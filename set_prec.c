@@ -8,6 +8,6 @@
 #include "mpfa.h"
 
 void mpfa_set_prec (mpfa_ptr x, mp_prec_t p) {
-	mpfr_set_prec (&(x->centre), p);
-	mpfr_set_prec (&(x->radius), p);
+	mpfr_set_prec(&(x->centre), p);
+	mpfr_set_prec(&(x->radius), p);
 }

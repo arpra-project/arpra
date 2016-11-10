@@ -8,6 +8,6 @@
 #include "mpfa.h"
 
 void mpfa_init2 (mpfa_ptr x, mp_prec_t p) {
-	mpfr_init2 (&(x->centre), p);
-	mpfr_init2 (&(x->radius), p);
+	mpfr_init2(&(x->centre), p);
+	mpfr_init2(&(x->radius), p);
 }
