@@ -23,15 +23,19 @@ void mpfa_affine_term_1 (mpfr_ptr z, mpfr_srcptr alpha, mpfr_srcptr x, mpfr_srcp
 	mpfr_max(error, lo, hi, MPFR_RNDU);
 	mpfr_add(delta, delta, error, MPFR_RNDU);
 
+
 	// alpha * x + gamma
 	if (gamma) {
-		mpfr_add(z, z, gamma, MPFR_RNDN);
-		mpfr_add(lo, z, gamma, MPFR_RNDD);
-		mpfr_add(hi, z, gamma, MPFR_RNDU);
+		mpfr_add(z, ax, gamma, MPFR_RNDN);
+		mpfr_add(lo, ax, gamma, MPFR_RNDD);
+		mpfr_add(hi, ax, gamma, MPFR_RNDU);
 		mpfr_sub(lo, z, lo, MPFR_RNDU);
 		mpfr_sub(hi, hi, z, MPFR_RNDU);
 		mpfr_max(error, lo, hi, MPFR_RNDU);
 		mpfr_add(delta, delta, error, MPFR_RNDU);
+	}
+	else {
+		mpfr_set(z, ax, MPFR_RNDN);
 	}
 
 	mpfr_clear(ax);
