@@ -39,20 +39,20 @@ mp_prec_t mpfa_get_prec (mpfa_srcptr x);
 void mpfa_set_prec (mpfa_ptr x, mp_prec_t p);
 
 // Set affine form
-int mpfa_set (mpfa_ptr x, mpfa_srcptr newVal);
-//int mpfa_set_si (mpfa_ptr x, const long newVal);
-//int mpfa_set_ui (mpfa_ptr x, const long unsigned newVal);
-int mpfa_set_d (mpfa_ptr x, const double newVal);
-//int mpfa_set_fr (mpfa_ptr x, mpfr_srcptr newVal);
-//int mpfa_set_str (mpfa_ptr x, const char *newVal, int base);
+void mpfa_set (mpfa_ptr x, mpfa_srcptr newVal);
+//void mpfa_set_si (mpfa_ptr x, const long newVal);
+//void mpfa_set_ui (mpfa_ptr x, const long unsigned newVal);
+void mpfa_set_d (mpfa_ptr x, const double newVal);
+//void mpfa_set_fr (mpfa_ptr x, mpfr_srcptr newVal);
+//void mpfa_set_str (mpfa_ptr x, const char *newVal, int base);
 
 // Initialise and set affine form
-int mpfa_init_set (mpfa_ptr x, mpfa_srcptr newVal);
-//int mpfa_init_set_si (mpfa_ptr x, const long newVal);
-// TODO: int mpfa_init_set_ui (mpfa_ptr x, const long unsigned newVal);
-int mpfa_init_set_d (mpfa_ptr x, const double newVal);
-//int mpfa_init_set_fr (mpfa_ptr x, mpfr_srcptr newVal);
-//int mpfa_init_set_str (mpfa_ptr x, const char *newVal, int base);
+void mpfa_init_set (mpfa_ptr x, mpfa_srcptr newVal);
+//void mpfa_init_set_si (mpfa_ptr x, const long newVal);
+//void mpfa_init_set_ui (mpfa_ptr x, const long unsigned newVal);
+void mpfa_init_set_d (mpfa_ptr x, const double newVal);
+//void mpfa_init_set_fr (mpfa_ptr x, mpfr_srcptr newVal);
+//void mpfa_init_set_str (mpfa_ptr x, const char *newVal, int base);
 
 // Generic affine operation
 void mpfa_affine_1 (mpfa_ptr z, mpfr_srcptr alpha, mpfa_srcptr x, mpfr_ptr gamma, mpfr_ptr delta);
@@ -64,7 +64,8 @@ void mpfa_sub (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y);
 void mpfa_neg (mpfa_ptr z, mpfa_srcptr x);
 
 // Non-affine operations
-
+void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y);
+void mpfa_div (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y);
 
 // Helper functions
 unsigned long mpfa_next_sym();

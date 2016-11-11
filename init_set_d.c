@@ -7,13 +7,9 @@
 
 #include "mpfa.h"
 
-int mpfa_init_set_d (mpfa_ptr x, const double newVal) {
-	int inexact = 0;
-
+void mpfa_init_set_d (mpfa_ptr x, const double newVal) {
 	mpfr_init(&(x->centre));
-	inexact += mpfr_set_d(&(x->centre), newVal, MPFR_RNDN);
+	mpfr_set_d(&(x->centre), newVal, MPFR_RNDN);
 	mpfr_init(&(x->radius));
-	inexact += mpfr_set_d(&(x->radius), 0.0, MPFR_RNDU);
-
-	return inexact;
+	mpfr_set_d(&(x->radius), 0.0, MPFR_RNDU);
 }
