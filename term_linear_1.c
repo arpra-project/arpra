@@ -7,7 +7,7 @@
 
 #include "mpfa.h"
 
-void mpfa_affine_term_1 (mpfr_ptr z, mpfr_srcptr alpha, mpfr_srcptr x, mpfr_srcptr gamma, mpfr_ptr delta) {
+void mpfa_term_linear_1 (mpfr_ptr z, mpfr_srcptr alpha, mpfr_srcptr x, mpfr_srcptr gamma, mpfr_ptr delta) {
 	mpfr_t ax, lo, hi, error;
 	mpfr_init(ax);
 	mpfr_init(lo);

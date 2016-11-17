@@ -6,7 +6,6 @@
  */
 
 #include <stdio.h>
-
 #include "mpfa.h"
 
 int main (int argc, char *argv[]) {
