@@ -7,6 +7,6 @@
 
 #include "mpfa.h"
 
-mp_prec_t mpfa_get_prec (mpfa_srcptr x) {
+mpfr_prec_t mpfa_get_prec (mpfa_srcptr x) {
 	return mpfr_get_prec(&(x->centre));
 }

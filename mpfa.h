@@ -52,13 +52,13 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y);
 void mpfa_div (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y);
 
 // Get and set precision
-mp_prec_t mpfa_get_prec (mpfa_srcptr x);
-void mpfa_set_prec (mpfa_ptr x, mp_prec_t p);
+mpfr_prec_t mpfa_get_prec (mpfa_srcptr x);
+mpfr_prec_t mpfa_get_default_prec ();
+void mpfa_set_prec (mpfa_ptr x, mpfr_prec_t p);
+void mpfa_set_default_prec (mpfr_prec_t p);
 
 // Helper functions
 unsigned long mpfa_next_sym();
-void mpfa_term_linear_1 (mpfr_ptr z, mpfr_srcptr alpha, mpfr_srcptr x, mpfr_srcptr gamma, mpfr_ptr delta);
-void mpfa_term_linear_2 (mpfr_ptr z, mpfr_srcptr alpha, mpfr_srcptr x, mpfr_srcptr beta, mpfr_srcptr y, mpfr_srcptr gamma, mpfr_ptr delta);
 
 #ifdef __cplusplus
 }

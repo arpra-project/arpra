@@ -9,36 +9,66 @@
 #include <malloc.h>
 
 void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
-	unsigned xTerm, yTerm, zTerm;
+	unsigned prec, xTerm, yTerm, zTerm;
+	mpfr_t u, temp, error, delta;
 	mpfa_t z_new;
-	mpfr_t temp, delta;
 
-	mpfr_init(temp);
-	mpfr_init_set_d(delta, 0.0, MPFR_RNDN);
+	prec = mpfr_get_prec(&(z->centre));
+	mpfr_init2(u, prec);
+	mpfr_init2(temp, prec);
+	mpfr_init2(error, prec);
+	mpfr_init2(delta, prec);
+	mpfr_init2(&(z_new->centre), prec);
+	mpfr_init2(&(z_new->radius), prec);
+	mpfr_set_d(&(z_new->radius), 0.0, MPFR_RNDN);
+
+	mpfr_set_si(u, -prec, MPFR_RNDN);
+	mpfr_exp2(u, u, MPFR_RNDN);
+
+	mpfr_mul(&(z_new->centre), &(x->centre), &(y->centre), MPFR_RNDN);
+	mpfr_mul(delta, u, &(z_new->centre), MPFR_RNDU);
+
 	z_new->nTerms = x->nTerms + y->nTerms + 1;
 	z_new->symbols = malloc(z_new->nTerms * sizeof(unsigned));
 	z_new->deviations = malloc(z_new->nTerms * sizeof(mpfr_t));
-	mpfr_init(&(z_new->centre));
-	mpfa_term_linear_1 (&(z_new->centre), &(x->centre), &(y->centre), NULL, delta);
-	mpfr_init_set_d(&(z_new->radius), 0.0, MPFR_RNDN);
 
 	for (xTerm = 0, yTerm = 0, zTerm = 0; ((xTerm < x->nTerms) && (yTerm < y->nTerms)); zTerm++) {
 		if ((yTerm == y->nTerms) || (x->symbols[xTerm] < y->symbols[yTerm])) {
 			z_new->symbols[zTerm] = x->symbols[xTerm];
-			mpfr_init(&(z_new->deviations[zTerm]));
-			mpfa_term_linear_1(&(z_new->deviations[zTerm]), &(y->centre), &(x->deviations[xTerm]), NULL, delta);
+			mpfr_init2(&(z_new->deviations[zTerm]), prec);
+
+			mpfr_mul(&(z_new->deviations[zTerm]), &(y->centre), &(x->deviations[xTerm]), MPFR_RNDN);
+			mpfr_mul(error, u, &(z_new->deviations[zTerm]), MPFR_RNDU);
+			mpfr_add(delta, delta, error, MPFR_RNDU);
+
 			xTerm++;
 		}
 		else if ((xTerm == x->nTerms) || (y->symbols[yTerm] < x->symbols[xTerm])) {
 			z_new->symbols[zTerm] = y->symbols[yTerm];
-			mpfr_init(&(z_new->deviations[zTerm]));
-			mpfa_term_linear_1(&(z_new->deviations[zTerm]), &(x->centre), &(y->deviations[yTerm]), NULL, delta);
+			mpfr_init2(&(z_new->deviations[zTerm]), prec);
+
+			mpfr_mul(&(z_new->deviations[zTerm]), &(x->centre), &(y->deviations[yTerm]), MPFR_RNDN);
+			mpfr_mul(error, u, &(z_new->deviations[zTerm]), MPFR_RNDU);
+			mpfr_add(delta, delta, error, MPFR_RNDU);
+
 			yTerm++;
 		}
 		else {
 			z_new->symbols[zTerm] = x->symbols[xTerm];
-			mpfr_init(&(z_new->deviations[zTerm]));
-			mpfa_term_linear_2(&(z_new->deviations[zTerm]), &(y->centre), &(x->deviations[xTerm]), &(x->centre), &(y->deviations[yTerm]), NULL, delta);
+			mpfr_init2(&(z_new->deviations[zTerm]), prec);
+
+			mpfr_mul(&(z_new->deviations[zTerm]), &(y->centre), &(x->deviations[xTerm]), MPFR_RNDN);
+			mpfr_mul(error, u, &(z_new->deviations[zTerm]), MPFR_RNDU);
+			mpfr_add(delta, delta, error, MPFR_RNDU);
+
+			mpfr_mul(temp, &(x->centre), &(y->deviations[yTerm]), MPFR_RNDN);
+			mpfr_mul(error, u, temp, MPFR_RNDU);
+			mpfr_add(delta, delta, error, MPFR_RNDU);
+
+			mpfr_add(&(z_new->deviations[zTerm]), &(z_new->deviations[zTerm]), temp, MPFR_RNDN);
+			mpfr_mul(error, u, &(z_new->deviations[zTerm]), MPFR_RNDU);
+			mpfr_add(delta, delta, error, MPFR_RNDU);
+
 			xTerm++;
 			yTerm++;
 		}
@@ -47,8 +77,8 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
 	}
 
 	// Trivial estimate of linearisation error
-	mpfr_mul(temp, &(x->radius), &(y->radius), MPFR_RNDU);
-	mpfr_add(delta, delta, temp, MPFR_RNDU);
+	mpfr_mul(error, &(x->radius), &(y->radius), MPFR_RNDU);
+	mpfr_add(delta, delta, error, MPFR_RNDU);
 
 	z_new->nTerms = zTerm + 1;
 	z_new->symbols = realloc(z_new->symbols, z_new->nTerms * sizeof(unsigned));
@@ -57,8 +87,10 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
 	mpfr_init_set(&(z_new->deviations[zTerm]), delta, MPFR_RNDU);
 	mpfr_add(&(z_new->radius), &(z_new->radius), delta, MPFR_RNDU);
 
+	mpfr_clear(u);
+	mpfr_clear(temp);
+	mpfr_clear(error);
+	mpfr_clear(delta);
 	mpfa_clear(z);
 	*z = *z_new;
-	mpfr_clear(temp);
-	mpfr_clear(delta);
 }
