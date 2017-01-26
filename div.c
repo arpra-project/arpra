@@ -7,9 +7,12 @@
 
 #include "mpfa.h"
 #include <malloc.h>
+#include <assert.h>
 
 void mpfa_div (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
-	unsigned prec, xTerm, yTerm, zTerm;
+	unsigned xTerm, yTerm, zTerm;
+	int inexact;
+	mpfr_prec_t prec;
 	mpfr_t u, temp, error, delta;
 	mpfa_t z_new;
 
@@ -22,11 +25,13 @@ void mpfa_div (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
 	mpfr_init2(&(z_new->radius), prec);
 	mpfr_set_d(&(z_new->radius), 0.0, MPFR_RNDN);
 
-	mpfr_set_si(u, -prec, MPFR_RNDN);
-	mpfr_exp2(u, u, MPFR_RNDN);
+	assert(!mpfr_set_si(u, -prec, MPFR_RNDN)); // fails if 2^emax < prec
+	assert(!mpfr_exp2(u, u, MPFR_RNDN)); // fails if emin > 1-prec
 
-	mpfr_mul(&(z_new->centre), &(x->centre), &(y->centre), MPFR_RNDN);
-	mpfr_mul(delta, u, &(z_new->centre), MPFR_RNDU);
+	inexact = mpfr_div(&(z_new->centre), &(x->centre), &(y->centre), MPFR_RNDN);
+	if (inexact) {
+		mpfr_mul(delta, u, &(z_new->centre), MPFR_RNDU);
+	}
 
 	z_new->nTerms = x->nTerms + y->nTerms + 1;
 	z_new->symbols = malloc(z_new->nTerms * sizeof(unsigned));
