@@ -24,7 +24,7 @@ void mpfa_affine_1 (mpfa_ptr z, mpfr_srcptr alpha, mpfa_srcptr x, mpfr_ptr gamma
 	mpfr_init2(&(z_new->radius), prec);
 	mpfr_set_d(&(z_new->radius), 0.0, MPFR_RNDN);
 
-	assert(!mpfr_set_si(u, -prec, MPFR_RNDN)); // fails if 2^emax < prec
+	assert(!mpfr_set_si(u, -prec, MPFR_RNDN)); // fails if emax <= log2(prec)
 	assert(!mpfr_exp2(u, u, MPFR_RNDN)); // fails if emin > 1-prec
 
 	inexact = mpfr_mul(temp, alpha, &(x->centre), MPFR_RNDN);
