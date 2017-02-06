@@ -48,14 +48,14 @@ void mpfa_sub (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y);
 void mpfa_neg (mpfa_ptr z, mpfa_srcptr x);
 
 // Non-affine operations
-void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y);
+void mpfa_mul(mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y);
 void mpfa_div (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y);
 
 // Get and set precision
 mpfr_prec_t mpfa_get_prec (mpfa_srcptr x);
 mpfr_prec_t mpfa_get_default_prec ();
-void mpfa_set_prec (mpfa_ptr x, mpfr_prec_t p);
-void mpfa_set_default_prec (mpfr_prec_t p);
+void mpfa_set_prec (mpfa_ptr x, mpfr_prec_t prec);
+void mpfa_set_default_prec (mpfr_prec_t prec);
 
 // Helper functions
 unsigned long mpfa_next_sym();

@@ -7,6 +7,6 @@
 
 #include "mpfa.h"
 
-void mpfa_set_default_prec (mpfr_prec_t p) {
-	mpfr_set_default_prec(p);
+void mpfa_set_default_prec (mpfr_prec_t prec) {
+	mpfr_set_default_prec(prec);
 }

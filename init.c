@@ -9,6 +9,7 @@
 #include <malloc.h>
 
 void mpfa_init (mpfa_ptr x) {
+	x->nTerms = 0;
 	x->symbols = malloc(0);
 	x->deviations = malloc(0);
 	mpfr_init(&(x->centre));
