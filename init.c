@@ -14,4 +14,5 @@ void mpfa_init (mpfa_ptr x) {
 	x->deviations = malloc(0);
 	mpfr_init(&(x->centre));
 	mpfr_init(&(x->radius));
+	mpfr_set_si(&(x->radius), 0, MPFR_RNDN);
 }

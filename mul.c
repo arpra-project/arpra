@@ -25,24 +25,24 @@
 void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
 	unsigned xTerm, yTerm, zTerm;
 	int inexact;
-	mpfr_prec_t prec;
 	mpfr_t u, temp, error, delta;
+	mpfr_prec_t prec;
 
 	prec = mpfr_get_prec(&(z->centre));
 	mpfr_init2(u, prec);
 	mpfr_init2(temp, prec);
 	mpfr_init2(error, prec);
 	mpfr_init2(delta, prec);
-	mpfr_set_d(&(z->radius), 0.0, MPFR_RNDN);
+	mpfr_set_si(&(z->radius), 0, MPFR_RNDN);
 
 #ifdef MPFA_TIGHT_MUL
 	unsigned xNext, yNext;
 	mpfr_t xiyiPos, xiyiNeg;
 
 	mpfr_init2(xiyiPos, prec);
-	mpfr_set_d(xiyiPos, 0.0, MPFR_RNDN);
+	mpfr_set_si(xiyiPos, 0, MPFR_RNDN);
 	mpfr_init2(xiyiNeg, prec);
-	mpfr_set_d(xiyiNeg, 0.0, MPFR_RNDN);
+	mpfr_set_si(xiyiNeg, 0, MPFR_RNDN);
 #endif
 
 	assert(!mpfr_set_si(u, -prec, MPFR_RNDN)); // fails if emax <= log2(prec)

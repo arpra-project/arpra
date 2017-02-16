@@ -29,7 +29,6 @@ extern "C" {
 
 // Initialise and clear
 void mpfa_init (mpfa_ptr x);
-void mpfa_init_nterms (mpfa_ptr x, unsigned n);
 void mpfa_clear (mpfa_ptr x);
 
 // Set affine form
@@ -50,6 +49,9 @@ void mpfa_neg (mpfa_ptr z, mpfa_srcptr x);
 // Non-affine operations
 void mpfa_mul(mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y);
 void mpfa_div (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y);
+
+// Transcendental functions
+void mpfa_inv (mpfa_ptr z, mpfa_srcptr x);
 
 // Get and set precision
 mpfr_prec_t mpfa_get_prec (mpfa_srcptr x);

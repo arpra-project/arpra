@@ -12,15 +12,15 @@
 void mpfa_div (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
 	unsigned xTerm, yTerm, zTerm;
 	int inexact;
-	mpfr_prec_t prec;
 	mpfr_t u, temp, error, delta;
+	mpfr_prec_t prec;
 
 	prec = mpfr_get_prec(&(z->centre));
 	mpfr_init2(u, prec);
 	mpfr_init2(temp, prec);
 	mpfr_init2(error, prec);
 	mpfr_init2(delta, prec);
-	mpfr_set_d(&(z->radius), 0.0, MPFR_RNDN);
+	mpfr_set_si(&(z->radius), 0, MPFR_RNDN);
 
 	assert(!mpfr_set_si(u, -prec, MPFR_RNDN)); // fails if emax <= log2(prec)
 	assert(!mpfr_exp2(u, u, MPFR_RNDN)); // fails if emin > 1-prec

@@ -9,11 +9,17 @@
 
 void mpfa_sub (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
 	mpfr_t alpha, beta, gamma, delta;
+	mpfr_prec_t prec;
 
-	mpfr_init_set_d(alpha, 1.0, MPFR_RNDN);
-	mpfr_init_set_d(beta, -1.0, MPFR_RNDN);
-	mpfr_init_set_d(gamma, 0.0, MPFR_RNDN);
-	mpfr_init_set_d(delta, 0.0, MPFR_RNDN);
+	prec = mpfr_get_prec(&(z->centre));
+	mpfr_init2(alpha, prec);
+	mpfr_set_si(alpha, 1, MPFR_RNDN);
+	mpfr_init2(beta, prec);
+	mpfr_set_si(beta, -1, MPFR_RNDN);
+	mpfr_init2(gamma, prec);
+	mpfr_set_si(gamma, 0, MPFR_RNDN);
+	mpfr_init2(delta, prec);
+	mpfr_set_si(delta, 0, MPFR_RNDN);
 
 	mpfa_affine_2(z, alpha, x, beta, y, gamma, delta);
 
