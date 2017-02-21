@@ -9,7 +9,7 @@
 #include <malloc.h>
 #include <assert.h>
 
-void mpfa_affine_2 (mpfa_ptr z, mpfr_srcptr alpha, mpfa_srcptr x, mpfr_srcptr beta, mpfa_srcptr y, mpfr_ptr gamma, mpfr_ptr delta) {
+void mpfa_affine_2 (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y, mpfr_srcptr alpha, mpfr_srcptr beta, mpfr_ptr gamma, mpfr_ptr delta) {
 	unsigned xTerm, yTerm, zTerm;
 	int inexact;
 	mpfr_t u, temp, error;

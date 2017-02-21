@@ -19,7 +19,7 @@ void mpfa_neg (mpfa_ptr z, mpfa_srcptr x) {
 	mpfr_init2(delta, prec);
 	mpfr_set_si(delta, 0, MPFR_RNDN);
 
-	mpfa_affine_1(z, alpha, x, gamma, delta);
+	mpfa_affine_1(z, x, alpha, gamma, delta);
 
 	mpfr_clear(alpha);
 	mpfr_clear(gamma);

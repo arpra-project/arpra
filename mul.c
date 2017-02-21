@@ -9,6 +9,8 @@
 #include <malloc.h>
 #include <assert.h>
 
+#define MPFA_TIGHT_MUL
+
 /*
  * If MPFA_TIGHT_MUL is defined, then the linear approximation to the quadratic term of the
  * affine product is defined the same as in (26) of:
@@ -20,7 +22,6 @@
  *
  * \sum^{n}_{i=1} x_{i} \sum^{n}_{i=1} y_{i}
  */
-#define MPFA_TIGHT_MUL
 
 void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
 	unsigned xTerm, yTerm, zTerm;

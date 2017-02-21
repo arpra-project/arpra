@@ -21,7 +21,7 @@ void mpfa_sub (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
 	mpfr_init2(delta, prec);
 	mpfr_set_si(delta, 0, MPFR_RNDN);
 
-	mpfa_affine_2(z, alpha, x, beta, y, gamma, delta);
+	mpfa_affine_2(z, x, y, alpha, beta, gamma, delta);
 
 	mpfr_clear(alpha);
 	mpfr_clear(beta);

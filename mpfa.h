@@ -29,6 +29,7 @@ extern "C" {
 
 // Initialise and clear
 void mpfa_init (mpfa_ptr x);
+void mpfa_init2 (mpfa_ptr x, mpfr_prec_t prec);
 void mpfa_clear (mpfa_ptr x);
 
 // Set affine form
@@ -40,8 +41,8 @@ void mpfa_set_d (mpfa_ptr z, const double x);
 //void mpfa_set_str (mpfa_ptr z, const char *x, int base);
 
 // Affine operations
-void mpfa_affine_1 (mpfa_ptr z, mpfr_srcptr alpha, mpfa_srcptr x, mpfr_ptr gamma, mpfr_ptr delta);
-void mpfa_affine_2 (mpfa_ptr z, mpfr_srcptr alpha, mpfa_srcptr x, mpfr_srcptr beta, mpfa_srcptr y, mpfr_ptr gamma, mpfr_ptr delta);
+void mpfa_affine_1 (mpfa_ptr z, mpfa_srcptr x, mpfr_srcptr alpha, mpfr_ptr gamma, mpfr_ptr delta);
+void mpfa_affine_2 (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y, mpfr_srcptr alpha, mpfr_srcptr beta, mpfr_ptr gamma, mpfr_ptr delta);
 void mpfa_add (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y);
 void mpfa_sub (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y);
 void mpfa_neg (mpfa_ptr z, mpfa_srcptr x);
