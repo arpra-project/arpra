@@ -10,12 +10,15 @@
 
 void mpfa_set (mpfa_ptr z, mpfa_srcptr x) {
 	unsigned zTerm;
+	mpfr_prec_t prec;
+
 	if (z->nTerms < x->nTerms) {
 		// need to grow z then initialise extra terms
 		z->symbols = realloc(z->symbols, x->nTerms * sizeof(unsigned));
 		z->deviations = realloc(z->deviations, x->nTerms * sizeof(mpfa_t));
+		prec = mpfr_get_prec(&(z->centre));
 		for (zTerm = z->nTerms; zTerm < x->nTerms; zTerm++) {
-			mpfr_init(&(z->deviations[zTerm]));
+			mpfr_init2(&(z->deviations[zTerm]), prec);
 		}
 	}
 	else if (z->nTerms > x->nTerms) {
