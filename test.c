@@ -9,6 +9,37 @@
 #include "mpfa.h"
 
 int main (int argc, char *argv[]) {
+
+	mpfa_t a, b, c;
+
+	mpfa_init(a);
+	mpfa_init(b);
+	mpfa_init(c);
+
+	mpfa_set_d(a, 0.2);
+	mpfa_set_d(b, 0.6);
+
+	mpfa_add(c, a, b);
+	mpfr_out_str (stdout, 10, 100, &(c->centre), MPFR_RNDN);
+	putchar ('\n');
+
+	mpfa_mul(c, a, b);
+	mpfr_out_str (stdout, 10, 100, &(c->centre), MPFR_RNDN);
+	putchar ('\n');
+
+	mpfa_div(c, a, b);
+	mpfr_out_str (stdout, 10, 100, &(c->centre), MPFR_RNDN);
+	putchar ('\n');
+
+	mpfa_clear(a);
+	mpfa_clear(b);
+	mpfa_clear(c);
+
+
+
+	// MPFR testing ============================================
+
+	/*
 	mpfr_t t;
 
 	mpfr_init2 (t, 24);
@@ -20,6 +51,7 @@ int main (int argc, char *argv[]) {
 	putchar ('\n');
 
 	mpfr_clear (t);
+	 */
 
     return 0;
 }

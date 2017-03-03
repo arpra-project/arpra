@@ -41,7 +41,7 @@ void mpfa_affine_1 (mpfa_ptr z, mpfa_srcptr x, mpfr_srcptr alpha, mpfr_ptr gamma
 	}
 	z->nTerms = x->nTerms + 1;
 	z->symbols = realloc(z->symbols, z->nTerms * sizeof(unsigned));
-	z->deviations = realloc(z->symbols, z->nTerms * sizeof(mpfr_t));
+	z->deviations = realloc(z->deviations, z->nTerms * sizeof(mpfr_t));
 
 	for (zTerm = 0; zTerm < (z->nTerms - 1); zTerm++) {
 		z->symbols[zTerm] = x->symbols[zTerm];

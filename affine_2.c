@@ -53,7 +53,7 @@ void mpfa_affine_2 (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y, mpfr_srcptr alpha,
 	}
 	z->nTerms = x->nTerms + y->nTerms + 1;
 	z->symbols = realloc(z->symbols, z->nTerms * sizeof(unsigned));
-	z->deviations = realloc(z->symbols, z->nTerms * sizeof(mpfr_t));
+	z->deviations = realloc(z->deviations, z->nTerms * sizeof(mpfr_t));
 
 	for (xTerm = 0, yTerm = 0, zTerm = 0; ((xTerm < x->nTerms) || (yTerm < y->nTerms)); zTerm++) {
 		if ((yTerm == y->nTerms) || (x->symbols[xTerm] < y->symbols[yTerm])) {
@@ -112,7 +112,7 @@ void mpfa_affine_2 (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y, mpfr_srcptr alpha,
 	z->nTerms = zTerm + 1;
 	z->symbols = realloc(z->symbols, z->nTerms * sizeof(unsigned));
 	z->symbols[zTerm] = mpfa_next_sym();
-	z->deviations = realloc(z->symbols, z->nTerms * sizeof(mpfr_t));
+	z->deviations = realloc(z->deviations, z->nTerms * sizeof(mpfr_t));
 	mpfr_init_set(&(z->deviations[zTerm]), delta, MPFR_RNDU);
 	mpfr_add(&(z->radius), &(z->radius), delta, MPFR_RNDU);
 
