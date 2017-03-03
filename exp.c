@@ -1,18 +1,17 @@
 /*
- * inv.c
+ * exp.c
  *
- *  Created on: 14 Feb 2017
- *      Author: jt273
+ *  Created on: 21 Feb 2017
+ *      Author: james
  */
 
 #include "mpfa.h"
 
 /*
- * This affine inverse function uses a Chebyshev linear approximation.
+ * This affine exponential function uses a Chebyshev linear approximation.
  */
 
-void mpfa_inv (mpfa_ptr z, mpfa_srcptr x) {
-	int sign;
+void mpfa_exp (mpfa_ptr z, mpfa_srcptr x) {
 	mpfr_t temp, xa, xb, da, db, du, alpha, gamma, delta;
 	mpfr_prec_t prec;
 
@@ -29,38 +28,31 @@ void mpfa_inv (mpfa_ptr z, mpfa_srcptr x) {
 
 	mpfr_sub(xa, &(x->centre), &(x->radius), MPFR_RNDD);
 	mpfr_add(xb, &(x->centre), &(x->radius), MPFR_RNDU);
-	sign = mpfr_sgn(xa);
-	if ((sign != mpfr_sgn(xb) || !sign)) {
-		// TODO: handle singularity
-		// return ANY_NUM;
-	}
-
-	if (sign < 0) {
-		mpfr_set(temp, xa, MPFR_RNDN);
-		mpfr_neg(xa, xb, MPFR_RNDN);
-		mpfr_neg(xb, temp, MPFR_RNDN);
-	}
 
 	// compute alpha
-	mpfr_si_div(alpha, -1, xb, MPFR_RNDN);
-	mpfr_div(alpha, alpha, xa, MPFR_RNDN);
+	mpfr_exp(alpha, xb, MPFR_RNDN);
+	mpfr_exp(temp, xa, MPFR_RNDN);
+	mpfr_sub(alpha, alpha, temp, MPFR_RNDN);
+	mpfr_sub(temp, xb, xa, MPFR_RNDN);
+	mpfr_div(alpha, alpha, temp, MPFR_RNDN);
 
-	// compute difference (1/a - alpha a)
+	// compute difference (exp(a) - alpha a)
 	mpfr_mul(da, alpha, xa, MPFR_RNDD);
-	mpfr_si_div(temp, 1, xa, MPFR_RNDU);
+	mpfr_exp(temp, xa, MPFR_RNDU);
 	mpfr_sub(da, temp, da, MPFR_RNDU);
 
-	// compute difference (1/b - alpha b)
+	// compute difference (exp(b) - alpha b)
 	mpfr_mul(db, alpha, xb, MPFR_RNDD);
-	mpfr_si_div(temp, 1, xb, MPFR_RNDU);
+	mpfr_exp(temp, xb, MPFR_RNDU);
 	mpfr_sub(db, temp, db, MPFR_RNDU);
 
 	mpfr_max(da, da, db, MPFR_RNDN);
 
-	// compute difference (1/u - alpha u)
-	mpfr_neg(du, alpha, MPFR_RNDN);
-	mpfr_sqrt(du, du, MPFR_RNDD);
-	mpfr_mul_si(du, du, 2, MPFR_RNDD);
+	// compute difference (exp(u) - alpha u)
+	mpfr_log(du, alpha, MPFR_RNDU);
+	mpfr_sub_si(du, du, 1, MPFR_RNDU);
+	mpfr_mul(du, alpha, du, MPFR_RNDU);
+	mpfr_neg(du, du, MPFR_RNDN);
 
 	// compute gamma
 	mpfr_add(gamma, da, du, MPFR_RNDN);
@@ -70,10 +62,6 @@ void mpfa_inv (mpfa_ptr z, mpfa_srcptr x) {
 	mpfr_sub(delta, du, gamma, MPFR_RNDU);
 	mpfr_sub(temp, gamma, da, MPFR_RNDU);
 	mpfr_max(delta, delta, temp, MPFR_RNDN);
-
-	if (sign < 0) {
-		mpfr_neg(gamma, gamma, MPFR_RNDN);
-	}
 
 	// compute affine approximation
 	mpfa_affine_1(z, x, alpha, gamma, delta);

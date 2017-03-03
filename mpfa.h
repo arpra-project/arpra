@@ -52,6 +52,7 @@ void mpfa_mul(mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y);
 void mpfa_div (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y);
 
 // Transcendental functions
+void mpfa_exp (mpfa_ptr z, mpfa_srcptr x);
 void mpfa_inv (mpfa_ptr z, mpfa_srcptr x);
 
 // Get and set precision
