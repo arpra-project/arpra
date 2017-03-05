@@ -14,8 +14,14 @@ void mpfa_set (mpfa_ptr z, mpfa_srcptr x) {
 
 	if (z->nTerms < x->nTerms) {
 		// need to grow z then initialise extra terms
-		z->symbols = realloc(z->symbols, x->nTerms * sizeof(unsigned));
-		z->deviations = realloc(z->deviations, x->nTerms * sizeof(mpfa_t));
+		if (z->nTerms == 0) {
+			z->symbols = malloc(x->nTerms * sizeof(unsigned));
+			z->deviations = malloc(x->nTerms * sizeof(mpfa_t));
+		}
+		else {
+			z->symbols = realloc(z->symbols, x->nTerms * sizeof(unsigned));
+			z->deviations = realloc(z->deviations, x->nTerms * sizeof(mpfa_t));
+		}
 		prec = mpfr_get_prec(&(z->centre));
 		for (zTerm = z->nTerms; zTerm < x->nTerms; zTerm++) {
 			mpfr_init2(&(z->deviations[zTerm]), prec);
@@ -26,8 +32,14 @@ void mpfa_set (mpfa_ptr z, mpfa_srcptr x) {
 		for (zTerm = x->nTerms; zTerm < z->nTerms; zTerm++) {
 			mpfr_clear(&(z->deviations[zTerm]));
 		}
-		z->symbols = realloc(z->symbols, x->nTerms * sizeof(unsigned));
-		z->deviations = realloc(z->deviations, x->nTerms * sizeof(mpfa_t));
+		if (x->nTerms == 0) {
+			free(z->symbols);
+			free(z->deviations);
+		}
+		else {
+			z->symbols = realloc(z->symbols, x->nTerms * sizeof(unsigned));
+			z->deviations = realloc(z->deviations, x->nTerms * sizeof(mpfa_t));
+		}
 	}
 	z->nTerms = x->nTerms;
 	for (zTerm = 0; zTerm < z->nTerms; zTerm++) {

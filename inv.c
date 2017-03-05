@@ -30,7 +30,7 @@ void mpfa_inv (mpfa_ptr z, mpfa_srcptr x) {
 	mpfr_sub(xa, &(x->centre), &(x->radius), MPFR_RNDD);
 	mpfr_add(xb, &(x->centre), &(x->radius), MPFR_RNDU);
 	sign = mpfr_sgn(xa);
-	if ((sign != mpfr_sgn(xb) || !sign)) {
+	if ((sign != mpfr_sgn(xb) || (sign == 0))) {
 		// TODO: handle singularity
 		// return ANY_NUM;
 	}

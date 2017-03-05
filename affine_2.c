@@ -21,8 +21,8 @@ void mpfa_affine_2 (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y, mpfr_srcptr alpha,
 	mpfr_init2(error, prec);
 	mpfr_set_si(&(z->radius), 0, MPFR_RNDN);
 
-	assert(!mpfr_set_si(u, -prec, MPFR_RNDN)); // fails if emax <= log2(prec)
-	assert(!mpfr_exp2(u, u, MPFR_RNDN)); // fails if emin > 1-prec
+	assert(mpfr_set_si(u, -prec, MPFR_RNDN) == 0); // fails if emax <= log2(prec)
+	assert(mpfr_exp2(u, u, MPFR_RNDN) == 0); // fails if emin > 1-prec
 
 	inexact = mpfr_mul(temp, alpha, &(x->centre), MPFR_RNDN);
 	if (inexact) {
@@ -48,12 +48,19 @@ void mpfa_affine_2 (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y, mpfr_srcptr alpha,
 		mpfr_add(delta, delta, error, MPFR_RNDU);
 	}
 
-	for (zTerm = 0; zTerm < z->nTerms; zTerm++) {
-		mpfr_clear(&(z->deviations[zTerm]));
+	if (z->nTerms == 0) {
+		z->nTerms = x->nTerms + y->nTerms + 1;
+		z->symbols = malloc(z->nTerms * sizeof(unsigned));
+		z->deviations = malloc(z->nTerms * sizeof(mpfr_t));
 	}
-	z->nTerms = x->nTerms + y->nTerms + 1;
-	z->symbols = realloc(z->symbols, z->nTerms * sizeof(unsigned));
-	z->deviations = realloc(z->deviations, z->nTerms * sizeof(mpfr_t));
+	else {
+		for (zTerm = 0; zTerm < z->nTerms; zTerm++) {
+			mpfr_clear(&(z->deviations[zTerm]));
+		}
+		z->nTerms = x->nTerms + y->nTerms + 1;
+		z->symbols = realloc(z->symbols, z->nTerms * sizeof(unsigned));
+		z->deviations = realloc(z->symbols, z->nTerms * sizeof(mpfr_t));
+	}
 
 	for (xTerm = 0, yTerm = 0, zTerm = 0; ((xTerm < x->nTerms) || (yTerm < y->nTerms)); zTerm++) {
 		if ((yTerm == y->nTerms) || (x->symbols[xTerm] < y->symbols[yTerm])) {
