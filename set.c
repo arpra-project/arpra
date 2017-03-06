@@ -12,6 +12,8 @@ void mpfa_set (mpfa_ptr z, mpfa_srcptr x) {
 	unsigned zTerm;
 	mpfr_prec_t prec;
 
+	if (z == x) return;
+
 	if (z->nTerms < x->nTerms) {
 		// need to grow z then initialise extra terms
 		if (z->nTerms == 0) {
@@ -41,6 +43,7 @@ void mpfa_set (mpfa_ptr z, mpfa_srcptr x) {
 			z->deviations = realloc(z->deviations, x->nTerms * sizeof(mpfa_t));
 		}
 	}
+
 	z->nTerms = x->nTerms;
 	for (zTerm = 0; zTerm < z->nTerms; zTerm++) {
 		z->symbols[zTerm] = x->symbols[zTerm];
