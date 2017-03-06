@@ -143,8 +143,8 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
 	xTerm = 0;
 	yTerm = 0;
 	while (1) {
-		if (xTerm == x->nTerms) break;
 		if (yTerm == y->nTerms) break;
+		if (xTerm == x->nTerms) break;
 
 		if (x->symbols[xTerm] < y->symbols[yTerm]) {
 			for (yNext = yTerm; yNext < y->nTerms; yNext++) {
@@ -175,10 +175,26 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
 			xNext = xTerm + 1;
 			yNext = yTerm + 1;
 			while (1) {
-				if (xNext == x->nTerms) break;
-				if (yNext == y->nTerms) break;
+				if (yNext == y->nTerms) {
+					for (; xNext < x->nTerms; xNext++) {
+						// both x and y have symbol i, but only x has symbol j, so delta += abs(xj * yi)
+						mpfr_mul(error, &(y->deviations[yTerm]), &(x->deviations[xNext]), MPFR_RNDA);
+						mpfr_abs(error, error, MPFR_RNDN);
+						mpfr_add(delta, delta, error, MPFR_RNDU);
+					}
+					break;
+				}
+				if (xNext == x->nTerms) {
+					for (; yNext < y->nTerms; yNext++) {
+						// both x and y have symbol i, but only y has symbol j, so delta += abs(xi * yj)
+						mpfr_mul(error, &(x->deviations[xTerm]), &(y->deviations[yNext]), MPFR_RNDA);
+						mpfr_abs(error, error, MPFR_RNDN);
+						mpfr_add(delta, delta, error, MPFR_RNDU);
+					}
+					break;
+				}
 
-				if ((yNext == y->nTerms) || (x->symbols[xNext] < y->symbols[yNext])) {
+				if (x->symbols[xNext] < y->symbols[yNext]) {
 					// both x and y have symbol i, but only x has symbol j, so delta += abs(xj * yi)
 					mpfr_mul(error, &(y->deviations[yTerm]), &(x->deviations[xNext]), MPFR_RNDA);
 					mpfr_abs(error, error, MPFR_RNDN);
@@ -186,7 +202,7 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
 
 					xNext++;
 				}
-				else if ((xNext == x->nTerms) || (y->symbols[yNext] < x->symbols[xNext])) {
+				else if (y->symbols[yNext] < x->symbols[xNext]) {
 					// both x and y have symbol i, but only y has symbol j, so delta += abs(xi * yj)
 					mpfr_mul(error, &(x->deviations[xTerm]), &(y->deviations[yNext]), MPFR_RNDA);
 					mpfr_abs(error, error, MPFR_RNDN);
