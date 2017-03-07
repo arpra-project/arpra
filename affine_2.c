@@ -65,6 +65,9 @@ void mpfa_affine_2 (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y, mpfr_srcptr alpha,
 					mpfr_mul(error, u, &(zNew->deviations[zTerm]), MPFR_RNDU);
 					mpfr_add(delta, delta, error, MPFR_RNDU);
 				}
+
+				mpfr_abs(temp, &(zNew->deviations[zTerm]), MPFR_RNDN);
+				mpfr_add(&(zNew->radius), &(zNew->radius), temp, MPFR_RNDU);
 			}
 			break;
 		}
@@ -78,6 +81,9 @@ void mpfa_affine_2 (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y, mpfr_srcptr alpha,
 					mpfr_mul(error, u, &(zNew->deviations[zTerm]), MPFR_RNDU);
 					mpfr_add(delta, delta, error, MPFR_RNDU);
 				}
+
+				mpfr_abs(temp, &(zNew->deviations[zTerm]), MPFR_RNDN);
+				mpfr_add(&(zNew->radius), &(zNew->radius), temp, MPFR_RNDU);
 			}
 			break;
 		}
@@ -131,6 +137,7 @@ void mpfa_affine_2 (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y, mpfr_srcptr alpha,
 			xTerm++;
 			yTerm++;
 		}
+
 		mpfr_abs(temp, &(zNew->deviations[zTerm]), MPFR_RNDN);
 		mpfr_add(&(zNew->radius), &(zNew->radius), temp, MPFR_RNDU);
 	}

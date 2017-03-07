@@ -35,6 +35,7 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
 	mpfr_init2(temp, prec);
 	mpfr_init2(error, prec);
 	mpfr_init2(delta, prec);
+	mpfr_set_si(delta, 0, MPFR_RNDN);
 	mpfa_init2(zNew, prec);
 	mpfr_set_si(&(zNew->radius), 0, MPFR_RNDN);
 
@@ -61,6 +62,9 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
 					mpfr_mul(error, u, &(zNew->deviations[zTerm]), MPFR_RNDU);
 					mpfr_add(delta, delta, error, MPFR_RNDU);
 				}
+
+				mpfr_abs(temp, &(zNew->deviations[zTerm]), MPFR_RNDN);
+				mpfr_add(&(zNew->radius), &(zNew->radius), temp, MPFR_RNDU);
 			}
 			break;
 		}
@@ -74,6 +78,9 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
 					mpfr_mul(error, u, &(zNew->deviations[zTerm]), MPFR_RNDU);
 					mpfr_add(delta, delta, error, MPFR_RNDU);
 				}
+
+				mpfr_abs(temp, &(zNew->deviations[zTerm]), MPFR_RNDN);
+				mpfr_add(&(zNew->radius), &(zNew->radius), temp, MPFR_RNDU);
 			}
 			break;
 		}
@@ -127,6 +134,7 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
 			xTerm++;
 			yTerm++;
 		}
+
 		mpfr_abs(temp, &(zNew->deviations[zTerm]), MPFR_RNDN);
 		mpfr_add(&(zNew->radius), &(zNew->radius), temp, MPFR_RNDU);
 	}
@@ -153,6 +161,7 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
 				mpfr_abs(error, error, MPFR_RNDN);
 				mpfr_add(delta, delta, error, MPFR_RNDU);
 			}
+			xTerm++;
 		}
 		else if (y->symbols[yTerm] < x->symbols[xTerm]) {
 			for (xNext = xTerm; xNext < x->nTerms; xNext++) {
@@ -161,6 +170,7 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
 				mpfr_abs(error, error, MPFR_RNDN);
 				mpfr_add(delta, delta, error, MPFR_RNDU);
 			}
+			yTerm++;
 		}
 		else {
 			// both x and y have symbol i, so delta += abs(xi * yi)
@@ -227,6 +237,8 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
 					yNext++;
 				}
 			}
+			xTerm++;
+			yTerm++;
 		}
 	}
 
