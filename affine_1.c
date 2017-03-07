@@ -9,7 +9,7 @@
 #include <malloc.h>
 #include <assert.h>
 
-void mpfa_affine_1 (mpfa_ptr z, mpfa_srcptr x, mpfr_srcptr alpha, mpfr_ptr gamma, mpfr_ptr delta) {
+void mpfa_affine_1 (mpfa_ptr z, mpfa_srcptr x, mpfr_ptr alpha, mpfr_ptr gamma, mpfr_ptr delta) {
 	unsigned zTerm;
 	int inexact;
 	mpfr_t u, temp, error;
@@ -29,12 +29,14 @@ void mpfa_affine_1 (mpfa_ptr z, mpfa_srcptr x, mpfr_srcptr alpha, mpfr_ptr gamma
 	inexact = mpfr_mul(temp, alpha, &(x->centre), MPFR_RNDN);
 	if (inexact) {
 		mpfr_mul(error, u, temp, MPFR_RNDU);
+		mpfr_abs(error, error, MPFR_RNDN);
 		mpfr_add(delta, delta, error, MPFR_RNDU);
 	}
 
 	inexact = mpfr_add(&(zNew->centre), gamma, temp, MPFR_RNDN);
 	if (inexact) {
 		mpfr_mul(error, u, &(zNew->centre), MPFR_RNDU);
+		mpfr_abs(error, error, MPFR_RNDN);
 		mpfr_add(delta, delta, error, MPFR_RNDU);
 	}
 
@@ -49,6 +51,7 @@ void mpfa_affine_1 (mpfa_ptr z, mpfa_srcptr x, mpfr_srcptr alpha, mpfr_ptr gamma
 		inexact = mpfr_mul(&(zNew->deviations[zTerm]), alpha, &(x->deviations[zTerm]), MPFR_RNDN);
 		if (inexact) {
 			mpfr_mul(error, u, &(zNew->deviations[zTerm]), MPFR_RNDU);
+			mpfr_abs(error, error, MPFR_RNDN);
 			mpfr_add(delta, delta, error, MPFR_RNDU);
 		}
 

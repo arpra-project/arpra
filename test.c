@@ -43,8 +43,8 @@ int main (int argc, char *argv[]) {
 
 	int i;
 	for (i = 0; i < 10; i++) {
-		mpfa_mul(a, a, b);
-		//mpfa_div(a, a, b);
+		//mpfa_mul(a, a, b);
+		mpfa_div(a, a, b);
 		printf("centre: "); mpfr_out_str (stdout, 10, 100, &(a->centre), MPFR_RNDN); putchar('\n');
 		printf("radius: "); mpfr_out_str (stdout, 10, 100, &(a->radius), MPFR_RNDN); putchar('\n');
 	}
