@@ -11,7 +11,6 @@
 
 void mpfa_affine_2 (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y, mpfr_ptr alpha, mpfr_ptr beta, mpfr_ptr gamma, mpfr_ptr delta) {
 	unsigned xTerm, yTerm, zTerm;
-	int inexact;
 	mpfr_t u, temp, error;
 	mpfr_prec_t prec;
 	mpfa_t zNew;
@@ -26,29 +25,25 @@ void mpfa_affine_2 (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y, mpfr_ptr alpha, mp
 	assert(mpfr_set_si(u, -prec, MPFR_RNDN) == 0); // fails if emax <= log2(prec)
 	assert(mpfr_exp2(u, u, MPFR_RNDN) == 0); // fails if emin > 1-prec
 
-	inexact = mpfr_mul(temp, alpha, &(x->centre), MPFR_RNDN);
-	if (inexact) {
+	if (mpfr_mul(temp, alpha, &(x->centre), MPFR_RNDN)) {
 		mpfr_mul(error, u, temp, MPFR_RNDU);
 		mpfr_abs(error, error, MPFR_RNDN);
 		mpfr_add(delta, delta, error, MPFR_RNDU);
 	}
 
-	inexact = mpfr_add(&(zNew->centre), gamma, temp, MPFR_RNDN);
-	if (inexact) {
+	if (mpfr_add(&(zNew->centre), gamma, temp, MPFR_RNDN)) {
 		mpfr_mul(error, u, &(zNew->centre), MPFR_RNDU);
 		mpfr_abs(error, error, MPFR_RNDN);
 		mpfr_add(delta, delta, error, MPFR_RNDU);
 	}
 
-	inexact = mpfr_mul(temp, beta, &(y->centre), MPFR_RNDN);
-	if (inexact) {
+	if (mpfr_mul(temp, beta, &(y->centre), MPFR_RNDN)) {
 		mpfr_mul(error, u, temp, MPFR_RNDU);
 		mpfr_abs(error, error, MPFR_RNDN);
 		mpfr_add(delta, delta, error, MPFR_RNDU);
 	}
 
-	inexact = mpfr_add(&(zNew->centre), &(zNew->centre), temp, MPFR_RNDN);
-	if (inexact) {
+	if (mpfr_add(&(zNew->centre), &(zNew->centre), temp, MPFR_RNDN)) {
 		mpfr_mul(error, u, &(zNew->centre), MPFR_RNDU);
 		mpfr_abs(error, error, MPFR_RNDN);
 		mpfr_add(delta, delta, error, MPFR_RNDU);
@@ -64,8 +59,7 @@ void mpfa_affine_2 (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y, mpfr_ptr alpha, mp
 				zNew->symbols[zTerm] = x->symbols[xTerm];
 				mpfr_init2(&(zNew->deviations[zTerm]), prec);
 
-				inexact = mpfr_mul(&(zNew->deviations[zTerm]), alpha, &(x->deviations[xTerm]), MPFR_RNDN);
-				if (inexact) {
+				if (mpfr_mul(&(zNew->deviations[zTerm]), alpha, &(x->deviations[xTerm]), MPFR_RNDN)) {
 					mpfr_mul(error, u, &(zNew->deviations[zTerm]), MPFR_RNDU);
 					mpfr_abs(error, error, MPFR_RNDN);
 					mpfr_add(delta, delta, error, MPFR_RNDU);
@@ -81,8 +75,7 @@ void mpfa_affine_2 (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y, mpfr_ptr alpha, mp
 				zNew->symbols[zTerm] = y->symbols[yTerm];
 				mpfr_init2(&(zNew->deviations[zTerm]), prec);
 
-				inexact = mpfr_mul(&(zNew->deviations[zTerm]), beta, &(y->deviations[yTerm]), MPFR_RNDN);
-				if (inexact) {
+				if (mpfr_mul(&(zNew->deviations[zTerm]), beta, &(y->deviations[yTerm]), MPFR_RNDN)) {
 					mpfr_mul(error, u, &(zNew->deviations[zTerm]), MPFR_RNDU);
 					mpfr_abs(error, error, MPFR_RNDN);
 					mpfr_add(delta, delta, error, MPFR_RNDU);
@@ -98,8 +91,7 @@ void mpfa_affine_2 (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y, mpfr_ptr alpha, mp
 			zNew->symbols[zTerm] = x->symbols[xTerm];
 			mpfr_init2(&(zNew->deviations[zTerm]), prec);
 
-			inexact = mpfr_mul(&(zNew->deviations[zTerm]), alpha, &(x->deviations[xTerm]), MPFR_RNDN);
-			if (inexact) {
+			if (mpfr_mul(&(zNew->deviations[zTerm]), alpha, &(x->deviations[xTerm]), MPFR_RNDN)) {
 				mpfr_mul(error, u, &(zNew->deviations[zTerm]), MPFR_RNDU);
 				mpfr_abs(error, error, MPFR_RNDN);
 				mpfr_add(delta, delta, error, MPFR_RNDU);
@@ -111,8 +103,7 @@ void mpfa_affine_2 (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y, mpfr_ptr alpha, mp
 			zNew->symbols[zTerm] = y->symbols[yTerm];
 			mpfr_init2(&(zNew->deviations[zTerm]), prec);
 
-			inexact = mpfr_mul(&(zNew->deviations[zTerm]), beta, &(y->deviations[yTerm]), MPFR_RNDN);
-			if (inexact) {
+			if (mpfr_mul(&(zNew->deviations[zTerm]), beta, &(y->deviations[yTerm]), MPFR_RNDN)) {
 				mpfr_mul(error, u, &(zNew->deviations[zTerm]), MPFR_RNDU);
 				mpfr_abs(error, error, MPFR_RNDN);
 				mpfr_add(delta, delta, error, MPFR_RNDU);
@@ -124,22 +115,19 @@ void mpfa_affine_2 (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y, mpfr_ptr alpha, mp
 			zNew->symbols[zTerm] = x->symbols[xTerm];
 			mpfr_init2(&(zNew->deviations[zTerm]), prec);
 
-			inexact = mpfr_mul(&(zNew->deviations[zTerm]), alpha, &(x->deviations[xTerm]), MPFR_RNDN);
-			if (inexact) {
+			if (mpfr_mul(&(zNew->deviations[zTerm]), alpha, &(x->deviations[xTerm]), MPFR_RNDN)) {
 				mpfr_mul(error, u, &(zNew->deviations[zTerm]), MPFR_RNDU);
 				mpfr_abs(error, error, MPFR_RNDN);
 				mpfr_add(delta, delta, error, MPFR_RNDU);
 			}
 
-			inexact = mpfr_mul(temp, beta, &(y->deviations[yTerm]), MPFR_RNDN);
-			if (inexact) {
+			if (mpfr_mul(temp, beta, &(y->deviations[yTerm]), MPFR_RNDN)) {
 				mpfr_mul(error, u, temp, MPFR_RNDU);
 				mpfr_abs(error, error, MPFR_RNDN);
 				mpfr_add(delta, delta, error, MPFR_RNDU);
 			}
 
-			inexact = mpfr_add(&(zNew->deviations[zTerm]), &(zNew->deviations[zTerm]), temp, MPFR_RNDN);
-			if (inexact) {
+			if (mpfr_add(&(zNew->deviations[zTerm]), &(zNew->deviations[zTerm]), temp, MPFR_RNDN)) {
 				mpfr_mul(error, u, &(zNew->deviations[zTerm]), MPFR_RNDU);
 				mpfr_abs(error, error, MPFR_RNDN);
 				mpfr_add(delta, delta, error, MPFR_RNDU);
