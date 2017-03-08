@@ -59,9 +59,9 @@ void mpfa_affine_1 (mpfa_ptr z, mpfa_srcptr x, mpfr_ptr alpha, mpfr_ptr gamma, m
 		mpfr_add(&(zNew->radius), &(zNew->radius), temp, MPFR_RNDU);
 	}
 
-	zNew->symbols[zNew->nTerms - 1] = mpfa_next_sym();
-	mpfr_init2(&(zNew->deviations[zNew->nTerms - 1]), prec);
-	mpfr_set(&(zNew->deviations[zNew->nTerms - 1]), delta, MPFR_RNDU);
+	zNew->symbols[zTerm] = mpfa_next_sym();
+	mpfr_init2(&(zNew->deviations[zTerm]), prec);
+	mpfr_set(&(zNew->deviations[zTerm]), delta, MPFR_RNDN);
 	mpfr_add(&(zNew->radius), &(zNew->radius), delta, MPFR_RNDU);
 
 	mpfr_clear(u);

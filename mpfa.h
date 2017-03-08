@@ -8,6 +8,7 @@
 #ifndef MPFA_H
 #define MPFA_H
 
+#include <stdio.h>
 #include <gmp.h>
 #include <mpfr.h>
 
