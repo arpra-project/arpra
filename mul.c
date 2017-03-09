@@ -21,7 +21,7 @@
  * \sum^{n}_{i=1} x_{i} \sum^{n}_{i=1} y_{i}
  */
 
-//#define MPFA_TIGHT_MUL
+#define MPFA_TIGHT_MUL
 
 void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
 	unsigned xTerm, yTerm, zTerm;
@@ -147,35 +147,16 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
 				mpfr_sub(xiyiNeg, xiyiNeg, error, MPFR_RNDU);
 			}
 
-			xNext = xTerm + 1;
-			yNext = yTerm + 1;
-			while (1) {
-				if (yNext == y->nTerms) {
-					for (; xNext < x->nTerms; xNext++) {
-						// both x and y have symbol i, but only x has symbol j, so delta += abs(xj * yi)
-						mpfr_mul(error, &(y->deviations[yTerm]), &(x->deviations[xNext]), MPFR_RNDA);
-						mpfr_abs(error, error, MPFR_RNDN);
-						mpfr_add(delta, delta, error, MPFR_RNDU);
-					}
-					break;
-				}
-				if (xNext == x->nTerms) {
-					for (; yNext < y->nTerms; yNext++) {
-						// both x and y have symbol i, but only y has symbol j, so delta += abs(xi * yj)
-						mpfr_mul(error, &(x->deviations[xTerm]), &(y->deviations[yNext]), MPFR_RNDA);
-						mpfr_abs(error, error, MPFR_RNDN);
-						mpfr_add(delta, delta, error, MPFR_RNDU);
-					}
-					break;
-				}
-
+			xNext = xTerm + 1; yNext = yTerm + 1;
+			xHasNext = xNext < x->nTerms; yHasNext = yNext < y->nTerms;
+			while (xHasNext || yHasNext) {
 				if (x->symbols[xNext] < y->symbols[yNext]) {
 					// both x and y have symbol i, but only x has symbol j, so delta += abs(xj * yi)
 					mpfr_mul(error, &(y->deviations[yTerm]), &(x->deviations[xNext]), MPFR_RNDA);
 					mpfr_abs(error, error, MPFR_RNDN);
 					mpfr_add(delta, delta, error, MPFR_RNDU);
 
-					xNext++;
+					xHasNext = ++xNext < x->nTerms;
 				}
 				else if (y->symbols[yNext] < x->symbols[xNext]) {
 					// both x and y have symbol i, but only y has symbol j, so delta += abs(xi * yj)
@@ -183,7 +164,7 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
 					mpfr_abs(error, error, MPFR_RNDN);
 					mpfr_add(delta, delta, error, MPFR_RNDU);
 
-					yNext++;
+					yHasNext = ++yNext < y->nTerms;
 				}
 				else {
 					// both x and y have symbols i and j, so delta += abs(xi * yj + xj * yi)
@@ -198,8 +179,8 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
 					mpfr_abs(error, error, MPFR_RNDN);
 					mpfr_add(delta, delta, error, MPFR_RNDU);
 
-					xNext++;
-					yNext++;
+					xHasNext = ++xNext < x->nTerms;
+					yHasNext = ++yNext < y->nTerms;
 				}
 			}
 			xTerm++;
