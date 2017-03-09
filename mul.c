@@ -150,7 +150,7 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
 			xNext = xTerm + 1; yNext = yTerm + 1;
 			xHasNext = xNext < x->nTerms; yHasNext = yNext < y->nTerms;
 			while (xHasNext || yHasNext) {
-				if (x->symbols[xNext] < y->symbols[yNext]) {
+				if ((!yHasNext) || (xHasNext && (x->symbols[xTerm] < y->symbols[yTerm]))) {
 					// both x and y have symbol i, but only x has symbol j, so delta += abs(xj * yi)
 					mpfr_mul(error, &(y->deviations[yTerm]), &(x->deviations[xNext]), MPFR_RNDA);
 					mpfr_abs(error, error, MPFR_RNDN);
@@ -158,7 +158,7 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
 
 					xHasNext = ++xNext < x->nTerms;
 				}
-				else if (y->symbols[yNext] < x->symbols[xNext]) {
+				else if ((!xHasNext) || (yHasNext && (y->symbols[yTerm] < x->symbols[xTerm]))) {
 					// both x and y have symbol i, but only y has symbol j, so delta += abs(xi * yj)
 					mpfr_mul(error, &(x->deviations[xTerm]), &(y->deviations[yNext]), MPFR_RNDA);
 					mpfr_abs(error, error, MPFR_RNDN);
