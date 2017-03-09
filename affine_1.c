@@ -41,7 +41,7 @@ void mpfa_affine_1 (mpfa_ptr z, mpfa_srcptr x, mpfr_ptr alpha, mpfr_ptr gamma, m
 	zNew->symbols = malloc(zNew->nTerms * sizeof(unsigned));
 	zNew->deviations = malloc(zNew->nTerms * sizeof(mpfr_t));
 
-	for (zTerm = 0; zTerm < (zNew->nTerms - 1); zTerm++) {
+	for (zTerm = 0; zTerm < x->nTerms; zTerm++) {
 		zNew->symbols[zTerm] = x->symbols[zTerm];
 		mpfr_init2(&(zNew->deviations[zTerm]), prec);
 
