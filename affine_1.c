@@ -26,13 +26,13 @@ void mpfa_affine_1 (mpfa_ptr z, mpfa_srcptr x, mpfr_ptr alpha, mpfr_ptr gamma, m
 	assert(mpfr_exp2(u, u, MPFR_RNDN) == 0); // fails if emin > 1-prec
 
 	if (mpfr_mul(temp, alpha, &(x->centre), MPFR_RNDN)) {
-		mpfr_mul(error, u, temp, MPFR_RNDU);
+		mpfr_mul(error, u, temp, MPFR_RNDA);
 		mpfr_abs(error, error, MPFR_RNDN);
 		mpfr_add(delta, delta, error, MPFR_RNDU);
 	}
 
 	if (mpfr_add(&(zNew->centre), gamma, temp, MPFR_RNDN)) {
-		mpfr_mul(error, u, &(zNew->centre), MPFR_RNDU);
+		mpfr_mul(error, u, &(zNew->centre), MPFR_RNDA);
 		mpfr_abs(error, error, MPFR_RNDN);
 		mpfr_add(delta, delta, error, MPFR_RNDU);
 	}
@@ -46,7 +46,7 @@ void mpfa_affine_1 (mpfa_ptr z, mpfa_srcptr x, mpfr_ptr alpha, mpfr_ptr gamma, m
 		mpfr_init2(&(zNew->deviations[zTerm]), prec);
 
 		if (mpfr_mul(&(zNew->deviations[zTerm]), alpha, &(x->deviations[zTerm]), MPFR_RNDN)) {
-			mpfr_mul(error, u, &(zNew->deviations[zTerm]), MPFR_RNDU);
+			mpfr_mul(error, u, &(zNew->deviations[zTerm]), MPFR_RNDA);
 			mpfr_abs(error, error, MPFR_RNDN);
 			mpfr_add(delta, delta, error, MPFR_RNDU);
 		}
