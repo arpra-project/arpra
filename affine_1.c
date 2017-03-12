@@ -25,13 +25,7 @@ void mpfa_affine_1 (mpfa_ptr z, mpfa_srcptr x, mpfr_ptr alpha, mpfr_ptr gamma, m
 	assert(mpfr_set_si(u, -prec, MPFR_RNDN) == 0); // fails if emax <= log2(prec)
 	assert(mpfr_exp2(u, u, MPFR_RNDN) == 0); // fails if emin > 1-prec
 
-	if (mpfr_mul(temp, alpha, &(x->centre), MPFR_RNDN)) {
-		mpfr_mul(error, u, temp, MPFR_RNDA);
-		mpfr_abs(error, error, MPFR_RNDN);
-		mpfr_add(delta, delta, error, MPFR_RNDU);
-	}
-
-	if (mpfr_add(&(zNew->centre), gamma, temp, MPFR_RNDN)) {
+	if (mpfr_fma(&(zNew->centre), alpha, &(x->centre), gamma, MPFR_RNDN)) {
 		mpfr_mul(error, u, &(zNew->centre), MPFR_RNDA);
 		mpfr_abs(error, error, MPFR_RNDN);
 		mpfr_add(delta, delta, error, MPFR_RNDU);

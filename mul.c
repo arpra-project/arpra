@@ -35,6 +35,7 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
 	mpfr_init2(temp, prec);
 	mpfr_init2(error, prec);
 	mpfr_init2(delta, prec);
+	mpfr_set_si(delta, 0, MPFR_RNDN);
 	mpfa_init2(zNew, prec);
 	mpfr_set_si(&(zNew->radius), 0, MPFR_RNDN);
 
@@ -42,8 +43,9 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
 	assert(mpfr_exp2(u, u, MPFR_RNDN) == 0); // fails if emin > 1-prec
 
 	if (mpfr_mul(&(zNew->centre), &(x->centre), &(y->centre), MPFR_RNDN)) {
-		mpfr_mul(delta, u, &(zNew->centre), MPFR_RNDA);
-		mpfr_abs(delta, delta, MPFR_RNDN);
+		mpfr_mul(error, u, &(zNew->centre), MPFR_RNDA);
+		mpfr_abs(error, error, MPFR_RNDN);
+		mpfr_add(delta, delta, error, MPFR_RNDU);
 	}
 
 	zNew->nTerms = x->nTerms + y->nTerms + 1;

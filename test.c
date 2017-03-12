@@ -21,6 +21,8 @@ int main (int argc, char *argv[]) {
 
 	mpfa_set_d(a, 0.2);
 	mpfa_set_d(b, 0.6);
+	//mpfa_set_d(a, 3.323234235732578935);
+	//mpfa_set_d(b, 3.332536490684068738946);
 
 	mpfa_add(c, a, b);
 	//mpfr_out_str (stdout, 10, 100, &(c->centre), MPFR_RNDN);
@@ -34,6 +36,7 @@ int main (int argc, char *argv[]) {
 	//mpfr_out_str (stdout, 10, 100, &(c->centre), MPFR_RNDN);
 	//putchar ('\n');
 
+	//mpfa_exp(c, a);
 
 	//mpfa_set_d(a, 1.0);
 	//mpfa_set_d(b, 2.0);
@@ -44,6 +47,7 @@ int main (int argc, char *argv[]) {
 	int i;
 	for (i = 0; i < 10; i++) {
 		//mpfa_mul(a, a, b);
+		//mpfa_mul(b, a, b);
 		mpfa_div(a, a, b);
 		printf("centre: "); mpfr_out_str (stdout, 10, 100, &(a->centre), MPFR_RNDN); putchar('\n');
 		printf("radius: "); mpfr_out_str (stdout, 10, 100, &(a->radius), MPFR_RNDN); putchar('\n');
