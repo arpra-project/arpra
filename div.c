@@ -16,8 +16,10 @@
 void mpfa_div (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
 	mpfa_t zNew;
 
-	mpfa_init(zNew);
+	mpfa_init2(zNew, mpfr_get_prec(&(z->centre)));
+
 	mpfa_inv(zNew, y);
 	mpfa_mul(z, x, zNew);
+
 	mpfa_clear(zNew);
 }

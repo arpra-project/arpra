@@ -11,7 +11,7 @@
 
 int main (int argc, char *argv[]) {
 
-///* MPFA testing ============================================
+	// MPFA testing ============================================
 
 	mpfa_t a, b, c;
 
@@ -19,28 +19,34 @@ int main (int argc, char *argv[]) {
 	mpfa_init(b);
 	mpfa_init(c);
 
-	mpfa_set_d(a, 0.2);
-	mpfa_set_d(b, 0.6);
-	//mpfa_set_d(a, 3.323234235732578935);
-	//mpfa_set_d(b, 3.332536490684068738946);
+	mpfa_set_d(a, 0.2, 0.0);
+	mpfa_set_d(b, 0.6, 0.0);
+	//mpfa_set_d(a, 3.323234235732578935, 0.0);
+	//mpfa_set_d(b, 3.332536490684068738946, 0.0);
 
 	mpfa_add(c, a, b);
-	//mpfr_out_str (stdout, 10, 100, &(c->centre), MPFR_RNDN);
-	//putchar ('\n');
+	//printf("centre: "); mpfr_out_str (stdout, 10, 100, &(c->centre), MPFR_RNDN); putchar('\n');
+	//printf("radius: "); mpfr_out_str (stdout, 10, 100, &(c->radius), MPFR_RNDN); putchar('\n');
 
 	mpfa_mul(c, a, b);
-	//mpfr_out_str (stdout, 10, 100, &(c->centre), MPFR_RNDN);
-	//putchar ('\n');
+	//printf("centre: "); mpfr_out_str (stdout, 10, 100, &(c->centre), MPFR_RNDN); putchar('\n');
+	//printf("radius: "); mpfr_out_str (stdout, 10, 100, &(c->radius), MPFR_RNDN); putchar('\n');
 
 	mpfa_div(c, a, b);
-	//mpfr_out_str (stdout, 10, 100, &(c->centre), MPFR_RNDN);
-	//putchar ('\n');
+	//printf("centre: "); mpfr_out_str (stdout, 10, 100, &(c->centre), MPFR_RNDN); putchar('\n');
+	//printf("radius: "); mpfr_out_str (stdout, 10, 100, &(c->radius), MPFR_RNDN); putchar('\n');
 
-	//mpfa_exp(c, a);
+	mpfa_exp(c, a);
+	//printf("centre: "); mpfr_out_str (stdout, 10, 100, &(c->centre), MPFR_RNDN); putchar('\n');
+	//printf("radius: "); mpfr_out_str (stdout, 10, 100, &(c->radius), MPFR_RNDN); putchar('\n');
 
-	//mpfa_set_d(a, 1.0);
-	//mpfa_set_d(b, 2.0);
+	mpfa_inv(c, a);
+	//printf("centre: "); mpfr_out_str (stdout, 10, 100, &(c->centre), MPFR_RNDN); putchar('\n');
+	//printf("radius: "); mpfr_out_str (stdout, 10, 100, &(c->radius), MPFR_RNDN); putchar('\n');
 
+
+
+	//*
 	printf("centre: "); mpfr_out_str (stdout, 10, 100, &(a->centre), MPFR_RNDN); putchar('\n');
 	printf("radius: "); mpfr_out_str (stdout, 10, 100, &(a->radius), MPFR_RNDN); putchar('\n');
 
@@ -52,11 +58,11 @@ int main (int argc, char *argv[]) {
 		printf("centre: "); mpfr_out_str (stdout, 10, 100, &(a->centre), MPFR_RNDN); putchar('\n');
 		printf("radius: "); mpfr_out_str (stdout, 10, 100, &(a->radius), MPFR_RNDN); putchar('\n');
 	}
+	//*/
 
 	mpfa_clear(a);
 	mpfa_clear(b);
 	mpfa_clear(c);
-//*/
 
 
 
@@ -76,5 +82,7 @@ int main (int argc, char *argv[]) {
 	mpfr_clear (t);
 //*/
 
-    return 0;
+	mpfr_free_cache();
+
+	return 0;
 }

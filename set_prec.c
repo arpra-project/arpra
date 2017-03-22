@@ -9,6 +9,7 @@
 
 void mpfa_set_prec (mpfa_ptr x, mpfr_prec_t prec) {
 	unsigned xTerm;
+
 	for (xTerm = 0; xTerm < x->nTerms; xTerm++) {
 		mpfr_set_prec(&(x->deviations[xTerm]), prec);
 	}

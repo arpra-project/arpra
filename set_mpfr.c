@@ -1,27 +1,27 @@
 /*
- * set_d.c
+ * set_mpfr.c
  *
- *  Created on: 21 Oct 2016
- *      Author: jt273
+ *  Created on: 14 Mar 2017
+ *      Author: james
  */
 
 #include "mpfa.h"
 #include <malloc.h>
 #include <assert.h>
 
-void mpfa_set_d (mpfa_ptr z, const double centre, const double radius) {
+void mpfa_set_mpfr (mpfa_ptr z, mpfr_srcptr centre, mpfr_srcptr radius) {
 	unsigned zTerm;
 	mpfr_prec_t prec;
 
 	prec = mpfr_get_prec(&(z->centre));
 
-	if (mpfr_set_d(&(z->centre), centre, MPFR_RNDN)) {
+	if (mpfr_set(&(z->centre), centre, MPFR_RNDN)) {
 		assert(mpfr_set_si(&(z->radius), (-prec + mpfr_get_exp(&(z->centre))), MPFR_RNDN) == 0);
 		assert(mpfr_exp2(&(z->radius), &(z->radius), MPFR_RNDN) == 0);
-		mpfr_add_d(&(z->radius), &(z->radius), radius, MPFR_RNDU);
+		mpfr_add(&(z->radius), &(z->radius), radius, MPFR_RNDU);
 	}
 	else {
-		mpfr_set_d(&(z->radius), radius, MPFR_RNDU);
+		mpfr_set(&(z->radius), radius, MPFR_RNDU);
 	}
 
 	if (mpfr_zero_p(&(z->radius))) {
@@ -49,6 +49,6 @@ void mpfa_set_d (mpfa_ptr z, const double centre, const double radius) {
 		}
 		z->nTerms = 1;
 		z->symbols[0] = mpfa_next_sym();
-		mpfr_set_d(&(z->deviations[0]), radius, MPFR_RNDN);
+		mpfr_set(&(z->deviations[0]), &(z->radius), MPFR_RNDN);
 	}
 }
