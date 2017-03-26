@@ -20,7 +20,7 @@
  */
 
 #include "mpfa.h"
-#include <malloc.h>
+#include <stdlib.h>
 
 void mpfa_clear (mpfa_ptr x) {
 	unsigned xTerm;

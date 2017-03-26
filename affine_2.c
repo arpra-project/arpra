@@ -20,7 +20,7 @@
  */
 
 #include "mpfa.h"
-#include <malloc.h>
+#include <stdlib.h>
 #include <assert.h>
 
 void mpfa_affine_2 (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y, mpfr_srcptr alpha, mpfr_srcptr beta, mpfr_srcptr gamma, mpfr_srcptr delta) {

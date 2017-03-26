@@ -20,7 +20,7 @@
  */
 
 #include "mpfa.h"
-#include <malloc.h>
+#include <stdlib.h>
 #include <assert.h>
 
 void mpfa_set_d (mpfa_ptr z, const double centre, const double radius) {
