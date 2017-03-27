@@ -41,12 +41,12 @@ AC_CHECK_LIB([mpfr], [mpfr_init])
 #  [AC_MSG_ERROR([GNU MP not found, see https://gmplib.org/])])
 
 # Checks for header files.
-AC_CHECK_HEADER([stdio.h])
-AC_CHECK_HEADER([stdlib.h])
-AC_CHECK_HEADER([assert.h])
-AC_CHECK_HEADER([gmp.h])
-AC_CHECK_HEADER([mpfr.h])
-#AC_CHECK_HEADERS([stdlib.h stdio.h assert.h gmp.h mpfr.h])
+AC_CHECK_HEADERS([stdlib.h stdio.h assert.h gmp.h mpfr.h])
+#AC_CHECK_HEADER([stdio.h])
+#AC_CHECK_HEADER([stdlib.h])
+#AC_CHECK_HEADER([assert.h])
+#AC_CHECK_HEADER([gmp.h])
+#AC_CHECK_HEADER([mpfr.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 
