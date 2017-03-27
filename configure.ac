@@ -22,7 +22,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the MPFA library. If not, see <http://www.gnu.org/licenses/>.
 ])
 
-AC_CONFIG_SRCDIR([next_sym.c])
+AC_CONFIG_SRCDIR([src/next_sym.c])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([Makefile src/Makefile])
 AC_CONFIG_MACRO_DIR([m4])
