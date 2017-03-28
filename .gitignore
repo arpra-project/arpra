@@ -1,3 +1,6 @@
-Debug
-Release
-.settings
+Build (GNU)
+Debug (GNU)
+configure
+autom4te.cache
+*.in
+*.m4
