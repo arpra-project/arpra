@@ -1,8 +1,7 @@
-#                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
 # Initialisation.
-AC_PREREQ([2.65])
+AC_PREREQ([2.60])
 AC_COPYRIGHT([
 Copyright 2016-2017 James Paul Turner.
 
