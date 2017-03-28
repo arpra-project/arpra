@@ -2,5 +2,12 @@ Build (GNU)
 Debug (GNU)
 configure
 autom4te.cache
-*.in
-*.m4
+aclocal.m4
+config.h.in
+Makefile.in
+src/Makefile.in
+
+.project
+.cproject
+.autotools
+.settings
