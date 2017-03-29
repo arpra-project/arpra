@@ -26,27 +26,23 @@ AC_INIT([MPFA], [1.0.0-dev])
 AC_CONFIG_SRCDIR([src/next_sym.c])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([Makefile src/Makefile])
-#AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_AUX_DIR([build-aux])
 
 AM_INIT_AUTOMAKE([-Wall -Werror])
 
 # Checks for programs.
 AC_PROG_CC
+AC_PROG_CPP
 
 # Checks for libraries.
-AC_CHECK_LIB([gmp], [__gmpz_init])
-AC_CHECK_LIB([mpfr], [mpfr_init])
-#AC_CHECK_LIB([gmp], [__gmpz_init], ,
-#  [AC_MSG_ERROR([GNU MP not found, see https://gmplib.org/])])
+AC_CHECK_LIB([gmp], [__gmpz_init], ,
+  [AC_MSG_ERROR([GNU MP not found - see https://gmplib.org/])])
+AC_CHECK_LIB([mpfr], [mpfr_init], ,
+  [AC_MSG_ERROR([GNU MPFR not found - see http://www.mpfr.org/])])
 
 # Checks for header files.
-AC_CHECK_HEADERS([stdlib.h stdio.h assert.h gmp.h mpfr.h])
-#AC_CHECK_HEADER([stdio.h])
-#AC_CHECK_HEADER([stdlib.h])
-#AC_CHECK_HEADER([assert.h])
-#AC_CHECK_HEADER([gmp.h])
-#AC_CHECK_HEADER([mpfr.h])
+AC_CHECK_HEADER([gmp.h])
+AC_CHECK_HEADER([mpfr.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 
