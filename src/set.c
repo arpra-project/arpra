@@ -21,7 +21,6 @@
 
 #include "mpfa.h"
 #include <stdlib.h>
-#include <assert.h>
 
 void mpfa_set (mpfa_ptr z, mpfa_srcptr x) {
 	unsigned xTerm, zTerm;
@@ -36,8 +35,7 @@ void mpfa_set (mpfa_ptr z, mpfa_srcptr x) {
 	mpfr_set_si(&(z->radius), 0, MPFR_RNDN);
 
 	if (mpfr_set(&(z->centre), &(x->centre), MPFR_RNDN)) {
-		assert(mpfr_set_si(temp, (-prec + mpfr_get_exp(&(z->centre))), MPFR_RNDN) == 0);
-		assert(mpfr_exp2(temp, temp, MPFR_RNDN) == 0);
+		mpfr_mul(temp, &(z->centre), &(z->u), MPFR_RNDU);
 		mpfr_add(error, error, temp, MPFR_RNDU);
 	}
 
@@ -74,8 +72,7 @@ void mpfa_set (mpfa_ptr z, mpfa_srcptr x) {
 		z->symbols[zTerm] = x->symbols[zTerm];
 
 		if (mpfr_set(&(z->deviations[zTerm]), &(x->deviations[xTerm]), MPFR_RNDN)) {
-			assert(mpfr_set_si(temp, (-prec + mpfr_get_exp(&(z->deviations[zTerm]))), MPFR_RNDN) == 0);
-			assert(mpfr_exp2(temp, temp, MPFR_RNDN) == 0);
+			mpfr_mul(temp, &(z->deviations[zTerm]), &(z->u), MPFR_RNDU);
 			mpfr_add(error, error, temp, MPFR_RNDU);
 		}
 

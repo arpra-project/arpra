@@ -21,7 +21,6 @@
 
 #include "mpfa.h"
 #include <stdlib.h>
-#include <assert.h>
 
 void mpfa_set_mpfr (mpfa_ptr z, mpfr_srcptr centre, mpfr_srcptr radius) {
 	unsigned zTerm;
@@ -30,8 +29,7 @@ void mpfa_set_mpfr (mpfa_ptr z, mpfr_srcptr centre, mpfr_srcptr radius) {
 	prec = mpfr_get_prec(&(z->centre));
 
 	if (mpfr_set(&(z->centre), centre, MPFR_RNDN)) {
-		assert(mpfr_set_si(&(z->radius), (-prec + mpfr_get_exp(&(z->centre))), MPFR_RNDN) == 0);
-		assert(mpfr_exp2(&(z->radius), &(z->radius), MPFR_RNDN) == 0);
+		mpfr_mul(&(z->radius), &(z->centre), &(z->u), MPFR_RNDU);
 		mpfr_add(&(z->radius), &(z->radius), radius, MPFR_RNDU);
 	}
 	else {
