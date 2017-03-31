@@ -21,7 +21,6 @@
 
 #include "mpfa.h"
 #include <stdlib.h>
-#include <assert.h>
 
 void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
 	unsigned xTerm, yTerm, zTerm;
@@ -37,8 +36,7 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
 	mpfr_set_si(&(zNew->radius), 0, MPFR_RNDN);
 
 	if (mpfr_mul(&(zNew->centre), &(x->centre), &(y->centre), MPFR_RNDN)) {
-		assert(mpfr_set_si(temp, (-prec + mpfr_get_exp(&(zNew->centre))), MPFR_RNDN) == 0);
-		assert(mpfr_exp2(temp, temp, MPFR_RNDN) == 0);
+		mpfr_mul(temp, &(zNew->centre), &(zNew->u), MPFR_RNDU);
 		mpfr_add(error, error, temp, MPFR_RNDU);
 	}
 
@@ -54,8 +52,7 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
 			mpfr_init2(&(zNew->deviations[zTerm]), prec);
 
 			if (mpfr_mul(&(zNew->deviations[zTerm]), &(y->centre), &(x->deviations[xTerm]), MPFR_RNDN)) {
-				assert(mpfr_set_si(temp, (-prec + mpfr_get_exp(&(zNew->deviations[zTerm]))), MPFR_RNDN) == 0);
-				assert(mpfr_exp2(temp, temp, MPFR_RNDN) == 0);
+				mpfr_mul(temp, &(zNew->deviations[zTerm]), &(zNew->u), MPFR_RNDU);
 				mpfr_add(error, error, temp, MPFR_RNDU);
 			}
 
@@ -66,8 +63,7 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
 			mpfr_init2(&(zNew->deviations[zTerm]), prec);
 
 			if (mpfr_mul(&(zNew->deviations[zTerm]), &(x->centre), &(y->deviations[yTerm]), MPFR_RNDN)) {
-				assert(mpfr_set_si(temp, (-prec + mpfr_get_exp(&(zNew->deviations[zTerm]))), MPFR_RNDN) == 0);
-				assert(mpfr_exp2(temp, temp, MPFR_RNDN) == 0);
+				mpfr_mul(temp, &(zNew->deviations[zTerm]), &(zNew->u), MPFR_RNDU);
 				mpfr_add(error, error, temp, MPFR_RNDU);
 			}
 
@@ -78,8 +74,7 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
 			mpfr_init2(&(zNew->deviations[zTerm]), prec);
 
 			if (mpfa_term(&(zNew->deviations[zTerm]), &(x->deviations[xTerm]), &(y->deviations[yTerm]), &(y->centre), &(x->centre), NULL)) {
-				assert(mpfr_set_si(temp, (-prec + mpfr_get_exp(&(zNew->deviations[zTerm]))), MPFR_RNDN) == 0);
-				assert(mpfr_exp2(temp, temp, MPFR_RNDN) == 0);
+				mpfr_mul(temp, &(zNew->deviations[zTerm]), &(zNew->u), MPFR_RNDU);
 				mpfr_add(error, error, temp, MPFR_RNDU);
 			}
 

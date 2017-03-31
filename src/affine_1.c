@@ -21,7 +21,6 @@
 
 #include "mpfa.h"
 #include <stdlib.h>
-#include <assert.h>
 
 void mpfa_affine_1 (mpfa_ptr z, mpfa_srcptr x, mpfr_srcptr alpha, mpfr_srcptr gamma, mpfr_srcptr delta) {
 	unsigned xTerm, zTerm;
@@ -36,8 +35,7 @@ void mpfa_affine_1 (mpfa_ptr z, mpfa_srcptr x, mpfr_srcptr alpha, mpfr_srcptr ga
 	mpfr_set_si(&(zNew->radius), 0, MPFR_RNDN);
 
 	if (mpfr_fma(&(zNew->centre), alpha, &(x->centre), gamma, MPFR_RNDN)) {
-		assert(mpfr_set_si(temp, (-prec + mpfr_get_exp(&(zNew->centre))), MPFR_RNDN) == 0);
-		assert(mpfr_exp2(temp, temp, MPFR_RNDN) == 0);
+		mpfr_mul(temp, &(zNew->centre), &(zNew->u), MPFR_RNDU);
 		mpfr_add(error, error, temp, MPFR_RNDU);
 	}
 
@@ -50,8 +48,7 @@ void mpfa_affine_1 (mpfa_ptr z, mpfa_srcptr x, mpfr_srcptr alpha, mpfr_srcptr ga
 		mpfr_init2(&(zNew->deviations[zTerm]), prec);
 
 		if (mpfr_mul(&(zNew->deviations[zTerm]), alpha, &(x->deviations[xTerm]), MPFR_RNDN)) {
-			assert(mpfr_set_si(temp, (-prec + mpfr_get_exp(&(zNew->deviations[zTerm]))), MPFR_RNDN) == 0);
-			assert(mpfr_exp2(temp, temp, MPFR_RNDN) == 0);
+			mpfr_mul(temp, &(zNew->deviations[zTerm]), &(zNew->u), MPFR_RNDU);
 			mpfr_add(error, error, temp, MPFR_RNDU);
 		}
 

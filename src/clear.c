@@ -35,4 +35,5 @@ void mpfa_clear (mpfa_ptr x) {
 
 	mpfr_clear(&(x->centre));
 	mpfr_clear(&(x->radius));
+	mpfr_clear(&(x->u));
 }

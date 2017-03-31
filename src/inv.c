@@ -21,7 +21,6 @@
 
 #include "mpfa.h"
 #include <stdlib.h>
-#include <assert.h>
 
 /*
  * This affine inverse function uses a Chebyshev linear approximation.
@@ -37,9 +36,8 @@ void mpfa_inv (mpfa_ptr z, mpfa_srcptr x) {
 	if (mpfr_zero_p(&(x->radius))) {
 		mpfr_inits2(prec, temp, delta, (mpfr_ptr) NULL);
 
-		if (mpfr_exp(temp, &(x->centre), MPFR_RNDN)) {
-			assert(mpfr_set_si(delta, (-prec + mpfr_get_exp(temp)), MPFR_RNDN) == 0);
-			assert(mpfr_exp2(delta, delta, MPFR_RNDN) == 0);
+		if (mpfr_si_div(temp, 1, &(x->centre), MPFR_RNDN)) {
+			mpfr_mul(delta, temp, &(z->u), MPFR_RNDU);
 		}
 		else {
 			mpfr_set_si(delta, 0, MPFR_RNDN);

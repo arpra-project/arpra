@@ -20,7 +20,6 @@
  */
 
 #include "mpfa.h"
-#include <assert.h>
 
 /*
  * This affine exponential function uses a Chebyshev linear approximation.
@@ -36,8 +35,7 @@ void mpfa_exp (mpfa_ptr z, mpfa_srcptr x) {
 		mpfr_inits2(prec, temp, delta, (mpfr_ptr) NULL);
 
 		if (mpfr_exp(temp, &(x->centre), MPFR_RNDN)) {
-			assert(mpfr_set_si(delta, (-prec + mpfr_get_exp(temp)), MPFR_RNDN) == 0);
-			assert(mpfr_exp2(delta, delta, MPFR_RNDN) == 0);
+			mpfr_mul(delta, temp, &(z->u), MPFR_RNDU);
 		}
 		else {
 			mpfr_set_si(delta, 0, MPFR_RNDN);
