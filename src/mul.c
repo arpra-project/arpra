@@ -191,14 +191,6 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
 	}
 
 	zNew->nTerms = zTerm;
-	if (zNew->nTerms == 0) {
-		free(zNew->symbols);
-		free(zNew->deviations);
-	}
-	else {
-		zNew->symbols = realloc(zNew->symbols, zNew->nTerms * sizeof(unsigned));
-		zNew->deviations = realloc(zNew->deviations, zNew->nTerms * sizeof(mpfr_t));
-	}
 
 	mpfr_clears(temp, error, (mpfr_ptr) NULL);
 	mpfa_set(z, zNew);

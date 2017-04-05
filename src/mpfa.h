@@ -58,9 +58,9 @@ void mpfa_set_mpfr (mpfa_ptr z, mpfr_srcptr centre, mpfr_srcptr radius);
 void mpfa_affine_1 (mpfa_ptr z, mpfa_srcptr x, mpfr_srcptr alpha, mpfr_srcptr gamma, mpfr_srcptr delta);
 void mpfa_affine_2 (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y, mpfr_srcptr alpha, mpfr_srcptr beta, mpfr_srcptr gamma, mpfr_srcptr delta);
 void mpfa_add (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y);
-void mpfa_sum (mpfa_ptr z, const mpfa_ptr *x, unsigned long n);
 void mpfa_sub (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y);
 void mpfa_neg (mpfa_ptr z, mpfa_srcptr x);
+void mpfa_sum (mpfa_ptr z, const mpfa_ptr *x, unsigned long n);
 
 // Non-affine operations
 void mpfa_mul(mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y);

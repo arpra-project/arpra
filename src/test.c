@@ -65,7 +65,7 @@ int main (int argc, char *argv[]) {
 	printf("radius: "); mpfr_out_str (stdout, 10, 100, &(a->radius), MPFR_RNDN); putchar('\n');
 
 	int i;
-	for (i = 0; i < 10; i++) {
+	for (i = 0; i < 289; i++) {
 		//mpfa_mul(a, a, b);
 		//mpfa_mul(b, a, b);
 		mpfa_div(a, a, b);
