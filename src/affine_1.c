@@ -31,7 +31,7 @@ void mpfa_affine_1 (mpfa_ptr z, mpfa_srcptr x, mpfr_srcptr alpha, mpfr_srcptr ga
 	prec = mpfr_get_prec(&(z->centre));
 	mpfr_inits2(prec, temp, error, (mpfr_ptr) NULL);
 	mpfa_init2(zNew, prec);
-	mpfr_set_si(error, 0, MPFR_RNDN);
+	mpfr_set(error, delta, MPFR_RNDU);
 	mpfr_set_si(&(zNew->radius), 0, MPFR_RNDN);
 
 	if (mpfr_fma(&(zNew->centre), alpha, &(x->centre), gamma, MPFR_RNDN)) {
@@ -62,7 +62,6 @@ void mpfa_affine_1 (mpfa_ptr z, mpfa_srcptr x, mpfr_srcptr alpha, mpfr_srcptr ga
 		}
 	}
 
-	mpfr_add(error, error, delta, MPFR_RNDU);
 	if (!mpfr_zero_p(error)) {
 		zNew->symbols[zTerm] = mpfa_next_sym();
 		mpfr_init2(&(zNew->deviations[zTerm]), prec);
