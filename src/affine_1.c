@@ -72,6 +72,10 @@ void mpfa_affine_1 (mpfa_ptr z, mpfa_srcptr x, mpfr_srcptr alpha, mpfr_srcptr ga
 	}
 
 	zNew->nTerms = zTerm;
+	if (zNew->nTerms == 0) {
+		free(zNew->symbols);
+		free(zNew->deviations);
+	}
 
 	mpfr_clears(temp, error, (mpfr_ptr) NULL);
 	mpfa_set(z, zNew);
