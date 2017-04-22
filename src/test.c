@@ -20,6 +20,7 @@
  */
 
 #include <stdio.h>
+#include <assert.h>
 #include "mpfa.h"
 
 
@@ -32,6 +33,14 @@ int main (int argc, char *argv[]) {
 	mpfa_init(a);
 	mpfa_init(b);
 	mpfa_init(c);
+
+//	mpfr_t temp, error;
+//	mpfr_inits(temp, error, (mpfr_ptr) NULL);
+//	assert(!mpfr_mul_si(temp, &(a->u), (-1ul), MPFR_RNDU));
+//	assert(!mpfr_si_sub(error, 1, temp, MPFR_RNDD));
+//	assert(!mpfr_div(error, temp, error, MPFR_RNDU));
+//	mpfr_clears(temp, error, (mpfr_ptr) NULL);
+//	return 0;
 
 	mpfa_set_d(a, 0.2, 0.0);
 	mpfa_set_d(b, 0.6, 0.0);
