@@ -96,9 +96,8 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
 	unsigned xNext, yNext;
 	mpfr_t xiyiPos, xiyiNeg;
 
-	mpfr_init2(xiyiPos, prec);
+	mpfr_inits2(prec, xiyiPos, xiyiNeg, (mpfr_ptr) NULL);
 	mpfr_set_si(xiyiPos, 0, MPFR_RNDN);
-	mpfr_init2(xiyiNeg, prec);
 	mpfr_set_si(xiyiNeg, 0, MPFR_RNDN);
 
 	xTerm = 0; yTerm = 0;
@@ -175,8 +174,7 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
 	mpfr_max(temp, xiyiPos, xiyiNeg, MPFR_RNDN);
 	mpfr_add(error, error, temp, MPFR_RNDU);
 
-	mpfr_clear(xiyiPos);
-	mpfr_clear(xiyiNeg);
+	mpfr_clears(xiyiPos, xiyiNeg, (mpfr_ptr) NULL);
 #else
 	mpfr_mul(temp, &(x->radius), &(y->radius), MPFR_RNDU);
 	mpfr_add(error, error, temp, MPFR_RNDU);
