@@ -18,6 +18,6 @@
 
 bin_PROGRAMS = test
 
-test_SOURCES = mpfa.h test.c
+test_SOURCES = test.c
 test_CPPFLAGS = -I$(srcdir)/../src
 test_LDADD = ../src/libmpfa.la
