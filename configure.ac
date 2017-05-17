@@ -24,7 +24,7 @@ AC_CONFIG_SRCDIR([src/mpfa.h])
 AC_CONFIG_HEADER([config.h])
 AC_CONFIG_MACRO_DIR([m4])
 
-AM_INIT_AUTOMAKE([1.13 -Wall -Werror dist-bzip2])
+AM_INIT_AUTOMAKE([1.13 -Wall -Werror subdir-objects dist-bzip2])
 
 # Checks for programs.
 AC_PROG_CC
@@ -53,8 +53,5 @@ AC_CHECK_HEADERS([stdlib.h])
 AC_FUNC_MALLOC
 AC_FUNC_REALLOC
 
-AC_CONFIG_FILES([Makefile
-                 src/Makefile
-		 doc/Makefile
-		 tests/Makefile])
+AC_CONFIG_FILES([Makefile])
 AC_OUTPUT

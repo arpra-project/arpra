@@ -45,13 +45,16 @@ void mpfa_sum (mpfa_ptr z, const mpfa_ptr *x, unsigned long n) {
 	prec = mpfr_get_prec(&(z->centre));
 	mpfr_inits2(prec, temp, error, (mpfr_ptr) NULL);
 	mpfa_init2(zNew, prec);
+	mpfr_set_si(error, 0, MPFR_RNDN);
 	mpfr_set_si(&(zNew->radius), 0, MPFR_RNDN);
 	xTerm = malloc(n * sizeof(unsigned));
 	summands = malloc(n * sizeof(mpfr_ptr));
 
+	/* TODO: move this to user src
 	mpfr_mul_si(temp, &(zNew->u), (n - 1), MPFR_RNDU);
 	mpfr_si_sub(error, 1, temp, MPFR_RNDD);
 	mpfr_div(error, temp, error, MPFR_RNDU);
+	*/
 
 	zTerm = 0;
 	for (i = 0; i < n; i++) {
