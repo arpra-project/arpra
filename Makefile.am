@@ -34,7 +34,6 @@ libmpfa_la_SOURCES = src/add.c \
 		     src/init.c \
 		     src/init2.c \
 		     src/inv.c \
-		     src/mpfa.h \
 		     src/mul.c \
 		     src/neg.c \
 		     src/next_sym.c \
@@ -53,7 +52,7 @@ TESTS = tests/mpfa_test1
 check_PROGRAMS = tests/mpfa_test1
 
 tests_mpfa_test1_SOURCES = tests/mpfa_test1.c
-tests_mpfa_test1_CPPFLAGS = -Isrc
+tests_mpfa_test1_CPPFLAGS = -I$(srcdir)/src
 tests_mpfa_test1_LDADD = libmpfa.la
 
 # MPFA documentation
