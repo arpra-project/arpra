@@ -1,5 +1,5 @@
 /*
- * test.c -- Temporary testing, until a full test suite is implemented.
+ * test1.c -- Temporary testing, until a full test suite is implemented.
  *
  * Copyright 2016-2017 James Paul Turner.
  *
