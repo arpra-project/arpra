@@ -52,7 +52,7 @@ TESTS = tests/mpfa_test1
 check_PROGRAMS = tests/mpfa_test1
 
 tests_mpfa_test1_SOURCES = tests/mpfa_test1.c
-tests_mpfa_test1_CPPFLAGS = -I$(srcdir)/src
+tests_mpfa_test1_CPPFLAGS = -I$(top_srcdir)/src
 tests_mpfa_test1_LDADD = libmpfa.la
 
 # MPFA documentation
