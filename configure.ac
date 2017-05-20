@@ -20,7 +20,7 @@ AC_PREREQ([2.65])
 AC_INIT([MPFA], [1.0.0-dev], [https://github.com/jamesturner246/mpfa/issues])
 
 AC_CONFIG_AUX_DIR([build-aux])
-AC_CONFIG_SRCDIR([src/mpfa.h])
+AC_CONFIG_SRCDIR([include/mpfa.h])
 AC_CONFIG_HEADER([config.h])
 AC_CONFIG_MACRO_DIR([m4])
 

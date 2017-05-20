@@ -19,42 +19,43 @@
 ACLOCAL_AMFLAGS = -I m4
 
 # MPFA library
-include_HEADERS = src/mpfa.h
+include_HEADERS = include/mpfa.h
 
-lib_LTLIBRARIES = libmpfa.la
+lib_LTLIBRARIES = lib/libmpfa.la
 
-libmpfa_la_SOURCES = src/add.c \
-		     src/affine_1.c \
-		     src/affine_2.c \
-		     src/clear.c \
-		     src/div.c \
-		     src/exp.c \
-		     src/get_default_prec.c \
-		     src/get_prec.c \
-		     src/init.c \
-		     src/init2.c \
-		     src/inv.c \
-		     src/mul.c \
-		     src/neg.c \
-		     src/next_sym.c \
-		     src/set_d.c \
-		     src/set_default_prec.c \
-		     src/set_mpfr.c \
-		     src/set_prec.c \
-		     src/set.c \
-		     src/sub.c \
-		     src/sum.c \
-		     src/term.c
+lib_libmpfa_la_CPPFLAGS = -I$(top_srcdir)/include
+lib_libmpfa_la_SOURCES = src/add.c \
+                         src/affine_1.c \
+                         src/affine_2.c \
+                         src/clear.c \
+                         src/div.c \
+                         src/exp.c \
+                         src/get_default_prec.c \
+                         src/get_prec.c \
+                         src/init.c \
+                         src/init2.c \
+                         src/inv.c \
+                         src/mul.c \
+                         src/neg.c \
+                         src/next_sym.c \
+                         src/set_d.c \
+                         src/set_default_prec.c \
+                         src/set_mpfr.c \
+                         src/set_prec.c \
+                         src/set.c \
+                         src/sub.c \
+                         src/sum.c \
+                         src/term.c
 
 # MPFA test suite
-check_PROGRAMS = tests/test1 tests/morris_lecar
-
 TESTS = tests/test1 tests/morris_lecar
 
-tests_test1_SOURCES = tests/test1.c
-tests_test1_CPPFLAGS = -I$(top_srcdir)/src
-tests_test1_LDADD = libmpfa.la
+check_PROGRAMS = tests/test1 tests/morris_lecar
 
+tests_test1_CPPFLAGS = -I$(top_srcdir)/include
+tests_test1_LDADD = lib/libmpfa.la
+tests_test1_SOURCES = tests/test1.c
+
+tests_morris_lecar_CPPFLAGS = -I$(top_srcdir)/include
+tests_morris_lecar_LDADD = lib/libmpfa.la
 tests_morris_lecar_SOURCES = tests/morris_lecar.c
-tests_morris_lecar_CPPFLAGS = -I$(top_srcdir)/src
-tests_morris_lecar_LDADD = libmpfa.la
