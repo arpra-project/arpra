@@ -50,12 +50,6 @@ void mpfa_sum (mpfa_ptr z, const mpfa_ptr *x, unsigned long n) {
 	xTerm = malloc(n * sizeof(unsigned));
 	summands = malloc(n * sizeof(mpfr_ptr));
 
-	/* TODO: move this to user src
-	mpfr_mul_si(temp, &(zNew->u), (n - 1), MPFR_RNDU);
-	mpfr_si_sub(error, 1, temp, MPFR_RNDD);
-	mpfr_div(error, temp, error, MPFR_RNDU);
-	*/
-
 	zTerm = 0;
 	for (i = 0; i < n; i++) {
 		xTerm[i] = 0;
