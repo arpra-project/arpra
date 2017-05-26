@@ -69,6 +69,7 @@ void mpfa_sum (mpfa_ptr z, const mpfa_ptr *x, unsigned long n);
 // Non-affine operations
 void mpfa_mul(mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y);
 void mpfa_div (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y);
+void mpfa_sqrt (mpfa_ptr z, mpfa_srcptr x);
 void mpfa_exp (mpfa_ptr z, mpfa_srcptr x);
 void mpfa_inv (mpfa_ptr z, mpfa_srcptr x);
 

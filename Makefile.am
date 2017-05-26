@@ -43,6 +43,7 @@ lib_libmpfa_la_SOURCES = src/add.c \
                          src/set_mpfr.c \
                          src/set_prec.c \
                          src/set.c \
+                         src/sqrt.c \
                          src/sub.c \
                          src/sum.c \
                          src/term.c
