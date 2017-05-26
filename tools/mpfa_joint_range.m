@@ -10,17 +10,17 @@ y = [5; 0; 5; 0];
 %y = [-2; 0; 0; 1];
 
 
-u0 = 0;
-u = [6; 0; 4; 0];
+%u0 = 0;
+%u = [6; 0; 4; 0];
 
-v0 = 0;
-v = [0; 3; 0; 7];
+%v0 = 0;
+%v = [0; 3; 0; 7];
 
-x0 = x0 + u0 + v0;
-x = x + u + v;
+%x0 = x0 + u0 + v0;
+%x = x + u + v;
 
-y0 = y0 + u0 - v0;
-y = y + u - v;
+%y0 = y0 + u0 - v0;
+%y = y + u - v;
 
 
 % Get all permutations of noise symbol extremities
