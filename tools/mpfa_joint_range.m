@@ -28,8 +28,9 @@ terms = size(x, 1);
 x = repmat(x, 1, 2^terms);
 y = repmat(y, 1, 2^terms);
 e = zeros(terms, 2^terms);
+
 for i = 1:2^terms
-    e(:, i) = de2bi(i - 1, terms);
+    e(:, i) = bitget(i - 1, 1:terms);
 end
 e(e == 0) = -1;
 
