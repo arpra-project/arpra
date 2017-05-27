@@ -23,17 +23,17 @@
 #include <stdlib.h>
 
 void mpfa_clear (mpfa_ptr x) {
-	unsigned xTerm;
+    unsigned xTerm;
 
-	if (x->nTerms > 0) {
-		for (xTerm = 0; xTerm < x->nTerms; xTerm++) {
-			mpfr_clear(&(x->deviations[xTerm]));
-		}
-		free(x->symbols);
-		free(x->deviations);
-	}
+    if (x->nTerms > 0) {
+        for (xTerm = 0; xTerm < x->nTerms; xTerm++) {
+            mpfr_clear(&(x->deviations[xTerm]));
+        }
+        free(x->symbols);
+        free(x->deviations);
+    }
 
-	mpfr_clear(&(x->centre));
-	mpfr_clear(&(x->radius));
-	mpfr_clear(&(x->u));
+    mpfr_clear(&(x->centre));
+    mpfr_clear(&(x->radius));
+    mpfr_clear(&(x->u));
 }

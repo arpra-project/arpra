@@ -23,11 +23,11 @@
 #include <assert.h>
 
 void mpfa_init2 (mpfa_ptr x, mpfr_prec_t prec) {
-	x->nTerms = 0;
-	mpfr_init2(&(x->centre), prec);
-	mpfr_init2(&(x->radius), prec);
-	mpfr_init2(&(x->u), prec);
+    x->nTerms = 0;
+    mpfr_init2(&(x->centre), prec);
+    mpfr_init2(&(x->radius), prec);
+    mpfr_init2(&(x->u), prec);
 
-	assert(mpfr_set_si(&(x->u), -prec, MPFR_RNDN) == 0);
-	assert(mpfr_exp2(&(x->u), &(x->u), MPFR_RNDN) == 0);
+    assert(mpfr_set_si(&(x->u), -prec, MPFR_RNDN) == 0);
+    assert(mpfr_exp2(&(x->u), &(x->u), MPFR_RNDN) == 0);
 }

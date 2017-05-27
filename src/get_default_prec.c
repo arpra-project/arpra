@@ -22,5 +22,5 @@
 #include "mpfa.h"
 
 mpfr_prec_t mpfa_get_default_prec () {
-	return mpfr_get_default_prec();
+    return mpfr_get_default_prec();
 }

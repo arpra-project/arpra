@@ -27,82 +27,82 @@
  */
 
 void mpfa_sqrt (mpfa_ptr z, mpfa_srcptr x) {
-	mpfr_t temp, xa, xb, da, db, du, alpha, gamma, delta;
-	mpfr_prec_t prec;
+    mpfr_t temp, xa, xb, da, db, du, alpha, gamma, delta;
+    mpfr_prec_t prec;
 
-	prec = mpfr_get_prec(&(z->centre));
+    prec = mpfr_get_prec(&(z->centre));
 
-	if (mpfr_zero_p(&(x->radius))) {
-		mpfr_inits2(prec, temp, delta, (mpfr_ptr) NULL);
+    if (mpfr_zero_p(&(x->radius))) {
+        mpfr_inits2(prec, temp, delta, (mpfr_ptr) NULL);
 
-		if (mpfr_sqrt(temp, &(x->centre), MPFR_RNDN)) {
-			mpfr_mul(delta, temp, &(z->u), MPFR_RNDU);
-		}
-		else {
-			mpfr_set_si(delta, 0, MPFR_RNDN);
-		}
+        if (mpfr_sqrt(temp, &(x->centre), MPFR_RNDN)) {
+            mpfr_mul(delta, temp, &(z->u), MPFR_RNDU);
+        }
+        else {
+            mpfr_set_si(delta, 0, MPFR_RNDN);
+        }
 
-		mpfa_set_mpfr(z, temp, delta);
+        mpfa_set_mpfr(z, temp, delta);
 
-		mpfr_clears(temp, delta, (mpfr_ptr) NULL);
-	}
-	else {
-		mpfr_inits2(prec, temp, xa, xb, da, db, du, alpha, gamma, delta, (mpfr_ptr) NULL);
+        mpfr_clears(temp, delta, (mpfr_ptr) NULL);
+    }
+    else {
+        mpfr_inits2(prec, temp, xa, xb, da, db, du, alpha, gamma, delta, (mpfr_ptr) NULL);
 
-		mpfr_sub(xa, &(x->centre), &(x->radius), MPFR_RNDD);
-		mpfr_add(xb, &(x->centre), &(x->radius), MPFR_RNDU);
+        mpfr_sub(xa, &(x->centre), &(x->radius), MPFR_RNDD);
+        mpfr_add(xb, &(x->centre), &(x->radius), MPFR_RNDU);
 
-		if (mpfr_sgn(xa) < 0) {
-			if (z->nTerms > 0) {
-				unsigned zTerm;
-				for (zTerm = 0; zTerm < z->nTerms; zTerm++) {
-					mpfr_clear(&(z->deviations[zTerm]));
-				}
-				z->nTerms = 0;
-				free(z->symbols);
-				free(z->deviations);
-			}
+        if (mpfr_sgn(xa) < 0) {
+            if (z->nTerms > 0) {
+                unsigned zTerm;
+                for (zTerm = 0; zTerm < z->nTerms; zTerm++) {
+                    mpfr_clear(&(z->deviations[zTerm]));
+                }
+                z->nTerms = 0;
+                free(z->symbols);
+                free(z->deviations);
+            }
 
-			// TODO: find a better representation for Inf
-			mpfr_set_nan(&(z->centre));
+            // TODO: find a better representation for Inf
+            mpfr_set_nan(&(z->centre));
 
-			return;
-		}
+            return;
+        }
 
-		// compute alpha
-		mpfr_sqrt(alpha, xa, MPFR_RNDN);
-		mpfr_sqrt(temp, xb, MPFR_RNDN);
-		mpfr_add(alpha, alpha, temp, MPFR_RNDN);
-		mpfr_si_div(alpha, 1, alpha, MPFR_RNDN);
+        // compute alpha
+        mpfr_sqrt(alpha, xa, MPFR_RNDN);
+        mpfr_sqrt(temp, xb, MPFR_RNDN);
+        mpfr_add(alpha, alpha, temp, MPFR_RNDN);
+        mpfr_si_div(alpha, 1, alpha, MPFR_RNDN);
 
-		// compute difference (sqrt(a) - alpha a)
-		mpfr_mul(da, alpha, xa, MPFR_RNDU);
-		mpfr_sqrt(temp, xa, MPFR_RNDD);
-		mpfr_sub(da, temp, da, MPFR_RNDD);
+        // compute difference (sqrt(a) - alpha a)
+        mpfr_mul(da, alpha, xa, MPFR_RNDU);
+        mpfr_sqrt(temp, xa, MPFR_RNDD);
+        mpfr_sub(da, temp, da, MPFR_RNDD);
 
-		// compute difference (sqrt(b) - alpha b)
-		mpfr_mul(db, alpha, xb, MPFR_RNDU);
-		mpfr_sqrt(temp, xb, MPFR_RNDD);
-		mpfr_sub(db, temp, db, MPFR_RNDD);
+        // compute difference (sqrt(b) - alpha b)
+        mpfr_mul(db, alpha, xb, MPFR_RNDU);
+        mpfr_sqrt(temp, xb, MPFR_RNDD);
+        mpfr_sub(db, temp, db, MPFR_RNDD);
 
-		mpfr_min(da, da, db, MPFR_RNDN);
+        mpfr_min(da, da, db, MPFR_RNDN);
 
-		// compute difference (sqrt(u) - alpha u)
-		mpfr_si_div(du, 1, alpha, MPFR_RNDU);
-		mpfr_div_si(du, du, 4, MPFR_RNDU);
+        // compute difference (sqrt(u) - alpha u)
+        mpfr_si_div(du, 1, alpha, MPFR_RNDU);
+        mpfr_div_si(du, du, 4, MPFR_RNDU);
 
-		// compute gamma
-		mpfr_add(gamma, da, du, MPFR_RNDN);
-		mpfr_div_si(gamma, gamma, 2, MPFR_RNDN);
+        // compute gamma
+        mpfr_add(gamma, da, du, MPFR_RNDN);
+        mpfr_div_si(gamma, gamma, 2, MPFR_RNDN);
 
-		// compute delta
-		mpfr_sub(delta, du, gamma, MPFR_RNDU);
-		mpfr_sub(temp, gamma, da, MPFR_RNDU);
-		mpfr_max(delta, delta, temp, MPFR_RNDN);
+        // compute delta
+        mpfr_sub(delta, du, gamma, MPFR_RNDU);
+        mpfr_sub(temp, gamma, da, MPFR_RNDU);
+        mpfr_max(delta, delta, temp, MPFR_RNDN);
 
-		// compute affine approximation
-		mpfa_affine_1(z, x, alpha, gamma, delta);
+        // compute affine approximation
+        mpfa_affine_1(z, x, alpha, gamma, delta);
 
-		mpfr_clears(temp, xa, xb, da, db, du, alpha, gamma, delta, (mpfr_ptr) NULL);
-	}
+        mpfr_clears(temp, xa, xb, da, db, du, alpha, gamma, delta, (mpfr_ptr) NULL);
+    }
 }

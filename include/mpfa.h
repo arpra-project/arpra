@@ -31,12 +31,12 @@
 #include <mpfr.h>
 
 typedef struct {
-	__mpfr_struct centre;
-	__mpfr_struct radius;
-	__mpfr_struct u;
-	__mpfr_struct *deviations;
-	unsigned *symbols;
-	unsigned nTerms;
+    __mpfr_struct centre;
+    __mpfr_struct radius;
+    __mpfr_struct u;
+    __mpfr_struct *deviations;
+    unsigned *symbols;
+    unsigned nTerms;
 } __mpfa_struct;
 
 typedef __mpfa_struct mpfa_t[1];

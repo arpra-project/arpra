@@ -22,6 +22,6 @@
 #include "mpfa.h"
 
 unsigned long mpfa_next_sym() {
-	static unsigned long mpfa_symbol;
-	return mpfa_symbol++;
+    static unsigned long mpfa_symbol;
+    return mpfa_symbol++;
 }

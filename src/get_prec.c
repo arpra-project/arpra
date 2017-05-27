@@ -22,5 +22,5 @@
 #include "mpfa.h"
 
 mpfr_prec_t mpfa_get_prec (mpfa_srcptr x) {
-	return mpfr_get_prec(&(x->centre));
+    return mpfr_get_prec(&(x->centre));
 }
