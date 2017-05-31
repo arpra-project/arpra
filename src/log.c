@@ -1,5 +1,5 @@
 /*
- * sqrt.c -- Compute the square root of an affine form.
+ * log.c -- Compute the natural logarithm of an affine form.
  *
  * Copyright 2017 James Paul Turner.
  *
@@ -23,10 +23,10 @@
 #include <stdlib.h>
 
 /*
- * This affine square root function uses a Chebyshev linear approximation.
+ * This affine natural log function uses a Chebyshev linear approximation.
  */
 
-void mpfa_sqrt (mpfa_ptr z, mpfa_srcptr x) {
+void mpfa_log (mpfa_ptr z, mpfa_srcptr x) {
     mpfr_t temp, xa, xb, da, db, du, alpha, gamma, delta;
     mpfr_prec_t prec;
 
@@ -35,7 +35,7 @@ void mpfa_sqrt (mpfa_ptr z, mpfa_srcptr x) {
 		alpha, gamma, delta, (mpfr_ptr) NULL);
 
     if (mpfr_zero_p(&(x->radius))) {
-        if (mpfr_sqrt(temp, &(x->centre), MPFR_RNDN)) {
+        if (mpfr_log(temp, &(x->centre), MPFR_RNDN)) {
             mpfr_mul(delta, temp, &(z->u), MPFR_RNDU);
         }
         else {
@@ -64,41 +64,41 @@ void mpfa_sqrt (mpfa_ptr z, mpfa_srcptr x) {
         }
 	else {
 	    // compute alpha
-	    mpfr_sqrt(alpha, xa, MPFR_RNDN);
-	    mpfr_sqrt(temp, xb, MPFR_RNDN);
-	    mpfr_add(alpha, alpha, temp, MPFR_RNDN);
-	    mpfr_si_div(alpha, 1, alpha, MPFR_RNDN);
+	    //mpfr_sqrt(alpha, xa, MPFR_RNDN);
+	    //mpfr_sqrt(temp, xb, MPFR_RNDN);
+	    //mpfr_add(alpha, alpha, temp, MPFR_RNDN);
+	    //mpfr_si_div(alpha, 1, alpha, MPFR_RNDN);
 
-	    // compute difference (sqrt(a) - alpha a)
-	    mpfr_mul(da, alpha, xa, MPFR_RNDU);
-	    mpfr_sqrt(temp, xa, MPFR_RNDD);
-	    mpfr_sub(da, temp, da, MPFR_RNDD);
+	    // compute difference (log(a) - alpha a)
+	    //mpfr_mul(da, alpha, xa, MPFR_RNDU);
+	    //mpfr_sqrt(temp, xa, MPFR_RNDD);
+	    //mpfr_sub(da, temp, da, MPFR_RNDD);
 
-	    // compute difference (sqrt(b) - alpha b)
-	    mpfr_mul(db, alpha, xb, MPFR_RNDU);
-	    mpfr_sqrt(temp, xb, MPFR_RNDD);
-	    mpfr_sub(db, temp, db, MPFR_RNDD);
+	    // compute difference (log(b) - alpha b)
+	    //mpfr_mul(db, alpha, xb, MPFR_RNDU);
+	    //mpfr_sqrt(temp, xb, MPFR_RNDD);
+	    //mpfr_sub(db, temp, db, MPFR_RNDD);
 
-	    mpfr_min(da, da, db, MPFR_RNDN);
+	    //mpfr_min(da, da, db, MPFR_RNDN);
 
-	    // compute difference (sqrt(u) - alpha u)
-	    mpfr_si_div(du, 1, alpha, MPFR_RNDU);
-	    mpfr_div_si(du, du, 4, MPFR_RNDU);
+	    // compute difference (log(u) - alpha u)
+	    //mpfr_si_div(du, 1, alpha, MPFR_RNDU);
+	    //mpfr_div_si(du, du, 4, MPFR_RNDU);
 
 	    // compute gamma
-	    mpfr_add(gamma, da, du, MPFR_RNDN);
-	    mpfr_div_si(gamma, gamma, 2, MPFR_RNDN);
+	    //mpfr_add(gamma, da, du, MPFR_RNDN);
+	    //mpfr_div_si(gamma, gamma, 2, MPFR_RNDN);
 
 	    // compute delta
-	    mpfr_sub(delta, du, gamma, MPFR_RNDU);
-	    mpfr_sub(temp, gamma, da, MPFR_RNDU);
-	    mpfr_max(delta, delta, temp, MPFR_RNDN);
+	    //mpfr_sub(delta, du, gamma, MPFR_RNDU);
+	    //mpfr_sub(temp, gamma, da, MPFR_RNDU);
+	    //mpfr_max(delta, delta, temp, MPFR_RNDN);
 
 	    // compute affine approximation
 	    mpfa_affine_1(z, x, alpha, gamma, delta);
 	}
     }
-
+    
     mpfr_clears(temp, xa, xb, da, db, du,
 		alpha, gamma, delta, (mpfr_ptr) NULL);
 }

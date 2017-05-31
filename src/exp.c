@@ -30,10 +30,10 @@ void mpfa_exp (mpfa_ptr z, mpfa_srcptr x) {
     mpfr_prec_t prec;
 
     prec = mpfr_get_prec(&(z->centre));
+    mpfr_inits2(prec, temp, xa, xb, da, db, du,
+		alpha, gamma, delta, (mpfr_ptr) NULL);
 
     if (mpfr_zero_p(&(x->radius))) {
-        mpfr_inits2(prec, temp, delta, (mpfr_ptr) NULL);
-
         if (mpfr_exp(temp, &(x->centre), MPFR_RNDN)) {
             mpfr_mul(delta, temp, &(z->u), MPFR_RNDU);
         }
@@ -42,12 +42,8 @@ void mpfa_exp (mpfa_ptr z, mpfa_srcptr x) {
         }
 
         mpfa_set_mpfr(z, temp, delta);
-
-        mpfr_clears(temp, delta, (mpfr_ptr) NULL);
     }
     else {
-        mpfr_inits2(prec, temp, xa, xb, da, db, du, alpha, gamma, delta, (mpfr_ptr) NULL);
-
         mpfr_sub(xa, &(x->centre), &(x->radius), MPFR_RNDD);
         mpfr_add(xb, &(x->centre), &(x->radius), MPFR_RNDU);
 
@@ -87,7 +83,8 @@ void mpfa_exp (mpfa_ptr z, mpfa_srcptr x) {
 
         // compute affine approximation
         mpfa_affine_1(z, x, alpha, gamma, delta);
-
-        mpfr_clears(temp, xa, xb, da, db, du, alpha, gamma, delta, (mpfr_ptr) NULL);
     }
+
+    mpfr_clears(temp, xa, xb, da, db, du,
+		alpha, gamma, delta, (mpfr_ptr) NULL);
 }
