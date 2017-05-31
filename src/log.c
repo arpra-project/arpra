@@ -32,7 +32,7 @@ void mpfa_log (mpfa_ptr z, mpfa_srcptr x) {
 
     prec = mpfr_get_prec(&(z->centre));
     mpfr_inits2(prec, temp, xa, xb, da, db, du,
-		alpha, gamma, delta, (mpfr_ptr) NULL);
+                alpha, gamma, delta, (mpfr_ptr) NULL);
 
     if (mpfr_zero_p(&(x->radius))) {
         if (mpfr_log(temp, &(x->centre), MPFR_RNDN)) {
@@ -62,43 +62,45 @@ void mpfa_log (mpfa_ptr z, mpfa_srcptr x) {
             // TODO: find a better representation for Inf
             mpfr_set_nan(&(z->centre));
         }
-	else {
-	    // compute alpha
-	    //mpfr_sqrt(alpha, xa, MPFR_RNDN);
-	    //mpfr_sqrt(temp, xb, MPFR_RNDN);
-	    //mpfr_add(alpha, alpha, temp, MPFR_RNDN);
-	    //mpfr_si_div(alpha, 1, alpha, MPFR_RNDN);
+        else {
+            // compute alpha
+            mpfr_log(alpha, xb, MPFR_RNDN);
+            mpfr_log(temp, xa, MPFR_RNDN);
+            mpfr_sub(alpha, alpha, temp, MPFR_RNDN);
+            mpfr_sub(temp, xb, xa, MPFR_RNDN);
+            mpfr_div(alpha, alpha, temp, MPFR_RNDN);
 
-	    // compute difference (log(a) - alpha a)
-	    //mpfr_mul(da, alpha, xa, MPFR_RNDU);
-	    //mpfr_sqrt(temp, xa, MPFR_RNDD);
-	    //mpfr_sub(da, temp, da, MPFR_RNDD);
+            // compute difference (log(a) - alpha a)
+            mpfr_mul(da, alpha, xa, MPFR_RNDU);
+            mpfr_log(temp, xa, MPFR_RNDD);
+            mpfr_sub(da, temp, da, MPFR_RNDD);
 
-	    // compute difference (log(b) - alpha b)
-	    //mpfr_mul(db, alpha, xb, MPFR_RNDU);
-	    //mpfr_sqrt(temp, xb, MPFR_RNDD);
-	    //mpfr_sub(db, temp, db, MPFR_RNDD);
+            // compute difference (log(b) - alpha b)
+            mpfr_mul(db, alpha, xb, MPFR_RNDU);
+            mpfr_log(temp, xb, MPFR_RNDD);
+            mpfr_sub(db, temp, db, MPFR_RNDD);
 
-	    //mpfr_min(da, da, db, MPFR_RNDN);
+            mpfr_min(da, da, db, MPFR_RNDN);
 
-	    // compute difference (log(u) - alpha u)
-	    //mpfr_si_div(du, 1, alpha, MPFR_RNDU);
-	    //mpfr_div_si(du, du, 4, MPFR_RNDU);
+            // compute difference (log(u) - alpha u)
+            mpfr_si_div(du, 1, alpha, MPFR_RNDU);
+            mpfr_log(du, du, MPFR_RNDU);
+            mpfr_sub_si(du, du, 1, MPFR_RNDU);
 
-	    // compute gamma
-	    //mpfr_add(gamma, da, du, MPFR_RNDN);
-	    //mpfr_div_si(gamma, gamma, 2, MPFR_RNDN);
+            // compute gamma
+            mpfr_add(gamma, da, du, MPFR_RNDN);
+            mpfr_div_si(gamma, gamma, 2, MPFR_RNDN);
 
-	    // compute delta
-	    //mpfr_sub(delta, du, gamma, MPFR_RNDU);
-	    //mpfr_sub(temp, gamma, da, MPFR_RNDU);
-	    //mpfr_max(delta, delta, temp, MPFR_RNDN);
+            // compute delta
+            mpfr_sub(delta, du, gamma, MPFR_RNDU);
+            mpfr_sub(temp, gamma, da, MPFR_RNDU);
+            mpfr_max(delta, delta, temp, MPFR_RNDN);
 
-	    // compute affine approximation
-	    mpfa_affine_1(z, x, alpha, gamma, delta);
-	}
+            // compute affine approximation
+            mpfa_affine_1(z, x, alpha, gamma, delta);
+        }
     }
-    
+
     mpfr_clears(temp, xa, xb, da, db, du,
-		alpha, gamma, delta, (mpfr_ptr) NULL);
+                alpha, gamma, delta, (mpfr_ptr) NULL);
 }

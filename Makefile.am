@@ -35,6 +35,7 @@ lib_libmpfa_la_SOURCES = src/add.c \
                          src/init.c \
                          src/init2.c \
                          src/inv.c \
+                         src/log.c \
                          src/mul.c \
                          src/neg.c \
                          src/next_sym.c \
