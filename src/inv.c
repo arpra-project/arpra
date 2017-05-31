@@ -85,7 +85,7 @@ void mpfa_inv (mpfa_ptr z, mpfa_srcptr x) {
 	    mpfr_si_div(temp, 1, xb, MPFR_RNDU);
 	    mpfr_sub(db, temp, db, MPFR_RNDU);
 
-	    mpfr_max(da, da, db, MPFR_RNDN);
+	    mpfr_max(db, da, db, MPFR_RNDN);
 
 	    // compute difference (1/u - alpha u)
 	    mpfr_neg(du, alpha, MPFR_RNDN);
@@ -93,12 +93,12 @@ void mpfa_inv (mpfa_ptr z, mpfa_srcptr x) {
 	    mpfr_mul_si(du, du, 2, MPFR_RNDD);
 
 	    // compute gamma
-	    mpfr_add(gamma, da, du, MPFR_RNDN);
+	    mpfr_add(gamma, db, du, MPFR_RNDN);
 	    mpfr_div_si(gamma, gamma, 2, MPFR_RNDN);
 
 	    // compute delta
-	    mpfr_sub(delta, du, gamma, MPFR_RNDU);
-	    mpfr_sub(temp, gamma, da, MPFR_RNDU);
+	    mpfr_sub(delta, gamma, du, MPFR_RNDU);
+	    mpfr_sub(temp, db, gamma, MPFR_RNDU);
 	    mpfr_max(delta, delta, temp, MPFR_RNDN);
 
 	    if (sign < 0) {
