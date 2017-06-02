@@ -50,6 +50,7 @@ AC_CHECK_LIB([mpfr], [mpfr_init], [],
 AC_CHECK_HEADERS([stdlib.h])
 
 # Checks for library functions.
+AC_CHECK_FUNCS([sqrt])
 AC_FUNC_MALLOC
 AC_FUNC_REALLOC
 
