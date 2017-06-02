@@ -49,8 +49,11 @@ extern "C" {
 
 // Initialise and clear
 void mpfa_init (mpfa_ptr x);
+void mpfa_inits (mpfa_ptr x, ...);
 void mpfa_init2 (mpfa_ptr x, mpfr_prec_t prec);
+void mpfa_inits2 (mpfr_prec_t prec, mpfa_ptr x, ...);
 void mpfa_clear (mpfa_ptr x);
+void mpfa_clears (mpfa_ptr x, ...);
 
 // Set affine form
 void mpfa_set (mpfa_ptr z, mpfa_srcptr x);
