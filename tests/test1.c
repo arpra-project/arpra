@@ -19,9 +19,9 @@
  * along with the MPFA library. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "mpfa.h"
 #include <stdio.h>
 #include <assert.h>
-#include "mpfa.h"
 
 int main (int argc, char *argv[]) {
 

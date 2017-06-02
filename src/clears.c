@@ -27,8 +27,8 @@ void mpfa_clears (mpfa_ptr x, ...) {
 
     va_start(arg, x);
     while (x != NULL) {
-	mpfa_clear(x);
-	x = (mpfa_ptr) va_arg(arg, mpfa_ptr);
+        mpfa_clear(x);
+        x = (mpfa_ptr) va_arg(arg, mpfa_ptr);
     }
     va_end(arg);
 }

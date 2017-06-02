@@ -22,6 +22,25 @@
 #include "mpfa.h"
 
 int main (int argc, char *argv[]) {
+    mpfa_t V;   // Membrane potential (mV)
+    mpfa_t M;   // Fraction of open Ca++ channels
+    mpfa_t N;   // Fraction of open K+ channels
+    mpfa_t I;   // Applied current (uA/cm^2)
+    mpfa_t C;   // Membrane capacitance (uF/cm^2)
+    mpfa_t gL;  // Maximum leak conductance (mmho/cm^2)
+    mpfa_t gCa; // Maximum Ca++ conductance (mmho/cm^2)
+    mpfa_t gK;  // Maximum K+ conductance (mmho/cm^2)
+    mpfa_t VL;  // Equilibrium potential of leak conductance (mV)
+    mpfa_t VCa; // Equilibrium potential of Ca++ conductance (mV)
+    mpfa_t VK;  // Equilibrium potential of K+ conductance (mV)
+    mpfa_t V1;  // Potential at which Mss(V) = 0.5 (mV)
+    mpfa_t V2;  // Reciprocal of slope of voltage dependence of Mss(V) (mV)
+    mpfa_t V3;  // Potential at which Nss(V) = 0.5 (mV)
+    mpfa_t V4;  // Reciprocal of slope of voltage dependence of Nss(V) (mV)
+    mpfa_t phi; // Reference frequency
+
+    mpfa_inits(V, M, N, I, C, gL, gCa, gK, VL, VCa, VK, V1, V2, V3, V4, phi);
+
 
     /* // (nu) / (1 - nu)
        mpfr_mul_si(temp, &(zNew->u), (n - 1), MPFR_RNDU);
@@ -32,7 +51,5 @@ int main (int argc, char *argv[]) {
 
 
 
-    printf("Hello World!\n");
-
-    return 0;
+    mpfa_clears(V, M, N, I, C, gL, gCa, gK, VL, VCa, VK, V1, V2, V3, V4, phi);
 }

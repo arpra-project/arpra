@@ -27,8 +27,8 @@ void mpfa_inits2 (mpfr_prec_t prec, mpfa_ptr x, ...) {
 
     va_start(arg, x);
     while (x != NULL) {
-	mpfa_init2(x, prec);
-	x = (mpfa_ptr) va_arg(arg, mpfa_ptr);
+        mpfa_init2(x, prec);
+        x = (mpfa_ptr) va_arg(arg, mpfa_ptr);
     }
     va_end(arg);
 }
