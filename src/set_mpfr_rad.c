@@ -1,5 +1,5 @@
 /*
- * set_mpfr.c -- Set centre using an MPFR number.
+ * set_mpfr_rad.c -- Set centre and radius using MPFR numbers.
  *
  * Copyright 2016-2017 James Paul Turner.
  *
@@ -22,11 +22,28 @@
 #include "mpfa.h"
 #include <stdlib.h>
 
-void mpfa_set_mpfr (mpfa_ptr z, mpfr_srcptr centre) {
+void mpfa_set_mpfr_rad (mpfa_ptr z, mpfr_srcptr centre, mpfr_srcptr radius) {
     unsigned zTerm;
 
     if (mpfr_set(&(z->centre), centre, MPFR_RNDN)) {
         mpfr_mul(&(z->radius), &(z->centre), &(z->u), MPFR_RNDU);
+        mpfr_add(&(z->radius), &(z->radius), radius, MPFR_RNDU);
+    }
+    else {
+        mpfr_set(&(z->radius), radius, MPFR_RNDU);
+    }
+
+    if (mpfr_zero_p(&(z->radius))) {
+        if (z->nTerms > 0) {
+            for (zTerm = 0; zTerm < z->nTerms; zTerm++) {
+                mpfr_clear(&(z->deviations[zTerm]));
+            }
+            z->nTerms = 0;
+            free(z->symbols);
+            free(z->deviations);
+        }
+    }
+    else {
         if (z->nTerms == 0) {
             z->symbols = malloc(sizeof(unsigned));
             z->deviations = malloc(sizeof(mpfa_t));
@@ -42,16 +59,5 @@ void mpfa_set_mpfr (mpfa_ptr z, mpfr_srcptr centre) {
         z->nTerms = 1;
         z->symbols[0] = mpfa_next_sym();
         mpfr_set(&(z->deviations[0]), &(z->radius), MPFR_RNDN);
-    }
-    else {
-        mpfr_set_si(&(z->radius), 0, MPFR_RNDU);
-        if (z->nTerms > 0) {
-            for (zTerm = 0; zTerm < z->nTerms; zTerm++) {
-                mpfr_clear(&(z->deviations[zTerm]));
-            }
-            z->nTerms = 0;
-            free(z->symbols);
-            free(z->deviations);
-        }
     }
 }

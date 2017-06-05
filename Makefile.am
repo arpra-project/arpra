@@ -43,8 +43,10 @@ lib_libmpfa_la_SOURCES = src/add.c \
                          src/neg.c \
                          src/next_sym.c \
                          src/set_d.c \
+                         src/set_d_rad.c \
                          src/set_default_prec.c \
                          src/set_mpfr.c \
+                         src/set_mpfr_rad.c \
                          src/set_prec.c \
                          src/set.c \
                          src/sqrt.c \

@@ -57,8 +57,10 @@ void mpfa_clears (mpfa_ptr x, ...);
 
 // Set affine form
 void mpfa_set (mpfa_ptr z, mpfa_srcptr x);
-void mpfa_set_d (mpfa_ptr z, const double centre, const double radius);
-void mpfa_set_mpfr (mpfa_ptr z, mpfr_srcptr centre, mpfr_srcptr radius);
+void mpfa_set_d (mpfa_ptr z, const double centre);
+void mpfa_set_d_rad (mpfa_ptr z, const double centre, const double radius);
+void mpfa_set_mpfr (mpfa_ptr z, mpfr_srcptr centre);
+void mpfa_set_mpfr_rad (mpfa_ptr z, mpfr_srcptr centre, mpfr_srcptr radius);
 //void mpfa_set_str (mpfa_ptr z, const char *x, int base);
 
 // Affine operations

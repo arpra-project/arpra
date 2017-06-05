@@ -1,5 +1,5 @@
 /*
- * set_d.c -- Set an affine form using a double-precision float.
+ * set_d.c -- Set centre using a double-precision float.
  *
  * Copyright 2016-2017 James Paul Turner.
  *
@@ -22,35 +22,15 @@
 #include "mpfa.h"
 #include <stdlib.h>
 
-void mpfa_set_d (mpfa_ptr z, const double centre, const double radius) {
+void mpfa_set_d (mpfa_ptr z, const double centre) {
     unsigned zTerm;
-    mpfr_prec_t prec;
-
-    prec = mpfr_get_prec(&(z->centre));
 
     if (mpfr_set_d(&(z->centre), centre, MPFR_RNDN)) {
         mpfr_mul(&(z->radius), &(z->centre), &(z->u), MPFR_RNDU);
-        mpfr_add_d(&(z->radius), &(z->radius), radius, MPFR_RNDU);
-    }
-    else {
-        mpfr_set_d(&(z->radius), radius, MPFR_RNDU);
-    }
-
-    if (mpfr_zero_p(&(z->radius))) {
-        if (z->nTerms > 0) {
-            for (zTerm = 0; zTerm < z->nTerms; zTerm++) {
-                mpfr_clear(&(z->deviations[zTerm]));
-            }
-            z->nTerms = 0;
-            free(z->symbols);
-            free(z->deviations);
-        }
-    }
-    else {
         if (z->nTerms == 0) {
             z->symbols = malloc(sizeof(unsigned));
             z->deviations = malloc(sizeof(mpfa_t));
-            mpfr_init2(&(z->deviations[0]), prec);
+            mpfr_init2(&(z->deviations[0]), mpfr_get_prec(&(z->centre)));
         }
         else if (z->nTerms >= 2) {
             for (zTerm = 1; zTerm < z->nTerms; zTerm++) {
@@ -62,5 +42,16 @@ void mpfa_set_d (mpfa_ptr z, const double centre, const double radius) {
         z->nTerms = 1;
         z->symbols[0] = mpfa_next_sym();
         mpfr_set(&(z->deviations[0]), &(z->radius), MPFR_RNDN);
+    }
+    else {
+        mpfr_set_si(&(z->radius), 0, MPFR_RNDU);
+        if (z->nTerms > 0) {
+            for (zTerm = 0; zTerm < z->nTerms; zTerm++) {
+                mpfr_clear(&(z->deviations[zTerm]));
+            }
+            z->nTerms = 0;
+            free(z->symbols);
+            free(z->deviations);
+        }
     }
 }

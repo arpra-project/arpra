@@ -41,10 +41,10 @@ int main (int argc, char *argv[]) {
 //	mpfr_clears(temp, error, (mpfr_ptr) NULL);
 //	return 0;
 
-    mpfa_set_d(a, 0.2, 0.0);
-    mpfa_set_d(b, 0.6, 0.0);
-    //mpfa_set_d(a, 3.323234235732578935, 0.0);
-    //mpfa_set_d(b, 3.332536490684068738946, 0.0);
+    mpfa_set_d(a, 0.2);
+    mpfa_set_d(b, 0.6);
+    //mpfa_set_d(a, 3.323234235732578935);
+    //mpfa_set_d(b, 3.332536490684068738946);
 
     mpfa_add(c, a, b);
     //printf("centre: "); mpfr_out_str (stdout, 10, 100, &(c->centre), MPFR_RNDN); putchar('\n');

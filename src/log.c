@@ -42,7 +42,7 @@ void mpfa_log (mpfa_ptr z, mpfa_srcptr x) {
             mpfr_set_si(delta, 0, MPFR_RNDN);
         }
 
-        mpfa_set_mpfr(z, temp, delta);
+        mpfa_set_mpfr_rad(z, temp, delta);
     }
     else {
         mpfr_sub(xa, &(x->centre), &(x->radius), MPFR_RNDD);
