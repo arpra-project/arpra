@@ -61,6 +61,6 @@ void mpfa_set_d (mpfa_ptr z, const double centre, const double radius) {
         }
         z->nTerms = 1;
         z->symbols[0] = mpfa_next_sym();
-        mpfr_set_d(&(z->deviations[0]), radius, MPFR_RNDN);
+        mpfr_set(&(z->deviations[0]), &(z->radius), MPFR_RNDN);
     }
 }
