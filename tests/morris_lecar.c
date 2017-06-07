@@ -21,72 +21,184 @@
 
 #include "mpfa.h"
 
-static mpfa_t V;    // Membrane potential (mV)
-static mpfa_t M;    // Fraction of open Ca++ channels
-static mpfa_t N;    // Fraction of open K+ channels
-static mpfa_t I;    // Applied current (uA/cm^2)
-static mpfa_t C;    // Membrane capacitance (uF/cm^2)
-static mpfa_t gL;   // Maximum leak conductance (mmho/cm^2)
-static mpfa_t gCa;  // Maximum Ca++ conductance (mmho/cm^2)
-static mpfa_t gK;   // Maximum K+ conductance (mmho/cm^2)
-static mpfa_t VL;   // Equilibrium potential of leak conductance (mV)
-static mpfa_t VCa;  // Equilibrium potential of Ca++ conductance (mV)
-static mpfa_t VK;   // Equilibrium potential of K+ conductance (mV)
-static mpfa_t V1;   // Potential at which Mss(V) = 0.5 (mV)
-static mpfa_t V2;   // Reciprocal of voltage dependence slope of Mss(V) (mV)
-static mpfa_t V3;   // Potential at which Nss(V) = 0.5 (mV)
-static mpfa_t V4;   // Reciprocal of voltage dependence slope of Nss(V) (mV)
-static mpfa_t phi;  // Reference frequency
-static mpfa_t t1, t2, t3; // Intermediate variables
+// Intermediate constants
+static mpfa_t one, two, neg_two;
 
-void f_V (mpfa_ptr out, mpfa_srcptr V, mpfa_srcptr M, mpfa_srcptr N) {
-    mpfa_sub(t1, V, VL);
-    mpfa_mul(t1, t1, gL);
 
-    mpfa_sub(t2, V, VCa);
-    mpfa_mul(t2, t2, gCa);
+void f_V (mpfa_ptr out, mpfa_srcptr V, mpfa_srcptr M, mpfa_srcptr N,
+          mpfa_srcptr gL, mpfa_srcptr gCa, mpfa_srcptr gK,
+          mpfa_srcptr VL, mpfa_srcptr VCa, mpfa_srcptr VK,
+          mpfa_srcptr I, mpfa_srcptr C)
+{
+    mpfa_t temp;
+    mpfa_init(temp);
 
-    mpfa_sub(t3, V, VK);
-    mpfa_mul(t3, t3, gK);
+    // Compute leak current
+    mpfa_sub(temp, V, VL);
+    mpfa_mul(temp, gL, temp);
+    mpfa_sub(out, I, temp);
 
-    mpfa_sub(out, I, t1);
-    mpfa_sub(out, out, t2);
-    mpfa_sub(out, out, t3);
+    // Compute Ca++ current
+    mpfa_sub(temp, V, VCa);
+    mpfa_mul(temp, gCa, temp);
+    mpfa_sub(out, out, temp);
+
+    // Compute K+ current
+    mpfa_sub(temp, V, VK);
+    mpfa_mul(temp, gK, temp);
+    mpfa_sub(out, out, temp);
+
+    // Compute delta of membrane potential
+    // dV / dt = (I - gL (V - VL) - gCa (V - VCa) - gK (V - VK)) / C
     mpfa_div(out, out, C);
+
+    mpfa_clear(temp);
 }
 
-void f_M (mpfa_ptr out, mpfa_srcptr M, mpfa_srcptr V) {
-    // compute steady-state M
-    mpfa_sub(t1, V, V1);
-    //mpfa_mul(t2, -2, t1);
+
+void f_A (mpfa_ptr out, mpfa_srcptr A, mpfa_srcptr V,
+          mpfa_srcptr Va, mpfa_srcptr Vb, mpfa_srcptr phi)
+{
+    mpfa_t temp1, temp2, temp3;
+    mpfa_inits(temp1, temp2, temp3, NULL);
+
+    // Compute channel activation steady-state
+    // A_ss = 1 / (1 + exp(-2 (V - Va) / Vb))
+    mpfa_sub(temp2, V, Va);
+    mpfa_mul(temp1, neg_two, temp2);
+    mpfa_div(temp1, temp1, Vb);
+    mpfa_exp(temp1, temp1);
+    mpfa_add(temp1, one, temp1);
+    mpfa_div(temp1, one, temp1);
+
+    // Compute tau of channel activation
+    // A_tau = 1 / (phi ((p + q) / 2))
+    // p = exp(-(V - Va) / (2 Vb))
+    // q = exp( (V - Va) / (2 Vb))
+    mpfa_mul(temp3, two, Vb);
+    mpfa_div(temp3, temp2, temp3);
+    mpfa_neg(temp2, temp3);
+    mpfa_exp(temp2, temp2);
+    mpfa_exp(temp3, temp3);
+    mpfa_add(temp2, temp2, temp3);
+    mpfa_div(temp2, temp2, two);
+    mpfa_mul(temp2, phi, temp2);
+    mpfa_div(temp2, one, temp2);
+
+    // Compute delta of channel activation
+    // dA / dt = (A_ss - A) / A_tau
+    mpfa_sub(out, temp1, A);
+    mpfa_div(out, out, temp2);
+
+    mpfa_clears(temp1, temp2, temp3, NULL);
 }
 
-void f_N (mpfa_ptr out, mpfa_srcptr N, mpfa_srcptr V) {
-    // compute steady-state N
-    mpfa_sub(t1, V, V3);
-
-}
 
 int main (int argc, char *argv[])
 {
-    mpfa_inits(V, M, N, I, C, gL, gCa, gK, VL, VCa, VK,
-               V1, V2, V3, V4, phi, t1, t2, t3, NULL);
+    unsigned i;
+    const unsigned sim_time = 100;
+
+    mpfa_t V;    // Membrane potential (mV)
+    mpfa_t M;    // Fraction of open Ca++ channels
+    mpfa_t N;    // Fraction of open K+ channels
+    mpfa_t I;    // Applied current (uA/cm^2)
+    mpfa_t C;    // Membrane capacitance (uF/cm^2)
+
+    mpfa_t dt;   // Delta time
+    mpfa_t dV;   // Delta V
+    mpfa_t dM;   // Delta M
+    mpfa_t dN;   // Delta N
+
+    mpfa_t gL;   // Maximum leak conductance (mmho/cm^2)
+    mpfa_t gCa;  // Maximum Ca++ conductance (mmho/cm^2)
+    mpfa_t gK;   // Maximum K+ conductance (mmho/cm^2)
+
+    mpfa_t VL;   // Equilibrium potential of leak conductance (mV)
+    mpfa_t VCa;  // Equilibrium potential of Ca++ conductance (mV)
+    mpfa_t VK;   // Equilibrium potential of K+ conductance (mV)
+
+    mpfa_t V1;   // Potential at which Mss(V) = 0.5 (mV)
+    mpfa_t V2;   // Reciprocal of voltage dependence slope of Mss(V) (mV)
+    mpfa_t V3;   // Potential at which Nss(V) = 0.5 (mV)
+    mpfa_t V4;   // Reciprocal of voltage dependence slope of Nss(V) (mV)
+
+    mpfa_t M_phi;
+    mpfa_t N_phi;
+
+    mpfa_inits(V, M, N, I, C,
+               dt, dV, dM, dN,
+               gL, gCa, gK,
+               VL, VCa, VK,
+               V1, V2, V3, V4,
+               M_phi, N_phi,
+               one, two, neg_two,
+               NULL);
+
+    // Initialise Variables and parameters
+    mpfa_set_d(V, -60.0);
+    mpfa_set_d(M, 0.5);
+    mpfa_set_d(N, 0.5);
+    mpfa_set_d(I, 0.0);
+    mpfa_set_d(C, 1.0);
+
+    mpfa_set_d(gL, 0.0);
+    mpfa_set_d(gCa, 0.0);
+    mpfa_set_d(gK, 0.0);
+
+    mpfa_set_d(VL, 0.0);
+    mpfa_set_d(VCa, 0.0);
+    mpfa_set_d(VK, 0.0);
+
+    mpfa_set_d(V1, 0.0);
+    mpfa_set_d(V2, 0.0);
+    mpfa_set_d(V3, 0.0);
+    mpfa_set_d(V4, 0.0);
+
+    mpfa_set_d(M_phi, 1.0);
+    mpfa_set_d(N_phi, 0.5);
+
+    mpfa_set_d(dt, 0.5);
+
+    // Initialise constants
+    mpfa_set_d(one, 1.0);
+    mpfa_set_d(two, 2.0);
+    mpfa_set_d(neg_two, -2.0);
 
 
 
 
+    for (i = 0; i < sim_time; i++) {
 
-    /* // (nu) / (1 - nu)
-       mpfr_mul_si(temp, &(zNew->u), (n - 1), MPFR_RNDU);
-       mpfr_si_sub(error, 1, temp, MPFR_RNDD);
-       mpfr_div(error, temp, error, MPFR_RNDU);
-    */
+        /* // (nu) / (1 - nu)
+           mpfr_mul_si(temp, &(zNew->u), (n - 1), MPFR_RNDU);
+           mpfr_si_sub(error, 1, temp, MPFR_RNDD);
+           mpfr_div(error, temp, error, MPFR_RNDU);
+        */
+        
+        f_V(dV, V, M, N, gL, gCa, gK, VL, VCa, VK, I, C);
+        mpfa_mul(dV, dV, dt);
+        mpfa_add(V, V, dV);
+
+        f_A(dM, M, V, V1, V2, M_phi);
+        mpfa_mul(dM, dM, dt);
+        mpfa_add(M, M, dM);
+
+        f_A(dN, N, V, V3, V4, N_phi);
+        mpfa_mul(dN, dN, dt);
+        mpfa_add(N, N, dN);
+
+    }
 
 
-
-
-    mpfa_clears(V, M, N, I, C, gL, gCa, gK, VL, VCa, VK,
-                V1, V2, V3, V4, phi, t1, t2, t3, NULL);
+    mpfa_clears(V, M, N, I, C,
+                dt, dV, dM, dN,
+                gL, gCa, gK,
+                VL, VCa, VK,
+                V1, V2, V3, V4,
+                M_phi, N_phi,
+                one, two, neg_two,
+                NULL);
 
     return 0;
 }
