@@ -94,15 +94,17 @@ void mpfa_set (mpfa_ptr z, mpfa_srcptr x) {
         zTerm++;
     }
 
+    if (z->nTerms > 0) {
+        if (zTerm == 0) {
+            free(z->symbols);
+            free(z->deviations);
+        }
+        else {
+            z->symbols = realloc(z->symbols, zTerm * sizeof(unsigned));
+            z->deviations = realloc(z->deviations, zTerm * sizeof(mpfr_t));
+        }
+    }
     z->nTerms = zTerm;
-    if (z->nTerms == 0) {
-        free(z->symbols);
-        free(z->deviations);
-    }
-    else {
-        z->symbols = realloc(z->symbols, z->nTerms * sizeof(unsigned));
-        z->deviations = realloc(z->deviations, z->nTerms * sizeof(mpfr_t));
-    }
 
     mpfr_clears(temp, error, (mpfr_ptr) NULL);
 }
