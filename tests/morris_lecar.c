@@ -21,6 +21,8 @@
 
 #include "mpfa.h"
 
+//#define M_DYNAMICS // Define if M steady-state is instantaneous
+
 // Intermediate constants
 static mpfa_t one, two, neg_two;
 
@@ -94,6 +96,19 @@ void f_A (mpfa_ptr out, mpfa_srcptr A, mpfa_srcptr V,
 }
 
 
+void M_ss (mpfa_ptr out, mpfa_srcptr V, mpfa_srcptr V1, mpfa_srcptr V2)
+{
+    // Compute Ca++ channel activation steady-state
+    // M_ss = 1 / (1 + exp(-2 (V - V1) / V2))
+    mpfa_sub(out, V, V1);
+    mpfa_mul(out, neg_two, out);
+    mpfa_div(out, out, V2);
+    mpfa_exp(out, out);
+    mpfa_add(out, one, out);
+    mpfa_div(out, one, out);
+}
+
+
 int main (int argc, char *argv[])
 {
     unsigned i;
@@ -139,11 +154,12 @@ int main (int argc, char *argv[])
     mpfa_set_d(V, -60.0);
     mpfa_set_d(M, 0.5);
     mpfa_set_d(N, 0.5);
-    mpfa_set_d(I, 0.0);
+    mpfa_set_d(I, 120.0);
     mpfa_set_d(C, 20.0);
 
     mpfa_set_d(gL, 2.0);
-    mpfa_set_d(gCa, 4.0); // Class 1
+    //mpfa_set_d(gCa, 4.0); // Class 1 excitability
+    mpfa_set_d(gCa, 4.4); // Class 2 excitability
     mpfa_set_d(gK, 8.0);
 
     mpfa_set_d(VL, -60.0);
@@ -152,11 +168,14 @@ int main (int argc, char *argv[])
 
     mpfa_set_d(V1, -1.2);
     mpfa_set_d(V2, 18.0);
-    mpfa_set_d(V3, 12.0); // Class 1
-    mpfa_set_d(V4, 17.4); // Class 1
+    //mpfa_set_d(V3, 12.0); // Class 1 excitability
+    mpfa_set_d(V3, 2.0); // Class 2 excitability
+    //mpfa_set_d(V4, 17.4); // Class 1 excitability
+    mpfa_set_d(V4, 30.0); // Class 2 excitability
 
     mpfa_set_d(M_phi, 1.0);
-    mpfa_set_d(N_phi, 1.0 / 15.0); // Class 1
+    //mpfa_set_d(N_phi, 1.0 / 15.0); // Class 1 excitability
+    mpfa_set_d(N_phi, 1.0 / 25.0); // Class 2 excitability
 
     mpfa_set_d(dt, 0.5);
 
@@ -165,30 +184,47 @@ int main (int argc, char *argv[])
     mpfa_set_d(two, 2.0);
     mpfa_set_d(neg_two, -2.0);
 
-
-
     for (i = 0; i < sim_time; i++) {
-
         /* // (nu) / (1 - nu)
            mpfr_mul_si(temp, &(zNew->u), (n - 1), MPFR_RNDU);
            mpfr_si_sub(error, 1, temp, MPFR_RNDD);
            mpfr_div(error, temp, error, MPFR_RNDU);
         */
-        
-        f_V(dV, V, M, N, gL, gCa, gK, VL, VCa, VK, I, C);
-        mpfa_mul(dV, dV, dt);
-        mpfa_add(V, V, dV);
 
+#ifdef M_DYNAMICS // If we need M dynamics
         f_A(dM, M, V, V1, V2, M_phi);
+#else // Else M steady-state is instantaneous
+        M_ss(M, V, V1, V2);
+#endif
+        f_A(dN, N, V, V3, V4, N_phi);
+        f_V(dV, V, M, N, gL, gCa, gK, VL, VCa, VK, I, C);
+
+#ifdef M_DYNAMICS // If we need M dynamics
         mpfa_mul(dM, dM, dt);
         mpfa_add(M, M, dM);
+        //printf("M centre: "); mpfr_out_str (stdout, 10, 100, &(M->centre), MPFR_RNDN); putchar('\n');
+        //printf("M radius: "); mpfr_out_str (stdout, 10, 100, &(M->radius), MPFR_RNDN); putchar('\n');
+        //printf("dM centre: "); mpfr_out_str (stdout, 10, 100, &(dM->centre), MPFR_RNDN); putchar('\n');
+#endif
 
-        f_A(dN, N, V, V3, V4, N_phi);
         mpfa_mul(dN, dN, dt);
         mpfa_add(N, N, dN);
+        printf("N centre: ");
+        mpfr_out_str (stdout, 10, 100, &(N->centre), MPFR_RNDN);
+        putchar('\n');
+        //printf("N radius: "); mpfr_out_str (stdout, 10, 100, &(N->radius), MPFR_RNDN); putchar('\n');
+        printf("dN centre: ");
+        mpfr_out_str (stdout, 10, 100, &(dN->centre), MPFR_RNDN);
+        putchar('\n');
 
+        mpfa_mul(dV, dV, dt);
+        mpfa_add(V, V, dV);
+        printf("V centre: ");
+        mpfr_out_str (stdout, 10, 100, &(V->centre), MPFR_RNDN);
+        putchar('\n');
+        //printf("V radius: "); mpfr_out_str (stdout, 10, 100, &(V->radius), MPFR_RNDN); putchar('\n');
+        //printf("dV centre: "); mpfr_out_str (stdout, 10, 100, &(dV->centre), MPFR_RNDN); putchar('\n');
     }
-
 
     mpfa_clears(V, M, N, I, C,
                 dt, dV, dM, dN,
