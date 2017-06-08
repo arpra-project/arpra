@@ -40,7 +40,7 @@ void mpfa_set (mpfa_ptr z, mpfa_srcptr x) {
     }
 
     if (z->nTerms < x->nTerms) {
-        // need to grow z then initialise extra terms
+        // need to grow z and initialise new terms
         if (z->nTerms == 0) {
             z->symbols = malloc((x->nTerms + 1) * sizeof(unsigned));
             z->deviations = malloc((x->nTerms + 1) * sizeof(mpfa_t));
@@ -54,17 +54,9 @@ void mpfa_set (mpfa_ptr z, mpfa_srcptr x) {
         }
     }
     else if (z->nTerms > x->nTerms) {
-        // need to clear extra terms then shrink z
+        // need to clear unused terms
         for (zTerm = x->nTerms; zTerm < z->nTerms; zTerm++) {
             mpfr_clear(&(z->deviations[zTerm]));
-        }
-        if (x->nTerms == 0) {
-            free(z->symbols);
-            free(z->deviations);
-        }
-        else {
-            z->symbols = realloc(z->symbols, (x->nTerms + 1) * sizeof(unsigned));
-            z->deviations = realloc(z->deviations, (x->nTerms + 1) * sizeof(mpfa_t));
         }
     }
 
