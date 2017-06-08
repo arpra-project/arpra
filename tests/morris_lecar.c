@@ -123,8 +123,8 @@ int main (int argc, char *argv[])
     mpfa_t V3;   // Potential at which Nss(V) = 0.5 (mV)
     mpfa_t V4;   // Reciprocal of voltage dependence slope of Nss(V) (mV)
 
-    mpfa_t M_phi;
-    mpfa_t N_phi;
+    mpfa_t M_phi; // (s^-1)
+    mpfa_t N_phi; // (s^-1)
 
     mpfa_inits(V, M, N, I, C,
                dt, dV, dM, dN,
@@ -140,23 +140,23 @@ int main (int argc, char *argv[])
     mpfa_set_d(M, 0.5);
     mpfa_set_d(N, 0.5);
     mpfa_set_d(I, 0.0);
-    mpfa_set_d(C, 1.0);
+    mpfa_set_d(C, 20.0);
 
-    mpfa_set_d(gL, 0.0);
-    mpfa_set_d(gCa, 0.0);
-    mpfa_set_d(gK, 0.0);
+    mpfa_set_d(gL, 2.0);
+    mpfa_set_d(gCa, 4.0); // Class 1
+    mpfa_set_d(gK, 8.0);
 
-    mpfa_set_d(VL, 0.0);
-    mpfa_set_d(VCa, 0.0);
-    mpfa_set_d(VK, 0.0);
+    mpfa_set_d(VL, -60.0);
+    mpfa_set_d(VCa, 120.0);
+    mpfa_set_d(VK, -80.0);
 
-    mpfa_set_d(V1, 0.0);
-    mpfa_set_d(V2, 0.0);
-    mpfa_set_d(V3, 0.0);
-    mpfa_set_d(V4, 0.0);
+    mpfa_set_d(V1, -1.2);
+    mpfa_set_d(V2, 18.0);
+    mpfa_set_d(V3, 12.0); // Class 1
+    mpfa_set_d(V4, 17.4); // Class 1
 
     mpfa_set_d(M_phi, 1.0);
-    mpfa_set_d(N_phi, 0.5);
+    mpfa_set_d(N_phi, 1.0 / 15.0); // Class 1
 
     mpfa_set_d(dt, 0.5);
 
@@ -164,7 +164,6 @@ int main (int argc, char *argv[])
     mpfa_set_d(one, 1.0);
     mpfa_set_d(two, 2.0);
     mpfa_set_d(neg_two, -2.0);
-
 
 
 
