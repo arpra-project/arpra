@@ -154,14 +154,14 @@ int main (int argc, char *argv[])
 
     // Initialise Variables and parameters
     mpfa_set_d(V, -60.0);
-    mpfa_set_d(M, 0.5);
-    mpfa_set_d(N, 0.5);
+    mpfa_set_d(M, 0.0);
+    mpfa_set_d(N, 0.0);
     mpfa_set_d(I, 80.0);
     mpfa_set_d(C, 20.0);
 
     mpfa_set_d(gL, 2.0);
-    //mpfa_set_d(gCa, 4.0); // Class 1 excitability
-    mpfa_set_d(gCa, 4.4); // Class 2 excitability
+    mpfa_set_d(gCa, 4.0); // Class 1 excitability
+    //mpfa_set_d(gCa, 4.4); // Class 2 excitability
     mpfa_set_d(gK, 8.0);
 
     mpfa_set_d(VL, -60.0);
@@ -170,16 +170,16 @@ int main (int argc, char *argv[])
 
     mpfa_set_d(V1, -1.2);
     mpfa_set_d(V2, 18.0);
-    //mpfa_set_d(V3, 12.0); // Class 1 excitability
-    mpfa_set_d(V3, 2.0); // Class 2 excitability
-    //mpfa_set_d(V4, 17.4); // Class 1 excitability
-    mpfa_set_d(V4, 30.0); // Class 2 excitability
+    mpfa_set_d(V3, 12.0); // Class 1 excitability
+    //mpfa_set_d(V3, 2.0); // Class 2 excitability
+    mpfa_set_d(V4, 17.4); // Class 1 excitability
+    //mpfa_set_d(V4, 30.0); // Class 2 excitability
 
     mpfa_set_d(M_phi, 1.0);
-    //mpfa_set_d(N_phi, 1.0 / 15.0); // Class 1 excitability
-    mpfa_set_d(N_phi, 1.0 / 25.0); // Class 2 excitability
+    mpfa_set_d(N_phi, 1.0 / 15.0); // Class 1 excitability
+    //mpfa_set_d(N_phi, 1.0 / 25.0); // Class 2 excitability
 
-    mpfa_set_d(dt, 0.5);
+    mpfa_set_d(dt, 1.0);
 
     // Initialise constants
     mpfa_set_d(one, 1.0);
@@ -204,19 +204,19 @@ int main (int argc, char *argv[])
 #ifdef M_DYNAMICS // If we need M dynamics
         mpfa_mul(dM, dM, dt);
         mpfa_add(M, M, dM);
-        //printf("M centre: "); mpfr_out_str (stdout, 10, 100, &(M->centre), MPFR_RNDN); putchar('\n');
-        //printf("M radius: "); mpfr_out_str (stdout, 10, 100, &(M->radius), MPFR_RNDN); putchar('\n');
+        //printf("Mc: "); mpfr_out_str (stdout, 10, 100, &(M->centre), MPFR_RNDN); putchar('\n');
+        //printf("Mr: "); mpfr_out_str (stdout, 10, 100, &(M->radius), MPFR_RNDN); putchar('\n');
 #endif
 
         mpfa_mul(dN, dN, dt);
         mpfa_add(N, N, dN);
-        //printf("N centre: "); mpfr_out_str (stdout, 10, 100, &(N->centre), MPFR_RNDN); putchar('\n');
-        //printf("N radius: "); mpfr_out_str (stdout, 10, 100, &(N->radius), MPFR_RNDN); putchar('\n');
+        //printf("Nc: "); mpfr_out_str (stdout, 10, 100, &(N->centre), MPFR_RNDN); putchar('\n');
+        //printf("Nr: "); mpfr_out_str (stdout, 10, 100, &(N->radius), MPFR_RNDN); putchar('\n');
 
         mpfa_mul(dV, dV, dt);
         mpfa_add(V, V, dV);
-        printf("V centre: "); mpfr_out_str (stdout, 10, 100, &(V->centre), MPFR_RNDN); putchar('\n');
-        //printf("V radius: "); mpfr_out_str (stdout, 10, 100, &(V->radius), MPFR_RNDN); putchar('\n');
+        printf("Vc: "); mpfr_out_str (stdout, 10, 100, &(V->centre), MPFR_RNDN); putchar('\n');
+        //printf("Vr: "); mpfr_out_str (stdout, 10, 100, &(V->radius), MPFR_RNDN); putchar('\n');
     }
 
     mpfa_clears(V, M, N, I, C,
