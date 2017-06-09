@@ -37,21 +37,23 @@ void f_V (mpfa_ptr out, mpfa_srcptr V, mpfa_srcptr M, mpfa_srcptr N,
 
     // Compute leak current
     mpfa_sub(temp, V, VL);
-    mpfa_mul(temp, gL, temp);
+    mpfa_mul(temp, temp, gL);
     mpfa_sub(out, I, temp);
 
     // Compute Ca++ current
     mpfa_sub(temp, V, VCa);
-    mpfa_mul(temp, gCa, temp);
+    mpfa_mul(temp, temp, gCa);
+    mpfa_mul(temp, temp, M);
     mpfa_sub(out, out, temp);
 
     // Compute K+ current
     mpfa_sub(temp, V, VK);
-    mpfa_mul(temp, gK, temp);
+    mpfa_mul(temp, temp, gK);
+    mpfa_mul(temp, temp, N);
     mpfa_sub(out, out, temp);
 
     // Compute delta of membrane potential
-    // dV / dt = (I - gL (V - VL) - gCa (V - VCa) - gK (V - VK)) / C
+    // dV / dt = (I - gL (V - VL) - gCa M (V - VCa) - gK N (V - VK)) / C
     mpfa_div(out, out, C);
 
     mpfa_clear(temp);
@@ -154,7 +156,7 @@ int main (int argc, char *argv[])
     mpfa_set_d(V, -60.0);
     mpfa_set_d(M, 0.5);
     mpfa_set_d(N, 0.5);
-    mpfa_set_d(I, 120.0);
+    mpfa_set_d(I, 80.0);
     mpfa_set_d(C, 20.0);
 
     mpfa_set_d(gL, 2.0);
@@ -204,26 +206,17 @@ int main (int argc, char *argv[])
         mpfa_add(M, M, dM);
         //printf("M centre: "); mpfr_out_str (stdout, 10, 100, &(M->centre), MPFR_RNDN); putchar('\n');
         //printf("M radius: "); mpfr_out_str (stdout, 10, 100, &(M->radius), MPFR_RNDN); putchar('\n');
-        //printf("dM centre: "); mpfr_out_str (stdout, 10, 100, &(dM->centre), MPFR_RNDN); putchar('\n');
 #endif
 
         mpfa_mul(dN, dN, dt);
         mpfa_add(N, N, dN);
-        printf("N centre: ");
-        mpfr_out_str (stdout, 10, 100, &(N->centre), MPFR_RNDN);
-        putchar('\n');
+        //printf("N centre: "); mpfr_out_str (stdout, 10, 100, &(N->centre), MPFR_RNDN); putchar('\n');
         //printf("N radius: "); mpfr_out_str (stdout, 10, 100, &(N->radius), MPFR_RNDN); putchar('\n');
-        printf("dN centre: ");
-        mpfr_out_str (stdout, 10, 100, &(dN->centre), MPFR_RNDN);
-        putchar('\n');
 
         mpfa_mul(dV, dV, dt);
         mpfa_add(V, V, dV);
-        printf("V centre: ");
-        mpfr_out_str (stdout, 10, 100, &(V->centre), MPFR_RNDN);
-        putchar('\n');
+        printf("V centre: "); mpfr_out_str (stdout, 10, 100, &(V->centre), MPFR_RNDN); putchar('\n');
         //printf("V radius: "); mpfr_out_str (stdout, 10, 100, &(V->radius), MPFR_RNDN); putchar('\n');
-        //printf("dV centre: "); mpfr_out_str (stdout, 10, 100, &(dV->centre), MPFR_RNDN); putchar('\n');
     }
 
     mpfa_clears(V, M, N, I, C,
