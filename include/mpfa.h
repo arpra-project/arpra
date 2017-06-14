@@ -33,7 +33,6 @@
 typedef struct {
     __mpfr_struct centre;
     __mpfr_struct radius;
-    __mpfr_struct u;
     __mpfr_struct *deviations;
     unsigned *symbols;
     unsigned nTerms;

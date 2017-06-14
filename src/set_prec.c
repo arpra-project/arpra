@@ -20,7 +20,6 @@
  */
 
 #include "mpfa.h"
-#include <assert.h>
 
 void mpfa_set_prec (mpfa_ptr x, mpfr_prec_t prec) {
     unsigned xTerm;
@@ -31,8 +30,4 @@ void mpfa_set_prec (mpfa_ptr x, mpfr_prec_t prec) {
 
     mpfr_set_prec(&(x->centre), prec);
     mpfr_set_prec(&(x->radius), prec);
-    mpfr_set_prec(&(x->u), prec);
-
-    assert(mpfr_set_si(&(x->u), -prec, MPFR_RNDN) == 0);
-    assert(mpfr_exp2(&(x->u), &(x->u), MPFR_RNDN) == 0);
 }
