@@ -37,7 +37,7 @@ void mpfa_inv (mpfa_ptr z, mpfa_srcptr x) {
 
     if (mpfr_zero_p(&(x->radius))) {
         if (mpfr_si_div(temp, 1, &(x->centre), MPFR_RNDN)) {
-            mpfr_mul(delta, temp, &(z->u), MPFR_RNDU);
+            mpfa_error(delta, temp);
         }
         else {
             mpfr_set_si(delta, 0, MPFR_RNDN);

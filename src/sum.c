@@ -57,7 +57,7 @@ void mpfa_sum (mpfa_ptr z, const mpfa_ptr *x, unsigned long n) {
     }
 
     if (mpfr_sum(&(zNew->centre), summands, n, MPFR_RNDN)) {
-        mpfr_mul(temp, &(zNew->centre), &(zNew->u), MPFR_RNDU);
+        mpfa_error(temp, &(zNew->centre));
         mpfr_add(error, error, temp, MPFR_RNDU);
     }
 
@@ -89,7 +89,7 @@ void mpfa_sum (mpfa_ptr z, const mpfa_ptr *x, unsigned long n) {
                 summands[j++] = &(x[i]->deviations[xTerm[i]]);
 
                 if (mpfr_sum(&(zNew->deviations[zTerm]), summands, j, MPFR_RNDN)) {
-                    mpfr_mul(temp, &(zNew->deviations[zTerm]), &(zNew->u), MPFR_RNDU);
+                    mpfa_error(temp, &(zNew->deviations[zTerm]));
                     mpfr_add(error, error, temp, MPFR_RNDU);
                 }
 

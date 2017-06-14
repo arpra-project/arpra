@@ -35,7 +35,7 @@ int main (int argc, char *argv[]) {
 
 //	mpfr_t temp, error;
 //	mpfr_inits(temp, error, (mpfr_ptr) NULL);
-//	assert(!mpfr_mul_si(temp, &(a->u), (-1ul), MPFR_RNDU));
+//	assert(!mpfr_mul_si(temp, u, (-1ul), MPFR_RNDU));
 //	assert(!mpfr_si_sub(error, 1, temp, MPFR_RNDD));
 //	assert(!mpfr_div(error, temp, error, MPFR_RNDU));
 //	mpfr_clears(temp, error, (mpfr_ptr) NULL);

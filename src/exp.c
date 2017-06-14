@@ -35,7 +35,7 @@ void mpfa_exp (mpfa_ptr z, mpfa_srcptr x) {
 
     if (mpfr_zero_p(&(x->radius))) {
         if (mpfr_exp(temp, &(x->centre), MPFR_RNDN)) {
-            mpfr_mul(delta, temp, &(z->u), MPFR_RNDU);
+            mpfa_error(delta, temp);
         }
         else {
             mpfr_set_si(delta, 0, MPFR_RNDN);

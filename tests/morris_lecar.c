@@ -188,7 +188,7 @@ int main (int argc, char *argv[])
 
     for (i = 0; i < sim_time; i++) {
         /* // (nu) / (1 - nu)
-           mpfr_mul_si(temp, &(zNew->u), (n - 1), MPFR_RNDU);
+           mpfr_mul_si(temp, u, (n - 1), MPFR_RNDU);
            mpfr_si_sub(error, 1, temp, MPFR_RNDD);
            mpfr_div(error, temp, error, MPFR_RNDU);
         */

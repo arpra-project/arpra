@@ -26,7 +26,7 @@ void mpfa_set_mpfr_rad (mpfa_ptr z, mpfr_srcptr centre, mpfr_srcptr radius) {
     unsigned zTerm;
 
     if (mpfr_set(&(z->centre), centre, MPFR_RNDN)) {
-        mpfr_mul(&(z->radius), &(z->centre), &(z->u), MPFR_RNDU);
+        mpfa_error(&(z->radius), &(z->centre));
         mpfr_add(&(z->radius), &(z->radius), radius, MPFR_RNDU);
     }
     else {

@@ -26,7 +26,7 @@ void mpfa_set_mpfr (mpfa_ptr z, mpfr_srcptr centre) {
     unsigned zTerm;
 
     if (mpfr_set(&(z->centre), centre, MPFR_RNDN)) {
-        mpfr_mul(&(z->radius), &(z->centre), &(z->u), MPFR_RNDU);
+        mpfa_error(&(z->radius), &(z->centre));
         if (z->nTerms == 0) {
             z->symbols = malloc(sizeof(unsigned));
             z->deviations = malloc(sizeof(mpfa_t));

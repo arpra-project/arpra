@@ -35,7 +35,7 @@ void mpfa_set (mpfa_ptr z, mpfa_srcptr x) {
     mpfr_set_si(&(z->radius), 0, MPFR_RNDN);
 
     if (mpfr_set(&(z->centre), &(x->centre), MPFR_RNDN)) {
-        mpfr_mul(temp, &(z->centre), &(z->u), MPFR_RNDU);
+        mpfa_error(temp, &(z->centre));
         mpfr_add(error, error, temp, MPFR_RNDU);
     }
 
@@ -64,7 +64,7 @@ void mpfa_set (mpfa_ptr z, mpfa_srcptr x) {
         z->symbols[zTerm] = x->symbols[zTerm];
 
         if (mpfr_set(&(z->deviations[zTerm]), &(x->deviations[xTerm]), MPFR_RNDN)) {
-            mpfr_mul(temp, &(z->deviations[zTerm]), &(z->u), MPFR_RNDU);
+            mpfa_error(temp, &(z->deviations[zTerm]));
             mpfr_add(error, error, temp, MPFR_RNDU);
         }
 
