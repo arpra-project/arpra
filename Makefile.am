@@ -30,6 +30,7 @@ lib_libmpfa_la_SOURCES = src/add.c \
                          src/clear.c \
                          src/clears.c \
                          src/div.c \
+                         src/error.c \
                          src/exp.c \
                          src/get_default_prec.c \
                          src/get_prec.c \
