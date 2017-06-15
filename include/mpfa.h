@@ -30,12 +30,15 @@
 #include <gmp.h>
 #include <mpfr.h>
 
+typedef int mpfa_int_t;
+typedef unsigned int mpfa_uint_t;
+
 typedef struct {
     __mpfr_struct centre;
     __mpfr_struct radius;
     __mpfr_struct *deviations;
-    unsigned *symbols;
-    unsigned nTerms;
+    mpfa_uint_t *symbols;
+    mpfa_uint_t nTerms;
 } __mpfa_struct;
 
 typedef __mpfa_struct mpfa_t[1];
@@ -60,7 +63,7 @@ void mpfa_set_d (mpfa_ptr z, const double centre);
 void mpfa_set_d_rad (mpfa_ptr z, const double centre, const double radius);
 void mpfa_set_mpfr (mpfa_ptr z, mpfr_srcptr centre);
 void mpfa_set_mpfr_rad (mpfa_ptr z, mpfr_srcptr centre, mpfr_srcptr radius);
-//void mpfa_set_str (mpfa_ptr z, const char *x, int base);
+//void mpfa_set_str (mpfa_ptr z, const char *x, mpfa_int_t base);
 
 // Affine operations
 void mpfa_affine_1 (mpfa_ptr z, mpfa_srcptr x, mpfr_srcptr alpha, mpfr_srcptr gamma, mpfr_srcptr delta);
@@ -68,7 +71,7 @@ void mpfa_affine_2 (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y, mpfr_srcptr alpha,
 void mpfa_add (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y);
 void mpfa_sub (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y);
 void mpfa_neg (mpfa_ptr z, mpfa_srcptr x);
-void mpfa_sum (mpfa_ptr z, const mpfa_ptr *x, unsigned long n);
+void mpfa_sum (mpfa_ptr z, const mpfa_ptr *x, mpfa_uint_t n);
 
 // Non-affine operations
 void mpfa_mul(mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y);
@@ -86,8 +89,8 @@ void mpfa_set_default_prec (mpfr_prec_t prec);
 
 // Helper functions
 void mpfa_error (mpfr_ptr error, mpfr_srcptr x);
-int mpfa_term (mpfr_ptr z, mpfr_srcptr x, mpfr_srcptr y, mpfr_srcptr alpha, mpfr_srcptr beta, mpfr_srcptr gamma);
-unsigned long mpfa_next_sym();
+mpfa_int_t mpfa_term (mpfr_ptr z, mpfr_srcptr x, mpfr_srcptr y, mpfr_srcptr alpha, mpfr_srcptr beta, mpfr_srcptr gamma);
+mpfa_uint_t mpfa_next_sym();
 
 #ifdef __cplusplus
 }

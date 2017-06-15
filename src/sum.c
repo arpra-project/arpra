@@ -22,11 +22,11 @@
 #include "mpfa.h"
 #include <stdlib.h>
 
-void mpfa_sum (mpfa_ptr z, const mpfa_ptr *x, unsigned long n) {
-    unsigned long i, j;
-    unsigned xSymbol, zTerm;
-    unsigned *xTerm;
-    int xHasNext;
+void mpfa_sum (mpfa_ptr z, const mpfa_ptr *x, mpfa_uint_t n) {
+    mpfa_uint_t i, j;
+    mpfa_uint_t xSymbol, zTerm;
+    mpfa_uint_t *xTerm;
+    mpfa_int_t xHasNext;
     mpfr_ptr *summands;
     mpfr_t temp, error;
     mpfr_prec_t prec;
@@ -47,7 +47,7 @@ void mpfa_sum (mpfa_ptr z, const mpfa_ptr *x, unsigned long n) {
     mpfa_init2(zNew, prec);
     mpfr_set_si(error, 0, MPFR_RNDN);
     mpfr_set_si(&(zNew->radius), 0, MPFR_RNDN);
-    xTerm = malloc(n * sizeof(unsigned));
+    xTerm = malloc(n * sizeof(mpfa_uint_t));
     summands = malloc(n * sizeof(mpfr_ptr));
 
     zTerm = 0;
@@ -65,7 +65,7 @@ void mpfa_sum (mpfa_ptr z, const mpfa_ptr *x, unsigned long n) {
     for (i = 0; i < n; i++) {
         zNew->nTerms += x[i]->nTerms;
     }
-    zNew->symbols = malloc(zNew->nTerms * sizeof(unsigned));
+    zNew->symbols = malloc(zNew->nTerms * sizeof(mpfa_uint_t));
     zNew->deviations = malloc(zNew->nTerms * sizeof(mpfr_t));
 
     xHasNext = zNew->nTerms > 1;

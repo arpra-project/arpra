@@ -23,8 +23,8 @@
 #include <stdlib.h>
 
 void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
-    unsigned xTerm, yTerm, zTerm;
-    int xHasNext, yHasNext;
+    mpfa_uint_t xTerm, yTerm, zTerm;
+    mpfa_int_t xHasNext, yHasNext;
     mpfr_t temp, error;
     mpfr_prec_t prec;
     mpfa_t zNew;
@@ -41,7 +41,7 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
     }
 
     zNew->nTerms = x->nTerms + y->nTerms + 1;
-    zNew->symbols = malloc(zNew->nTerms * sizeof(unsigned));
+    zNew->symbols = malloc(zNew->nTerms * sizeof(mpfa_uint_t));
     zNew->deviations = malloc(zNew->nTerms * sizeof(mpfr_t));
 
     xTerm = 0;
@@ -96,7 +96,7 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
     }
 
 #ifdef MPFA_TIGHT_MUL
-    unsigned xNext, yNext;
+    mpfa_uint_t xNext, yNext;
     mpfr_t xiyiPos, xiyiNeg;
 
     mpfr_inits2(prec, xiyiPos, xiyiNeg, (mpfr_ptr) NULL);

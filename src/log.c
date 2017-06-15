@@ -50,7 +50,7 @@ void mpfa_log (mpfa_ptr z, mpfa_srcptr x) {
 
         if (mpfr_sgn(xa) < 0) {
             if (z->nTerms > 0) {
-                unsigned zTerm;
+                mpfa_uint_t zTerm;
                 for (zTerm = 0; zTerm < z->nTerms; zTerm++) {
                     mpfr_clear(&(z->deviations[zTerm]));
                 }

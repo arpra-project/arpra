@@ -23,7 +23,7 @@
 #include <stdlib.h>
 
 void mpfa_affine_1 (mpfa_ptr z, mpfa_srcptr x, mpfr_srcptr alpha, mpfr_srcptr gamma, mpfr_srcptr delta) {
-    unsigned xTerm, zTerm;
+    mpfa_uint_t xTerm, zTerm;
     mpfr_t temp, error;
     mpfr_prec_t prec;
     mpfa_t zNew;
@@ -40,7 +40,7 @@ void mpfa_affine_1 (mpfa_ptr z, mpfa_srcptr x, mpfr_srcptr alpha, mpfr_srcptr ga
     }
 
     zNew->nTerms = x->nTerms + 1;
-    zNew->symbols = malloc(zNew->nTerms * sizeof(unsigned));
+    zNew->symbols = malloc(zNew->nTerms * sizeof(mpfa_uint_t));
     zNew->deviations = malloc(zNew->nTerms * sizeof(mpfr_t));
 
     for (xTerm = 0, zTerm = 0; xTerm < x->nTerms; xTerm++) {

@@ -27,7 +27,7 @@
  */
 
 void mpfa_inv (mpfa_ptr z, mpfa_srcptr x) {
-    int sign;
+    mpfa_int_t sign;
     mpfr_t temp, xa, xb, da, db, du, alpha, gamma, delta;
     mpfr_prec_t prec;
 
@@ -52,7 +52,7 @@ void mpfa_inv (mpfa_ptr z, mpfa_srcptr x) {
         sign = mpfr_sgn(xa);
         if ((sign != mpfr_sgn(xb) || (sign == 0))) {
             if (z->nTerms > 0) {
-                unsigned zTerm;
+                mpfa_uint_t zTerm;
                 for (zTerm = 0; zTerm < z->nTerms; zTerm++) {
                     mpfr_clear(&(z->deviations[zTerm]));
                 }

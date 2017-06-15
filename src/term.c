@@ -22,8 +22,8 @@
 #include "mpfa.h"
 #include <assert.h>
 
-int mpfa_term (mpfr_ptr z, mpfr_srcptr x, mpfr_srcptr y, mpfr_srcptr alpha, mpfr_srcptr beta, mpfr_srcptr gamma) {
-    int inexact;
+mpfa_int_t mpfa_term (mpfr_ptr z, mpfr_srcptr x, mpfr_srcptr y, mpfr_srcptr alpha, mpfr_srcptr beta, mpfr_srcptr gamma) {
+    mpfa_int_t inexact;
     mpfr_t alpha_x, beta_y;
 
     mpfr_init2(alpha_x, (mpfr_get_prec(alpha) + mpfr_get_prec(x)));

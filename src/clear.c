@@ -23,7 +23,7 @@
 #include <stdlib.h>
 
 void mpfa_clear (mpfa_ptr x) {
-    unsigned xTerm;
+    mpfa_uint_t xTerm;
 
     if (x->nTerms > 0) {
         for (xTerm = 0; xTerm < x->nTerms; xTerm++) {

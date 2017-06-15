@@ -23,7 +23,7 @@
 #include <stdlib.h>
 
 void mpfa_set_d_rad (mpfa_ptr z, const double centre, const double radius) {
-    unsigned zTerm;
+    mpfa_uint_t zTerm;
 
     if (mpfr_set_d(&(z->centre), centre, MPFR_RNDN)) {
         mpfa_error(&(z->radius), &(z->centre));
@@ -45,7 +45,7 @@ void mpfa_set_d_rad (mpfa_ptr z, const double centre, const double radius) {
     }
     else {
         if (z->nTerms == 0) {
-            z->symbols = malloc(sizeof(unsigned));
+            z->symbols = malloc(sizeof(mpfa_uint_t));
             z->deviations = malloc(sizeof(mpfa_t));
             mpfr_init2(&(z->deviations[0]), mpfr_get_prec(&(z->centre)));
         }
@@ -53,7 +53,7 @@ void mpfa_set_d_rad (mpfa_ptr z, const double centre, const double radius) {
             for (zTerm = 1; zTerm < z->nTerms; zTerm++) {
                 mpfr_clear(&(z->deviations[zTerm]));
             }
-            z->symbols = realloc(z->symbols, sizeof(unsigned));
+            z->symbols = realloc(z->symbols, sizeof(mpfa_uint_t));
             z->deviations = realloc(z->deviations, sizeof(mpfa_t));
         }
         z->nTerms = 1;

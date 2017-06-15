@@ -23,7 +23,7 @@
 #include <stdlib.h>
 
 void mpfa_set (mpfa_ptr z, mpfa_srcptr x) {
-    unsigned xTerm, zTerm;
+    mpfa_uint_t xTerm, zTerm;
     mpfr_prec_t prec;
     mpfr_t temp, error;
 
@@ -42,11 +42,11 @@ void mpfa_set (mpfa_ptr z, mpfa_srcptr x) {
     if (z->nTerms < x->nTerms) {
         // need to grow z and initialise new terms
         if (z->nTerms == 0) {
-            z->symbols = malloc((x->nTerms + 1) * sizeof(unsigned));
+            z->symbols = malloc((x->nTerms + 1) * sizeof(mpfa_uint_t));
             z->deviations = malloc((x->nTerms + 1) * sizeof(mpfa_t));
         }
         else {
-            z->symbols = realloc(z->symbols, (x->nTerms + 1) * sizeof(unsigned));
+            z->symbols = realloc(z->symbols, (x->nTerms + 1) * sizeof(mpfa_uint_t));
             z->deviations = realloc(z->deviations, (x->nTerms + 1) * sizeof(mpfa_t));
         }
         for (zTerm = z->nTerms; zTerm < x->nTerms; zTerm++) {
@@ -92,7 +92,7 @@ void mpfa_set (mpfa_ptr z, mpfa_srcptr x) {
             free(z->deviations);
         }
         else {
-            z->symbols = realloc(z->symbols, zTerm * sizeof(unsigned));
+            z->symbols = realloc(z->symbols, zTerm * sizeof(mpfa_uint_t));
             z->deviations = realloc(z->deviations, zTerm * sizeof(mpfr_t));
         }
     }
