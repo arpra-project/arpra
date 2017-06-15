@@ -29,6 +29,7 @@ lib_libmpfa_la_SOURCES = src/add.c \
                          src/affine_2.c \
                          src/clear.c \
                          src/clears.c \
+                         src/condense_last_n.c \
                          src/div.c \
                          src/error.c \
                          src/exp.c \

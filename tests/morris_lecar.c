@@ -114,7 +114,8 @@ void M_ss (mpfa_ptr out, mpfa_srcptr V, mpfa_srcptr V1, mpfa_srcptr V2)
 int main (int argc, char *argv[])
 {
     unsigned i;
-    const unsigned sim_time = 100;
+    const unsigned sim_time = 1000;
+    mpfa_uint_t nTerms;
 
     mpfa_t V;    // Membrane potential (mV)
     mpfa_t M;    // Fraction of open Ca++ channels
@@ -193,30 +194,39 @@ int main (int argc, char *argv[])
            mpfr_div(error, temp, error, MPFR_RNDU);
         */
 
+        nTerms = M->nTerms;
 #ifdef M_DYNAMICS // If we need M dynamics
         f_A(dM, M, V, V1, V2, M_phi);
 #else // Else M steady-state is instantaneous
         M_ss(M, V, V1, V2);
+        mpfa_condense_last_n(M, (M->nTerms - nTerms));
 #endif
+
+        nTerms = N->nTerms;
         f_A(dN, N, V, V3, V4, N_phi);
+
+        nTerms = V->nTerms;
         f_V(dV, V, M, N, gL, gCa, gK, VL, VCa, VK, I, C);
 
 #ifdef M_DYNAMICS // If we need M dynamics
         mpfa_mul(dM, dM, dt);
         mpfa_add(M, M, dM);
-        //printf("Mc: "); mpfr_out_str (stdout, 10, 100, &(M->centre), MPFR_RNDN); putchar('\n');
-        //printf("Mr: "); mpfr_out_str (stdout, 10, 100, &(M->radius), MPFR_RNDN); putchar('\n');
+        mpfa_condense_last_n(M, (M->nTerms - nTerms));
+        //printf("Mc: "); mpfr_out_str (stdout, 10, 80, &(M->centre), MPFR_RNDN); putchar('\n');
+        //printf("Mr: "); mpfr_out_str (stdout, 10, 80, &(M->radius), MPFR_RNDN); putchar('\n');
 #endif
 
         mpfa_mul(dN, dN, dt);
         mpfa_add(N, N, dN);
-        //printf("Nc: "); mpfr_out_str (stdout, 10, 100, &(N->centre), MPFR_RNDN); putchar('\n');
-        //printf("Nr: "); mpfr_out_str (stdout, 10, 100, &(N->radius), MPFR_RNDN); putchar('\n');
+        mpfa_condense_last_n(N, (N->nTerms - nTerms));
+        //printf("Nc: "); mpfr_out_str (stdout, 10, 80, &(N->centre), MPFR_RNDN); putchar('\n');
+        //printf("Nr: "); mpfr_out_str (stdout, 10, 80, &(N->radius), MPFR_RNDN); putchar('\n');
 
         mpfa_mul(dV, dV, dt);
         mpfa_add(V, V, dV);
-        printf("Vc: "); mpfr_out_str (stdout, 10, 100, &(V->centre), MPFR_RNDN); putchar('\n');
-        //printf("Vr: "); mpfr_out_str (stdout, 10, 100, &(V->radius), MPFR_RNDN); putchar('\n');
+        mpfa_condense_last_n(V, (V->nTerms - nTerms));
+        printf("Vc: "); mpfr_out_str (stdout, 10, 80, &(V->centre), MPFR_RNDN); putchar('\n');
+        //printf("Vr: "); mpfr_out_str (stdout, 10, 80, &(V->radius), MPFR_RNDN); putchar('\n');
     }
 
     mpfa_clears(V, M, N, I, C,
@@ -228,5 +238,6 @@ int main (int argc, char *argv[])
                 one, two, neg_two,
                 NULL);
 
+    mpfr_free_cache();
     return 0;
 }

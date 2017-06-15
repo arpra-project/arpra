@@ -88,9 +88,10 @@ void mpfa_set_prec (mpfa_ptr x, mpfr_prec_t prec);
 void mpfa_set_default_prec (mpfr_prec_t prec);
 
 // Helper functions
-void mpfa_error (mpfr_ptr error, mpfr_srcptr x);
-mpfa_int_t mpfa_term (mpfr_ptr z, mpfr_srcptr x, mpfr_srcptr y, mpfr_srcptr alpha, mpfr_srcptr beta, mpfr_srcptr gamma);
 mpfa_uint_t mpfa_next_sym();
+mpfa_int_t mpfa_term (mpfr_ptr z, mpfr_srcptr x, mpfr_srcptr y, mpfr_srcptr alpha, mpfr_srcptr beta, mpfr_srcptr gamma);
+void mpfa_error (mpfr_ptr error, mpfr_srcptr x);
+void mpfa_condense_last_n (mpfa_ptr z, mpfa_uint_t n);
 
 #ifdef __cplusplus
 }
