@@ -113,9 +113,13 @@ void M_ss (mpfa_ptr out, mpfa_srcptr V, mpfa_srcptr V1, mpfa_srcptr V2)
 
 int main (int argc, char *argv[])
 {
-    unsigned i;
+    unsigned i, j;
     const unsigned sim_time = 1000;
     mpfa_uint_t nTerms;
+
+    FILE *out_V_centre, *out_V_nterms, *out_V_symbols, *out_V_deviations;
+    FILE *out_M_centre, *out_M_nterms, *out_M_symbols, *out_M_deviations;
+    FILE *out_N_centre, *out_N_nterms, *out_N_symbols, *out_N_deviations;
 
     mpfa_t V;    // Membrane potential (mV)
     mpfa_t M;    // Fraction of open Ca++ channels
@@ -143,6 +147,21 @@ int main (int argc, char *argv[])
 
     mpfa_t M_phi; // (s^-1)
     mpfa_t N_phi; // (s^-1)
+
+    out_V_centre = fopen("out_V_centre", "w");
+    out_V_nterms = fopen("out_V_nterms", "w");
+    out_V_symbols = fopen("out_V_symbols", "w");
+    out_V_deviations = fopen("out_V_deviations", "w");
+
+    out_M_centre = fopen("out_M_centre", "w");
+    out_M_nterms = fopen("out_M_nterms", "w");
+    out_M_symbols = fopen("out_M_symbols", "w");
+    out_M_deviations = fopen("out_M_deviations", "w");
+
+    out_N_centre = fopen("out_N_centre", "w");
+    out_N_nterms = fopen("out_N_nterms", "w");
+    out_N_symbols = fopen("out_N_symbols", "w");
+    out_N_deviations = fopen("out_N_deviations", "w");
 
     mpfa_inits(V, M, N, I, C,
                dt, dV, dM, dN,
@@ -212,21 +231,50 @@ int main (int argc, char *argv[])
         mpfa_mul(dM, dM, dt);
         mpfa_add(M, M, dM);
         mpfa_condense_last_n(M, (M->nTerms - nTerms));
-        //printf("Mc: "); mpfr_out_str (stdout, 10, 80, &(M->centre), MPFR_RNDN); putchar('\n');
-        //printf("Mr: "); mpfr_out_str (stdout, 10, 80, &(M->radius), MPFR_RNDN); putchar('\n');
 #endif
 
         mpfa_mul(dN, dN, dt);
         mpfa_add(N, N, dN);
         mpfa_condense_last_n(N, (N->nTerms - nTerms));
-        //printf("Nc: "); mpfr_out_str (stdout, 10, 80, &(N->centre), MPFR_RNDN); putchar('\n');
-        //printf("Nr: "); mpfr_out_str (stdout, 10, 80, &(N->radius), MPFR_RNDN); putchar('\n');
 
         mpfa_mul(dV, dV, dt);
         mpfa_add(V, V, dV);
         mpfa_condense_last_n(V, (V->nTerms - nTerms));
-        printf("Vc: "); mpfr_out_str (stdout, 10, 80, &(V->centre), MPFR_RNDN); putchar('\n');
-        //printf("Vr: "); mpfr_out_str (stdout, 10, 80, &(V->radius), MPFR_RNDN); putchar('\n');
+
+#ifdef M_DYNAMICS // If we need M dynamics
+        mpfr_out_str(out_M_centre, 10, 80, &(M->centre), MPFR_RNDN);
+        fputc('\n', out_M_centre);
+        fprintf(out_M_nterms, "%u\n", M->nTerms);
+        for (j = 0; j < M->nTerms; j++) {
+            fprintf(out_M_symbols, "%u ", M->symbols[j]);
+            mpfr_out_str(out_M_deviations, 10, 80, &(M->deviations[j]), MPFR_RNDN);
+            fputc(' ', out_M_deviations);
+        }
+        fputc('\n', out_M_symbols);
+        fputc('\n', out_M_deviations);
+#endif
+
+        mpfr_out_str(out_N_centre, 10, 80, &(N->centre), MPFR_RNDN);
+        fputc('\n', out_N_centre);
+        fprintf(out_N_nterms, "%u\n", N->nTerms);
+        for (j = 0; j < N->nTerms; j++) {
+            fprintf(out_N_symbols, "%u ", N->symbols[j]);
+            mpfr_out_str(out_N_deviations, 10, 80, &(N->deviations[j]), MPFR_RNDN);
+            fputc(' ', out_N_deviations);
+        }
+        fputc('\n', out_N_symbols);
+        fputc('\n', out_N_deviations);
+
+        mpfr_out_str(out_V_centre, 10, 80, &(V->centre), MPFR_RNDN);
+        fputc('\n', out_V_centre);
+        fprintf(out_V_nterms, "%u\n", V->nTerms);
+        for (j = 0; j < V->nTerms; j++) {
+            fprintf(out_V_symbols, "%u ", V->symbols[j]);
+            mpfr_out_str(out_V_deviations, 10, 80, &(V->deviations[j]), MPFR_RNDN);
+            fputc(' ', out_V_deviations);
+        }
+        fputc('\n', out_V_symbols);
+        fputc('\n', out_V_deviations);
     }
 
     mpfa_clears(V, M, N, I, C,
@@ -237,6 +285,21 @@ int main (int argc, char *argv[])
                 M_phi, N_phi,
                 one, two, neg_two,
                 NULL);
+
+    fclose(out_V_centre);
+    fclose(out_V_nterms);
+    fclose(out_V_symbols);
+    fclose(out_V_deviations);
+
+    fclose(out_M_centre);
+    fclose(out_M_nterms);
+    fclose(out_M_symbols);
+    fclose(out_M_deviations);
+
+    fclose(out_N_centre);
+    fclose(out_N_nterms);
+    fclose(out_N_symbols);
+    fclose(out_N_deviations);
 
     mpfr_free_cache();
     return 0;
