@@ -111,9 +111,25 @@ void M_ss (mpfa_ptr out, mpfa_srcptr V, mpfa_srcptr V1, mpfa_srcptr V2)
 }
 
 
+void write_data (mpfa_srcptr a, FILE *out_c, FILE *out_n, FILE *out_s, FILE *out_d) {
+    mpfa_uint_t i;
+
+    mpfr_out_str(out_c, 10, 80, &(a->centre), MPFR_RNDN);
+    fputc('\n', out_c);
+    fprintf(out_n, "%u\n", a->nTerms);
+    for (i = 0; i < a->nTerms; i++) {
+        fprintf(out_s, "%u ", a->symbols[i]);
+        mpfr_out_str(out_d, 10, 80, &(a->deviations[i]), MPFR_RNDN);
+        fputc(' ', out_d);
+    }
+    fputc('\n', out_s);
+    fputc('\n', out_d);
+}
+
+
 int main (int argc, char *argv[])
 {
-    unsigned i, j;
+    unsigned i;
     const unsigned sim_time = 1000;
     mpfa_uint_t nTerms;
 
@@ -213,68 +229,33 @@ int main (int argc, char *argv[])
            mpfr_div(error, temp, error, MPFR_RNDU);
         */
 
-        nTerms = M->nTerms;
 #ifdef M_DYNAMICS // If we need M dynamics
+        nTerms = M->nTerms;
         f_A(dM, M, V, V1, V2, M_phi);
+        mpfa_mul(dM, dM, dt);
+        mpfa_add(M, M, dM);
+        mpfa_condense_last_n(M, (M->nTerms - nTerms));
+        write_data (M, out_M_centre, out_M_nterms, out_M_symbols, out_M_deviations);
+
 #else // Else M steady-state is instantaneous
+        nTerms = M->nTerms;
         M_ss(M, V, V1, V2);
         mpfa_condense_last_n(M, (M->nTerms - nTerms));
 #endif
 
         nTerms = N->nTerms;
         f_A(dN, N, V, V3, V4, N_phi);
-
-        nTerms = V->nTerms;
-        f_V(dV, V, M, N, gL, gCa, gK, VL, VCa, VK, I, C);
-
-#ifdef M_DYNAMICS // If we need M dynamics
-        mpfa_mul(dM, dM, dt);
-        mpfa_add(M, M, dM);
-        mpfa_condense_last_n(M, (M->nTerms - nTerms));
-#endif
-
         mpfa_mul(dN, dN, dt);
         mpfa_add(N, N, dN);
         mpfa_condense_last_n(N, (N->nTerms - nTerms));
+        write_data (N, out_N_centre, out_N_nterms, out_N_symbols, out_N_deviations);
 
+        nTerms = V->nTerms;
+        f_V(dV, V, M, N, gL, gCa, gK, VL, VCa, VK, I, C);
         mpfa_mul(dV, dV, dt);
         mpfa_add(V, V, dV);
         mpfa_condense_last_n(V, (V->nTerms - nTerms));
-
-#ifdef M_DYNAMICS // If we need M dynamics
-        mpfr_out_str(out_M_centre, 10, 80, &(M->centre), MPFR_RNDN);
-        fputc('\n', out_M_centre);
-        fprintf(out_M_nterms, "%u\n", M->nTerms);
-        for (j = 0; j < M->nTerms; j++) {
-            fprintf(out_M_symbols, "%u ", M->symbols[j]);
-            mpfr_out_str(out_M_deviations, 10, 80, &(M->deviations[j]), MPFR_RNDN);
-            fputc(' ', out_M_deviations);
-        }
-        fputc('\n', out_M_symbols);
-        fputc('\n', out_M_deviations);
-#endif
-
-        mpfr_out_str(out_N_centre, 10, 80, &(N->centre), MPFR_RNDN);
-        fputc('\n', out_N_centre);
-        fprintf(out_N_nterms, "%u\n", N->nTerms);
-        for (j = 0; j < N->nTerms; j++) {
-            fprintf(out_N_symbols, "%u ", N->symbols[j]);
-            mpfr_out_str(out_N_deviations, 10, 80, &(N->deviations[j]), MPFR_RNDN);
-            fputc(' ', out_N_deviations);
-        }
-        fputc('\n', out_N_symbols);
-        fputc('\n', out_N_deviations);
-
-        mpfr_out_str(out_V_centre, 10, 80, &(V->centre), MPFR_RNDN);
-        fputc('\n', out_V_centre);
-        fprintf(out_V_nterms, "%u\n", V->nTerms);
-        for (j = 0; j < V->nTerms; j++) {
-            fprintf(out_V_symbols, "%u ", V->symbols[j]);
-            mpfr_out_str(out_V_deviations, 10, 80, &(V->deviations[j]), MPFR_RNDN);
-            fputc(' ', out_V_deviations);
-        }
-        fputc('\n', out_V_symbols);
-        fputc('\n', out_V_deviations);
+        write_data (V, out_V_centre, out_V_nterms, out_V_symbols, out_V_deviations);
     }
 
     mpfa_clears(V, M, N, I, C,

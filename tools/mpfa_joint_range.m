@@ -1,4 +1,9 @@
 
+vc = dlmread('../out_V_centre');
+vn = dlmread('../out_V_nterms');
+vs = dlmread('../out_V_symbols');
+vd = dlmread('../out_V_deviations');
+
 x0 = 20;
 x = [5; 0; -5; 0];
 %x = [-4; 0; 2; 3];
