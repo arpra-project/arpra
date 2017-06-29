@@ -1,46 +1,73 @@
 
-vc = dlmread('../out_V_centre');
-vn = dlmread('../out_V_nterms');
-vs = dlmread('../out_V_symbols');
-vd = dlmread('../out_V_deviations');
+xc_data = fopen('../out_V_centre');
+xn_data = fopen('../out_V_nterms');
+xs_data = fopen('../out_V_symbols');
+xd_data = fopen('../out_V_deviations');
 
-x0 = 20;
-x = [5; 0; -5; 0];
-%x = [-4; 0; 2; 3];
-%x = [-4; 1; 2; 3];
+yc_data = fopen('../out_N_centre');
+yn_data = fopen('../out_N_nterms');
+ys_data = fopen('../out_N_symbols');
+yd_data = fopen('../out_N_deviations');
 
-y0 = 10;
-y = [5; 0; 5; 0];
-%y = [-2; 1; 0; -1];
-%y = [-2; 0; 0; 1];
+%figure;
+figure(2); clf;
+%hold on;
+%axis([-20, 20, 0, 1]);
 
+t = 20;
 
-%u0 = 0;
-%u = [6; 0; 4; 0];
+for i = 1:t
+    %sprintf('%.80f', xc)
 
-%v0 = 0;
-%v = [0; 3; 0; 7];
+    xc = sscanf(fgetl(xc_data), '%f');
+    xn = sscanf(fgetl(xn_data), '%u');
+    xs = sscanf(fgetl(xs_data), '%u');
+    xd = sscanf(fgetl(xd_data), '%f');
 
-%x0 = x0 + u0 + v0;
-%x = x + u + v;
+    yc = sscanf(fgetl(yc_data), '%f');
+    yn = sscanf(fgetl(yn_data), '%u');
+    ys = sscanf(fgetl(ys_data), '%u');
+    yd = sscanf(fgetl(yd_data), '%f');
 
-%y0 = y0 + u0 - v0;
-%y = y + u - v;
+    us = union(xs, ys);
+    if isrow(us)
+        us = us';
+    end;
+    
+    ix = find(ismember(us, xs));
+    xxd = zeros(size(us));
+    xxd(ix) = xd;
 
+    iy = find(ismember(us, ys));
+    yyd = zeros(size(us));
+    yyd(iy) = yd;
+    
+    % Get all permutations of noise symbol extremities
+    terms = size(us, 1);
+    xxd = repmat(xxd, 1, 2^terms);
+    yyd = repmat(yyd, 1, 2^terms);
+    e = zeros(terms, 2^terms);
+    for j = 1:2^terms
+        e(:, j) = bitget(j - 1, 1:terms);
+    end
+    e(e == 0) = -1;
 
-% Get all permutations of noise symbol extremities
-terms = size(x, 1);
-x = repmat(x, 1, 2^terms);
-y = repmat(y, 1, 2^terms);
-e = zeros(terms, 2^terms);
+    xxd = xc + sum(xxd .* e);
+    yyd = yc + sum(yyd .* e);
 
-for i = 1:2^terms
-    e(:, i) = bitget(i - 1, 1:terms);
+    k = convhull(xxd, yyd);
+    plot(xxd(k), yyd(k));
+    drawnow;
 end
-e(e == 0) = -1;
 
-xx = x0 + sum(x .* e);
-yy = y0 + sum(y .* e);
+hold off;
 
-k = convhull(xx' ,yy');
-plot(xx(k), yy(k));
+fclose(xc_data);
+fclose(xn_data);
+fclose(xs_data);
+fclose(xd_data);
+
+fclose(yc_data);
+fclose(yn_data);
+fclose(ys_data);
+fclose(yd_data);
