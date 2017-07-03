@@ -11,7 +11,7 @@ function mpfa_joint_range (x, y, t)
     ys_data = fopen([y, '_s.dat']);
     yd_data = fopen([y, '_d.dat']);
 
-    maxterms = 10;
+    maxterms = 21;
     e = zeros(maxterms, 2^maxterms);
     for j = 1:2^maxterms
         e(:, j) = bitget(j - 1, 1:maxterms);
@@ -39,11 +39,11 @@ function mpfa_joint_range (x, y, t)
             us = us';
         end
 
-        ix = find(ismember(us, xs));
+        ix = ismember(us, xs);
         xxd = zeros(size(us));
         xxd(ix) = xd;
 
-        iy = find(ismember(us, ys));
+        iy = ismember(us, ys);
         yyd = zeros(size(us));
         yyd(iy) = yd;
 
@@ -51,6 +51,7 @@ function mpfa_joint_range (x, y, t)
         terms = size(us, 1);
         xxd = repmat(xxd, 1, 2^terms);
         yyd = repmat(yyd, 1, 2^terms);
+
         xxd = sum(xxd .* e(1:terms, 1:2^terms));
         yyd = sum(yyd .* e(1:terms, 1:2^terms));
         %xxd = xc + sum(xxd .* e(1:terms, 1:2^terms));

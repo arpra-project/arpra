@@ -1,5 +1,5 @@
 /*
- * condense_last_n.c -- Condense the last n deviation terms into one.
+ * condense_last_n.c -- Condense the last n terms.
  *
  * Copyright 2017 James Paul Turner.
  *
@@ -23,23 +23,47 @@
 #include <stdlib.h>
 
 void mpfa_condense_last_n (mpfa_ptr z, mpfa_uint_t n) {
-    mpfa_uint_t zTerm, last;
+    mpfa_uint_t zTerm, nTerms;
+    mpfr_prec_t prec;
+    mpfr_t temp;
 
     if (n < 2) return;
+    if (n > z->nTerms) n = z->nTerms;
 
+    prec = mpfr_get_prec(&(z->centre));
+    mpfr_init2(temp, prec);
     mpfr_set_si(&(z->radius), 0, MPFR_RNDN);
-    last = z->nTerms - n;
+    nTerms = z->nTerms - n;
 
-    for (zTerm = (last + 1); zTerm < z->nTerms; zTerm++) {
-        mpfr_add(&(z->deviations[last]), &(z->deviations[last]), &(z->deviations[zTerm]), MPFR_RNDU);
+    for (zTerm = (nTerms + 1); zTerm < z->nTerms; zTerm++) {
+        mpfr_add(&(z->deviations[nTerms]), &(z->deviations[nTerms]), &(z->deviations[zTerm]), MPFR_RNDU);
         mpfr_clear(&(z->deviations[zTerm]));
     }
 
-    z->nTerms = last + 1;
-    z->symbols = realloc(z->symbols, z->nTerms * sizeof(mpfa_uint_t));
-    z->deviations = realloc(z->deviations, z->nTerms * sizeof(mpfa_t));
+    if (mpfr_zero_p(&(z->deviations[nTerms]))) {
+        mpfr_clear(&(z->deviations[nTerms]));
+    }
+    else {
+	z->symbols[nTerms] = mpfa_next_sym();
+        nTerms++;
+    }
+
+    if (z->nTerms > 0) {
+        if (nTerms == 0) {
+            free(z->symbols);
+            free(z->deviations);
+        }
+        else {
+            z->symbols = realloc(z->symbols, nTerms * sizeof(mpfa_uint_t));
+            z->deviations = realloc(z->deviations, nTerms * sizeof(mpfr_t));
+        }
+    }
+    z->nTerms = nTerms;
 
     for (zTerm = 0; zTerm < z->nTerms; zTerm++) {
-        mpfr_add(&(z->radius), &(z->radius), &(z->deviations[zTerm]), MPFR_RNDU);
+        mpfr_abs(temp, &(z->deviations[zTerm]), MPFR_RNDN);
+        mpfr_add(&(z->radius), &(z->radius), temp, MPFR_RNDU);
     }
+
+    mpfr_clear(temp);
 }
