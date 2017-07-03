@@ -23,47 +23,47 @@
 #include <stdlib.h>
 
 void mpfa_condense_last_n (mpfa_ptr z, mpfa_uint_t n) {
-    mpfa_uint_t zTerm, nTerms;
+    mpfa_uint_t zTerm, zNext;
     mpfr_prec_t prec;
     mpfr_t temp;
 
     if ((z->nTerms < 2) || (n < 2)) return;
 
     if (n > z->nTerms) {
-        nTerms = 0
+        zTerm = 0
     }
     else {
-        nTerms = z->nTerms - n;
+        zTerm = z->nTerms - n;
     }
 
     prec = mpfr_get_prec(&(z->centre));
     mpfr_init2(temp, prec);
     mpfr_set_si(&(z->radius), 0, MPFR_RNDN);
 
-    for (zTerm = (nTerms + 1); zTerm < z->nTerms; zTerm++) {
-        mpfr_add(&(z->deviations[nTerms]), &(z->deviations[nTerms]), &(z->deviations[zTerm]), MPFR_RNDU);
-        mpfr_clear(&(z->deviations[zTerm]));
+    for (zNext = (zTerm + 1); zNext < z->nTerms; zNext++) {
+        mpfr_add(&(z->deviations[zTerm]), &(z->deviations[zTerm]), &(z->deviations[zNext]), MPFR_RNDU);
+        mpfr_clear(&(z->deviations[zNext]));
     }
 
-    if (mpfr_zero_p(&(z->deviations[nTerms]))) {
-        mpfr_clear(&(z->deviations[nTerms]));
+    if (mpfr_zero_p(&(z->deviations[zTerm]))) {
+        mpfr_clear(&(z->deviations[zTerm]));
     }
     else {
-        z->symbols[nTerms] = mpfa_next_sym();
-        nTerms++;
+        z->symbols[zTerm] = mpfa_next_sym();
+        zTerm++;
     }
 
     if (z->nTerms > 0) {
-        if (nTerms == 0) {
+        if (zTerm == 0) {
             free(z->symbols);
             free(z->deviations);
         }
         else {
-            z->symbols = realloc(z->symbols, nTerms * sizeof(mpfa_uint_t));
-            z->deviations = realloc(z->deviations, nTerms * sizeof(mpfr_t));
+            z->symbols = realloc(z->symbols, zTerm * sizeof(mpfa_uint_t));
+            z->deviations = realloc(z->deviations, zTerm * sizeof(mpfr_t));
         }
     }
-    z->nTerms = nTerms;
+    z->nTerms = zTerm;
 
     for (zTerm = 0; zTerm < z->nTerms; zTerm++) {
         mpfr_abs(temp, &(z->deviations[zTerm]), MPFR_RNDN);
