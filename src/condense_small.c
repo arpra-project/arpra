@@ -1,5 +1,5 @@
 /*
- * condense_last_n.c -- Condense the last n terms.
+ * condense_small.c -- Condense terms less than some fraction of the radius.
  *
  * Copyright 2017 James Paul Turner.
  *
@@ -22,48 +22,37 @@
 #include "mpfa.h"
 #include <stdlib.h>
 
-void mpfa_condense_last_n (mpfa_ptr z, mpfa_uint_t n) {
-    mpfa_uint_t zTerm, nTerms;
+void mpfa_condense_small (mpfa_ptr z, double fraction) {
+    mpfa_uint_t zTerm;
     mpfr_prec_t prec;
     mpfr_t temp;
 
-    if ((z->nTerms < 2) || (n < 2)) return;
+    if (z->nTerms < 2) return;
 
-    if (n > z->nTerms) {
-        nTerms = 0
-    }
-    else {
-        nTerms = z->nTerms - n;
-    }
+    // check double fraction in [0, 1]
+
 
     prec = mpfr_get_prec(&(z->centre));
     mpfr_init2(temp, prec);
     mpfr_set_si(&(z->radius), 0, MPFR_RNDN);
 
-    for (zTerm = (nTerms + 1); zTerm < z->nTerms; zTerm++) {
-        mpfr_add(&(z->deviations[nTerms]), &(z->deviations[nTerms]), &(z->deviations[zTerm]), MPFR_RNDU);
-        mpfr_clear(&(z->deviations[zTerm]));
-    }
 
-    if (mpfr_zero_p(&(z->deviations[nTerms]))) {
-        mpfr_clear(&(z->deviations[nTerms]));
-    }
-    else {
-        z->symbols[nTerms] = mpfa_next_sym();
-        nTerms++;
-    }
+
+
+
+
 
     if (z->nTerms > 0) {
-        if (nTerms == 0) {
+        if (zTerm == 0) {
             free(z->symbols);
             free(z->deviations);
         }
         else {
-            z->symbols = realloc(z->symbols, nTerms * sizeof(mpfa_uint_t));
-            z->deviations = realloc(z->deviations, nTerms * sizeof(mpfr_t));
+            z->symbols = realloc(z->symbols, zTerm * sizeof(mpfa_uint_t));
+            z->deviations = realloc(z->deviations, zTerm * sizeof(mpfr_t));
         }
     }
-    z->nTerms = nTerms;
+    z->nTerms = zTerm;
 
     for (zTerm = 0; zTerm < z->nTerms; zTerm++) {
         mpfr_abs(temp, &(z->deviations[zTerm]), MPFR_RNDN);
