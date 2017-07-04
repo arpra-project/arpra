@@ -92,6 +92,7 @@ mpfa_uint_t mpfa_next_sym();
 mpfa_int_t mpfa_term (mpfr_ptr z, mpfr_srcptr x, mpfr_srcptr y, mpfr_srcptr alpha, mpfr_srcptr beta, mpfr_srcptr gamma);
 void mpfa_error (mpfr_ptr error, mpfr_srcptr x);
 void mpfa_condense_last_n (mpfa_ptr z, mpfa_uint_t n);
+void mpfa_condense_small (mpfa_ptr z, double fraction);
 
 #ifdef __cplusplus
 }
