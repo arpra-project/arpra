@@ -52,15 +52,16 @@ void mpfa_condense_small (mpfa_ptr z, double fraction) {
         }
     }
 
+    for (zNext = zTerm; zNext < z->nTerms; zNext++) {
+        mpfr_clear(&(z->deviations[zNext]));
+    }
+
     if (!mpfr_zero_p(error)) {
         z->symbols[zTerm] = mpfa_next_sym();
+        mpfr_init2(&(z->deviations[zTerm]), prec);
         mpfr_set(&(z->deviations[zTerm]), error, MPFR_RNDN);
         mpfr_add(&(z->radius), &(z->radius), error, MPFR_RNDU);
         zTerm++;
-    }
-
-    for (zNext = zTerm; zNext < z->nTerms; zNext++) {
-        mpfr_clear(&(z->deviations[zNext]));
     }
 
     if (zTerm == 0) {

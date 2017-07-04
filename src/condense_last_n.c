@@ -35,7 +35,7 @@ void mpfa_condense_last_n (mpfa_ptr z, mpfa_uint_t n) {
     mpfr_set_si(&(z->radius), 0, MPFR_RNDN);
     zTerm = (n > z->nTerms) ? 0 : z->nTerms - n;
 
-    for (zNext = 0; zNext < z->nTerms; zNext++) {
+    for (zNext = 0; zNext < zTerm; zNext++) {
         mpfr_abs(temp, &(z->deviations[zNext]), MPFR_RNDN);
         mpfr_add(&(z->radius), &(z->radius), temp, MPFR_RNDU);
     }

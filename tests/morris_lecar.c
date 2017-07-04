@@ -130,7 +130,7 @@ void write_data (mpfa_srcptr a, FILE *out_c, FILE *out_n, FILE *out_s, FILE *out
 int main (int argc, char *argv[])
 {
     unsigned i;
-    const unsigned sim_time = 1000;
+    const unsigned sim_time = 100;
     mpfa_uint_t nTerms;
 
     FILE *out_V_c, *out_V_n, *out_V_s, *out_V_d;
@@ -235,12 +235,14 @@ int main (int argc, char *argv[])
         mpfa_mul(dM, dM, dt);
         mpfa_add(M, M, dM);
         mpfa_condense_last_n(M, (M->nTerms - nTerms));
+        mpfa_condense_small(M, 0.1);
         write_data (M, out_M_c, out_M_n, out_M_s, out_M_d);
 
 #else // Else M steady-state is instantaneous
         nTerms = M->nTerms;
         M_ss(M, V, V1, V2);
         mpfa_condense_last_n(M, (M->nTerms - nTerms));
+        mpfa_condense_small(M, 0.1);
 #endif
 
         nTerms = N->nTerms;
@@ -248,6 +250,7 @@ int main (int argc, char *argv[])
         mpfa_mul(dN, dN, dt);
         mpfa_add(N, N, dN);
         mpfa_condense_last_n(N, (N->nTerms - nTerms));
+        mpfa_condense_small(N, 0.1);
         write_data (N, out_N_c, out_N_n, out_N_s, out_N_d);
 
         nTerms = V->nTerms;
@@ -255,6 +258,7 @@ int main (int argc, char *argv[])
         mpfa_mul(dV, dV, dt);
         mpfa_add(V, V, dV);
         mpfa_condense_last_n(V, (V->nTerms - nTerms));
+        mpfa_condense_small(V, 0.1);
         write_data (V, out_V_c, out_V_n, out_V_s, out_V_d);
     }
 
