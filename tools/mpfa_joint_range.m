@@ -62,6 +62,7 @@ function mpfa_joint_range (x, y, t)
         drawnow;
     end
 
+    xlabel(x); ylabel(y);
     hold off;
 
     fclose(xc_data);
