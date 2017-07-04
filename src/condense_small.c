@@ -24,64 +24,54 @@
 
 void mpfa_condense_small (mpfa_ptr z, double fraction) {
     mpfa_uint_t zTerm, zNext;
-    mpfr_prec_t prec;
     mpfr_t temp, error, threshold;
+    mpfr_prec_t prec;
 
-    if (z->nTerms < 2) return;
-
-    // check double fraction in [0, 1]
-
-
-
-
-
+    if ((z->nTerms < 2) || (fraction >= 1)) return;
 
     prec = mpfr_get_prec(&(z->centre));
     mpfr_inits2(prec, temp, error, threshold, (mpfr_ptr) NULL);
-    mpfr_mul_d(threshold, &(z->radius), fraction, MPFR_RNDN);
     mpfr_set_si(error, 0, MPFR_RNDN);
+    mpfr_mul_d(threshold, &(z->radius), fraction, MPFR_RNDN);
     mpfr_set_si(&(z->radius), 0, MPFR_RNDN);
+    zTerm = 0;
 
-    for (zTerm = 0, zNext = 0; zNext < z->nTerms; zNext++) {
-        mpfr_abs(temp, &(z->deviations[zTerm]), MPFR_RNDN);
+    for (zNext = 0; zNext < z->nTerms; zNext++) {
+        mpfr_abs(temp, &(z->deviations[zNext]), MPFR_RNDN);
 
         if (mpfr_lessequal_p(temp, threshold)) {
-            
+            mpfr_add(error, error, temp, MPFR_RNDU);
         }
         else {
-            
+            if (zTerm < zNext) {
+                z->symbols[zTerm] = z->symbols[zNext];
+                mpfr_set(&(z->deviations[zTerm]), &(z->deviations[zNext]), MPFR_RNDN);
+            }
+            mpfr_add(&(z->radius), &(z->radius), temp, MPFR_RNDU);
+            zTerm++;
         }
     }
 
+    if (!mpfr_zero_p(error)) {
+        z->symbols[zTerm] = mpfa_next_sym();
+        mpfr_set(&(z->deviations[zTerm]), error, MPFR_RNDN);
+        mpfr_add(&(z->radius), &(z->radius), error, MPFR_RNDU);
+        zTerm++;
+    }
 
+    for (zNext = zTerm; zNext < z->nTerms; zNext++) {
+        mpfr_clear(&(z->deviations[zNext]));
+    }
 
-
-
-
-
-
-
-
-    if (z->nTerms > 0) {
-        if (zTerm == 0) {
-            free(z->symbols);
-            free(z->deviations);
-        }
-        else {
-            z->symbols = realloc(z->symbols, zTerm * sizeof(mpfa_uint_t));
-            z->deviations = realloc(z->deviations, zTerm * sizeof(mpfr_t));
-        }
+    if (zTerm == 0) {
+        free(z->symbols);
+        free(z->deviations);
+    }
+    else {
+        z->symbols = realloc(z->symbols, zTerm * sizeof(mpfa_uint_t));
+        z->deviations = realloc(z->deviations, zTerm * sizeof(mpfr_t));
     }
     z->nTerms = zTerm;
-
-
-
-    for (zTerm = 0; zTerm < z->nTerms; zTerm++) {
-        mpfr_abs(temp, &(z->deviations[zTerm]), MPFR_RNDN);
-        mpfr_add(&(z->radius), &(z->radius), temp, MPFR_RNDU);
-    }
-
-
 
     mpfr_clears(temp, error, threshold, (mpfr_ptr) NULL);
 }

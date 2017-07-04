@@ -24,51 +24,45 @@
 
 void mpfa_condense_last_n (mpfa_ptr z, mpfa_uint_t n) {
     mpfa_uint_t zTerm, zNext;
+    mpfr_t temp, error;
     mpfr_prec_t prec;
-    mpfr_t temp;
 
     if ((z->nTerms < 2) || (n < 2)) return;
 
-    if (n > z->nTerms) {
-        zTerm = 0
-    }
-    else {
-        zTerm = z->nTerms - n;
-    }
-
     prec = mpfr_get_prec(&(z->centre));
-    mpfr_init2(temp, prec);
+    mpfr_inits2(prec, temp, error, (mpfr_ptr) NULL);
+    mpfr_set_si(error, 0, MPFR_RNDN);
     mpfr_set_si(&(z->radius), 0, MPFR_RNDN);
+    zTerm = (n > z->nTerms) ? 0 : z->nTerms - n;
 
-    for (zNext = (zTerm + 1); zNext < z->nTerms; zNext++) {
-        mpfr_add(&(z->deviations[zTerm]), &(z->deviations[zTerm]), &(z->deviations[zNext]), MPFR_RNDU);
-        mpfr_clear(&(z->deviations[zNext]));
-    }
-
-    if (mpfr_zero_p(&(z->deviations[zTerm]))) {
-        mpfr_clear(&(z->deviations[zTerm]));
-    }
-    else {
-        z->symbols[zTerm] = mpfa_next_sym();
-        zTerm++;
-    }
-
-    if (z->nTerms > 0) {
-        if (zTerm == 0) {
-            free(z->symbols);
-            free(z->deviations);
-        }
-        else {
-            z->symbols = realloc(z->symbols, zTerm * sizeof(mpfa_uint_t));
-            z->deviations = realloc(z->deviations, zTerm * sizeof(mpfr_t));
-        }
-    }
-    z->nTerms = zTerm;
-
-    for (zTerm = 0; zTerm < z->nTerms; zTerm++) {
-        mpfr_abs(temp, &(z->deviations[zTerm]), MPFR_RNDN);
+    for (zNext = 0; zNext < z->nTerms; zNext++) {
+        mpfr_abs(temp, &(z->deviations[zNext]), MPFR_RNDN);
         mpfr_add(&(z->radius), &(z->radius), temp, MPFR_RNDU);
     }
 
-    mpfr_clear(temp);
+    for (zNext = zTerm; zNext < z->nTerms; zNext++) {
+        mpfr_abs(temp, &(z->deviations[zNext]), MPFR_RNDN);
+        mpfr_add(error, error, temp, MPFR_RNDU);
+        mpfr_clear(&(z->deviations[zNext]));
+    }
+
+    if (!mpfr_zero_p(error)) {
+        z->symbols[zTerm] = mpfa_next_sym();
+        mpfr_init2(&(z->deviations[zTerm]), prec);
+        mpfr_set(&(z->deviations[zTerm]), error, MPFR_RNDN);
+        mpfr_add(&(z->radius), &(z->radius), error, MPFR_RNDU);
+        zTerm++;
+    }
+
+    if (zTerm == 0) {
+        free(z->symbols);
+        free(z->deviations);
+    }
+    else {
+        z->symbols = realloc(z->symbols, zTerm * sizeof(mpfa_uint_t));
+        z->deviations = realloc(z->deviations, zTerm * sizeof(mpfr_t));
+    }
+    z->nTerms = zTerm;
+
+    mpfr_clears(temp, error, (mpfr_ptr) NULL);
 }
