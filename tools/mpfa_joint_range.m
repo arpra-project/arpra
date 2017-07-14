@@ -9,15 +9,15 @@ ys_data = fopen([y, '_s.dat']);
 yd_data = fopen([y, '_d.dat']);
 
 for i = 1:(t(1) - 1)
-    %sscanf(fgetl(xc_data), '%f');
-    sscanf(fgetl(xs_data), '%u');
-    sscanf(fgetl(xd_data), '%f');
-    %sscanf(fgetl(yc_data), '%f');
-    sscanf(fgetl(ys_data), '%u');
-    sscanf(fgetl(yd_data), '%f');
+    %fgetl(xc_data);
+    fgetl(xs_data);
+    fgetl(xd_data);
+    %fgetl(yc_data);
+    fgetl(ys_data);
+    fgetl(yd_data);
 end
 
-maxterms = 23;
+maxterms = 15;
 e = zeros(maxterms, 2^maxterms);
 for i = 1:2^maxterms
     e(:, i) = double(bitget(i - 1, 1:maxterms))';
@@ -26,7 +26,6 @@ e(e == 0) = -1;
 
 figure;
 hold on;
-xlabel(x); ylabel(y);
 
 for i = t
     disp(num2str(i));
