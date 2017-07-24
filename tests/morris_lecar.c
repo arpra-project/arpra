@@ -245,14 +245,14 @@ int main (int argc, char *argv[])
         mpfa_add(M, M, dM);
         mpfa_condense_last_n(M, (M->nTerms - nTerms));
         if (i % condense_step == 0) mpfa_condense_small(M, condense_ratio);
-        write_data (M, out_M_c, out_M_n, out_M_s, out_M_d);
+        write_data (M, out_M_c, out_M_r, out_M_n, out_M_s, out_M_d);
 
 #else // Else M steady-state is instantaneous
         nTerms = M->nTerms;
         M_ss(M, V, V1, V2);
         mpfa_condense_last_n(M, (M->nTerms - nTerms));
         if (i % condense_step == 0) mpfa_condense_small(M, condense_ratio);
-        write_data (M, out_M_c, out_M_n, out_M_s, out_M_d);
+        write_data (M, out_M_c, out_M_r, out_M_n, out_M_s, out_M_d);
 #endif
 
         nTerms = N->nTerms;
@@ -261,7 +261,7 @@ int main (int argc, char *argv[])
         mpfa_add(N, N, dN);
         mpfa_condense_last_n(N, (N->nTerms - nTerms));
         if (i % condense_step == 0) mpfa_condense_small(N, condense_ratio);
-        write_data (N, out_N_c, out_N_n, out_N_s, out_N_d);
+        write_data (N, out_N_c, out_N_r, out_N_n, out_N_s, out_N_d);
 
         nTerms = V->nTerms;
         f_V(dV, V, M, N, gL, gCa, gK, VL, VCa, VK, I, C);
@@ -269,7 +269,7 @@ int main (int argc, char *argv[])
         mpfa_add(V, V, dV);
         mpfa_condense_last_n(V, (V->nTerms - nTerms));
         if (i % condense_step == 0) mpfa_condense_small(V, condense_ratio);
-        write_data (V, out_V_c, out_V_n, out_V_s, out_V_d);
+        write_data (V, out_V_c, out_V_r, out_V_n, out_V_s, out_V_d);
     }
 
     mpfa_clears(V, M, N, I, C,
