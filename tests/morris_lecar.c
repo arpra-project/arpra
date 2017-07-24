@@ -111,11 +111,13 @@ void M_ss (mpfa_ptr out, mpfa_srcptr V, mpfa_srcptr V1, mpfa_srcptr V2)
 }
 
 
-void write_data (mpfa_srcptr a, FILE *out_c, FILE *out_n, FILE *out_s, FILE *out_d) {
+void write_data (mpfa_srcptr a, FILE *out_c, FILE *out_r, FILE *out_n, FILE *out_s, FILE *out_d) {
     mpfa_uint_t i;
 
     mpfr_out_str(out_c, 10, 80, &(a->centre), MPFR_RNDN);
     fputc('\n', out_c);
+    mpfr_out_str(out_r, 10, 80, &(a->radius), MPFR_RNDN);
+    fputc('\n', out_r);
     fprintf(out_n, "%u\n", a->nTerms);
     for (i = 0; i < a->nTerms; i++) {
         fprintf(out_s, "%u ", a->symbols[i]);
@@ -133,9 +135,9 @@ int main (int argc, char *argv[])
     const unsigned sim_time = 500;
     mpfa_uint_t nTerms;
 
-    FILE *out_V_c, *out_V_n, *out_V_s, *out_V_d;
-    FILE *out_M_c, *out_M_n, *out_M_s, *out_M_d;
-    FILE *out_N_c, *out_N_n, *out_N_s, *out_N_d;
+    FILE *out_V_c, *out_V_r, *out_V_n, *out_V_s, *out_V_d;
+    FILE *out_M_c, *out_M_r, *out_M_n, *out_M_s, *out_M_d;
+    FILE *out_N_c, *out_N_r, *out_N_n, *out_N_s, *out_N_d;
 
     mpfa_t V;    // Membrane potential (mV)
     mpfa_t M;    // Fraction of open Ca++ channels
@@ -165,16 +167,19 @@ int main (int argc, char *argv[])
     mpfa_t N_phi; // (s^-1)
 
     out_V_c = fopen("v_c.dat", "w");
+    out_V_r = fopen("v_r.dat", "w");
     out_V_n = fopen("v_n.dat", "w");
     out_V_s = fopen("v_s.dat", "w");
     out_V_d = fopen("v_d.dat", "w");
 
     out_M_c = fopen("m_c.dat", "w");
+    out_M_r = fopen("m_r.dat", "w");
     out_M_n = fopen("m_n.dat", "w");
     out_M_s = fopen("m_s.dat", "w");
     out_M_d = fopen("m_d.dat", "w");
 
     out_N_c = fopen("n_c.dat", "w");
+    out_N_r = fopen("n_r.dat", "w");
     out_N_n = fopen("n_n.dat", "w");
     out_N_s = fopen("n_s.dat", "w");
     out_N_d = fopen("n_d.dat", "w");
@@ -238,14 +243,14 @@ int main (int argc, char *argv[])
         mpfa_add(M, M, dM);
         mpfa_condense_last_n(M, (M->nTerms - nTerms));
         if (i % 150 == 0) mpfa_condense_small(M, 0.1);
-        write_data (M, out_M_c, out_M_n, out_M_s, out_M_d);
+        write_data (M, out_M_c, out_M_r, out_M_n, out_M_s, out_M_d);
 
 #else // Else M steady-state is instantaneous
         nTerms = M->nTerms;
         M_ss(M, V, V1, V2);
         mpfa_condense_last_n(M, (M->nTerms - nTerms));
         if (i % 150 == 0) mpfa_condense_small(M, 0.1);
-        write_data (M, out_M_c, out_M_n, out_M_s, out_M_d);
+        write_data (M, out_M_c, out_M_r, out_M_n, out_M_s, out_M_d);
 #endif
 
         nTerms = N->nTerms;
@@ -254,7 +259,7 @@ int main (int argc, char *argv[])
         mpfa_add(N, N, dN);
         mpfa_condense_last_n(N, (N->nTerms - nTerms));
         if (i % 150 == 0) mpfa_condense_small(N, 0.1);
-        write_data (N, out_N_c, out_N_n, out_N_s, out_N_d);
+        write_data (N, out_N_c, out_N_r, out_N_n, out_N_s, out_N_d);
 
         nTerms = V->nTerms;
         f_V(dV, V, M, N, gL, gCa, gK, VL, VCa, VK, I, C);
@@ -262,7 +267,7 @@ int main (int argc, char *argv[])
         mpfa_add(V, V, dV);
         mpfa_condense_last_n(V, (V->nTerms - nTerms));
         if (i % 150 == 0) mpfa_condense_small(V, 0.1);
-        write_data (V, out_V_c, out_V_n, out_V_s, out_V_d);
+        write_data (V, out_V_c, out_V_r, out_V_n, out_V_s, out_V_d);
     }
 
     mpfa_clears(V, M, N, I, C,
@@ -275,16 +280,19 @@ int main (int argc, char *argv[])
                 NULL);
 
     fclose(out_V_c);
+    fclose(out_V_r);
     fclose(out_V_n);
     fclose(out_V_s);
     fclose(out_V_d);
 
     fclose(out_M_c);
+    fclose(out_M_r);
     fclose(out_M_n);
     fclose(out_M_s);
     fclose(out_M_d);
 
     fclose(out_N_c);
+    fclose(out_N_r);
     fclose(out_N_n);
     fclose(out_N_s);
     fclose(out_N_d);
