@@ -24,16 +24,18 @@
 
 void mpfa_condense_last_n (mpfa_ptr z, mpfa_uint_t n) {
     mpfa_uint_t zTerm, zNext;
-    mpfr_t temp, error;
+    mpfr_ptr *summands;
+    mpfr_t temp;
     mpfr_prec_t prec;
 
-    if ((z->nTerms < 2) || (n < 2)) return;
+    if (n > z->nTerms) n = z->nTerms;
+    if (n < 2) return;
 
     prec = mpfr_get_prec(&(z->centre));
-    mpfr_inits2(prec, temp, error, (mpfr_ptr) NULL);
-    mpfr_set_si(error, 0, MPFR_RNDN);
+    mpfr_init2(temp, prec);
     mpfr_set_si(&(z->radius), 0, MPFR_RNDN);
-    zTerm = (n >= z->nTerms) ? 0 : z->nTerms - n;
+    zTerm = z->nTerms - n;
+    summands = malloc(n * sizeof(mpfr_ptr));
 
     for (zNext = 0; zNext < zTerm; zNext++) {
         mpfr_abs(temp, &(z->deviations[zNext]), MPFR_RNDN);
@@ -41,17 +43,20 @@ void mpfa_condense_last_n (mpfa_ptr z, mpfa_uint_t n) {
     }
 
     for (zNext = zTerm; zNext < z->nTerms; zNext++) {
-        mpfr_abs(temp, &(z->deviations[zNext]), MPFR_RNDN);
-        mpfr_add(error, error, temp, MPFR_RNDU);
-        mpfr_clear(&(z->deviations[zNext]));
+        mpfr_abs(&(z->deviations[zNext]), &(z->deviations[zNext]), MPFR_RNDN);
+        summands[zNext - zTerm] = &(z->deviations[zNext]);
     }
 
-    if (!mpfr_zero_p(error)) {
+    mpfr_sum(&(z->deviations[zTerm]), summands, n, MPFR_RNDU);
+
+    if (!mpfr_zero_p(&(z->deviations[zTerm]))) {
         z->symbols[zTerm] = mpfa_next_sym();
-        mpfr_init2(&(z->deviations[zTerm]), prec);
-        mpfr_set(&(z->deviations[zTerm]), error, MPFR_RNDN);
-        mpfr_add(&(z->radius), &(z->radius), error, MPFR_RNDU);
+        mpfr_add(&(z->radius), &(z->radius), &(z->deviations[zTerm]), MPFR_RNDU);
         zTerm++;
+    }
+
+    for (zNext = zTerm; zNext < z->nTerms; zNext++) {
+        mpfr_clear(&(z->deviations[zNext]));
     }
 
     if (zTerm == 0) {
@@ -64,5 +69,6 @@ void mpfa_condense_last_n (mpfa_ptr z, mpfa_uint_t n) {
     }
     z->nTerms = zTerm;
 
-    mpfr_clears(temp, error, (mpfr_ptr) NULL);
+    mpfr_clear(temp);
+    free(summands);
 }

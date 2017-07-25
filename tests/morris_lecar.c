@@ -60,7 +60,7 @@ void f_V (mpfa_ptr out, mpfa_srcptr V, mpfa_srcptr M, mpfa_srcptr N,
 }
 
 
-void f_A (mpfa_ptr out, mpfa_srcptr A, mpfa_srcptr V,
+void f_channel (mpfa_ptr out, mpfa_srcptr A, mpfa_srcptr V,
           mpfa_srcptr Va, mpfa_srcptr Vb, mpfa_srcptr phi)
 {
     mpfa_t temp1, temp2, temp3;
@@ -240,7 +240,7 @@ int main (int argc, char *argv[])
 
 #ifdef M_DYNAMICS // If we need M dynamics
         nTerms = M->nTerms;
-        f_A(dM, M, V, V1, V2, M_phi);
+        f_channel(dM, M, V, V1, V2, M_phi);
         mpfa_mul(dM, dM, dt);
         mpfa_add(M, M, dM);
         mpfa_condense_last_n(M, (M->nTerms - nTerms));
@@ -256,7 +256,7 @@ int main (int argc, char *argv[])
 #endif
 
         nTerms = N->nTerms;
-        f_A(dN, N, V, V3, V4, N_phi);
+        f_channel(dN, N, V, V3, V4, N_phi);
         mpfa_mul(dN, dN, dt);
         mpfa_add(N, N, dN);
         mpfa_condense_last_n(N, (N->nTerms - nTerms));
