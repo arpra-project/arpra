@@ -3,22 +3,22 @@ function mpfa_joint_range (x, y, t_start, t_stop)
 
 xc_data = fopen([x, '_c.dat']);
 xr_data = fopen([x, '_r.dat']);
-%xs_data = fopen([x, '_s.dat']);
-%xd_data = fopen([x, '_d.dat']);
+xs_data = fopen([x, '_s.dat']);
+xd_data = fopen([x, '_d.dat']);
 yc_data = fopen([y, '_c.dat']);
 yr_data = fopen([y, '_r.dat']);
-%ys_data = fopen([y, '_s.dat']);
-%yd_data = fopen([y, '_d.dat']);
+ys_data = fopen([y, '_s.dat']);
+yd_data = fopen([y, '_d.dat']);
 
 for i = 1:(t_start - 1)
     fgetl(xc_data);
     fgetl(xr_data);
-    %fgetl(xs_data);
-    %fgetl(xd_data);
+    fgetl(xs_data);
+    fgetl(xd_data);
     fgetl(yc_data);
     fgetl(yr_data);
-    %fgetl(ys_data);
-    %fgetl(yd_data);
+    fgetl(ys_data);
+    fgetl(yd_data);
 end
 
 % maxterms = 15;
@@ -28,8 +28,7 @@ end
 % end
 % e(e == 0) = -1;
 
-%figure;
-clf;
+figure;
 hold on;
 
 % Plot interval regions
@@ -43,7 +42,7 @@ for i = t_start:t_stop
 
     pos = [(xc - xr), (yc - yr), (2 .* xr), (2 .* yr)];
     %pos = [-xr, -yr, (2 .* xr), (2 .* yr)];
-    rectangle('Position', pos);
+    rectangle('Position', pos, 'EdgeColor', 'b');
     drawnow;
 end
 
@@ -101,11 +100,11 @@ hold off;
 
 fclose(xc_data);
 fclose(xr_data);
-%fclose(xs_data);
-%fclose(xd_data);
+fclose(xs_data);
+fclose(xd_data);
 fclose(yc_data);
 fclose(yr_data);
-%fclose(ys_data);
-%fclose(yd_data);
+fclose(ys_data);
+fclose(yd_data);
 
 end
