@@ -20,6 +20,7 @@
  */
 
 #include "mpfa.h"
+#include <stdlib.h>
 
 //#define M_DYNAMICS // Define if M steady-state is instantaneous
 
@@ -61,7 +62,7 @@ void f_V (mpfa_ptr out, mpfa_srcptr V, mpfa_srcptr M, mpfa_srcptr N,
 
 
 void f_channel (mpfa_ptr out, mpfa_srcptr A, mpfa_srcptr V,
-          mpfa_srcptr Va, mpfa_srcptr Vb, mpfa_srcptr phi)
+                mpfa_srcptr Va, mpfa_srcptr Vb, mpfa_srcptr phi)
 {
     mpfa_t temp1, temp2, temp3;
     mpfa_inits(temp1, temp2, temp3, NULL);
@@ -111,193 +112,260 @@ void M_ss (mpfa_ptr out, mpfa_srcptr V, mpfa_srcptr V1, mpfa_srcptr V2)
 }
 
 
-void write_data (mpfa_srcptr a, FILE *out_c, FILE *out_r, FILE *out_n, FILE *out_s, FILE *out_d) {
-    mpfa_uint_t i;
+void file_init (char *var, mpfa_uint_t num, FILE **c, FILE **r, FILE **n, FILE **s, FILE **d) {
+    mpfa_uint_t j;
+    char fname[20];
 
-    mpfr_out_str(out_c, 10, 80, &(a->centre), MPFR_RNDN);
-    fputc('\n', out_c);
-    mpfr_out_str(out_r, 10, 80, &(a->radius), MPFR_RNDN);
-    fputc('\n', out_r);
-    fprintf(out_n, "%u\n", a->nTerms);
-    for (i = 0; i < a->nTerms; i++) {
-        fprintf(out_s, "%u ", a->symbols[i]);
-        mpfr_out_str(out_d, 10, 80, &(a->deviations[i]), MPFR_RNDN);
-        fputc(' ', out_d);
+    for (j = 0; j < num; j++) {
+        sprintf(fname, "%03u_%s_c.dat", j, var);
+        c[j] = fopen(fname, "w");
+        sprintf(fname, "%03u_%s_r.dat", j, var);
+        r[j] = fopen(fname, "w");
+        sprintf(fname, "%03u_%s_n.dat", j, var);
+        n[j] = fopen(fname, "w");
+        sprintf(fname, "%03u_%s_s.dat", j, var);
+        s[j] = fopen(fname, "w");
+        sprintf(fname, "%03u_%s_d.dat", j, var);
+        d[j] = fopen(fname, "w");
     }
-    fputc('\n', out_s);
-    fputc('\n', out_d);
+}
+
+
+void file_clear (mpfa_uint_t num, FILE **c, FILE **r, FILE **n, FILE **s, FILE **d) {
+    mpfa_uint_t j;
+
+    for (j = 0; j < num; j++) {
+        fclose(c[j]);
+        fclose(r[j]);
+        fclose(n[j]);
+        fclose(s[j]);
+        fclose(d[j]);
+    }
+}
+
+
+void file_write (mpfa_srcptr a, mpfa_uint_t num, FILE **c, FILE **r, FILE **n, FILE **s, FILE **d) {
+    mpfa_uint_t j, k;
+
+    for (j = 0; j < num; j++) {
+        mpfr_out_str(c[j], 10, 80, &(a[j].centre), MPFR_RNDN);
+        fputc('\n', c[j]);
+        mpfr_out_str(r[j], 10, 80, &(a[j].radius), MPFR_RNDN);
+        fputc('\n', r[j]);
+        fprintf(n[j], "%u\n", a[j].nTerms);
+        for (k = 0; k < a[j].nTerms; k++) {
+            fprintf(s[j], "%u ", a[j].symbols[k]);
+            mpfr_out_str(d[j], 10, 80, &(a[j].deviations[k]), MPFR_RNDN);
+            fputc(' ', d[j]);
+        }
+        fputc('\n', s[j]);
+        fputc('\n', d[j]);
+    }
 }
 
 
 int main (int argc, char *argv[])
 {
-    unsigned long i;
-    const unsigned long sim_time = 500;
-    const unsigned long condense_step = 50;
+    const mpfa_uint_t sim_steps = 500;
+    const mpfa_uint_t n_grp1 = 10;
+    const mpfa_uint_t n_grp2 = 10;
+    const mpfa_uint_t n_grp1_grp2 = n_grp1 * n_grp2;
+    const mpfa_uint_t condense_step = 50;
     const double condense_ratio = 0.3;
-    mpfa_uint_t nTerms;
 
-    FILE *out_V_c, *out_V_r, *out_V_n, *out_V_s, *out_V_d;
-    FILE *out_M_c, *out_M_r, *out_M_n, *out_M_s, *out_M_d;
-    FILE *out_N_c, *out_N_r, *out_N_n, *out_N_s, *out_N_d;
+    size_t size;
+    mpfa_uint_t i, j;
+    mpfa_uint_t M_term, N_term, V_term;
 
-    mpfa_t V;    // Membrane potential (mV)
-    mpfa_t M;    // Fraction of open Ca++ channels
-    mpfa_t N;    // Fraction of open K+ channels
-    mpfa_t I;    // Applied current (uA/cm^2)
-    mpfa_t C;    // Membrane capacitance (uF/cm^2)
+    // Init state variables
+    size = n_grp1 * sizeof(mpfa_t);
+    mpfa_ptr M = malloc(size);  // Fraction of open Ca++ channels
+    mpfa_ptr N = malloc(size);  // Fraction of open K+ channels
+    mpfa_ptr V = malloc(size);  // Membrane potential (mV)
+    mpfa_ptr I = malloc(size);  // Applied current (uA/cm^2)
 
-    mpfa_t dt;   // Delta time
-    mpfa_t dV;   // Delta V
-    mpfa_t dM;   // Delta M
-    mpfa_t dN;   // Delta N
+    for (j = 0; j < n_grp1; j++) {
+        mpfa_init(&(M[j]));
+        mpfa_init(&(N[j]));
+        mpfa_init(&(V[j]));
+        mpfa_init(&(I[j]));
 
-    mpfa_t gL;   // Maximum leak conductance (mmho/cm^2)
-    mpfa_t gCa;  // Maximum Ca++ conductance (mmho/cm^2)
-    mpfa_t gK;   // Maximum K+ conductance (mmho/cm^2)
+        mpfa_set_d(&(M[j]), 0.0);
+        mpfa_set_d(&(N[j]), 0.0);
+        mpfa_set_d(&(V[j]), -60.0);
+        mpfa_set_d(&(I[j]), 80.0);
+    }
 
-    mpfa_t VL;   // Equilibrium potential of leak conductance (mV)
-    mpfa_t VCa;  // Equilibrium potential of Ca++ conductance (mV)
-    mpfa_t VK;   // Equilibrium potential of K+ conductance (mV)
+    // Init file handles
+    FILE **f_M_c = malloc(n_grp1 * sizeof(FILE *)); // centre
+    FILE **f_M_r = malloc(n_grp1 * sizeof(FILE *)); // radius
+    FILE **f_M_n = malloc(n_grp1 * sizeof(FILE *)); // nTerms
+    FILE **f_M_s = malloc(n_grp1 * sizeof(FILE *)); // symbols
+    FILE **f_M_d = malloc(n_grp1 * sizeof(FILE *)); // deviations
+    file_init("m", n_grp1, f_M_c, f_M_r, f_M_n, f_M_s, f_M_d);
 
-    mpfa_t V1;   // Potential at which Mss(V) = 0.5 (mV)
-    mpfa_t V2;   // Reciprocal of voltage dependence slope of Mss(V) (mV)
-    mpfa_t V3;   // Potential at which Nss(V) = 0.5 (mV)
-    mpfa_t V4;   // Reciprocal of voltage dependence slope of Nss(V) (mV)
+    FILE **f_N_c = malloc(n_grp1 * sizeof(FILE *)); // centre
+    FILE **f_N_r = malloc(n_grp1 * sizeof(FILE *)); // radius
+    FILE **f_N_n = malloc(n_grp1 * sizeof(FILE *)); // nterms
+    FILE **f_N_s = malloc(n_grp1 * sizeof(FILE *)); // symbols
+    FILE **f_N_d = malloc(n_grp1 * sizeof(FILE *)); // deviations
+    file_init("n", n_grp1, f_N_c, f_N_r, f_N_n, f_N_s, f_N_d);
 
+    FILE **f_V_c = malloc(n_grp1 * sizeof(FILE *)); // centre
+    FILE **f_V_r = malloc(n_grp1 * sizeof(FILE *)); // radius
+    FILE **f_V_n = malloc(n_grp1 * sizeof(FILE *)); // nterms
+    FILE **f_V_s = malloc(n_grp1 * sizeof(FILE *)); // symbols
+    FILE **f_V_d = malloc(n_grp1 * sizeof(FILE *)); // deviations
+    file_init("v", n_grp1, f_V_c, f_V_r, f_V_n, f_V_s, f_V_d);
+
+    // Init parameters
+    mpfa_t dM;    // Delta M
+    mpfa_t dN;    // Delta N
+    mpfa_t dV;    // Delta V
+    mpfa_t dt;    // Delta time
+    mpfa_t gL;    // Maximum leak conductance (mmho/cm^2)
+    mpfa_t VL;    // Equilibrium potential of leak conductance (mV)
+    mpfa_t gCa;   // Maximum Ca++ conductance (mmho/cm^2)
+    mpfa_t VCa;   // Equilibrium potential of Ca++ conductance (mV)
+    mpfa_t gK;    // Maximum K+ conductance (mmho/cm^2)
+    mpfa_t VK;    // Equilibrium potential of K+ conductance (mV)
+    mpfa_t V1;    // Potential at which Mss(V) = 0.5 (mV)
+    mpfa_t V2;    // Reciprocal of voltage dependence slope of Mss(V) (mV)
+    mpfa_t V3;    // Potential at which Nss(V) = 0.5 (mV)
+    mpfa_t V4;    // Reciprocal of voltage dependence slope of Nss(V) (mV)
     mpfa_t M_phi; // (s^-1)
     mpfa_t N_phi; // (s^-1)
+    mpfa_t C;     // Membrane capacitance (uF/cm^2)
 
-    out_V_c = fopen("v_c.dat", "w");
-    out_V_r = fopen("v_r.dat", "w");
-    out_V_n = fopen("v_n.dat", "w");
-    out_V_s = fopen("v_s.dat", "w");
-    out_V_d = fopen("v_d.dat", "w");
-
-    out_M_c = fopen("m_c.dat", "w");
-    out_M_r = fopen("m_r.dat", "w");
-    out_M_n = fopen("m_n.dat", "w");
-    out_M_s = fopen("m_s.dat", "w");
-    out_M_d = fopen("m_d.dat", "w");
-
-    out_N_c = fopen("n_c.dat", "w");
-    out_N_r = fopen("n_r.dat", "w");
-    out_N_n = fopen("n_n.dat", "w");
-    out_N_s = fopen("n_s.dat", "w");
-    out_N_d = fopen("n_d.dat", "w");
-
-    mpfa_inits(V, M, N, I, C,
-               dt, dV, dM, dN,
+    mpfa_inits(dM, dN, dV, dt,
                gL, gCa, gK,
                VL, VCa, VK,
                V1, V2, V3, V4,
-               M_phi, N_phi,
+               M_phi, N_phi, C,
                one, two, neg_two,
                NULL);
 
-    // Initialise Variables and parameters
-    mpfa_set_d(V, -60.0);
-    mpfa_set_d(M, 0.0);
-    mpfa_set_d(N, 0.0);
-    mpfa_set_d(I, 80.0);
-    mpfa_set_d(C, 20.0);
-
+    mpfa_set_d(dt, 1.0);
     mpfa_set_d(gL, 2.0);
     mpfa_set_d(gCa, 4.0); // Class 1 excitability
     //mpfa_set_d(gCa, 4.4); // Class 2 excitability
     mpfa_set_d(gK, 8.0);
-
     mpfa_set_d(VL, -60.0);
     mpfa_set_d(VCa, 120.0);
     mpfa_set_d(VK, -80.0);
-
     mpfa_set_d(V1, -1.2);
     mpfa_set_d(V2, 18.0);
     mpfa_set_d(V3, 12.0); // Class 1 excitability
     //mpfa_set_d(V3, 2.0); // Class 2 excitability
     mpfa_set_d(V4, 17.4); // Class 1 excitability
     //mpfa_set_d(V4, 30.0); // Class 2 excitability
-
     mpfa_set_d(M_phi, 1.0);
     mpfa_set_d(N_phi, 1.0 / 15.0); // Class 1 excitability
     //mpfa_set_d(N_phi, 1.0 / 25.0); // Class 2 excitability
-
-    mpfa_set_d(dt, 1.0);
-
-    // Initialise constants
+    mpfa_set_d(C, 20.0);
     mpfa_set_d(one, 1.0);
     mpfa_set_d(two, 2.0);
     mpfa_set_d(neg_two, -2.0);
 
-    for (i = 0; i < sim_time; i++) {
+
+    // Simulation loop
+    // ===============
+
+    for (i = 0; i < sim_steps; i++) {
         printf("%u\n", i);
 
-        /* // (nu) / (1 - nu)
-           mpfr_mul_si(temp, u, (n - 1), MPFR_RNDU);
-           mpfr_si_sub(error, 1, temp, MPFR_RNDD);
-           mpfr_div(error, temp, error, MPFR_RNDU);
-        */
+        for (j = 0; j < n_grp1; j++) {
+
+            /* // (nu) / (1 - nu)
+               mpfr_mul_si(temp, u, (n - 1), MPFR_RNDU);
+               mpfr_si_sub(error, 1, temp, MPFR_RNDD);
+               mpfr_div(error, temp, error, MPFR_RNDU);
+            */
+
+            M_term = M[j].nTerms;
+            N_term = N[j].nTerms;
+            V_term = V[j].nTerms;
 
 #ifdef M_DYNAMICS // If we need M dynamics
-        nTerms = M->nTerms;
-        f_channel(dM, M, V, V1, V2, M_phi);
-        mpfa_mul(dM, dM, dt);
-        mpfa_add(M, M, dM);
-        mpfa_condense_last_n(M, (M->nTerms - nTerms));
-        if (i % condense_step == 0) mpfa_condense_small(M, condense_ratio);
-        write_data (M, out_M_c, out_M_r, out_M_n, out_M_s, out_M_d);
-
+            f_channel(dM, &(M[j]), &(V[j]), V1, V2, M_phi);
 #else // Else M steady-state is instantaneous
-        nTerms = M->nTerms;
-        M_ss(M, V, V1, V2);
-        mpfa_condense_last_n(M, (M->nTerms - nTerms));
-        if (i % condense_step == 0) mpfa_condense_small(M, condense_ratio);
-        write_data (M, out_M_c, out_M_r, out_M_n, out_M_s, out_M_d);
-#endif
+            M_ss(&(M[j]), &(V[j]), V1, V2);
+#endif // M_DYNAMICS
+            f_channel(dN, &(N[j]), &(V[j]), V3, V4, N_phi);
+            f_V(dV, &(V[j]), &(M[j]), &(N[j]), gL, gCa, gK, VL, VCa, VK, I, C);
 
-        nTerms = N->nTerms;
-        f_channel(dN, N, V, V3, V4, N_phi);
-        mpfa_mul(dN, dN, dt);
-        mpfa_add(N, N, dN);
-        mpfa_condense_last_n(N, (N->nTerms - nTerms));
-        if (i % condense_step == 0) mpfa_condense_small(N, condense_ratio);
-        write_data (N, out_N_c, out_N_r, out_N_n, out_N_s, out_N_d);
+#ifdef M_DYNAMICS // If we need M dynamics
+            mpfa_mul(dM, dM, dt);
+            mpfa_add(&(M[j]), &(M[j]), dM);
+#endif // M_DYNAMICS
+            mpfa_mul(dN, dN, dt);
+            mpfa_add(&(N[j]), &(N[j]), dN);
+            mpfa_mul(dV, dV, dt);
+            mpfa_add(&(V[j]), &(V[j]), dV);
 
-        nTerms = V->nTerms;
-        f_V(dV, V, M, N, gL, gCa, gK, VL, VCa, VK, I, C);
-        mpfa_mul(dV, dV, dt);
-        mpfa_add(V, V, dV);
-        mpfa_condense_last_n(V, (V->nTerms - nTerms));
-        if (i % condense_step == 0) mpfa_condense_small(V, condense_ratio);
-        write_data (V, out_V_c, out_V_r, out_V_n, out_V_s, out_V_d);
+            mpfa_condense_last_n(&(M[j]), (M[j].nTerms - M_term));
+            mpfa_condense_last_n(&(N[j]), (N[j].nTerms - N_term));
+            mpfa_condense_last_n(&(V[j]), (V[j].nTerms - V_term));
+
+            if (i % condense_step == 0) {
+                mpfa_condense_small(&(M[j]), condense_ratio);
+                mpfa_condense_small(&(N[j]), condense_ratio);
+                mpfa_condense_small(&(V[j]), condense_ratio);
+            }
+        }
+
+        file_write(M, n_grp1, f_M_c, f_M_r, f_M_n, f_M_s, f_M_d);
+        file_write(N, n_grp1, f_N_c, f_N_r, f_N_n, f_N_s, f_N_d);
+        file_write(V, n_grp1, f_V_c, f_V_r, f_V_n, f_V_s, f_V_d);
     }
 
-    mpfa_clears(V, M, N, I, C,
-                dt, dV, dM, dN,
+    // End simulation loop
+    // ===================
+
+
+    // Clear state variables
+    for (j = 0; j < n_grp1; j++) {
+        mpfa_clear(&(M[j]));
+        mpfa_clear(&(N[j]));
+        mpfa_clear(&(V[j]));
+        mpfa_clear(&(I[j]));
+    }
+
+    free(V);
+    free(M);
+    free(N);
+    free(I);
+
+    // Clear parameters
+    mpfa_clears(dM, dN, dV, dt,
                 gL, gCa, gK,
                 VL, VCa, VK,
                 V1, V2, V3, V4,
-                M_phi, N_phi,
+                M_phi, N_phi, C,
                 one, two, neg_two,
                 NULL);
 
-    fclose(out_V_c);
-    fclose(out_V_r);
-    fclose(out_V_n);
-    fclose(out_V_s);
-    fclose(out_V_d);
+    // Clear file handles
+    file_clear(n_grp1, f_M_c, f_M_r, f_M_n, f_M_s, f_M_d);
+    free(f_M_c);
+    free(f_M_r);
+    free(f_M_n);
+    free(f_M_s);
+    free(f_M_d);
 
-    fclose(out_M_c);
-    fclose(out_M_r);
-    fclose(out_M_n);
-    fclose(out_M_s);
-    fclose(out_M_d);
+    file_clear(n_grp1, f_N_c, f_N_r, f_N_n, f_N_s, f_N_d);
+    free(f_N_c);
+    free(f_N_r);
+    free(f_N_n);
+    free(f_N_s);
+    free(f_N_d);
 
-    fclose(out_N_c);
-    fclose(out_N_r);
-    fclose(out_N_n);
-    fclose(out_N_s);
-    fclose(out_N_d);
+    file_clear(n_grp1, f_V_c, f_V_r, f_V_n, f_V_s, f_V_d);
+    free(f_V_c);
+    free(f_V_r);
+    free(f_V_n);
+    free(f_V_s);
+    free(f_V_d);
 
     mpfr_free_cache();
     return 0;
