@@ -28,10 +28,10 @@
 static mpfa_t one, two, neg_two;
 
 
-void f_V (mpfa_ptr out, mpfa_srcptr V, mpfa_srcptr M, mpfa_srcptr N,
+void d_V (mpfa_ptr out, mpfa_srcptr V, mpfa_srcptr M, mpfa_srcptr N,
+          mpfa_srcptr I, mpfa_srcptr C,
           mpfa_srcptr gL, mpfa_srcptr gCa, mpfa_srcptr gK,
-          mpfa_srcptr VL, mpfa_srcptr VCa, mpfa_srcptr VK,
-          mpfa_srcptr I, mpfa_srcptr C)
+          mpfa_srcptr VL, mpfa_srcptr VCa, mpfa_srcptr VK)
 {
     mpfa_t temp;
     mpfa_init(temp);
@@ -61,7 +61,7 @@ void f_V (mpfa_ptr out, mpfa_srcptr V, mpfa_srcptr M, mpfa_srcptr N,
 }
 
 
-void f_channel (mpfa_ptr out, mpfa_srcptr A, mpfa_srcptr V,
+void d_channel (mpfa_ptr out, mpfa_srcptr A, mpfa_srcptr V,
                 mpfa_srcptr Va, mpfa_srcptr Vb, mpfa_srcptr phi)
 {
     mpfa_t temp1, temp2, temp3;
@@ -112,20 +112,21 @@ void M_ss (mpfa_ptr out, mpfa_srcptr V, mpfa_srcptr V1, mpfa_srcptr V2)
 }
 
 
-void file_init (char *var, mpfa_uint_t num, FILE **c, FILE **r, FILE **n, FILE **s, FILE **d) {
+void file_init (char *grp, char *var, mpfa_uint_t num,
+                FILE **c, FILE **r, FILE **n, FILE **s, FILE **d) {
     mpfa_uint_t j;
     char fname[20];
 
     for (j = 0; j < num; j++) {
-        sprintf(fname, "%03u_%s_c.dat", j, var);
+        sprintf(fname, "%s_%03u_%s_c.dat", grp, j, var);
         c[j] = fopen(fname, "w");
-        sprintf(fname, "%03u_%s_r.dat", j, var);
+        sprintf(fname, "%s_%03u_%s_r.dat", grp, j, var);
         r[j] = fopen(fname, "w");
-        sprintf(fname, "%03u_%s_n.dat", j, var);
+        sprintf(fname, "%s_%03u_%s_n.dat", grp, j, var);
         n[j] = fopen(fname, "w");
-        sprintf(fname, "%03u_%s_s.dat", j, var);
+        sprintf(fname, "%s_%03u_%s_s.dat", grp, j, var);
         s[j] = fopen(fname, "w");
-        sprintf(fname, "%03u_%s_d.dat", j, var);
+        sprintf(fname, "%s_%03u_%s_d.dat", grp, j, var);
         d[j] = fopen(fname, "w");
     }
 }
@@ -144,23 +145,22 @@ void file_clear (mpfa_uint_t num, FILE **c, FILE **r, FILE **n, FILE **s, FILE *
 }
 
 
-void file_write (mpfa_srcptr a, mpfa_uint_t num, FILE **c, FILE **r, FILE **n, FILE **s, FILE **d) {
-    mpfa_uint_t j, k;
+void file_write (mpfa_srcptr a, mpfa_uint_t i,
+                 FILE **c, FILE **r, FILE **n, FILE **s, FILE **d) {
+    mpfa_uint_t j;
 
-    for (j = 0; j < num; j++) {
-        mpfr_out_str(c[j], 10, 80, &(a[j].centre), MPFR_RNDN);
-        fputc('\n', c[j]);
-        mpfr_out_str(r[j], 10, 80, &(a[j].radius), MPFR_RNDN);
-        fputc('\n', r[j]);
-        fprintf(n[j], "%u\n", a[j].nTerms);
-        for (k = 0; k < a[j].nTerms; k++) {
-            fprintf(s[j], "%u ", a[j].symbols[k]);
-            mpfr_out_str(d[j], 10, 80, &(a[j].deviations[k]), MPFR_RNDN);
-            fputc(' ', d[j]);
-        }
-        fputc('\n', s[j]);
-        fputc('\n', d[j]);
+    mpfr_out_str(c[i], 10, 80, &(a[i].centre), MPFR_RNDN);
+    fputc('\n', c[i]);
+    mpfr_out_str(r[i], 10, 80, &(a[i].radius), MPFR_RNDN);
+    fputc('\n', r[i]);
+    fprintf(n[i], "%u\n", a[i].nTerms);
+    for (j = 0; j < a[i].nTerms; j++) {
+        fprintf(s[i], "%u ", a[i].symbols[j]);
+        mpfr_out_str(d[i], 10, 80, &(a[i].deviations[j]), MPFR_RNDN);
+        fputc(' ', d[i]);
     }
+    fputc('\n', s[i]);
+    fputc('\n', d[i]);
 }
 
 
@@ -173,50 +173,87 @@ int main (int argc, char *argv[])
     const mpfa_uint_t condense_step = 50;
     const double condense_ratio = 0.3;
 
-    size_t size;
-    mpfa_uint_t i, j;
-    mpfa_uint_t M_term, N_term, V_term;
+    mpfa_uint_t i, j, M_mark, N_mark, V_mark;
 
-    // Init state variables
-    size = n_grp1 * sizeof(mpfa_t);
-    mpfa_ptr M = malloc(size);  // Fraction of open Ca++ channels
-    mpfa_ptr N = malloc(size);  // Fraction of open K+ channels
-    mpfa_ptr V = malloc(size);  // Membrane potential (mV)
-    mpfa_ptr I = malloc(size);  // Applied current (uA/cm^2)
+    // Init neuron group 1 state variables
+    mpfa_ptr nrn1_M = malloc(n_grp1 * sizeof(mpfa_t));  // Fraction of open Ca++ channels
+    mpfa_ptr nrn1_N = malloc(n_grp1 * sizeof(mpfa_t));  // Fraction of open K+ channels
+    mpfa_ptr nrn1_V = malloc(n_grp1 * sizeof(mpfa_t));  // Membrane potential (mV)
+    mpfa_ptr nrn1_I = malloc(n_grp1 * sizeof(mpfa_t));  // Applied current (uA/cm^2)
 
     for (j = 0; j < n_grp1; j++) {
-        mpfa_init(&(M[j]));
-        mpfa_init(&(N[j]));
-        mpfa_init(&(V[j]));
-        mpfa_init(&(I[j]));
+        mpfa_init(&(nrn1_M[j]));
+        mpfa_init(&(nrn1_N[j]));
+        mpfa_init(&(nrn1_V[j]));
+        mpfa_init(&(nrn1_I[j]));
 
-        mpfa_set_d(&(M[j]), 0.0);
-        mpfa_set_d(&(N[j]), 0.0);
-        mpfa_set_d(&(V[j]), -60.0);
-        mpfa_set_d(&(I[j]), 80.0);
+        mpfa_set_d(&(nrn1_M[j]), 0.0);
+        mpfa_set_d(&(nrn1_N[j]), 0.0);
+        mpfa_set_d(&(nrn1_V[j]), -60.0);
+        mpfa_set_d(&(nrn1_I[j]), 80.0);
     }
 
-    // Init file handles
-    FILE **f_M_c = malloc(n_grp1 * sizeof(FILE *)); // centre
-    FILE **f_M_r = malloc(n_grp1 * sizeof(FILE *)); // radius
-    FILE **f_M_n = malloc(n_grp1 * sizeof(FILE *)); // nTerms
-    FILE **f_M_s = malloc(n_grp1 * sizeof(FILE *)); // symbols
-    FILE **f_M_d = malloc(n_grp1 * sizeof(FILE *)); // deviations
-    file_init("m", n_grp1, f_M_c, f_M_r, f_M_n, f_M_s, f_M_d);
+    // Init neuron group 1 file handles
+    FILE **f_nrn1_M_c = malloc(n_grp1 * sizeof(FILE *)); // centre
+    FILE **f_nrn1_M_r = malloc(n_grp1 * sizeof(FILE *)); // radius
+    FILE **f_nrn1_M_n = malloc(n_grp1 * sizeof(FILE *)); // nTerms
+    FILE **f_nrn1_M_s = malloc(n_grp1 * sizeof(FILE *)); // symbols
+    FILE **f_nrn1_M_d = malloc(n_grp1 * sizeof(FILE *)); // deviations
+    file_init("nrn1", "M", n_grp1, f_nrn1_M_c, f_nrn1_M_r, f_nrn1_M_n, f_nrn1_M_s, f_nrn1_M_d);
 
-    FILE **f_N_c = malloc(n_grp1 * sizeof(FILE *)); // centre
-    FILE **f_N_r = malloc(n_grp1 * sizeof(FILE *)); // radius
-    FILE **f_N_n = malloc(n_grp1 * sizeof(FILE *)); // nterms
-    FILE **f_N_s = malloc(n_grp1 * sizeof(FILE *)); // symbols
-    FILE **f_N_d = malloc(n_grp1 * sizeof(FILE *)); // deviations
-    file_init("n", n_grp1, f_N_c, f_N_r, f_N_n, f_N_s, f_N_d);
+    FILE **f_nrn1_N_c = malloc(n_grp1 * sizeof(FILE *)); // centre
+    FILE **f_nrn1_N_r = malloc(n_grp1 * sizeof(FILE *)); // radius
+    FILE **f_nrn1_N_n = malloc(n_grp1 * sizeof(FILE *)); // nterms
+    FILE **f_nrn1_N_s = malloc(n_grp1 * sizeof(FILE *)); // symbols
+    FILE **f_nrn1_N_d = malloc(n_grp1 * sizeof(FILE *)); // deviations
+    file_init("nrn1", "N", n_grp1, f_nrn1_N_c, f_nrn1_N_r, f_nrn1_N_n, f_nrn1_N_s, f_nrn1_N_d);
 
-    FILE **f_V_c = malloc(n_grp1 * sizeof(FILE *)); // centre
-    FILE **f_V_r = malloc(n_grp1 * sizeof(FILE *)); // radius
-    FILE **f_V_n = malloc(n_grp1 * sizeof(FILE *)); // nterms
-    FILE **f_V_s = malloc(n_grp1 * sizeof(FILE *)); // symbols
-    FILE **f_V_d = malloc(n_grp1 * sizeof(FILE *)); // deviations
-    file_init("v", n_grp1, f_V_c, f_V_r, f_V_n, f_V_s, f_V_d);
+    FILE **f_nrn1_V_c = malloc(n_grp1 * sizeof(FILE *)); // centre
+    FILE **f_nrn1_V_r = malloc(n_grp1 * sizeof(FILE *)); // radius
+    FILE **f_nrn1_V_n = malloc(n_grp1 * sizeof(FILE *)); // nterms
+    FILE **f_nrn1_V_s = malloc(n_grp1 * sizeof(FILE *)); // symbols
+    FILE **f_nrn1_V_d = malloc(n_grp1 * sizeof(FILE *)); // deviations
+    file_init("nrn1", "V", n_grp1, f_nrn1_V_c, f_nrn1_V_r, f_nrn1_V_n, f_nrn1_V_s, f_nrn1_V_d);
+
+    // Init neuron group 2 state variables
+    mpfa_ptr nrn2_M = malloc(n_grp2 * sizeof(mpfa_t));  // Fraction of open Ca++ channels
+    mpfa_ptr nrn2_N = malloc(n_grp2 * sizeof(mpfa_t));  // Fraction of open K+ channels
+    mpfa_ptr nrn2_V = malloc(n_grp2 * sizeof(mpfa_t));  // Membrane potential (mV)
+    mpfa_ptr nrn2_I = malloc(n_grp2 * sizeof(mpfa_t));  // Applied current (uA/cm^2)
+
+    for (j = 0; j < n_grp2; j++) {
+        mpfa_init(&(nrn2_M[j]));
+        mpfa_init(&(nrn2_N[j]));
+        mpfa_init(&(nrn2_V[j]));
+        mpfa_init(&(nrn2_I[j]));
+
+        mpfa_set_d(&(nrn2_M[j]), 0.0);
+        mpfa_set_d(&(nrn2_N[j]), 0.0);
+        mpfa_set_d(&(nrn2_V[j]), -60.0);
+        mpfa_set_d(&(nrn2_I[j]), 80.0);
+    }
+
+    // Init neuron group 2 file handles
+    FILE **f_nrn2_M_c = malloc(n_grp2 * sizeof(FILE *)); // centre
+    FILE **f_nrn2_M_r = malloc(n_grp2 * sizeof(FILE *)); // radius
+    FILE **f_nrn2_M_n = malloc(n_grp2 * sizeof(FILE *)); // nTerms
+    FILE **f_nrn2_M_s = malloc(n_grp2 * sizeof(FILE *)); // symbols
+    FILE **f_nrn2_M_d = malloc(n_grp2 * sizeof(FILE *)); // deviations
+    file_init("nrn2", "M", n_grp2, f_nrn2_M_c, f_nrn2_M_r, f_nrn2_M_n, f_nrn2_M_s, f_nrn2_M_d);
+
+    FILE **f_nrn2_N_c = malloc(n_grp2 * sizeof(FILE *)); // centre
+    FILE **f_nrn2_N_r = malloc(n_grp2 * sizeof(FILE *)); // radius
+    FILE **f_nrn2_N_n = malloc(n_grp2 * sizeof(FILE *)); // nterms
+    FILE **f_nrn2_N_s = malloc(n_grp2 * sizeof(FILE *)); // symbols
+    FILE **f_nrn2_N_d = malloc(n_grp2 * sizeof(FILE *)); // deviations
+    file_init("nrn2", "N", n_grp2, f_nrn2_N_c, f_nrn2_N_r, f_nrn2_N_n, f_nrn2_N_s, f_nrn2_N_d);
+
+    FILE **f_nrn2_V_c = malloc(n_grp2 * sizeof(FILE *)); // centre
+    FILE **f_nrn2_V_r = malloc(n_grp2 * sizeof(FILE *)); // radius
+    FILE **f_nrn2_V_n = malloc(n_grp2 * sizeof(FILE *)); // nterms
+    FILE **f_nrn2_V_s = malloc(n_grp2 * sizeof(FILE *)); // symbols
+    FILE **f_nrn2_V_d = malloc(n_grp2 * sizeof(FILE *)); // deviations
+    file_init("nrn2", "V", n_grp2, f_nrn2_V_c, f_nrn2_V_r, f_nrn2_V_n, f_nrn2_V_s, f_nrn2_V_d);
 
     // Init parameters
     mpfa_t dM;    // Delta M
@@ -268,12 +305,16 @@ int main (int argc, char *argv[])
     mpfa_set_d(neg_two, -2.0);
 
 
-    // Simulation loop
-    // ===============
+    // Begin simulation loop
+    // =====================
 
     for (i = 0; i < sim_steps; i++) {
         printf("%u\n", i);
 
+
+        // Neuron group 1
+        // ==============
+        
         for (j = 0; j < n_grp1; j++) {
 
             /* // (nu) / (1 - nu)
@@ -282,59 +323,129 @@ int main (int argc, char *argv[])
                mpfr_div(error, temp, error, MPFR_RNDU);
             */
 
-            M_term = M[j].nTerms;
-            N_term = N[j].nTerms;
-            V_term = V[j].nTerms;
+            M_mark = nrn1_M[j].nTerms;
+            N_mark = nrn1_N[j].nTerms;
+            V_mark = nrn1_V[j].nTerms;
 
 #ifdef M_DYNAMICS // If we need M dynamics
-            f_channel(dM, &(M[j]), &(V[j]), V1, V2, M_phi);
+            d_channel(dM, &(nrn1_M[j]), &(nrn1_V[j]), V1, V2, M_phi);
 #else // Else M steady-state is instantaneous
-            M_ss(&(M[j]), &(V[j]), V1, V2);
+            M_ss(&(nrn1_M[j]), &(nrn1_V[j]), V1, V2);
 #endif // M_DYNAMICS
-            f_channel(dN, &(N[j]), &(V[j]), V3, V4, N_phi);
-            f_V(dV, &(V[j]), &(M[j]), &(N[j]), gL, gCa, gK, VL, VCa, VK, I, C);
+            d_channel(dN, &(nrn1_N[j]), &(nrn1_V[j]), V3, V4, N_phi);
+            d_V(dV, &(nrn1_V[j]), &(nrn1_M[j]), &(nrn1_N[j]), &(nrn1_I[j]), C, gL, gCa, gK, VL, VCa, VK);
 
 #ifdef M_DYNAMICS // If we need M dynamics
             mpfa_mul(dM, dM, dt);
-            mpfa_add(&(M[j]), &(M[j]), dM);
+            mpfa_add(&(nrn1_M[j]), &(nrn1_M[j]), dM);
 #endif // M_DYNAMICS
             mpfa_mul(dN, dN, dt);
-            mpfa_add(&(N[j]), &(N[j]), dN);
+            mpfa_add(&(nrn1_N[j]), &(nrn1_N[j]), dN);
             mpfa_mul(dV, dV, dt);
-            mpfa_add(&(V[j]), &(V[j]), dV);
+            mpfa_add(&(nrn1_V[j]), &(nrn1_V[j]), dV);
 
-            mpfa_condense_last_n(&(M[j]), (M[j].nTerms - M_term));
-            mpfa_condense_last_n(&(N[j]), (N[j].nTerms - N_term));
-            mpfa_condense_last_n(&(V[j]), (V[j].nTerms - V_term));
+            mpfa_condense_last_n(&(nrn1_M[j]), (nrn1_M[j].nTerms - M_mark));
+            mpfa_condense_last_n(&(nrn1_N[j]), (nrn1_N[j].nTerms - N_mark));
+            mpfa_condense_last_n(&(nrn1_V[j]), (nrn1_V[j].nTerms - V_mark));
 
             if (i % condense_step == 0) {
-                mpfa_condense_small(&(M[j]), condense_ratio);
-                mpfa_condense_small(&(N[j]), condense_ratio);
-                mpfa_condense_small(&(V[j]), condense_ratio);
+                mpfa_condense_small(&(nrn1_M[j]), condense_ratio);
+                mpfa_condense_small(&(nrn1_N[j]), condense_ratio);
+                mpfa_condense_small(&(nrn1_V[j]), condense_ratio);
             }
+
+            file_write(nrn1_M, j, f_nrn1_M_c, f_nrn1_M_r, f_nrn1_M_n, f_nrn1_M_s, f_nrn1_M_d);
+            file_write(nrn1_N, j, f_nrn1_N_c, f_nrn1_N_r, f_nrn1_N_n, f_nrn1_N_s, f_nrn1_N_d);
+            file_write(nrn1_V, j, f_nrn1_V_c, f_nrn1_V_r, f_nrn1_V_n, f_nrn1_V_s, f_nrn1_V_d);
         }
 
-        file_write(M, n_grp1, f_M_c, f_M_r, f_M_n, f_M_s, f_M_d);
-        file_write(N, n_grp1, f_N_c, f_N_r, f_N_n, f_N_s, f_N_d);
-        file_write(V, n_grp1, f_V_c, f_V_r, f_V_n, f_V_s, f_V_d);
+
+        // Neuron group 2
+        // ==============
+
+        for (j = 0; j < n_grp2; j++) {
+
+            /* // (nu) / (1 - nu)
+               mpfr_mul_si(temp, u, (n - 1), MPFR_RNDU);
+               mpfr_si_sub(error, 1, temp, MPFR_RNDD);
+               mpfr_div(error, temp, error, MPFR_RNDU);
+            */
+
+            M_mark = nrn2_M[j].nTerms;
+            N_mark = nrn2_N[j].nTerms;
+            V_mark = nrn2_V[j].nTerms;
+
+#ifdef M_DYNAMICS // If we need M dynamics
+            d_channel(dM, &(nrn2_M[j]), &(nrn2_V[j]), V1, V2, M_phi);
+#else // Else M steady-state is instantaneous
+            M_ss(&(nrn2_M[j]), &(nrn2_V[j]), V1, V2);
+#endif // M_DYNAMICS
+            d_channel(dN, &(nrn2_N[j]), &(nrn2_V[j]), V3, V4, N_phi);
+            d_V(dV, &(nrn2_V[j]), &(nrn2_M[j]), &(nrn2_N[j]), &(nrn2_I[j]), C, gL, gCa, gK, VL, VCa, VK);
+
+#ifdef M_DYNAMICS // If we need M dynamics
+            mpfa_mul(dM, dM, dt);
+            mpfa_add(&(nrn2_M[j]), &(nrn2_M[j]), dM);
+#endif // M_DYNAMICS
+            mpfa_mul(dN, dN, dt);
+            mpfa_add(&(nrn2_N[j]), &(nrn2_N[j]), dN);
+            mpfa_mul(dV, dV, dt);
+            mpfa_add(&(nrn2_V[j]), &(nrn2_V[j]), dV);
+
+            mpfa_condense_last_n(&(nrn2_M[j]), (nrn2_M[j].nTerms - M_mark));
+            mpfa_condense_last_n(&(nrn2_N[j]), (nrn2_N[j].nTerms - N_mark));
+            mpfa_condense_last_n(&(nrn2_V[j]), (nrn2_V[j].nTerms - V_mark));
+
+            if (i % condense_step == 0) {
+                mpfa_condense_small(&(nrn2_M[j]), condense_ratio);
+                mpfa_condense_small(&(nrn2_N[j]), condense_ratio);
+                mpfa_condense_small(&(nrn2_V[j]), condense_ratio);
+            }
+
+            file_write(nrn2_M, j, f_nrn2_M_c, f_nrn2_M_r, f_nrn2_M_n, f_nrn2_M_s, f_nrn2_M_d);
+            file_write(nrn2_N, j, f_nrn2_N_c, f_nrn2_N_r, f_nrn2_N_n, f_nrn2_N_s, f_nrn2_N_d);
+            file_write(nrn2_V, j, f_nrn2_V_c, f_nrn2_V_r, f_nrn2_V_n, f_nrn2_V_s, f_nrn2_V_d);
+        }
     }
 
     // End simulation loop
     // ===================
 
 
-    // Clear state variables
-    for (j = 0; j < n_grp1; j++) {
-        mpfa_clear(&(M[j]));
-        mpfa_clear(&(N[j]));
-        mpfa_clear(&(V[j]));
-        mpfa_clear(&(I[j]));
+    // Clear neuron group 2 state variables
+    for (j = 0; j < n_grp2; j++) {
+        mpfa_clear(&(nrn2_M[j]));
+        mpfa_clear(&(nrn2_N[j]));
+        mpfa_clear(&(nrn2_V[j]));
+        mpfa_clear(&(nrn2_I[j]));
     }
 
-    free(V);
-    free(M);
-    free(N);
-    free(I);
+    free(nrn2_V);
+    free(nrn2_M);
+    free(nrn2_N);
+    free(nrn2_I);
+
+    // Clear neuron group 2 file handles
+    file_clear(n_grp2, f_nrn2_M_c, f_nrn2_M_r, f_nrn2_M_n, f_nrn2_M_s, f_nrn2_M_d);
+    free(f_nrn2_M_c);
+    free(f_nrn2_M_r);
+    free(f_nrn2_M_n);
+    free(f_nrn2_M_s);
+    free(f_nrn2_M_d);
+
+    file_clear(n_grp2, f_nrn2_N_c, f_nrn2_N_r, f_nrn2_N_n, f_nrn2_N_s, f_nrn2_N_d);
+    free(f_nrn2_N_c);
+    free(f_nrn2_N_r);
+    free(f_nrn2_N_n);
+    free(f_nrn2_N_s);
+    free(f_nrn2_N_d);
+
+    file_clear(n_grp2, f_nrn2_V_c, f_nrn2_V_r, f_nrn2_V_n, f_nrn2_V_s, f_nrn2_V_d);
+    free(f_nrn2_V_c);
+    free(f_nrn2_V_r);
+    free(f_nrn2_V_n);
+    free(f_nrn2_V_s);
+    free(f_nrn2_V_d);
 
     // Clear parameters
     mpfa_clears(dM, dN, dV, dt,
@@ -344,28 +455,6 @@ int main (int argc, char *argv[])
                 M_phi, N_phi, C,
                 one, two, neg_two,
                 NULL);
-
-    // Clear file handles
-    file_clear(n_grp1, f_M_c, f_M_r, f_M_n, f_M_s, f_M_d);
-    free(f_M_c);
-    free(f_M_r);
-    free(f_M_n);
-    free(f_M_s);
-    free(f_M_d);
-
-    file_clear(n_grp1, f_N_c, f_N_r, f_N_n, f_N_s, f_N_d);
-    free(f_N_c);
-    free(f_N_r);
-    free(f_N_n);
-    free(f_N_s);
-    free(f_N_d);
-
-    file_clear(n_grp1, f_V_c, f_V_r, f_V_n, f_V_s, f_V_d);
-    free(f_V_c);
-    free(f_V_r);
-    free(f_V_n);
-    free(f_V_s);
-    free(f_V_d);
 
     mpfr_free_cache();
     return 0;
