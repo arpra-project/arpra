@@ -32,6 +32,8 @@ const static mpfa_uint_t n_grp2 = 10;
 const static mpfa_uint_t condense_step = 50;
 const static double condense_ratio = 0.3;
 
+const static mpfa_prec_t prec = 53;
+
 // Neuron parameters
 static mpfa_t gL;    // Maximum leak conductance (mmho/cm^2)
 static mpfa_t VL;    // Equilibrium potential of leak conductance (mV)
@@ -66,7 +68,7 @@ void M_ss (mpfa_ptr out, mpfa_srcptr V)
 void d_V (mpfa_ptr out, mpfa_srcptr V, mpfa_srcptr M, mpfa_srcptr N, mpfa_srcptr I)
 {
     mpfa_t temp;
-    mpfa_init(temp);
+    mpfa_init2(temp, prec);
 
     // Compute leak current
     mpfa_sub(temp, V, VL);
@@ -96,7 +98,7 @@ void d_V (mpfa_ptr out, mpfa_srcptr V, mpfa_srcptr M, mpfa_srcptr N, mpfa_srcptr
 void d_N (mpfa_ptr out, mpfa_srcptr N, mpfa_srcptr V)
 {
     mpfa_t temp1, temp2, temp3;
-    mpfa_inits(temp1, temp2, temp3, NULL);
+    mpfa_inits2(prec, temp1, temp2, temp3, NULL);
 
     // Compute K+ channel activation steady-state
     // N_ss = 1 / (1 + exp(-2 (V - V3) / V4))
@@ -191,13 +193,14 @@ int main (int argc, char *argv[])
     mpfa_t dN, dV, dt, M;
 
     // Init parameters
-    mpfa_inits(dN, dV, dt, M,
-               gL, gCa, gK,
-               VL, VCa, VK,
-               V1, V2, V3, V4,
-               phi, C,
-               one, two, neg_two,
-               NULL);
+    mpfa_inits2(prec,
+                dN, dV, dt, M,
+                gL, gCa, gK,
+                VL, VCa, VK,
+                V1, V2, V3, V4,
+                phi, C,
+                one, two, neg_two,
+                NULL);
 
     mpfa_set_d(dt, step_size);
 
@@ -228,9 +231,9 @@ int main (int argc, char *argv[])
     mpfa_ptr nrn1_I = malloc(n_grp1 * sizeof(mpfa_t));  // Applied current (uA/cm^2)
 
     for (j = 0; j < n_grp1; j++) {
-        mpfa_init(&(nrn1_N[j]));
-        mpfa_init(&(nrn1_V[j]));
-        mpfa_init(&(nrn1_I[j]));
+        mpfa_init2(&(nrn1_N[j]), prec);
+        mpfa_init2(&(nrn1_V[j]), prec);
+        mpfa_init2(&(nrn1_I[j]), prec);
         mpfa_set_d(&(nrn1_N[j]), 0.0);
         mpfa_set_d(&(nrn1_V[j]), -60.0);
         mpfa_set_d(&(nrn1_I[j]), 80.0);
@@ -257,9 +260,9 @@ int main (int argc, char *argv[])
     mpfa_ptr nrn2_I = malloc(n_grp2 * sizeof(mpfa_t));  // Applied current (uA/cm^2)
 
     for (j = 0; j < n_grp2; j++) {
-        mpfa_init(&(nrn2_N[j]));
-        mpfa_init(&(nrn2_V[j]));
-        mpfa_init(&(nrn2_I[j]));
+        mpfa_init2(&(nrn2_N[j]), prec);
+        mpfa_init2(&(nrn2_V[j]), prec);
+        mpfa_init2(&(nrn2_I[j]), prec);
         mpfa_set_d(&(nrn2_N[j]), 0.0);
         mpfa_set_d(&(nrn2_V[j]), -60.0);
         mpfa_set_d(&(nrn2_I[j]), 80.0);
@@ -290,7 +293,7 @@ int main (int argc, char *argv[])
 
         // Neuron group 1
         // ==============
-        
+
         for (j = 0; j < n_grp1; j++) {
 
             /* // (nu) / (1 - nu)
