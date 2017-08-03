@@ -31,10 +31,10 @@ lib_libmpfa_la_SOURCES = src/add.c \
                          src/clears.c \
                          src/condense_last_n.c \
                          src/condense_small.c \
+                         src/default_prec.c \
                          src/div.c \
                          src/error.c \
                          src/exp.c \
-                         src/get_default_prec.c \
                          src/get_prec.c \
                          src/init.c \
                          src/inits.c \
@@ -47,7 +47,6 @@ lib_libmpfa_la_SOURCES = src/add.c \
                          src/next_sym.c \
                          src/set_d.c \
                          src/set_d_rad.c \
-                         src/set_default_prec.c \
                          src/set_mpfr.c \
                          src/set_mpfr_rad.c \
                          src/set_prec.c \

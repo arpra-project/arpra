@@ -1,5 +1,5 @@
 /*
- * set_default_prec.c -- Set the default precision of affine forms.
+ * default_prec.c -- Get and set the default precision of affine forms.
  *
  * Copyright 2016-2017 James Paul Turner.
  *
@@ -20,6 +20,10 @@
  */
 
 #include "mpfa.h"
+
+mpfa_prec_t mpfa_get_default_prec () {
+    return mpfr_get_default_prec();
+}
 
 void mpfa_set_default_prec (mpfa_prec_t prec) {
     mpfr_set_default_prec(prec);

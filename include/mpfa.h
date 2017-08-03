@@ -85,8 +85,8 @@ void mpfa_inv (mpfa_ptr z, mpfa_srcptr x);
 
 // Get and set precision
 mpfa_prec_t mpfa_get_prec (mpfa_srcptr x);
-mpfa_prec_t mpfa_get_default_prec ();
 void mpfa_set_prec (mpfa_ptr x, mpfa_prec_t prec);
+mpfa_prec_t mpfa_get_default_prec ();
 void mpfa_set_default_prec (mpfa_prec_t prec);
 
 // Helper functions
