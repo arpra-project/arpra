@@ -1,5 +1,5 @@
 /*
- * clear.c -- Free the memory of an affine form.
+ * clear.c -- Free the memory of one or more affine forms.
  *
  * Copyright 2016-2017 James Paul Turner.
  *
@@ -21,6 +21,7 @@
 
 #include "mpfa.h"
 #include <stdlib.h>
+#include <stdarg.h>
 
 void mpfa_clear (mpfa_ptr x) {
     mpfa_uint_t xTerm;
@@ -35,4 +36,15 @@ void mpfa_clear (mpfa_ptr x) {
 
     mpfr_clear(&(x->centre));
     mpfr_clear(&(x->radius));
+}
+
+void mpfa_clears (mpfa_ptr x, ...) {
+    va_list arg;
+
+    va_start(arg, x);
+    while (x != NULL) {
+        mpfa_clear(x);
+        x = (mpfa_ptr) va_arg(arg, mpfa_ptr);
+    }
+    va_end(arg);
 }

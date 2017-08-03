@@ -1,5 +1,5 @@
 /*
- * init.c -- Initialise an affine form.
+ * init.c -- Initialise one or more affine forms.
  *
  * Copyright 2016-2017 James Paul Turner.
  *
@@ -20,9 +20,21 @@
  */
 
 #include "mpfa.h"
+#include <stdarg.h>
 
 void mpfa_init (mpfa_ptr x) {
     x->nTerms = 0;
     mpfr_init(&(x->centre));
     mpfr_init(&(x->radius));
+}
+
+void mpfa_inits (mpfa_ptr x, ...) {
+    va_list arg;
+
+    va_start(arg, x);
+    while (x != NULL) {
+        mpfa_init(x);
+        x = (mpfa_ptr) va_arg(arg, mpfa_ptr);
+    }
+    va_end(arg);
 }

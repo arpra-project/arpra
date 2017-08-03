@@ -1,5 +1,5 @@
 /*
- * init2.c -- Initialise an affine form, and set its precision.
+ * init2.c -- Initialise one or more affine forms, and set their precision.
  *
  * Copyright 2016-2017 James Paul Turner.
  *
@@ -20,9 +20,21 @@
  */
 
 #include "mpfa.h"
+#include <stdarg.h>
 
 void mpfa_init2 (mpfa_ptr x, mpfa_prec_t prec) {
     x->nTerms = 0;
     mpfr_init2(&(x->centre), prec);
     mpfr_init2(&(x->radius), prec);
+}
+
+void mpfa_inits2 (mpfa_prec_t prec, mpfa_ptr x, ...) {
+    va_list arg;
+
+    va_start(arg, x);
+    while (x != NULL) {
+        mpfa_init2(x, prec);
+        x = (mpfa_ptr) va_arg(arg, mpfa_ptr);
+    }
+    va_end(arg);
 }

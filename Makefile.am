@@ -28,7 +28,6 @@ lib_libmpfa_la_SOURCES = src/add.c \
                          src/affine_1.c \
                          src/affine_2.c \
                          src/clear.c \
-                         src/clears.c \
                          src/condense_last_n.c \
                          src/condense_small.c \
                          src/default_prec.c \
@@ -37,9 +36,7 @@ lib_libmpfa_la_SOURCES = src/add.c \
                          src/exp.c \
                          src/get_prec.c \
                          src/init.c \
-                         src/inits.c \
                          src/init2.c \
-                         src/inits2.c \
                          src/inv.c \
                          src/log.c \
                          src/mul.c \
