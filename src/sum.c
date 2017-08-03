@@ -29,7 +29,7 @@ void mpfa_sum (mpfa_ptr z, const mpfa_ptr *x, mpfa_uint_t n) {
     mpfa_int_t xHasNext;
     mpfr_ptr *summands;
     mpfr_t temp, error;
-    mpfr_prec_t prec;
+    mpfa_prec_t prec;
     mpfa_t zNew;
 
     if (n < 3) {

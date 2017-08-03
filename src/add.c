@@ -23,7 +23,7 @@
 
 void mpfa_add (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
     mpfr_t alpha, beta, gamma, delta;
-    mpfr_prec_t prec;
+    mpfa_prec_t prec;
 
     prec = mpfr_get_prec(&(z->centre));
     mpfr_init2(alpha, prec);

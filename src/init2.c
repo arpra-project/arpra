@@ -21,7 +21,7 @@
 
 #include "mpfa.h"
 
-void mpfa_init2 (mpfa_ptr x, mpfr_prec_t prec) {
+void mpfa_init2 (mpfa_ptr x, mpfa_prec_t prec) {
     x->nTerms = 0;
     mpfr_init2(&(x->centre), prec);
     mpfr_init2(&(x->radius), prec);

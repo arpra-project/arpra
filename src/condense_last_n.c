@@ -26,7 +26,7 @@ void mpfa_condense_last_n (mpfa_ptr z, mpfa_uint_t n) {
     mpfa_uint_t zTerm, zNext;
     mpfr_ptr *summands;
     mpfr_t temp;
-    mpfr_prec_t prec;
+    mpfa_prec_t prec;
 
     if (n > z->nTerms) n = z->nTerms;
     if (n < 2) return;

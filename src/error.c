@@ -22,7 +22,7 @@
 #include "mpfa.h"
 
 void mpfa_error (mpfr_ptr error, mpfr_srcptr x) {
-    mpfr_prec_t p;
+    mpfa_prec_t p;
     mpfr_exp_t e;
 
     // 1/2 ULP = 2^(e-p-1)

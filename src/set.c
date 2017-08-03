@@ -24,7 +24,7 @@
 
 void mpfa_set (mpfa_ptr z, mpfa_srcptr x) {
     mpfa_uint_t xTerm, zTerm;
-    mpfr_prec_t prec;
+    mpfa_prec_t prec;
     mpfr_t temp, error;
 
     if (z == x) return;

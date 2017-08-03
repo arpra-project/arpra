@@ -22,7 +22,7 @@
 #include "mpfa.h"
 #include <stdarg.h>
 
-void mpfa_inits2 (mpfr_prec_t prec, mpfa_ptr x, ...) {
+void mpfa_inits2 (mpfa_prec_t prec, mpfa_ptr x, ...) {
     va_list arg;
 
     va_start(arg, x);

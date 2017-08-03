@@ -33,6 +33,8 @@
 typedef int mpfa_int_t;
 typedef unsigned int mpfa_uint_t;
 
+typedef mpfr_prec_t mpfa_prec_t;
+
 typedef struct {
     __mpfr_struct centre;
     __mpfr_struct radius;
@@ -52,8 +54,8 @@ extern "C" {
 // Initialise and clear
 void mpfa_init (mpfa_ptr x);
 void mpfa_inits (mpfa_ptr x, ...);
-void mpfa_init2 (mpfa_ptr x, mpfr_prec_t prec);
-void mpfa_inits2 (mpfr_prec_t prec, mpfa_ptr x, ...);
+void mpfa_init2 (mpfa_ptr x, mpfa_prec_t prec);
+void mpfa_inits2 (mpfa_prec_t prec, mpfa_ptr x, ...);
 void mpfa_clear (mpfa_ptr x);
 void mpfa_clears (mpfa_ptr x, ...);
 
@@ -82,10 +84,10 @@ void mpfa_log (mpfa_ptr z, mpfa_srcptr x);
 void mpfa_inv (mpfa_ptr z, mpfa_srcptr x);
 
 // Get and set precision
-mpfr_prec_t mpfa_get_prec (mpfa_srcptr x);
-mpfr_prec_t mpfa_get_default_prec ();
-void mpfa_set_prec (mpfa_ptr x, mpfr_prec_t prec);
-void mpfa_set_default_prec (mpfr_prec_t prec);
+mpfa_prec_t mpfa_get_prec (mpfa_srcptr x);
+mpfa_prec_t mpfa_get_default_prec ();
+void mpfa_set_prec (mpfa_ptr x, mpfa_prec_t prec);
+void mpfa_set_default_prec (mpfa_prec_t prec);
 
 // Helper functions
 mpfa_uint_t mpfa_next_sym();

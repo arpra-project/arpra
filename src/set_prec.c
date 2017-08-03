@@ -21,7 +21,7 @@
 
 #include "mpfa.h"
 
-void mpfa_set_prec (mpfa_ptr x, mpfr_prec_t prec) {
+void mpfa_set_prec (mpfa_ptr x, mpfa_prec_t prec) {
     mpfa_uint_t xTerm;
 
     for (xTerm = 0; xTerm < x->nTerms; xTerm++) {

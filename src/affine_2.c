@@ -26,7 +26,7 @@ void mpfa_affine_2 (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y, mpfr_srcptr alpha,
     mpfa_uint_t xTerm, yTerm, zTerm;
     mpfa_int_t xHasNext, yHasNext;
     mpfr_t temp, error;
-    mpfr_prec_t prec;
+    mpfa_prec_t prec;
     mpfa_t zNew;
 
     prec = mpfr_get_prec(&(z->centre));

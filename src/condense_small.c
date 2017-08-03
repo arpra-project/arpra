@@ -25,7 +25,7 @@
 void mpfa_condense_small (mpfa_ptr z, double fraction) {
     mpfa_uint_t zTerm, zNext;
     mpfr_t temp, error, threshold;
-    mpfr_prec_t prec;
+    mpfa_prec_t prec;
 
     if ((z->nTerms < 2) || (fraction >= 1)) return;
 

@@ -28,7 +28,7 @@
 
 void mpfa_log (mpfa_ptr z, mpfa_srcptr x) {
     mpfr_t temp, xa, xb, da, db, du, alpha, gamma, delta;
-    mpfr_prec_t prec;
+    mpfa_prec_t prec;
 
     prec = mpfr_get_prec(&(z->centre));
     mpfr_inits2(prec, temp, xa, xb, da, db, du,
