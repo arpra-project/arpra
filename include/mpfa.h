@@ -35,17 +35,17 @@ typedef unsigned int mpfa_uint_t;
 
 typedef mpfr_prec_t mpfa_prec_t;
 
-typedef struct {
+struct __mpfa_struct {
     __mpfr_struct centre;
     __mpfr_struct radius;
     __mpfr_struct *deviations;
     mpfa_uint_t *symbols;
     mpfa_uint_t nTerms;
-} __mpfa_struct;
+};
 
-typedef __mpfa_struct mpfa_t[1];
-typedef __mpfa_struct *mpfa_ptr;
-typedef __gmp_const __mpfa_struct *mpfa_srcptr;
+typedef struct __mpfa_struct mpfa_t[1];
+typedef struct __mpfa_struct *mpfa_ptr;
+typedef __gmp_const struct __mpfa_struct *mpfa_srcptr;
 
 #ifdef __cplusplus
 extern "C" {
@@ -102,7 +102,7 @@ void mpfa_condense_small (mpfa_ptr z, double fraction);
 }
 #endif
 
-#define MPFA_DEFAULT_INTERNAL_PREC = 1024
+#define MPFA_DEFAULT_INTERNAL_PREC 128
 
 /*
  * If MPFA_TIGHT_MUL is defined, then the linear approximation to the quadratic term of

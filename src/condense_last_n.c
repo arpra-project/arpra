@@ -26,13 +26,15 @@ void mpfa_condense_last_n (mpfa_ptr z, mpfa_uint_t n) {
     mpfa_uint_t zTerm, zNext;
     mpfr_ptr *summands;
     mpfr_t temp;
-    mpfa_prec_t prec;
+    mpfa_prec_t prec, prec_internal;
 
     if (n > z->nTerms) n = z->nTerms;
     if (n < 2) return;
 
     prec = mpfr_get_prec(&(z->centre));
+    prec_internal = mpfa_get_internal_prec();
     mpfr_init2(temp, prec);
+    mpfr_prec_round(&(z->radius), prec_internal, MPFR_RNDU);
     mpfr_set_si(&(z->radius), 0, MPFR_RNDN);
     zTerm = z->nTerms - n;
     summands = malloc(n * sizeof(mpfr_ptr));
@@ -68,6 +70,8 @@ void mpfa_condense_last_n (mpfa_ptr z, mpfa_uint_t n) {
         z->deviations = realloc(z->deviations, zTerm * sizeof(mpfr_t));
     }
     z->nTerms = zTerm;
+
+    mpfr_prec_round(&(z->radius), prec, MPFR_RNDU);
 
     mpfr_clear(temp);
     free(summands);

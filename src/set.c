@@ -24,13 +24,16 @@
 
 void mpfa_set (mpfa_ptr z, mpfa_srcptr x) {
     mpfa_uint_t xTerm, zTerm;
-    mpfa_prec_t prec;
+    mpfa_prec_t prec, prec_internal;
     mpfr_t temp, error;
 
     if (z == x) return;
 
     prec = mpfr_get_prec(&(z->centre));
-    mpfr_inits2(prec, temp, error, (mpfr_ptr) NULL);
+    prec_internal = mpfa_get_internal_prec();
+    mpfr_init2(temp, prec);
+    mpfr_init2(error, prec);
+    mpfr_prec_round(&(z->radius), prec_internal, MPFR_RNDU);
     mpfr_set_si(error, 0, MPFR_RNDN);
     mpfr_set_si(&(z->radius), 0, MPFR_RNDN);
 
@@ -98,5 +101,8 @@ void mpfa_set (mpfa_ptr z, mpfa_srcptr x) {
     }
     z->nTerms = zTerm;
 
-    mpfr_clears(temp, error, (mpfr_ptr) NULL);
+    mpfr_prec_round(&(z->radius), prec, MPFR_RNDU);
+
+    mpfr_clear(temp);
+    mpfr_clear(error);
 }

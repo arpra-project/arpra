@@ -25,14 +25,18 @@
 void mpfa_condense_small (mpfa_ptr z, double fraction) {
     mpfa_uint_t zTerm, zNext;
     mpfr_t temp, error, threshold;
-    mpfa_prec_t prec;
+    mpfa_prec_t prec, prec_internal;
 
     if ((z->nTerms < 2) || (fraction >= 1)) return;
 
     prec = mpfr_get_prec(&(z->centre));
-    mpfr_inits2(prec, temp, error, threshold, (mpfr_ptr) NULL);
+    prec_internal = mpfa_get_internal_prec();
+    mpfr_init2(temp, prec);
+    mpfr_init2(error, prec);
+    mpfr_init2(threshold, prec);
     mpfr_set_si(error, 0, MPFR_RNDN);
     mpfr_mul_d(threshold, &(z->radius), fraction, MPFR_RNDN);
+    mpfr_prec_round(&(z->radius), prec_internal, MPFR_RNDU);
     mpfr_set_si(&(z->radius), 0, MPFR_RNDN);
     zTerm = 0;
 
@@ -74,5 +78,9 @@ void mpfa_condense_small (mpfa_ptr z, double fraction) {
     }
     z->nTerms = zTerm;
 
-    mpfr_clears(temp, error, threshold, (mpfr_ptr) NULL);
+    mpfr_prec_round(&(z->radius), prec, MPFR_RNDU);
+
+    mpfr_clear(temp);
+    mpfr_clear(error);
+    mpfr_clear(threshold);
 }

@@ -23,6 +23,10 @@
 #include <stdarg.h>
 
 void mpfa_init2 (mpfa_ptr x, mpfa_prec_t prec) {
+    if (mpfa_get_internal_prec() < prec) {
+        mpfa_set_internal_prec(prec);
+    }
+
     x->nTerms = 0;
     mpfr_init2(&(x->centre), prec);
     mpfr_init2(&(x->radius), prec);

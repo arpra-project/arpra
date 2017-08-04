@@ -26,8 +26,10 @@ void mpfa_set_mpfr_rad (mpfa_ptr z, mpfr_srcptr centre, mpfr_srcptr radius) {
     mpfa_uint_t zTerm;
 
     if (mpfr_set(&(z->centre), centre, MPFR_RNDN)) {
+        mpfr_prec_round(&(z->radius), mpfa_get_internal_prec(), MPFR_RNDU);
         mpfa_error(&(z->radius), &(z->centre));
         mpfr_add(&(z->radius), &(z->radius), radius, MPFR_RNDU);
+        mpfr_prec_round(&(z->radius), mpfa_get_prec(z), MPFR_RNDU);
     }
     else {
         mpfr_set(&(z->radius), radius, MPFR_RNDU);

@@ -26,12 +26,15 @@ void mpfa_affine_2 (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y, mpfr_srcptr alpha,
     mpfa_uint_t xTerm, yTerm, zTerm;
     mpfa_int_t xHasNext, yHasNext;
     mpfr_t temp, error;
-    mpfa_prec_t prec;
+    mpfa_prec_t prec, prec_internal;
     mpfa_t zNew;
 
     prec = mpfr_get_prec(&(z->centre));
-    mpfr_inits2(prec, temp, error, (mpfr_ptr) NULL);
-    mpfa_init2(zNew, prec);
+    prec_internal = mpfa_get_internal_prec();
+    mpfr_init2(temp, prec);
+    mpfr_init2(error, prec);
+    mpfr_init2(&(zNew->centre), prec);
+    mpfr_init2(&(zNew->radius), prec_internal);
     mpfr_set(error, delta, MPFR_RNDU);
     mpfr_set_si(&(zNew->radius), 0, MPFR_RNDN);
 
@@ -103,13 +106,16 @@ void mpfa_affine_2 (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y, mpfr_srcptr alpha,
         zTerm++;
     }
 
+    mpfr_prec_round(&(zNew->radius), prec, MPFR_RNDU);
+
     zNew->nTerms = zTerm;
     if (zNew->nTerms == 0) {
         free(zNew->symbols);
         free(zNew->deviations);
     }
 
-    mpfr_clears(temp, error, (mpfr_ptr) NULL);
+    mpfr_clear(temp);
+    mpfr_clear(error);
     mpfa_set(z, zNew);
     mpfa_clear(zNew);
 }

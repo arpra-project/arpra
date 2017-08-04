@@ -43,6 +43,7 @@ mpfa_int_t mpfa_term (mpfr_ptr z, mpfr_srcptr x, mpfr_srcptr y, mpfr_srcptr alph
         inexact = mpfr_sum(z, sumArray, 3, MPFR_RNDN);
     }
 
-    mpfr_clears(alpha_x, beta_y, (mpfr_ptr) NULL);
+    mpfr_clear(alpha_x);
+    mpfr_clear(beta_y);
     return inexact;
 }

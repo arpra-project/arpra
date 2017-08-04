@@ -26,5 +26,9 @@ mpfa_prec_t mpfa_get_default_prec () {
 }
 
 void mpfa_set_default_prec (mpfa_prec_t prec) {
+    if (mpfa_get_internal_prec() < prec) {
+        mpfa_set_internal_prec(prec);
+    }
+
     mpfr_set_default_prec(prec);
 }

@@ -24,6 +24,10 @@
 void mpfa_set_prec (mpfa_ptr x, mpfa_prec_t prec) {
     mpfa_uint_t xTerm;
 
+    if (mpfa_get_internal_prec() < prec) {
+        mpfa_set_internal_prec(prec);
+    }
+
     for (xTerm = 0; xTerm < x->nTerms; xTerm++) {
         mpfr_set_prec(&(x->deviations[xTerm]), prec);
     }
