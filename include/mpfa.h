@@ -88,6 +88,8 @@ mpfa_prec_t mpfa_get_prec (mpfa_srcptr x);
 void mpfa_set_prec (mpfa_ptr x, mpfa_prec_t prec);
 mpfa_prec_t mpfa_get_default_prec ();
 void mpfa_set_default_prec (mpfa_prec_t prec);
+mpfa_prec_t mpfa_get_internal_prec ();
+void mpfa_set_internal_prec (mpfa_prec_t prec);
 
 // Helper functions
 mpfa_uint_t mpfa_next_sym();
