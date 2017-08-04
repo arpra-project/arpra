@@ -102,6 +102,8 @@ void mpfa_condense_small (mpfa_ptr z, double fraction);
 }
 #endif
 
+#define MPFA_DEFAULT_INTERNAL_PREC = 1024
+
 /*
  * If MPFA_TIGHT_MUL is defined, then the linear approximation to the quadratic term of
  * mpfa_mul (in mul.c) is defined the same as in (26) of:

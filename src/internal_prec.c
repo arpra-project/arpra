@@ -21,7 +21,7 @@
 
 #include "mpfa.h"
 
-static mpfa_prec_t mpfa_internal_prec = 1024;
+static mpfa_prec_t mpfa_internal_prec = MPFA_DEFAULT_INTERNAL_PREC;
 
 mpfa_prec_t mpfa_get_internal_prec () {
     return mpfa_internal_prec;
