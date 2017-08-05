@@ -1,5 +1,5 @@
 /*
- * get_prec.c -- Get the precision of an affine form.
+ * prec.c -- Get and set the precision of an affine form.
  *
  * Copyright 2016-2017 James Paul Turner.
  *
@@ -23,4 +23,19 @@
 
 mpfa_prec_t mpfa_get_prec (mpfa_srcptr x) {
     return mpfr_get_prec(&(x->centre));
+}
+
+void mpfa_set_prec (mpfa_ptr x, mpfa_prec_t prec) {
+    mpfa_uint_t xTerm;
+
+    if (mpfa_get_internal_prec() < prec) {
+        mpfa_set_internal_prec(prec);
+    }
+
+    for (xTerm = 0; xTerm < x->nTerms; xTerm++) {
+        mpfr_set_prec(&(x->deviations[xTerm]), prec);
+    }
+
+    mpfr_set_prec(&(x->centre), prec);
+    mpfr_set_prec(&(x->radius), prec);
 }

@@ -34,7 +34,6 @@ lib_libmpfa_la_SOURCES = src/add.c \
                          src/div.c \
                          src/error.c \
                          src/exp.c \
-                         src/get_prec.c \
                          src/init.c \
                          src/init2.c \
                          src/internal_prec.c \
@@ -43,11 +42,11 @@ lib_libmpfa_la_SOURCES = src/add.c \
                          src/mul.c \
                          src/neg.c \
                          src/next_sym.c \
+                         src/prec.c \
                          src/set_d.c \
                          src/set_d_rad.c \
                          src/set_mpfr.c \
                          src/set_mpfr_rad.c \
-                         src/set_prec.c \
                          src/set.c \
                          src/sqrt.c \
                          src/sub.c \
