@@ -55,7 +55,7 @@ void mpfa_sqrt (mpfa_ptr z, mpfa_srcptr x) {
         mpfr_sub(xa, &(x->centre), &(x->radius), MPFR_RNDD);
         mpfr_add(xb, &(x->centre), &(x->radius), MPFR_RNDU);
 
-        if (mpfr_sgn(xa) < 0) {
+        if (mpfr_sgn(xa) <= 0) {
             if (z->nTerms > 0) {
                 mpfa_uint_t zTerm;
                 for (zTerm = 0; zTerm < z->nTerms; zTerm++) {
