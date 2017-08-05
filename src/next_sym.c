@@ -21,7 +21,8 @@
 
 #include "mpfa.h"
 
+static mpfa_uint_t mpfa_symbol = 0;
+
 mpfa_uint_t mpfa_next_sym() {
-    static mpfa_uint_t symbol;
-    return symbol++;
+    return mpfa_symbol++;
 }
