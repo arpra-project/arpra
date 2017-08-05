@@ -23,7 +23,7 @@
 
 void mpfa_error (mpfr_ptr error, mpfr_srcptr x) {
     mpfa_prec_t p;
-    mpfr_exp_t e;
+    mpfa_exp_t e;
 
     // 1/2 ULP = 2^(e-p-1)
 

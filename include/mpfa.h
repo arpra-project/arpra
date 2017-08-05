@@ -34,6 +34,7 @@ typedef int mpfa_int_t;
 typedef unsigned int mpfa_uint_t;
 
 typedef mpfr_prec_t mpfa_prec_t;
+typedef mpfr_exp_t mpfa_exp_t;
 
 struct __mpfa_struct {
     __mpfr_struct centre;

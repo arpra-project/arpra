@@ -27,18 +27,18 @@
 
 void mpfa_exp (mpfa_ptr z, mpfa_srcptr x) {
     mpfr_t temp, xa, xb, da, db, du, alpha, gamma, delta;
-    mpfa_prec_t prec;
+    mpfa_prec_t prec_internal;
 
-    prec = mpfr_get_prec(&(z->centre));
-    mpfr_init2(temp, prec);
-    mpfr_init2(xa, prec);
-    mpfr_init2(xb, prec);
-    mpfr_init2(da, prec);
-    mpfr_init2(db, prec);
-    mpfr_init2(du, prec);
-    mpfr_init2(alpha, prec);
-    mpfr_init2(gamma, prec);
-    mpfr_init2(delta, prec);
+    prec_internal = mpfa_get_internal_prec();
+    mpfr_init2(temp, prec_internal);
+    mpfr_init2(xa, prec_internal);
+    mpfr_init2(xb, prec_internal);
+    mpfr_init2(da, prec_internal);
+    mpfr_init2(db, prec_internal);
+    mpfr_init2(du, prec_internal);
+    mpfr_init2(alpha, prec_internal);
+    mpfr_init2(gamma, prec_internal);
+    mpfr_init2(delta, prec_internal);
 
     if (mpfr_zero_p(&(x->radius))) {
         if (mpfr_exp(temp, &(x->centre), MPFR_RNDN)) {

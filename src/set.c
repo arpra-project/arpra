@@ -29,10 +29,10 @@ void mpfa_set (mpfa_ptr z, mpfa_srcptr x) {
 
     if (z == x) return;
 
-    prec = mpfr_get_prec(&(z->centre));
+    prec = mpfa_get_prec(z);
     prec_internal = mpfa_get_internal_prec();
-    mpfr_init2(temp, prec);
-    mpfr_init2(error, prec);
+    mpfr_init2(temp, prec_internal);
+    mpfr_init2(error, prec_internal);
     mpfr_prec_round(&(z->radius), prec_internal, MPFR_RNDU);
     mpfr_set_si(error, 0, MPFR_RNDN);
     mpfr_set_si(&(z->radius), 0, MPFR_RNDN);
@@ -52,12 +52,18 @@ void mpfa_set (mpfa_ptr z, mpfa_srcptr x) {
             z->symbols = realloc(z->symbols, (x->nTerms + 1) * sizeof(mpfa_uint_t));
             z->deviations = realloc(z->deviations, (x->nTerms + 1) * sizeof(mpfa_t));
         }
+        for (zTerm = 0; zTerm < z->nTerms; zTerm++) {
+            mpfr_prec_round(&(z->deviations[zTerm]), prec_internal, MPFR_RNDN);
+        }
         for (zTerm = z->nTerms; zTerm < x->nTerms; zTerm++) {
-            mpfr_init2(&(z->deviations[zTerm]), prec);
+            mpfr_init2(&(z->deviations[zTerm]), prec_internal);
         }
     }
     else if (z->nTerms > x->nTerms) {
         // need to clear unused terms
+        for (zTerm = 0; zTerm < x->nTerms; zTerm++) {
+            mpfr_prec_round(&(z->deviations[zTerm]), prec_internal, MPFR_RNDN);
+        }
         for (zTerm = x->nTerms; zTerm < z->nTerms; zTerm++) {
             mpfr_clear(&(z->deviations[zTerm]));
         }
@@ -83,7 +89,7 @@ void mpfa_set (mpfa_ptr z, mpfa_srcptr x) {
 
     if (!mpfr_zero_p(error)) {
         z->symbols[zTerm] = mpfa_next_sym();
-        mpfr_init2(&(z->deviations[zTerm]), prec);
+        mpfr_init2(&(z->deviations[zTerm]), prec_internal);
         mpfr_set(&(z->deviations[zTerm]), error, MPFR_RNDN);
         mpfr_add(&(z->radius), &(z->radius), error, MPFR_RNDU);
         zTerm++;

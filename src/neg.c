@@ -25,7 +25,7 @@ void mpfa_neg (mpfa_ptr z, mpfa_srcptr x) {
     mpfr_t alpha, gamma, delta;
     mpfa_prec_t prec;
 
-    prec = mpfr_get_prec(&(z->centre));
+    prec = mpfa_get_prec(z);
     mpfr_init2(alpha, prec);
     mpfr_set_si(alpha, -1, MPFR_RNDN);
     mpfr_init2(gamma, prec);

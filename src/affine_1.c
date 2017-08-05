@@ -28,10 +28,10 @@ void mpfa_affine_1 (mpfa_ptr z, mpfa_srcptr x, mpfr_srcptr alpha, mpfr_srcptr ga
     mpfa_prec_t prec, prec_internal;
     mpfa_t zNew;
 
-    prec = mpfr_get_prec(&(z->centre));
+    prec = mpfa_get_prec(z);
     prec_internal = mpfa_get_internal_prec();
-    mpfr_init2(temp, prec);
-    mpfr_init2(error, prec);
+    mpfr_init2(temp, prec_internal);
+    mpfr_init2(error, prec_internal);
     mpfr_init2(&(zNew->centre), prec);
     mpfr_init2(&(zNew->radius), prec_internal);
     mpfr_set(error, delta, MPFR_RNDU);
@@ -48,7 +48,7 @@ void mpfa_affine_1 (mpfa_ptr z, mpfa_srcptr x, mpfr_srcptr alpha, mpfr_srcptr ga
 
     for (xTerm = 0, zTerm = 0; xTerm < x->nTerms; xTerm++) {
         zNew->symbols[zTerm] = x->symbols[xTerm];
-        mpfr_init2(&(zNew->deviations[zTerm]), prec);
+        mpfr_init2(&(zNew->deviations[zTerm]), prec_internal);
 
         if (mpfr_mul(&(zNew->deviations[zTerm]), alpha, &(x->deviations[xTerm]), MPFR_RNDN)) {
             mpfa_error(temp, &(zNew->deviations[zTerm]));
@@ -67,7 +67,7 @@ void mpfa_affine_1 (mpfa_ptr z, mpfa_srcptr x, mpfr_srcptr alpha, mpfr_srcptr ga
 
     if (!mpfr_zero_p(error)) {
         zNew->symbols[zTerm] = mpfa_next_sym();
-        mpfr_init2(&(zNew->deviations[zTerm]), prec);
+        mpfr_init2(&(zNew->deviations[zTerm]), prec_internal);
         mpfr_set(&(zNew->deviations[zTerm]), error, MPFR_RNDN);
         mpfr_add(&(zNew->radius), &(zNew->radius), error, MPFR_RNDU);
         zTerm++;

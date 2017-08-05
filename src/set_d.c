@@ -24,15 +24,19 @@
 
 void mpfa_set_d (mpfa_ptr z, const double centre) {
     mpfa_uint_t zTerm;
+    mpfa_prec_t prec_internal;
+
+    prec_internal = mpfa_get_internal_prec();
 
     if (mpfr_set_d(&(z->centre), centre, MPFR_RNDN)) {
         mpfa_error(&(z->radius), &(z->centre));
         if (z->nTerms == 0) {
             z->symbols = malloc(sizeof(mpfa_uint_t));
             z->deviations = malloc(sizeof(mpfa_t));
-            mpfr_init2(&(z->deviations[0]), mpfr_get_prec(&(z->centre)));
+            mpfr_init2(&(z->deviations[0]), prec_internal);
         }
         else if (z->nTerms >= 2) {
+            mpfr_prec_round(&(z->deviations[0]), prec_internal, MPFR_RNDN);
             for (zTerm = 1; zTerm < z->nTerms; zTerm++) {
                 mpfr_clear(&(z->deviations[zTerm]));
             }
