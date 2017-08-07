@@ -65,3 +65,6 @@ tests_test1_SOURCES = tests/test1.c
 tests_morris_lecar_CPPFLAGS = -I$(top_srcdir)/include
 tests_morris_lecar_LDADD = lib/libmpfa.la
 tests_morris_lecar_SOURCES = tests/morris_lecar.c
+
+if MPFI_TESTS
+endif MPFI_TESTS

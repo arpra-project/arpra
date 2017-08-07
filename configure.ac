@@ -46,21 +46,21 @@ AC_CHECK_HEADER([mpfr.h], [],
 AC_CHECK_LIB([mpfr], [mpfr_init], [],
   [AC_MSG_ERROR([MPFR library (libmpfr.so) is missing or unusable - see README])])
 
-# --enable-testing (requires MPFI)
-AC_ARG_ENABLE([testing],
-  [AS_HELP_STRING([--enable-testing], [enable test suite [default=no]])],
+# Optionally enable MPFI tests (requires MPFI)
+AC_ARG_ENABLE([mpfi-tests],
+  [AS_HELP_STRING([--enable-mpfi-tests], [enable MPFI tests [default=no]])],
   [case "${enableval}" in
-    yes) testing=true ;;
-    no)  testing=false ;;
-    *) AC_MSG_ERROR([bad value ${enableval} for --enable-testing]) ;;
+    yes) mpfi-tests=true ;;
+    no)  mpfi-tests=false ;;
+    *) AC_MSG_ERROR([bad value ${enableval} for --enable-mpfi-tests]) ;;
   esac
-  # MPFI (required for testing)
+  # MPFI (required for MPFI tests)
   AC_CHECK_HEADER([mpfi.h], [],
     [AC_MSG_ERROR([MPFI header (mpfi.h) is missing or unusable - see README])])
   AC_CHECK_LIB([mpfi], [mpfi_init], [],
     [AC_MSG_ERROR([MPFI library (libmpfi.so) is missing or unusable - see README])])],
-  [testing=false])
-AM_CONDITIONAL([TESTING], [test x$testing = xtesting])
+  [mpfi-tests=false])
+AM_CONDITIONAL([MPFI_TESTS], [test x$mpfi-tests = xtrue])
 
 # Header files
 AC_CHECK_HEADERS([stdlib.h])
