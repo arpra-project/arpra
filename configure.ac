@@ -26,7 +26,7 @@ AC_CONFIG_MACRO_DIR([m4])
 
 AM_INIT_AUTOMAKE([1.13 -Wall -Werror subdir-objects dist-bzip2])
 
-# Checks for programs.
+# Programs
 AC_PROG_CC
 AC_PROG_CPP
 AM_PROG_AR
@@ -34,25 +34,42 @@ AM_PROG_AR
 LT_PREREQ([2.2])
 LT_INIT([])
 
-# Checks for GNU GMP header and library.
+# GNU GMP
 AC_CHECK_HEADER([gmp.h], [],
-  [AC_MSG_ERROR([Cannot include GMP header - see https://gmplib.org/])])
+  [AC_MSG_ERROR([GMP header (gmp.h) is missing or unusable - see README])])
 AC_CHECK_LIB([gmp], [__gmpz_init], [],
-  [AC_MSG_ERROR([Cannot link GMP library - see https://gmplib.org/])])
+  [AC_MSG_ERROR([GMP library (libgmp.so) is missing or unusable - see README])])
 
-# Checks for GNU MPFR header and library.
+# GNU MPFR
 AC_CHECK_HEADER([mpfr.h], [],
-  [AC_MSG_ERROR([Cannot include MPFR header - see http://www.mpfr.org/])])
+  [AC_MSG_ERROR([MPFR header (mpfr.h) is missing or unusable - see README])])
 AC_CHECK_LIB([mpfr], [mpfr_init], [],
-  [AC_MSG_ERROR([Cannot link MPFR library - see http://www.mpfr.org/])])
+  [AC_MSG_ERROR([MPFR library (libmpfr.so) is missing or unusable - see README])])
 
-# Checks for header files.
+# --enable-testing (requires MPFI)
+AC_ARG_ENABLE([testing],
+  [AS_HELP_STRING([--enable-testing], [enable test suite [default=no]])],
+  [case "${enableval}" in
+    yes) testing=true ;;
+    no)  testing=false ;;
+    *) AC_MSG_ERROR([bad value ${enableval} for --enable-testing]) ;;
+  esac
+  # MPFI (required for testing)
+  AC_CHECK_HEADER([mpfi.h], [],
+    [AC_MSG_ERROR([MPFI header (mpfi.h) is missing or unusable - see README])])
+  AC_CHECK_LIB([mpfi], [mpfi_init], [],
+    [AC_MSG_ERROR([MPFI library (libmpfi.so) is missing or unusable - see README])])],
+  [testing=false])
+AM_CONDITIONAL([TESTING], [test x$testing = xtesting])
+
+# Header files
 AC_CHECK_HEADERS([stdlib.h])
 
-# Checks for library functions.
+# Library functions
 AC_CHECK_FUNCS([sqrt])
 AC_FUNC_MALLOC
 AC_FUNC_REALLOC
 
+# Output
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT
