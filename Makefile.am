@@ -54,17 +54,23 @@ lib_libmpfa_la_SOURCES = src/add.c \
                          src/term.c
 
 # MPFA test suite
-TESTS = tests/test1 tests/morris_lecar
+check_LTLIBRARIES = tests/libmpfa-test.la
+
+tests_libmpfa_test_la_CPPFLAGS = -I$(top_srcdir)/include
+tests_libmpfa_test_la_LIBADD = lib/libmpfa.la
+tests_libmpfa_test_la_SOURCES = tests/test.c
 
 check_PROGRAMS = tests/test1 tests/morris_lecar
 
 tests_test1_CPPFLAGS = -I$(top_srcdir)/include
-tests_test1_LDADD = lib/libmpfa.la
+tests_test1_LDADD = tests/libmpfa-test.la
 tests_test1_SOURCES = tests/test1.c
 
 tests_morris_lecar_CPPFLAGS = -I$(top_srcdir)/include
-tests_morris_lecar_LDADD = lib/libmpfa.la
+tests_morris_lecar_LDADD = tests/libmpfa-test.la
 tests_morris_lecar_SOURCES = tests/morris_lecar.c
 
 if MPFI_TESTS
 endif MPFI_TESTS
+
+TESTS = $(check_PROGRAMS)

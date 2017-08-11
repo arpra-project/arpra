@@ -50,8 +50,8 @@ AC_CHECK_LIB([mpfr], [mpfr_init], [],
 AC_ARG_ENABLE([mpfi-tests],
   [AS_HELP_STRING([--enable-mpfi-tests], [enable MPFI tests [default=no]])],
   [case "${enableval}" in
-    yes) mpfi-tests=true ;;
-    no)  mpfi-tests=false ;;
+    yes) mpfi_tests=true ;;
+    no)  mpfi_tests=false ;;
     *) AC_MSG_ERROR([bad value ${enableval} for --enable-mpfi-tests]) ;;
   esac
   # MPFI (required for MPFI tests)
@@ -59,14 +59,14 @@ AC_ARG_ENABLE([mpfi-tests],
     [AC_MSG_ERROR([MPFI header (mpfi.h) is missing or unusable - see README])])
   AC_CHECK_LIB([mpfi], [mpfi_init], [],
     [AC_MSG_ERROR([MPFI library (libmpfi.so) is missing or unusable - see README])])],
-  [mpfi-tests=false])
-AM_CONDITIONAL([MPFI_TESTS], [test x$mpfi-tests = xtrue])
+  [mpfi_tests=false])
+AM_CONDITIONAL([MPFI_TESTS], [test x$mpfi_tests = xtrue])
 
 # Header files
 AC_CHECK_HEADERS([stdlib.h])
 
 # Library functions
-AC_CHECK_FUNCS([sqrt])
+AC_CHECK_FUNCS([strtoul clock_gettime sqrt])
 AC_FUNC_MALLOC
 AC_FUNC_REALLOC
 
