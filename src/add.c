@@ -25,6 +25,7 @@ void mpfa_add (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
     mpfr_t alpha, beta, gamma, delta;
     mpfa_prec_t prec;
 
+    // Init temp vars.
     prec = mpfa_get_prec(z);
     mpfr_init2(alpha, prec);
     mpfr_set_si(alpha, 1, MPFR_RNDN);
@@ -35,8 +36,10 @@ void mpfa_add (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
     mpfr_init2(delta, prec);
     mpfr_set_si(delta, 0, MPFR_RNDN);
 
+    // z = x + y
     mpfa_affine_2(z, x, y, alpha, beta, gamma, delta);
 
+    // Clear temp vars.
     mpfr_clear(alpha);
     mpfr_clear(beta);
     mpfr_clear(gamma);

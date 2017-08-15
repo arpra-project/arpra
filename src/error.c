@@ -1,5 +1,5 @@
 /*
- * error.c -- Compute the max absolute error of an inexact MPFR operation.
+ * error.c -- Compute the max ULP error of an inexact MPFR operation.
  *
  * Copyright 2017 James Paul Turner.
  *
@@ -21,17 +21,24 @@
 
 #include "mpfa.h"
 
+/*
+ * This function assumes that rounding error has occured - i.e. an MPFR call
+ * has returned nonzero. Therefore, if x == 0, then nextabove(x) is used
+ * instead of 1/2 ULP(x). This ensures that error is always recorded, even
+ * when x was flushed to zero.
+ */
+
 void mpfa_error (mpfr_ptr error, mpfr_srcptr x) {
     mpfa_prec_t p;
     mpfa_exp_t e;
 
-    // 1/2 ULP = 2^(e-p-1)
-
     if (mpfr_zero_p(x)) {
+        // error = nextabove(x)
         mpfr_set_si(error, 0, MPFR_RNDN);
         mpfr_nextabove(error);
     }
     else {
+        // error = 1/2 ULP(x) = 2^(e-p-1)
         p = mpfr_get_prec(x);
         e = mpfr_get_exp(x);
         mpfr_set_si(error, (e - p - 1), MPFR_RNDU);

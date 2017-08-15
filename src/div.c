@@ -23,19 +23,20 @@
 
 /*
  * For now we just multiply the numerator with the reciprocal of the denominator.
- *
- * TODO: find a better way to do mpfa_div
  */
 
 void mpfa_div (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
     mpfa_t zNew;
     mpfa_prec_t prec;
 
+    // Init temp z.
     prec = mpfa_get_prec(z);
     mpfa_init2(zNew, prec);
 
+    // z = x * (1 / y)
     mpfa_inv(zNew, y);
     mpfa_mul(z, x, zNew);
 
+    // Clear temp z.
     mpfa_clear(zNew);
 }

@@ -29,6 +29,7 @@ void mpfa_exp (mpfa_ptr z, mpfa_srcptr x) {
     mpfr_t temp, xa, xb, da, db, du, alpha, gamma, delta;
     mpfa_prec_t prec_internal;
 
+    // Init temp vars with internal precision.
     prec_internal = mpfa_get_internal_prec();
     mpfr_init2(temp, prec_internal);
     mpfr_init2(xa, prec_internal);
@@ -40,6 +41,7 @@ void mpfa_exp (mpfa_ptr z, mpfa_srcptr x) {
     mpfr_init2(gamma, prec_internal);
     mpfr_init2(delta, prec_internal);
 
+    // Handle trivial case, where x has zero radius.
     if (mpfr_zero_p(&(x->radius))) {
         if (mpfr_exp(temp, &(x->centre), MPFR_RNDN)) {
             mpfa_error(delta, temp);
@@ -92,6 +94,7 @@ void mpfa_exp (mpfa_ptr z, mpfa_srcptr x) {
         mpfa_affine_1(z, x, alpha, gamma, delta);
     }
 
+    // Clear temp vars.
     mpfr_clear(temp);
     mpfr_clear(xa);
     mpfr_clear(xb);

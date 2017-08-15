@@ -32,6 +32,7 @@ void mpfa_sum (mpfa_ptr z, const mpfa_ptr *x, mpfa_uint_t n) {
     mpfa_prec_t prec, prec_internal;
     mpfa_t zNew;
 
+    // Check input and handle trivial case.
     if (n < 3) {
         if (n == 2) {
             mpfa_add(z, x[0], x[1]);
@@ -42,6 +43,7 @@ void mpfa_sum (mpfa_ptr z, const mpfa_ptr *x, mpfa_uint_t n) {
         else return;
     }
 
+    // Init temp vars and set internal precision.
     prec = mpfa_get_prec(z);
     prec_internal = mpfa_get_internal_prec();
     mpfr_init2(temp, prec_internal);
@@ -53,17 +55,20 @@ void mpfa_sum (mpfa_ptr z, const mpfa_ptr *x, mpfa_uint_t n) {
     xTerm = malloc(n * sizeof(mpfa_uint_t));
     summands = malloc(n * sizeof(mpfr_ptr));
 
+    // MPFR sum takes an array of (mpfr_ptr *).
     zTerm = 0;
     for (i = 0; i < n; i++) {
         xTerm[i] = 0;
         summands[i] = &(x[i]->centre);
     }
 
+    // Sum centre values.
     if (mpfr_sum(&(zNew->centre), summands, n, MPFR_RNDN)) {
         mpfa_error(temp, &(zNew->centre));
         mpfr_add(error, error, temp, MPFR_RNDU);
     }
 
+    // Allocate memory for all possible noise terms in z.
     zNew->nTerms = 1;
     for (i = 0; i < n; i++) {
         zNew->nTerms += x[i]->nTerms;

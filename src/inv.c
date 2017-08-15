@@ -31,6 +31,7 @@ void mpfa_inv (mpfa_ptr z, mpfa_srcptr x) {
     mpfr_t temp, xa, xb, da, db, du, alpha, gamma, delta;
     mpfa_prec_t prec_internal;
 
+    // Init temp vars with internal precision.
     prec_internal = mpfa_get_internal_prec();
     mpfr_init2(temp, prec_internal);
     mpfr_init2(xa, prec_internal);
@@ -42,6 +43,7 @@ void mpfa_inv (mpfa_ptr z, mpfa_srcptr x) {
     mpfr_init2(gamma, prec_internal);
     mpfr_init2(delta, prec_internal);
 
+    // Handle trivial case, where x has zero radius.
     if (mpfr_zero_p(&(x->radius))) {
         if (mpfr_si_div(temp, 1, &(x->centre), MPFR_RNDN)) {
             mpfa_error(delta, temp);
@@ -56,6 +58,7 @@ void mpfa_inv (mpfa_ptr z, mpfa_srcptr x) {
         mpfr_sub(xa, &(x->centre), &(x->radius), MPFR_RNDD);
         mpfr_add(xb, &(x->centre), &(x->radius), MPFR_RNDU);
 
+        // Set NaN if x straddles zero.
         sign = mpfr_sgn(xa);
         if ((sign != mpfr_sgn(xb) || (sign == 0))) {
             if (z->nTerms > 0) {
@@ -117,6 +120,7 @@ void mpfa_inv (mpfa_ptr z, mpfa_srcptr x) {
         }
     }
 
+    // Clear temp vars.
     mpfr_clear(temp);
     mpfr_clear(xa);
     mpfr_clear(xb);

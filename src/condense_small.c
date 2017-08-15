@@ -27,8 +27,10 @@ void mpfa_condense_small (mpfa_ptr z, double fraction) {
     mpfr_t temp, error, threshold;
     mpfa_prec_t prec, prec_internal;
 
+    // Check input and handle trivial case.
     if ((z->nTerms < 2) || (fraction >= 1)) return;
 
+    // Init temp vars and set internal precision.
     prec = mpfa_get_prec(z);
     prec_internal = mpfa_get_internal_prec();
     mpfr_init2(temp, prec_internal);
@@ -44,9 +46,11 @@ void mpfa_condense_small (mpfa_ptr z, double fraction) {
         mpfr_abs(temp, &(z->deviations[zNext]), MPFR_RNDN);
 
         if (mpfr_lessequal_p(temp, threshold)) {
+            // If noise term is smaller than threshold, condense it.
             mpfr_add(error, error, temp, MPFR_RNDU);
         }
         else {
+            // Else shift noise term up, and add it to radius.
             mpfr_prec_round(&(z->deviations[zTerm]), prec_internal, MPFR_RNDN);
             if (zTerm < zNext) {
                 z->symbols[zTerm] = z->symbols[zNext];
@@ -56,19 +60,22 @@ void mpfa_condense_small (mpfa_ptr z, double fraction) {
             zTerm++;
         }
     }
+    mpfr_prec_round(&(z->deviations[zTerm]), prec_internal, MPFR_RNDN);
+    mpfr_set(&(z->deviations[zTerm]), error, MPFR_RNDU);
 
+    // Store nonzero condensed noise term, and add it to radius.
+    if (!mpfr_zero_p(&(z->deviations[zTerm]))) {
+        z->symbols[zTerm] = mpfa_next_sym();
+        mpfr_add(&(z->radius), &(z->radius), &(z->deviations[zTerm]), MPFR_RNDU);
+        zTerm++;
+    }
+
+    // Clear unused noise terms.
     for (zNext = zTerm; zNext < z->nTerms; zNext++) {
         mpfr_clear(&(z->deviations[zNext]));
     }
 
-    if (!mpfr_zero_p(error)) {
-        z->symbols[zTerm] = mpfa_next_sym();
-        mpfr_init2(&(z->deviations[zTerm]), prec_internal);
-        mpfr_set(&(z->deviations[zTerm]), error, MPFR_RNDN);
-        mpfr_add(&(z->radius), &(z->radius), error, MPFR_RNDU);
-        zTerm++;
-    }
-
+    // Resize noise term memory.
     if (zTerm == 0) {
         free(z->symbols);
         free(z->deviations);
@@ -79,8 +86,10 @@ void mpfa_condense_small (mpfa_ptr z, double fraction) {
     }
     z->nTerms = zTerm;
 
+    // Round internal precision of radius to working precision.
     mpfr_prec_round(&(z->radius), prec, MPFR_RNDU);
 
+    // Clear temp vars.
     mpfr_clear(temp);
     mpfr_clear(error);
     mpfr_clear(threshold);

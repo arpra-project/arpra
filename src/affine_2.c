@@ -29,6 +29,7 @@ void mpfa_affine_2 (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y, mpfr_srcptr alpha,
     mpfa_prec_t prec, prec_internal;
     mpfa_t zNew;
 
+    // Init temp vars and set internal precision.
     prec = mpfa_get_prec(z);
     prec_internal = mpfa_get_internal_prec();
     mpfr_init2(temp, prec_internal);
@@ -38,11 +39,13 @@ void mpfa_affine_2 (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y, mpfr_srcptr alpha,
     mpfr_set(error, delta, MPFR_RNDU);
     mpfr_set_si(&(zNew->radius), 0, MPFR_RNDN);
 
+    // z_0 = (alpha * x_0) + (beta * y_0) + gamma
     if (mpfa_term(&(zNew->centre), &(x->centre), &(y->centre), alpha, beta, gamma)) {
         mpfa_error(temp, &(zNew->centre));
         mpfr_add(error, error, temp, MPFR_RNDU);
     }
 
+    // Allocate memory for all possible noise terms in z.
     zNew->nTerms = x->nTerms + y->nTerms + 1;
     zNew->symbols = malloc(zNew->nTerms * sizeof(mpfa_uint_t));
     zNew->deviations = malloc(zNew->nTerms * sizeof(mpfr_t));
@@ -57,6 +60,7 @@ void mpfa_affine_2 (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y, mpfr_srcptr alpha,
             zNew->symbols[zTerm] = x->symbols[xTerm];
             mpfr_init2(&(zNew->deviations[zTerm]), prec_internal);
 
+            // z_i = (alpha * x_i)
             if (mpfr_mul(&(zNew->deviations[zTerm]), alpha, &(x->deviations[xTerm]), MPFR_RNDN)) {
                 mpfa_error(temp, &(zNew->deviations[zTerm]));
                 mpfr_add(error, error, temp, MPFR_RNDU);
@@ -68,6 +72,7 @@ void mpfa_affine_2 (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y, mpfr_srcptr alpha,
             zNew->symbols[zTerm] = y->symbols[yTerm];
             mpfr_init2(&(zNew->deviations[zTerm]), prec_internal);
 
+            // z_i = (beta * y_i)
             if (mpfr_mul(&(zNew->deviations[zTerm]), beta, &(y->deviations[yTerm]), MPFR_RNDN)) {
                 mpfa_error(temp, &(zNew->deviations[zTerm]));
                 mpfr_add(error, error, temp, MPFR_RNDU);
@@ -79,6 +84,7 @@ void mpfa_affine_2 (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y, mpfr_srcptr alpha,
             zNew->symbols[zTerm] = x->symbols[xTerm];
             mpfr_init2(&(zNew->deviations[zTerm]), prec_internal);
 
+            // z_i = (alpha * x_i) + (beta * y_i)
             if (mpfa_term(&(zNew->deviations[zTerm]), &(x->deviations[xTerm]), &(y->deviations[yTerm]), alpha, beta, NULL)) {
                 mpfa_error(temp, &(zNew->deviations[zTerm]));
                 mpfr_add(error, error, temp, MPFR_RNDU);
@@ -88,6 +94,7 @@ void mpfa_affine_2 (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y, mpfr_srcptr alpha,
             yHasNext = ++yTerm < y->nTerms;
         }
 
+        // Store nonzero noise terms.
         if (mpfr_zero_p(&(zNew->deviations[zTerm]))) {
             mpfr_clear(&(zNew->deviations[zTerm]));
         }
@@ -98,6 +105,7 @@ void mpfa_affine_2 (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y, mpfr_srcptr alpha,
         }
     }
 
+    // Store nonzero numerical error term.
     if (!mpfr_zero_p(error)) {
         zNew->symbols[zTerm] = mpfa_next_sym();
         mpfr_init2(&(zNew->deviations[zTerm]), prec_internal);
@@ -106,14 +114,17 @@ void mpfa_affine_2 (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y, mpfr_srcptr alpha,
         zTerm++;
     }
 
+    // Round internal precision radius to working precision.
     mpfr_prec_round(&(zNew->radius), prec, MPFR_RNDU);
 
+    // Free noise term memory if number of terms is zero.
     zNew->nTerms = zTerm;
     if (zNew->nTerms == 0) {
         free(zNew->symbols);
         free(zNew->deviations);
     }
 
+    // Clear temp vars and set z.
     mpfr_clear(temp);
     mpfr_clear(error);
     mpfa_set(z, zNew);

@@ -29,6 +29,7 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
     mpfa_prec_t prec, prec_internal;
     mpfa_t zNew;
 
+    // Init temp vars and set internal precision.
     prec = mpfa_get_prec(z);
     prec_internal = mpfa_get_internal_prec();
     mpfr_init2(temp, prec_internal);
@@ -38,11 +39,13 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
     mpfr_set_si(error, 0, MPFR_RNDN);
     mpfr_set_si(&(zNew->radius), 0, MPFR_RNDN);
 
+    // z_0 = x_0 * y_0
     if (mpfr_mul(&(zNew->centre), &(x->centre), &(y->centre), MPFR_RNDN)) {
         mpfa_error(temp, &(zNew->centre));
         mpfr_add(error, error, temp, MPFR_RNDU);
     }
 
+    // Allocate memory for all possible noise terms in z.
     zNew->nTerms = x->nTerms + y->nTerms + 1;
     zNew->symbols = malloc(zNew->nTerms * sizeof(mpfa_uint_t));
     zNew->deviations = malloc(zNew->nTerms * sizeof(mpfr_t));
@@ -57,6 +60,7 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
             zNew->symbols[zTerm] = x->symbols[xTerm];
             mpfr_init2(&(zNew->deviations[zTerm]), prec_internal);
 
+            // z_i = (y_0 * x_i)
             if (mpfr_mul(&(zNew->deviations[zTerm]), &(y->centre), &(x->deviations[xTerm]), MPFR_RNDN)) {
                 mpfa_error(temp, &(zNew->deviations[zTerm]));
                 mpfr_add(error, error, temp, MPFR_RNDU);
@@ -68,6 +72,7 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
             zNew->symbols[zTerm] = y->symbols[yTerm];
             mpfr_init2(&(zNew->deviations[zTerm]), prec_internal);
 
+            // z_i = (x_0 * y_i)
             if (mpfr_mul(&(zNew->deviations[zTerm]), &(x->centre), &(y->deviations[yTerm]), MPFR_RNDN)) {
                 mpfa_error(temp, &(zNew->deviations[zTerm]));
                 mpfr_add(error, error, temp, MPFR_RNDU);
@@ -79,6 +84,7 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
             zNew->symbols[zTerm] = x->symbols[xTerm];
             mpfr_init2(&(zNew->deviations[zTerm]), prec_internal);
 
+            // z_i = (y_0 * x_i) + (x_0 * y_i)
             if (mpfa_term(&(zNew->deviations[zTerm]), &(x->deviations[xTerm]), &(y->deviations[yTerm]), &(y->centre), &(x->centre), NULL)) {
                 mpfa_error(temp, &(zNew->deviations[zTerm]));
                 mpfr_add(error, error, temp, MPFR_RNDU);
@@ -88,6 +94,7 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
             yHasNext = ++yTerm < y->nTerms;
         }
 
+        // Store nonzero noise terms.
         if (mpfr_zero_p(&(zNew->deviations[zTerm]))) {
             mpfr_clear(&(zNew->deviations[zTerm]));
         }
@@ -99,9 +106,14 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
     }
 
 #ifdef MPFA_TIGHT_MUL
+    // Linear approximation of the quadratic term is defined the same as in (26) of:
+    // S. M. Rump and M. Kashiwagi, Implementation and improvements of affine arithmetic,
+    // Nonlinear Theory an Its Applications, IEICE, vol. 6, no. 3, pp. 341-359, 2015.
+
     mpfa_uint_t xNext, yNext;
     mpfr_t xiyiPos, xiyiNeg;
 
+    // Init extra temp vars.
     mpfr_init2(xiyiPos, prec_internal);
     mpfr_init2(xiyiNeg, prec_internal);
     mpfr_set_si(xiyiPos, 0, MPFR_RNDN);
@@ -184,13 +196,16 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
     mpfr_max(temp, xiyiPos, xiyiNeg, MPFR_RNDN);
     mpfr_add(error, error, temp, MPFR_RNDU);
 
+    // Clear extra temp vars.
     mpfr_clear(xiyiPos);
     mpfr_clear(xiyiNeg);
 #else
+    // Linear approximation of quadratic term is rad(x) * rad(y).
     mpfr_mul(temp, &(x->radius), &(y->radius), MPFR_RNDU);
     mpfr_add(error, error, temp, MPFR_RNDU);
 #endif
 
+    // Store nonzero numerical error term.
     if (!mpfr_zero_p(error)) {
         zNew->symbols[zTerm] = mpfa_next_sym();
         mpfr_init2(&(zNew->deviations[zTerm]), prec_internal);
@@ -199,14 +214,17 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
         zTerm++;
     }
 
+    // Round internal precision radius to working precision.
     mpfr_prec_round(&(zNew->radius), prec, MPFR_RNDU);
 
+    // Free noise term memory if number of terms is zero.
     zNew->nTerms = zTerm;
     if (zNew->nTerms == 0) {
         free(zNew->symbols);
         free(zNew->deviations);
     }
 
+    // Clear temp vars and set z.
     mpfr_clear(temp);
     mpfr_clear(error);
     mpfa_set(z, zNew);

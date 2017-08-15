@@ -106,7 +106,7 @@ void mpfa_condense_small (mpfa_ptr z, double fraction);
 #define MPFA_DEFAULT_INTERNAL_PREC 128
 
 /*
- * If MPFA_TIGHT_MUL is defined, then the linear approximation to the quadratic term of
+ * If MPFA_TIGHT_MUL is defined, then the linear approximation of the quadratic term of
  * mpfa_mul (in mul.c) is defined the same as in (26) of:
  *
  * S. M. Rump and M. Kashiwagi, Implementation and improvements of affine arithmetic,

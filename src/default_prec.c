@@ -26,6 +26,7 @@ mpfa_prec_t mpfa_get_default_prec () {
 }
 
 void mpfa_set_default_prec (mpfa_prec_t prec) {
+    // Internal precision must be >= working precision.
     if (mpfa_get_internal_prec() < prec) {
         mpfa_set_internal_prec(prec);
     }

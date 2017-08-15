@@ -23,6 +23,7 @@
 #include <stdarg.h>
 
 void mpfa_init (mpfa_ptr x) {
+    // Init centre and radius with working precision.
     x->nTerms = 0;
     mpfr_init(&(x->centre));
     mpfr_init(&(x->radius));
@@ -31,6 +32,7 @@ void mpfa_init (mpfa_ptr x) {
 void mpfa_inits (mpfa_ptr x, ...) {
     va_list arg;
 
+    // Init each argument with working precision.
     va_start(arg, x);
     while (x != NULL) {
         mpfa_init(x);

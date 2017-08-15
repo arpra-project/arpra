@@ -23,10 +23,16 @@
 #include <stdarg.h>
 
 void mpfa_init2 (mpfa_ptr x, mpfa_prec_t prec) {
-    if (mpfa_get_internal_prec() < prec) {
+    mpfa_prec_t prec_internal;
+
+    // Increase internal precision if < 'prec'.
+    prec_internal = mpfa_get_internal_prec();
+    if (prec_internal < prec) {
         mpfa_set_internal_prec(prec);
+        prec_internal = prec;
     }
 
+    // Init centre and radius with 'prec' precision.
     x->nTerms = 0;
     mpfr_init2(&(x->centre), prec);
     mpfr_init2(&(x->radius), prec);
@@ -35,6 +41,7 @@ void mpfa_init2 (mpfa_ptr x, mpfa_prec_t prec) {
 void mpfa_inits2 (mpfa_prec_t prec, mpfa_ptr x, ...) {
     va_list arg;
 
+    // Init each argument with precision 'prec'.
     va_start(arg, x);
     while (x != NULL) {
         mpfa_init2(x, prec);

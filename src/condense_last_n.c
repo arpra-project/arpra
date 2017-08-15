@@ -28,9 +28,11 @@ void mpfa_condense_last_n (mpfa_ptr z, mpfa_uint_t n) {
     mpfr_t temp;
     mpfa_prec_t prec, prec_internal;
 
+    // Check input and handle trivial case.
     if (n > z->nTerms) n = z->nTerms;
     if (n < 2) return;
 
+    // Init temp vars and set internal precision.
     prec = mpfa_get_prec(z);
     prec_internal = mpfa_get_internal_prec();
     mpfr_init2(temp, prec_internal);
@@ -39,30 +41,34 @@ void mpfa_condense_last_n (mpfa_ptr z, mpfa_uint_t n) {
     zTerm = z->nTerms - n;
     summands = malloc(n * sizeof(mpfr_ptr));
 
+    // Add leading noise terms to radius.
     for (zNext = 0; zNext < zTerm; zNext++) {
         mpfr_prec_round(&(z->deviations[zNext]), prec_internal, MPFR_RNDN);
         mpfr_abs(temp, &(z->deviations[zNext]), MPFR_RNDN);
         mpfr_add(&(z->radius), &(z->radius), temp, MPFR_RNDU);
     }
 
+    // Condense the last n noise terms.
     for (zNext = zTerm; zNext < z->nTerms; zNext++) {
         mpfr_abs(&(z->deviations[zNext]), &(z->deviations[zNext]), MPFR_RNDN);
         summands[zNext - zTerm] = &(z->deviations[zNext]);
     }
-
     mpfr_prec_round(&(z->deviations[zTerm]), prec_internal, MPFR_RNDN);
     mpfr_sum(&(z->deviations[zTerm]), summands, n, MPFR_RNDU);
 
+    // Store nonzero condensed noise term, and add it to radius.
     if (!mpfr_zero_p(&(z->deviations[zTerm]))) {
         z->symbols[zTerm] = mpfa_next_sym();
         mpfr_add(&(z->radius), &(z->radius), &(z->deviations[zTerm]), MPFR_RNDU);
         zTerm++;
     }
 
+    // Clear unused noise terms.
     for (zNext = zTerm; zNext < z->nTerms; zNext++) {
         mpfr_clear(&(z->deviations[zNext]));
     }
 
+    // Resize noise term memory.
     if (zTerm == 0) {
         free(z->symbols);
         free(z->deviations);
@@ -73,8 +79,10 @@ void mpfa_condense_last_n (mpfa_ptr z, mpfa_uint_t n) {
     }
     z->nTerms = zTerm;
 
+    // Round internal precision of radius to working precision.
     mpfr_prec_round(&(z->radius), prec, MPFR_RNDU);
 
+    // Clear temp vars.
     mpfr_clear(temp);
     free(summands);
 }
