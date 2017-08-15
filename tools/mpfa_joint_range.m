@@ -35,10 +35,14 @@ hold on;
 for i = t_start:t_stop
     disp(num2str(i));
 
-    xc = sscanf(fgetl(xc_data), '%f');
-    xr = sscanf(fgetl(xr_data), '%f');
-    yc = sscanf(fgetl(yc_data), '%f');
-    yr = sscanf(fgetl(yr_data), '%f');
+    [xc, ~, err] = sscanf(fgetl(xc_data), '%f');
+    if ~isempty(err); return; end;
+    [xr, ~, err] = sscanf(fgetl(xr_data), '%f');
+    if ~isempty(err); return; end;
+    [yc, ~, err] = sscanf(fgetl(yc_data), '%f');
+    if ~isempty(err); return; end;
+    [yr, ~, err] = sscanf(fgetl(yr_data), '%f');
+    if ~isempty(err); return; end;
 
     pos = [(xc - xr), (yc - yr), (2 .* xr), (2 .* yr)];
     %pos = [-xr, -yr, (2 .* xr), (2 .* yr)];
@@ -50,14 +54,22 @@ end
 % for i = t_start:t_stop
 %     disp(num2str(i));
 % 
-%     %xc = sscanf(fgetl(xc_data), '%f');
-%     %xr = sscanf(fgetl(xr_data), '%f');
-%     xs = sscanf(fgetl(xs_data), '%u');
-%     xd = sscanf(fgetl(xd_data), '%f');
-%     %yc = sscanf(fgetl(yc_data), '%f');
-%     %yr = sscanf(fgetl(yr_data), '%f');
-%     ys = sscanf(fgetl(ys_data), '%u');
-%     yd = sscanf(fgetl(yd_data), '%f');
+%     %[xc, ~, err] = sscanf(fgetl(xc_data), '%f');
+%     if ~isempty(err); return; end;
+%     %[xr, ~, err] = sscanf(fgetl(xr_data), '%f');
+%     if ~isempty(err); return; end;
+%     [xs, ~, err] = sscanf(fgetl(xs_data), '%u');
+%     if ~isempty(err); return; end;
+%     [xd, ~, err] = sscanf(fgetl(xd_data), '%f');
+%     if ~isempty(err); return; end;
+%     %[yc, ~, err] = sscanf(fgetl(yc_data), '%f');
+%     if ~isempty(err); return; end;
+%     %[yr, ~, err] = sscanf(fgetl(yr_data), '%f');
+%     if ~isempty(err); return; end;
+%     [ys, ~, err] = sscanf(fgetl(ys_data), '%u');
+%     if ~isempty(err); return; end;
+%     [yd, ~, err] = sscanf(fgetl(yd_data), '%f');
+%     if ~isempty(err); return; end;
 % 
 %     us = union(xs, ys);
 %     if isrow(us)
