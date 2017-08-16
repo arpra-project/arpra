@@ -28,7 +28,7 @@ void mpfa_affine_1 (mpfa_ptr z, mpfa_srcptr x, mpfr_srcptr alpha, mpfr_srcptr ga
     mpfa_prec_t prec, prec_internal;
     mpfa_t zNew;
 
-    // Init temp vars and set internal precision.
+    // Init temp vars, and set internal precision.
     prec = mpfa_get_prec(z);
     prec_internal = mpfa_get_internal_prec();
     mpfr_init2(temp, prec_internal);
@@ -89,7 +89,7 @@ void mpfa_affine_1 (mpfa_ptr z, mpfa_srcptr x, mpfr_srcptr alpha, mpfr_srcptr ga
         free(zNew->deviations);
     }
 
-    // Clear temp vars and set z.
+    // Clear temp vars, and set z.
     mpfr_clear(temp);
     mpfr_clear(error);
     mpfa_set(z, zNew);

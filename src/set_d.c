@@ -28,14 +28,22 @@ void mpfa_set_d (mpfa_ptr z, const double centre) {
 
     prec_internal = mpfa_get_internal_prec();
 
+    // If centre has rounding error:
     if (mpfr_set_d(&(z->centre), centre, MPFR_RNDN)) {
+        // Set radius with centre rounding error.
         mpfa_error(&(z->radius), &(z->centre));
+
+        // If z has no noise term memory:
         if (z->nTerms == 0) {
+            // Allocate noise term memory.
             z->symbols = malloc(sizeof(mpfa_uint_t));
             z->deviations = malloc(sizeof(mpfa_t));
             mpfr_init2(&(z->deviations[0]), prec_internal);
         }
+
+        // Else if z has too much noise term memory:
         else if (z->nTerms >= 2) {
+            // Clear unused noise terms.
             mpfr_prec_round(&(z->deviations[0]), prec_internal, MPFR_RNDN);
             for (zTerm = 1; zTerm < z->nTerms; zTerm++) {
                 mpfr_clear(&(z->deviations[zTerm]));
@@ -44,10 +52,15 @@ void mpfa_set_d (mpfa_ptr z, const double centre) {
             z->deviations = realloc(z->deviations, sizeof(mpfa_t));
         }
         z->nTerms = 1;
+
+        // Set noise term.
         z->symbols[0] = mpfa_next_sym();
         mpfr_set(&(z->deviations[0]), &(z->radius), MPFR_RNDN);
     }
+
+    // Else centre has no rounding error:
     else {
+        // Radius is set, and noise terms are cleared.
         mpfr_set_si(&(z->radius), 0, MPFR_RNDU);
         if (z->nTerms > 0) {
             for (zTerm = 0; zTerm < z->nTerms; zTerm++) {

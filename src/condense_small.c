@@ -27,10 +27,10 @@ void mpfa_condense_small (mpfa_ptr z, double fraction) {
     mpfr_t temp, error, threshold;
     mpfa_prec_t prec, prec_internal;
 
-    // Check input and handle trivial case.
+    // Check input, and handle trivial case.
     if ((z->nTerms < 2) || (fraction >= 1)) return;
 
-    // Init temp vars and set internal precision.
+    // Init temp vars, and set internal precision.
     prec = mpfa_get_prec(z);
     prec_internal = mpfa_get_internal_prec();
     mpfr_init2(temp, prec_internal);

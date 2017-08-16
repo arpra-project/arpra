@@ -32,7 +32,7 @@ void mpfa_sum (mpfa_ptr z, const mpfa_ptr *x, mpfa_uint_t n) {
     mpfa_prec_t prec, prec_internal;
     mpfa_t zNew;
 
-    // Check input and handle trivial case.
+    // Check input, and handle trivial case.
     if (n < 3) {
         if (n == 2) {
             mpfa_add(z, x[0], x[1]);
@@ -43,7 +43,7 @@ void mpfa_sum (mpfa_ptr z, const mpfa_ptr *x, mpfa_uint_t n) {
         else return;
     }
 
-    // Init temp vars and set internal precision.
+    // Init temp vars, and set internal precision.
     prec = mpfa_get_prec(z);
     prec_internal = mpfa_get_internal_prec();
     mpfr_init2(temp, prec_internal);
@@ -55,14 +55,14 @@ void mpfa_sum (mpfa_ptr z, const mpfa_ptr *x, mpfa_uint_t n) {
     xTerm = malloc(n * sizeof(mpfa_uint_t));
     summands = malloc(n * sizeof(mpfr_ptr));
 
-    // MPFR sum takes an array of (mpfr_ptr *).
+    // Zero term indexes, and fill summand array with centre values.
     zTerm = 0;
     for (i = 0; i < n; i++) {
         xTerm[i] = 0;
         summands[i] = &(x[i]->centre);
     }
 
-    // Sum centre values.
+    // z_0 = x[1]_0 + ... + x[n]_0
     if (mpfr_sum(&(zNew->centre), summands, n, MPFR_RNDN)) {
         mpfa_error(temp, &(zNew->centre));
         mpfr_add(error, error, temp, MPFR_RNDU);
@@ -76,11 +76,13 @@ void mpfa_sum (mpfa_ptr z, const mpfa_ptr *x, mpfa_uint_t n) {
     zNew->symbols = malloc(zNew->nTerms * sizeof(mpfa_uint_t));
     zNew->deviations = malloc(zNew->nTerms * sizeof(mpfr_t));
 
+    // For all unique symbols in x.
     xHasNext = zNew->nTerms > 1;
     while (xHasNext) {
         xHasNext = 0;
         xSymbol = -1;
 
+        // Find and set the next symbol in z.
         for (i = 0; i < n; i++) {
             if (xTerm[i] < x[i]->nTerms) {
                 if (x[i]->symbols[xTerm[i]] < xSymbol) {
@@ -88,25 +90,28 @@ void mpfa_sum (mpfa_ptr z, const mpfa_ptr *x, mpfa_uint_t n) {
                 }
             }
         }
-
         zNew->symbols[zTerm] = xSymbol;
-        mpfr_init2(&(zNew->deviations[zTerm]), prec_internal);
 
+        // Compute the next deviation in z.
+        mpfr_init2(&(zNew->deviations[zTerm]), prec_internal);
         for (i = 0, j = 0; i < n; i++) {
             if (x[i]->symbols[xTerm[i]] == xSymbol) {
                 summands[j++] = &(x[i]->deviations[xTerm[i]]);
 
+                // z_i = x[1]_i + ... + x[n]_i
                 if (mpfr_sum(&(zNew->deviations[zTerm]), summands, j, MPFR_RNDN)) {
                     mpfa_error(temp, &(zNew->deviations[zTerm]));
                     mpfr_add(error, error, temp, MPFR_RNDU);
                 }
 
+                // Check for another symbol.
                 if (++xTerm[i] < x[i]->nTerms) {
                     xHasNext = 1;
                 }
             }
         }
 
+        // Store nonzero noise terms.
         if (mpfr_zero_p(&(zNew->deviations[zTerm]))) {
             mpfr_clear(&(zNew->deviations[zTerm]));
         }
@@ -117,6 +122,7 @@ void mpfa_sum (mpfa_ptr z, const mpfa_ptr *x, mpfa_uint_t n) {
         }
     }
 
+    // Store nonzero numerical error term.
     if (!mpfr_zero_p(error)) {
         zNew->symbols[zTerm] = mpfa_next_sym();
         mpfr_init2(&(zNew->deviations[zTerm]), prec_internal);
@@ -125,14 +131,17 @@ void mpfa_sum (mpfa_ptr z, const mpfa_ptr *x, mpfa_uint_t n) {
         zTerm++;
     }
 
+    // Round internal precision of radius to working precision.
     mpfr_prec_round(&(zNew->radius), prec, MPFR_RNDU);
 
+    // Free noise term memory if number of terms is zero.
     zNew->nTerms = zTerm;
     if (zNew->nTerms == 0) {
         free(zNew->symbols);
         free(zNew->deviations);
     }
 
+    // Clear temp vars, and set z.
     mpfr_clear(temp);
     mpfr_clear(error);
     mpfa_set(z, zNew);
