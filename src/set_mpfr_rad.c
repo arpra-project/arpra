@@ -31,7 +31,6 @@ void mpfa_set_mpfr_rad (mpfa_ptr z, mpfr_srcptr centre, mpfr_srcptr radius) {
 
     // If centre has rounding error:
     if (mpfr_set(&(z->centre), centre, MPFR_RNDN)) {
-        // Set radius and add rounding error.
         mpfr_prec_round(&(z->radius), prec_internal, MPFR_RNDU);
         mpfa_error(&(z->radius), &(z->centre));
         mpfr_add(&(z->radius), &(z->radius), radius, MPFR_RNDU);
@@ -40,13 +39,12 @@ void mpfa_set_mpfr_rad (mpfa_ptr z, mpfr_srcptr centre, mpfr_srcptr radius) {
 
     // Else centre has no rounding error:
     else {
-        // Set radius.
         mpfr_set(&(z->radius), radius, MPFR_RNDU);
     }
 
-    // If noise term is zero:
+    // If radius is zero:
     if (mpfr_zero_p(&(z->radius))) {
-        // Clear noise term.
+        // Clear noise terms.
         if (z->nTerms > 0) {
             for (zTerm = 0; zTerm < z->nTerms; zTerm++) {
                 mpfr_clear(&(z->deviations[zTerm]));
@@ -57,19 +55,16 @@ void mpfa_set_mpfr_rad (mpfa_ptr z, mpfr_srcptr centre, mpfr_srcptr radius) {
         }
     }
 
-    // Else noise term is nonzero:
+    // Else radius is nonzero:
     else {
-        // If z has no noise term memory:
         if (z->nTerms == 0) {
-            // Allocate noise term memory.
+            // If z has no noise term memory, allocate enough for one term.
             z->symbols = malloc(sizeof(mpfa_uint_t));
             z->deviations = malloc(sizeof(mpfa_t));
             mpfr_init2(&(z->deviations[0]), prec_internal);
         }
-
-        // Else if z has too much noise term memory:
         else if (z->nTerms >= 2) {
-            // Clear unused noise terms.
+            // Else if z has too much noise term memory, clear unused terms.
             mpfr_prec_round(&(z->deviations[0]), prec_internal, MPFR_RNDN);
             for (zTerm = 1; zTerm < z->nTerms; zTerm++) {
                 mpfr_clear(&(z->deviations[zTerm]));
