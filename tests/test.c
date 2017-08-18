@@ -52,7 +52,7 @@ void mpfa_test_start () {
         struct timespec t;
         clock_gettime(CLOCK_REALTIME, &t);
         seed = t.tv_sec + t.tv_nsec;
-#else // else use stdlib clock
+#else // Else use stdlib clock.
         time(&seed);
 #endif
         gmp_randseed_ui(mpfa_test_randstate, seed);
