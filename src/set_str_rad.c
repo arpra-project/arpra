@@ -25,16 +25,20 @@
 void mpfa_set_str_rad (mpfa_ptr z, const char *centre, const char *radius, mpfa_int_t base) {
     mpfa_uint_t zTerm;
     mpfa_prec_t prec, prec_internal;
+    mpfr_t temp;
 
     prec = mpfa_get_prec(z);
     prec_internal = mpfa_get_internal_prec();
 
     // If centre has rounding error:
     if (mpfr_set_str(&(z->centre), centre, base, MPFR_RNDN)) {
+        mpfr_init2(temp, prec_internal);
+        mpfa_error(temp, &(z->centre));
         mpfr_prec_round(&(z->radius), prec_internal, MPFR_RNDU);
-        mpfa_error(&(z->radius), &(z->centre));
-        mpfr_add_str(&(z->radius), &(z->radius), radius, base, MPFR_RNDU);
+        mpfr_set_str(&(z->radius), radius, base, MPFR_RNDU);
+        mpfr_add(&(z->radius), &(z->radius), temp, MPFR_RNDU);
         mpfr_prec_round(&(z->radius), prec, MPFR_RNDU);
+        mpfr_clear(temp);
     }
 
     // Else centre has no rounding error:
