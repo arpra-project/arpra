@@ -45,6 +45,8 @@ lib_libmpfa_la_SOURCES = src/add.c \
                          src/prec.c \
                          src/set_d.c \
                          src/set_d_rad.c \
+                         src/set_str.c \
+                         src/set_str_rad.c \
                          src/set_mpfr.c \
                          src/set_mpfr_rad.c \
                          src/set.c \
