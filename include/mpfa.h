@@ -120,4 +120,4 @@ void mpfa_condense_small (mpfa_ptr z, double fraction);
 
 #define MPFA_TIGHT_MUL
 
-#endif /* MPFA_H */
+#endif // MPFA_H

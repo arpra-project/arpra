@@ -1,10 +1,7 @@
 /*
- * test.c -- Setup and teardown routines for testing.
+ * mpfa-test.c -- Common testing routines.
  *
  * Copyright 2017 James Paul Turner.
- *
- * This code is adapted from the GNU MPFR library test suite.
- * Copyright 2001-2017 Free Software Foundation, Inc.
  *
  * This file is part of the MPFA library.
  *
@@ -35,7 +32,7 @@ void mpfa_test_start () {
 
     if (mpfa_test_initialised) {
         fprintf(stderr, "Error: test is alreay initialised.\n");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
     gmp_randinit_default(mpfa_test_randstate);
@@ -67,6 +64,8 @@ void mpfa_test_end () {
     }
     else {
         fprintf(stderr, "Error: test is not initialised.\n");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
+
+    mpfr_free_cache();
 }
