@@ -22,13 +22,27 @@
 #ifndef MPFA_TEST_H
 #define MPFA_TEST_H
 
+#include "mpfa.h"
+#ifdef WITH_MPFI
+#include <mpfi.h>
+#endif // WITH_MPFI
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 // Initialise and clear.
-void mpfa_test_start ();
+void mpfa_test_begin ();
 void mpfa_test_end ();
+
+// Testing functions.
+int mpfa_test_mpfa (void (*mpfa_fun) (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y),
+                    mpfa_ptr expected, mpfa_srcptr x, mpfa_srcptr y);
+#ifdef WITH_MPFI
+int mpfa_test_mpfi (void (*mpfa_fun) (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y),
+                    void (*mpfi_fun) (mpfi_ptr z, mpfi_srcptr x, mpfi_srcptr y),
+                    mpfa_srcptr x, mpfa_srcptr y);
+#endif // WITH_MPFI
 
 #ifdef __cplusplus
 }

@@ -19,14 +19,15 @@
  * along with the MPFA library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "mpfa.h"
+#include "mpfa-test.h"
 #include <stdlib.h>
 #include <time.h>
 
 static gmp_randstate_t mpfa_test_randstate;
 static char mpfa_test_initialised = 0;
 
-void mpfa_test_start () {
+void mpfa_test_begin ()
+{
     unsigned long int seed;
     char *environment_seed;
 
@@ -57,7 +58,8 @@ void mpfa_test_start () {
     }
 }
 
-void mpfa_test_end () {
+void mpfa_test_end ()
+{
     if (mpfa_test_initialised) {
         gmp_randclear(mpfa_test_randstate);
         mpfa_test_initialised = 0;
@@ -69,3 +71,18 @@ void mpfa_test_end () {
 
     mpfr_free_cache();
 }
+
+int mpfa_test_mpfa (void (*mpfa_fun) (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y),
+                    mpfa_ptr expected, mpfa_srcptr x, mpfa_srcptr y)
+{
+    return 0;
+}
+
+#ifdef WITH_MPFI
+int mpfa_test_mpfi (void (*mpfa_fun) (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y),
+                    void (*mpfi_fun) (mpfi_ptr z, mpfi_srcptr x, mpfi_srcptr y),
+                    mpfa_srcptr x, mpfa_srcptr y)
+{
+    return 0;
+}
+#endif // WITH_MPFI

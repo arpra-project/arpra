@@ -72,7 +72,4 @@ tests_morris_lecar_CPPFLAGS = -I$(top_srcdir)/include
 tests_morris_lecar_LDADD = tests/libmpfa-test.la
 tests_morris_lecar_SOURCES = tests/morris_lecar.c
 
-if MPFI_TESTS
-endif MPFI_TESTS
-
 TESTS = $(check_PROGRAMS)

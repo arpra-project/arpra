@@ -36,31 +36,31 @@ LT_INIT([])
 
 # GNU GMP
 AC_CHECK_HEADER([gmp.h], [],
-  [AC_MSG_ERROR([GMP header (gmp.h) is missing or unusable - see README])])
+  [AC_MSG_ERROR([GMP header is missing or unusable - see README])])
 AC_CHECK_LIB([gmp], [__gmpz_init], [],
-  [AC_MSG_ERROR([GMP library (libgmp.so) is missing or unusable - see README])])
+  [AC_MSG_ERROR([GMP library is missing or unusable - see README])])
 
 # GNU MPFR
 AC_CHECK_HEADER([mpfr.h], [],
-  [AC_MSG_ERROR([MPFR header (mpfr.h) is missing or unusable - see README])])
+  [AC_MSG_ERROR([MPFR header is missing or unusable - see README])])
 AC_CHECK_LIB([mpfr], [mpfr_init], [],
-  [AC_MSG_ERROR([MPFR library (libmpfr.so) is missing or unusable - see README])])
+  [AC_MSG_ERROR([MPFR library is missing or unusable - see README])])
 
-# Optionally enable MPFI tests (requires MPFI)
-AC_ARG_ENABLE([mpfi-tests],
-  [AS_HELP_STRING([--enable-mpfi-tests], [enable MPFI tests [default=no]])],
-  [case "${enableval}" in
-    yes) mpfi_tests=true ;;
-    no)  mpfi_tests=false ;;
-    *) AC_MSG_ERROR([bad value ${enableval} for --enable-mpfi-tests]) ;;
-  esac
-  # MPFI (required for MPFI tests)
-  AC_CHECK_HEADER([mpfi.h], [],
-    [AC_MSG_ERROR([MPFI header (mpfi.h) is missing or unusable - see README])])
-  AC_CHECK_LIB([mpfi], [mpfi_init], [],
-    [AC_MSG_ERROR([MPFI library (libmpfi.so) is missing or unusable - see README])])],
-  [mpfi_tests=false])
-AM_CONDITIONAL([MPFI_TESTS], [test x$mpfi_tests = xtrue])
+# Interval support (requires MPFI)
+AC_ARG_WITH([mpfi],
+  [AS_HELP_STRING([--without-mpfi], [disable MPFI interval support])],
+  [case "${withval}" in
+    yes) with_mpfi=yes ;;
+    no)  with_mpfi=no ;;
+    *) AC_MSG_ERROR([bad value ${withval} for --without-mpfi: yes or no]) ;;
+  esac],
+  [with_mpfi=yes])
+AS_IF([test "x${with_mpfi}" = xyes],
+  [AC_DEFINE([WITH_MPFI], [1], [Define if MPFI interval support is enabled.])
+   AC_CHECK_HEADER([mpfi.h], [],
+     [AC_MSG_ERROR([MPFI header is missing or unusable - see README])])
+   AC_CHECK_LIB([mpfi], [mpfi_init], [],
+     [AC_MSG_ERROR([MPFI library is missing or unusable - see README])])])
 
 # Header files
 AC_CHECK_HEADERS([stdlib.h])
