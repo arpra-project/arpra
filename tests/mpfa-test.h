@@ -35,13 +35,20 @@ extern "C" {
 void mpfa_test_begin ();
 void mpfa_test_end ();
 
-// Testing functions.
-int mpfa_test_mpfa (void (*mpfa_fun) (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y),
-                    mpfa_ptr expected, mpfa_srcptr x, mpfa_srcptr y);
+// Compare known affine form result.
+int mpfa_test_mpfa_1 (void (*mpfa_1) (mpfa_ptr z, mpfa_srcptr x),
+                      mpfa_ptr expect, mpfa_srcptr x);
+int mpfa_test_mpfa_2 (void (*mpfa_2) (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y),
+                      mpfa_ptr expect, mpfa_srcptr x, mpfa_srcptr y);
+
 #ifdef WITH_MPFI
-int mpfa_test_mpfi (void (*mpfa_fun) (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y),
-                    void (*mpfi_fun) (mpfi_ptr z, mpfi_srcptr x, mpfi_srcptr y),
-                    mpfa_srcptr x, mpfa_srcptr y);
+// Compare MPFI interval result.
+int mpfa_test_mpfi_1 (void (*mpfa_1) (mpfa_ptr z, mpfa_srcptr x),
+                      void (*mpfi_1) (mpfi_ptr z, mpfi_srcptr x),
+                      mpfa_srcptr x);
+int mpfa_test_mpfi_2 (void (*mpfa_2) (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y),
+                      void (*mpfi_2) (mpfi_ptr z, mpfi_srcptr x, mpfi_srcptr y),
+                      mpfa_srcptr x, mpfa_srcptr y);
 #endif // WITH_MPFI
 
 #ifdef __cplusplus
