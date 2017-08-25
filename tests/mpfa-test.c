@@ -75,13 +75,41 @@ void mpfa_test_end ()
 int mpfa_test_mpfa_1 (void (*mpfa_1) (mpfa_ptr z, mpfa_srcptr x),
                       mpfa_ptr expect, mpfa_srcptr x)
 {
-    return 0;
+    int success;
+    mpfa_prec_t prec;
+    mpfa_t z;
+
+    // Init test var with precision of expected result.
+    prec = mpfa_get_prec(expect);
+    mpfa_init2(z, prec);
+
+    // Compare test result with expected result.
+    mpfa_1(z, x);
+    mpfa_equal_p(z, expect);
+
+    // Clear test var and return test result.
+    mpfa_clear(z);
+    return success;
 }
 
 int mpfa_test_mpfa_2 (void (*mpfa_2) (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y),
                       mpfa_ptr expect, mpfa_srcptr x, mpfa_srcptr y)
 {
-    return 0;
+    int success;
+    mpfa_prec_t prec;
+    mpfa_t z;
+
+    // Init test var with precision of expected result.
+    prec = mpfa_get_prec(expect);
+    mpfa_init2(z, prec);
+
+    // Compare test result with expected result.
+    mpfa_2(z, x, y);
+    mpfa_equal_p(z, expect);
+
+    // Clear test var and return test result.
+    mpfa_clear(z);
+    return success;
 }
 
 #ifdef WITH_MPFI
