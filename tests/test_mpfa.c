@@ -34,7 +34,7 @@ int mpfa_test_mpfa_1 (void (*mpfa_1) (mpfa_ptr z, mpfa_srcptr x),
 
     // Compare test result with expected result.
     mpfa_1(z, x);
-    mpfa_test_cmp_mpfa(z, expect);
+    success = mpfa_test_cmp_mpfa(z, expect);
 
     // Clear test var and return test result.
     mpfa_clear(z);
@@ -54,34 +54,34 @@ int mpfa_test_mpfa_2 (void (*mpfa_2) (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y),
 
     // Compare test result with expected result.
     mpfa_2(z, x, y);
-    mpfa_test_cmp_mpfa(z, expect);
+    success = mpfa_test_cmp_mpfa(z, expect);
 
     // Clear test var and return test result.
     mpfa_clear(z);
     return success;
 }
 
-int mpfa_test_cmp_mpfa (mpfa_srcptr got, mpfa_srcptr expect)
+int mpfa_test_cmp_mpfa (mpfa_srcptr op1, mpfa_srcptr op2)
 {
     mpfa_uint_t term;
 
     // Compare term count, centre and radius.
-    if (got->nTerms != expect->nTerms) {
+    if (op1->nTerms != op2->nTerms) {
         return 1;
     }
-    if (!mpfr_equal_p(got->centre, expect->centre)) {
+    if (!mpfr_equal_p(op1->centre, op2->centre)) {
         return 1;
     }
-    if (!mpfr_equal_p(got->radius, expect->radius)) {
+    if (!mpfr_equal_p(op1->radius, op2->radius)) {
         return 1;
     }
 
     // Compare all deviation terms.
-    for (term = 0; term < got->nTerms; term++) {
-        if (got->symbols[term] != expect->symbols[term]) {
+    for (term = 0; term < op1->nTerms; term++) {
+        if (op1->symbols[term] != op2->symbols[term]) {
             return 1;
         }
-        if (!mpfr_equal_p(got->deviations[term], expect->deviations[term])) {
+        if (!mpfr_equal_p(op1->deviations[term], op2->deviations[term])) {
             return 1;
         }
     }

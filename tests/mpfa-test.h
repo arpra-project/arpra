@@ -37,7 +37,7 @@ int mpfa_test_mpfa_1 (void (*mpfa_1) (mpfa_ptr z, mpfa_srcptr x),
                       mpfa_ptr expect, mpfa_srcptr x);
 int mpfa_test_mpfa_2 (void (*mpfa_2) (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y),
                       mpfa_ptr expect, mpfa_srcptr x, mpfa_srcptr y);
-int mpfa_test_cmp_mpfa (mpfa_srcptr got, mpfa_srcptr expect);
+int mpfa_test_cmp_mpfa (mpfa_srcptr op1, mpfa_srcptr op2);
 
 #ifdef WITH_MPFI
 
@@ -46,11 +46,11 @@ int mpfa_test_cmp_mpfa (mpfa_srcptr got, mpfa_srcptr expect);
 // Compare MPFI interval result.
 int mpfa_test_mpfi_1 (void (*mpfa_1) (mpfa_ptr z, mpfa_srcptr x),
                       void (*mpfi_1) (mpfi_ptr z, mpfi_srcptr x),
-                      mpfa_srcptr x);
+                      mpfa_srcptr x_a);
 int mpfa_test_mpfi_2 (void (*mpfa_2) (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y),
                       void (*mpfi_2) (mpfi_ptr z, mpfi_srcptr x, mpfi_srcptr y),
-                      mpfa_srcptr x, mpfa_srcptr y);
-int mpfa_test_cmp_mpfi (mpfa_srcptr got, mpfi_srcptr expect);
+                      mpfa_srcptr x_a, mpfa_srcptr y_a);
+int mpfa_test_cmp_mpfi (mpfa_srcptr op1, mpfi_srcptr op2);
 
 #endif // WITH_MPFI
 
