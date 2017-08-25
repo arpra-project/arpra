@@ -1,5 +1,5 @@
 /*
- * mpfa-test.c -- Common testing routines.
+ * test.c -- Setup and teardown tests.
  *
  * Copyright 2017 James Paul Turner.
  *
@@ -47,10 +47,12 @@ void mpfa_test_begin ()
     }
     else {
 #ifdef HAVE_CLOCK_GETTIME
+        // Seed with clock_gettime.
         struct timespec t;
         clock_gettime(CLOCK_REALTIME, &t);
         seed = t.tv_sec + t.tv_nsec;
-#else // Else use stdlib clock.
+#else
+        // Else seed with stdlib clock.
         time(&seed);
 #endif
         gmp_randseed_ui(mpfa_test_randstate, seed);
@@ -71,59 +73,3 @@ void mpfa_test_end ()
 
     mpfr_free_cache();
 }
-
-int mpfa_test_mpfa_1 (void (*mpfa_1) (mpfa_ptr z, mpfa_srcptr x),
-                      mpfa_ptr expect, mpfa_srcptr x)
-{
-    int success;
-    mpfa_prec_t prec;
-    mpfa_t z;
-
-    // Init test var with precision of expected result.
-    prec = mpfa_get_prec(expect);
-    mpfa_init2(z, prec);
-
-    // Compare test result with expected result.
-    mpfa_1(z, x);
-    mpfa_equal_p(z, expect);
-
-    // Clear test var and return test result.
-    mpfa_clear(z);
-    return success;
-}
-
-int mpfa_test_mpfa_2 (void (*mpfa_2) (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y),
-                      mpfa_ptr expect, mpfa_srcptr x, mpfa_srcptr y)
-{
-    int success;
-    mpfa_prec_t prec;
-    mpfa_t z;
-
-    // Init test var with precision of expected result.
-    prec = mpfa_get_prec(expect);
-    mpfa_init2(z, prec);
-
-    // Compare test result with expected result.
-    mpfa_2(z, x, y);
-    mpfa_equal_p(z, expect);
-
-    // Clear test var and return test result.
-    mpfa_clear(z);
-    return success;
-}
-
-#ifdef WITH_MPFI
-int mpfa_test_mpfi_1 (void (*mpfa_1) (mpfa_ptr z, mpfa_srcptr x),
-                      void (*mpfi_1) (mpfi_ptr z, mpfi_srcptr x),
-                      mpfa_srcptr x)
-{
-    return 0;
-}
-
-int mpfa_test_mpfi_2 (void (*mpfa_2) (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y),
-                      void (*mpfi_2) (mpfi_ptr z, mpfi_srcptr x, mpfi_srcptr y),
-                      mpfa_srcptr x, mpfa_srcptr y)
-{
-    return 0;
-}
-#endif // WITH_MPFI
