@@ -55,15 +55,18 @@ lib_libmpfa_la_SOURCES = src/add.c \
                          src/sum.c \
                          src/term.c
 
-# MPFA test suite
+# MPFA testsuite library
 check_LTLIBRARIES = tests/libmpfa-test.la
 
 tests_libmpfa_test_la_CPPFLAGS = -I$(top_srcdir)/include
 tests_libmpfa_test_la_LIBADD = lib/libmpfa.la
 tests_libmpfa_test_la_SOURCES = tests/test_mpfa.c \
-                                tests/test_mpfi.c \
                                 tests/test_random.c
+if WITH_MPFI
+tests_libmpfa_test_la_SOURCES += tests/test_mpfi.c
+endif WITH_MPFI
 
+# MPFA test programs
 check_PROGRAMS = tests/test1 tests/morris_lecar
 
 tests_test1_CPPFLAGS = -I$(top_srcdir)/include

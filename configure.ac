@@ -61,6 +61,7 @@ AS_IF([test "x${with_mpfi}" = xyes],
      [AC_MSG_ERROR([MPFI header is missing or unusable - see README])])
    AC_CHECK_LIB([mpfi], [mpfi_init], [],
      [AC_MSG_ERROR([MPFI library is missing or unusable - see README])])])
+AM_CONDITIONAL([WITH_MPFI], [test x$with_mpfi = xyes])
 
 # Header files
 AC_CHECK_HEADERS([stdlib.h])
