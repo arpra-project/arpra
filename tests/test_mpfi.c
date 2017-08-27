@@ -1,5 +1,5 @@
 /*
- * test_mpfi.c -- Compare function results against known MPFI intervals.
+ * test_mpfi.c -- Test an affine form against an MPFI interval.
  *
  * Copyright 2017 James Paul Turner.
  *
@@ -23,42 +23,29 @@
 
 #include "mpfa-test.h"
 
-int mpfa_test_mpfi_1 (void (*mpfa_1) (mpfa_ptr z, mpfa_srcptr x),
-                      void (*mpfi_1) (mpfi_ptr z, mpfi_srcptr x),
-                      mpfa_srcptr x_a)
+int mpfa_test_mpfi (mpfa_srcptr x, mpfi_srcptr y)
 {
-    int success;
-    mpfa_prec_t prec;
-    mpfa_t z_a;
-    mpfi_t z_i, x_i;
+    mpfi_t x_i;
+    mpfa_prec_t prec_x;
 
-    // Init test vars with precision of input affine form.
-    prec = mpfa_get_prec(x_a);
-    mpfa_init2(z_a, prec);
-    mpfi_init2(z_i, prec);
-    mpfi_init2(x_i, prec);
+    // Convert x to an MPFI interval.
+    prec_x = mpfa_get_prec(x);
+    mpfi_init2(x_i, prec_x);
+    mpfa_get_mpfi(x_i, x_a);
 
-    //mpfa_get_mpfi(x_i, x_a);
-    //mpfa_1(z_a, x_a);
-    //mpfi_1(z_i, x_i);
-    //success = mpfa_test_cmp_mpfi(z_a, z_i);
+    // Return 1 if y is not a subinterval of x.
+    if (mpfr_greater_p(&(x_i->left), &(y_i->left))) {
+        mpfi_clear(x_i);
+        return 1;
+    }
 
-    // Clear test vars and return test result.
-    mpfa_clear(z_a);
-    mpfi_clear(z_i);
+    if (mpfr_less_p(&(x_i->right), &(y_i->right))) {
+        mpfi_clear(x_i);
+        return 1;
+    }
+
+    // Else return 0.
     mpfi_clear(x_i);
-    return success;
-}
-
-int mpfa_test_mpfi_2 (void (*mpfa_2) (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y),
-                      void (*mpfi_2) (mpfi_ptr z, mpfi_srcptr x, mpfi_srcptr y),
-                      mpfa_srcptr x_a, mpfa_srcptr y_a)
-{
-    return 0;
-}
-
-int mpfa_test_cmp_mpfi (mpfa_srcptr op1, mpfi_srcptr op2)
-{
     return 0;
 }
 

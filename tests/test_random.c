@@ -1,5 +1,5 @@
 /*
- * test.c -- Setup and teardown tests.
+ * test_random.c -- Random test functions.
  *
  * Copyright 2017 James Paul Turner.
  *
@@ -24,20 +24,20 @@
 #include <time.h>
 
 static gmp_randstate_t mpfa_test_randstate;
-static char mpfa_test_initialised = 0;
+static char mpfa_test_rand_is_init = 0;
 
-void mpfa_test_begin ()
+void mpfa_test_rand_init ()
 {
     unsigned long int seed;
     char *environment_seed;
 
-    if (mpfa_test_initialised) {
+    if (mpfa_test_rand_is_init) {
         fprintf(stderr, "Error: test is alreay initialised.\n");
         exit(EXIT_FAILURE);
     }
 
     gmp_randinit_default(mpfa_test_randstate);
-    mpfa_test_initialised = 1;
+    mpfa_test_rand_is_init = 1;
 
     environment_seed = getenv("MPFA_TEST_RAND_SEED");
     if (environment_seed != NULL) {
@@ -60,16 +60,14 @@ void mpfa_test_begin ()
     }
 }
 
-void mpfa_test_end ()
+void mpfa_test_rand_clear ()
 {
-    if (mpfa_test_initialised) {
+    if (mpfa_test_rand_is_init) {
         gmp_randclear(mpfa_test_randstate);
-        mpfa_test_initialised = 0;
+        mpfa_test_rand_is_init = 0;
     }
     else {
         fprintf(stderr, "Error: test is not initialised.\n");
         exit(EXIT_FAILURE);
     }
-
-    mpfr_free_cache();
 }

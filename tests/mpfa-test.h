@@ -22,35 +22,29 @@
 #ifndef MPFA_TEST_H
 #define MPFA_TEST_H
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif // HAVE_CONFIG_H
+#ifdef WITH_MPFI
+#include <mpfi.h>
+#endif // WITH_MPFI
 #include "mpfa.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-// Initialise and clear.
-void mpfa_test_begin ();
-void mpfa_test_end ();
+// RNG initialise and clear.
+void mpfa_test_rand_init ();
+void mpfa_test_rand_clear ();
 
-// Compare known affine form result.
-int mpfa_test_mpfa_1 (void (*mpfa_1) (mpfa_ptr z, mpfa_srcptr x),
-                      mpfa_ptr expect, mpfa_srcptr x);
-int mpfa_test_mpfa_2 (void (*mpfa_2) (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y),
-                      mpfa_ptr expect, mpfa_srcptr x, mpfa_srcptr y);
-int mpfa_test_cmp_mpfa (mpfa_srcptr op1, mpfa_srcptr op2);
+// Test functions.
+int mpfa_test_mpfa (mpfa_srcptr x, mpfa_srcptr y);
 
 #ifdef WITH_MPFI
 
-#include <mpfi.h>
-
-// Compare MPFI interval result.
-int mpfa_test_mpfi_1 (void (*mpfa_1) (mpfa_ptr z, mpfa_srcptr x),
-                      void (*mpfi_1) (mpfi_ptr z, mpfi_srcptr x),
-                      mpfa_srcptr x_a);
-int mpfa_test_mpfi_2 (void (*mpfa_2) (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y),
-                      void (*mpfi_2) (mpfi_ptr z, mpfi_srcptr x, mpfi_srcptr y),
-                      mpfa_srcptr x_a, mpfa_srcptr y_a);
-int mpfa_test_cmp_mpfi (mpfa_srcptr op1, mpfi_srcptr op2);
+// MPFI test functions.
+int mpfa_test_mpfi (mpfa_srcptr x, mpfi_srcptr y);
 
 #endif // WITH_MPFI
 

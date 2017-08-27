@@ -22,12 +22,12 @@
 #ifndef MPFA_H
 #define MPFA_H
 
-#include <stdio.h>
-#include <gmp.h>
-#include <mpfr.h>
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif // HAVE_CONFIG_H
+#include <stdio.h>
+#include <gmp.h>
+#include <mpfr.h>
 
 typedef int mpfa_int_t;
 typedef unsigned int mpfa_uint_t;

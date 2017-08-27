@@ -60,9 +60,9 @@ check_LTLIBRARIES = tests/libmpfa-test.la
 
 tests_libmpfa_test_la_CPPFLAGS = -I$(top_srcdir)/include
 tests_libmpfa_test_la_LIBADD = lib/libmpfa.la
-tests_libmpfa_test_la_SOURCES = tests/test.c \
-                                tests/test_mpfa.c \
-                                tests/test_mpfi.c
+tests_libmpfa_test_la_SOURCES = tests/test_mpfa.c \
+                                tests/test_mpfi.c \
+                                tests/test_random.c
 
 check_PROGRAMS = tests/test1 tests/morris_lecar
 
