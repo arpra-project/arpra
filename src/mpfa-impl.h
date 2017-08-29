@@ -1,7 +1,7 @@
 /*
- * mpfa-test.h -- Header file for common testing routines.
+ * mpfa.h -- MPFA private header file, used in compilation.
  *
- * Copyright 2017 James Paul Turner.
+ * Copyright 2016-2017 James Paul Turner.
  *
  * This file is part of the MPFA library.
  *
@@ -19,8 +19,8 @@
  * along with the MPFA library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MPFA_TEST_H
-#define MPFA_TEST_H
+#ifndef MPFA_IMPL_H
+#define MPFA_IMPL_H
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -35,24 +35,20 @@
 #include <mpfa2mpfi.h>
 #endif // WITH_MPFI
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#define MPFA_DEFAULT_INTERNAL_PREC 128
 
-// RNG initialise and clear.
-void mpfa_test_rand_init ();
-void mpfa_test_rand_clear ();
+/*
+ * If MPFA_TIGHT_MUL is defined, then the linear approximation of the quadratic term of
+ * mpfa_mul (in mul.c) is defined the same as in (26) of:
+ *
+ * S. M. Rump and M. Kashiwagi, Implementation and improvements of affine arithmetic,
+ * Nonlinear Theory an Its Applications, IEICE, vol. 6, no. 3, pp. 341-359, 2015.
+ *
+ * Otherwise it is trivially defined as the product of the radii of x and y:
+ *
+ * \sum^{n}_{i=1} x_{i} \sum^{n}_{i=1} y_{i}
+ */
 
-// Test functions.
-int mpfa_test_mpfa (mpfa_srcptr x, mpfa_srcptr y);
+#define MPFA_TIGHT_MUL
 
-#ifdef WITH_MPFI
-// MPFI test functions.
-int mpfa_test_mpfi (mpfa_srcptr x, mpfi_srcptr y);
-#endif // WITH_MPFI
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif // MPFA_TEST_H
+#endif // MPFA_IMPL_H

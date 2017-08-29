@@ -20,25 +20,25 @@
  */
 
 #include "mpfa-test.h"
-#include <stdio.h>
-#include <assert.h>
 
 int main (int argc, char *argv[]) {
     mpfa_t a, b, c;
-    mpfi_t p;
 
     mpfa_init(a);
     mpfa_init(b);
     mpfa_init(c);
-    mpfi_init(p);
 
     mpfa_set_d(a, 0.2);
     mpfa_set_d(b, 0.6);
     //mpfa_set_d(a, 3.323234235732578935);
     //mpfa_set_d(b, 3.332536490684068738946);
-    mpfi_set_d(p, 2.0);
 
+#ifdef WITH_MPFI
+    mpfi_t p;
+    mpfi_init(p);
+    mpfi_set_d(p, 2.0);
     mpfa_test_mpfi(a, p);
+#endif // WITH_MPFI
 
     mpfa_add(c, a, b);
     //printf("centre: "); mpfr_out_str (stdout, 10, 100, &(c->centre), MPFR_RNDN); putchar('\n');

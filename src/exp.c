@@ -19,7 +19,7 @@
  * along with the MPFA library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "mpfa.h"
+#include "mpfa-impl.h"
 
 /*
  * This affine exponential function uses a Chebyshev linear approximation.
@@ -88,7 +88,7 @@ void mpfa_exp (mpfa_ptr z, mpfa_srcptr x) {
         // compute delta
         mpfr_sub(delta, gamma, du, MPFR_RNDU);
         mpfr_sub(temp, db, gamma, MPFR_RNDU);
-        mpfr_max(delta, delta, temp, MPFR_RNDN);
+        mpfr_max(delta, delta, temp, MPFR_RNDU);
 
         // compute affine approximation
         mpfa_affine_1(z, x, alpha, gamma, delta);

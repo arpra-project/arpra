@@ -19,8 +19,7 @@
  * along with the MPFA library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "mpfa.h"
-#include <assert.h>
+#include "mpfa-impl.h"
 
 mpfa_int_t mpfa_term (mpfr_ptr z, mpfr_srcptr x, mpfr_srcptr y, mpfr_srcptr alpha, mpfr_srcptr beta, mpfr_srcptr gamma) {
     mpfa_int_t inexact;
@@ -28,11 +27,11 @@ mpfa_int_t mpfa_term (mpfr_ptr z, mpfr_srcptr x, mpfr_srcptr y, mpfr_srcptr alph
 
     // alpha * x needs precision prec(alpha) + prec(x) to be exact.
     mpfr_init2(alpha_x, (mpfr_get_prec(alpha) + mpfr_get_prec(x)));
-    assert(mpfr_mul(alpha_x, alpha, x, MPFR_RNDN) == 0);
+    mpfr_mul(alpha_x, alpha, x, MPFR_RNDN);
 
     // beta * y needs precision prec(beta) + prec(y) to be exact.
     mpfr_init2(beta_y, (mpfr_get_prec(beta) + mpfr_get_prec(y)));
-    assert(mpfr_mul(beta_y, beta, y, MPFR_RNDN) == 0);
+    mpfr_mul(beta_y, beta, y, MPFR_RNDN);
 
     if (gamma == NULL) {
         // z = (alpha * x) + (beta * y)

@@ -1,5 +1,5 @@
 /*
- * set_str_rad.c -- Set centre and radius using C strings.
+ * set_mpfi.c -- Set an affine form with an MPFI interval.
  *
  * Copyright 2017 James Paul Turner.
  *
@@ -21,29 +21,24 @@
 
 #include "mpfa-impl.h"
 
-void mpfa_set_str_rad (mpfa_ptr z, const char *centre, const char *radius, mpfa_int_t base) {
+void mpfa_set_mpfi (mpfa_ptr z, mpfi_srcptr x) {
     mpfa_uint_t zTerm;
     mpfa_prec_t prec, prec_internal;
     mpfr_t temp;
 
+    // Init temp var.
     prec = mpfa_get_prec(z);
     prec_internal = mpfa_get_internal_prec();
+    mpfr_init2(temp, prec);
 
-    // If centre has rounding error:
-    if (mpfr_set_str(&(z->centre), centre, base, MPFR_RNDN)) {
-        mpfr_init2(temp, prec_internal);
-        mpfa_error(temp, &(z->centre));
-        mpfr_prec_round(&(z->radius), prec_internal, MPFR_RNDU);
-        mpfr_set_str(&(z->radius), radius, base, MPFR_RNDU);
-        mpfr_add(&(z->radius), &(z->radius), temp, MPFR_RNDU);
-        mpfr_prec_round(&(z->radius), prec, MPFR_RNDU);
-        mpfr_clear(temp);
-    }
+    // z_0 = (x_lo + x_hi) / 2
+    mpfr_add(&(z->centre), &(x->left), &(x->right), MPFR_RNDN);
+    mpfr_div_2ui(&(z->centre), &(z->centre), 1, MPFR_RNDN);
 
-    // Else centre has no rounding error:
-    else {
-        mpfr_set_str(&(z->radius), radius, base, MPFR_RNDU);
-    }
+    // rad(z) = max{(z_0 - x_lo), (x_hi - z_0)}
+    mpfr_sub(&(z->radius), &(z->centre), &(x->left), MPFR_RNDU);
+    mpfr_sub(temp, &(x->right), &(z->centre), MPFR_RNDU);
+    mpfr_max(&(z->radius), &(z->radius), temp, MPFR_RNDU);
 
     // If radius is zero:
     if (mpfr_zero_p(&(z->radius))) {
@@ -81,4 +76,7 @@ void mpfa_set_str_rad (mpfa_ptr z, const char *centre, const char *radius, mpfa_
         z->symbols[0] = mpfa_next_sym();
         mpfr_set(&(z->deviations[0]), &(z->radius), MPFR_RNDN);
     }
+
+    // Clear temp var.
+    mpfr_clear(temp);
 }

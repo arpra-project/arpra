@@ -19,7 +19,7 @@
  * along with the MPFA library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "mpfa.h"
+#include "mpfa-impl.h"
 
 void mpfa_neg (mpfa_ptr z, mpfa_srcptr x) {
     mpfr_t alpha, gamma, delta;

@@ -19,8 +19,7 @@
  * along with the MPFA library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "mpfa.h"
-#include <stdlib.h>
+#include "mpfa-impl.h"
 
 void mpfa_affine_1 (mpfa_ptr z, mpfa_srcptr x, mpfr_srcptr alpha, mpfr_srcptr gamma, mpfr_srcptr delta) {
     mpfa_uint_t xTerm, zTerm;

@@ -19,8 +19,7 @@
  * along with the MPFA library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "mpfa.h"
-#include <stdlib.h>
+#include "mpfa-impl.h"
 
 void mpfa_set_mpfr_rad (mpfa_ptr z, mpfr_srcptr centre, mpfr_srcptr radius) {
     mpfa_uint_t zTerm;

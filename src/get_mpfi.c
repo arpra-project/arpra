@@ -1,7 +1,7 @@
 /*
- * sub.c -- Subtract one affine form from another.
+ * get_mpfi.c -- Get an MPFI interval from an affine form.
  *
- * Copyright 2016-2017 James Paul Turner.
+ * Copyright 2017 James Paul Turner.
  *
  * This file is part of the MPFA library.
  *
@@ -21,27 +21,10 @@
 
 #include "mpfa-impl.h"
 
-void mpfa_sub (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
-    mpfr_t alpha, beta, gamma, delta;
-    mpfa_prec_t prec;
+void mpfa_get_mpfi (mpfi_ptr z, mpfa_srcptr x) {
+    // Set lower bound.
+    mpfr_sub(&(z->left), &(x->centre), &(x->radius), MPFR_RNDD);
 
-    // Init temp vars.
-    prec = mpfa_get_prec(z);
-    mpfr_init2(alpha, prec);
-    mpfr_set_si(alpha, 1, MPFR_RNDN);
-    mpfr_init2(beta, prec);
-    mpfr_set_si(beta, -1, MPFR_RNDN);
-    mpfr_init2(gamma, prec);
-    mpfr_set_si(gamma, 0, MPFR_RNDN);
-    mpfr_init2(delta, prec);
-    mpfr_set_si(delta, 0, MPFR_RNDN);
-
-    // z = x - y
-    mpfa_affine_2(z, x, y, alpha, beta, gamma, delta);
-
-    // Clear temp vars.
-    mpfr_clear(alpha);
-    mpfr_clear(beta);
-    mpfr_clear(gamma);
-    mpfr_clear(delta);
+    // Set upper bound.
+    mpfr_add(&(z->right), &(x->centre), &(x->radius), MPFR_RNDU);
 }

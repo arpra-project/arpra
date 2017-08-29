@@ -18,55 +18,41 @@
 
 ACLOCAL_AMFLAGS = -I m4
 
-# MPFA library
+# Public headers
 include_HEADERS = include/mpfa.h
+if WITH_MPFI
+include_HEADERS += include/mpfa2mpfi.h
+endif WITH_MPFI
 
+# MPFA library
 lib_LTLIBRARIES = lib/libmpfa.la
 
 lib_libmpfa_la_CPPFLAGS = -I$(top_srcdir)/include
-lib_libmpfa_la_SOURCES = src/add.c \
-                         src/affine_1.c \
-                         src/affine_2.c \
-                         src/clear.c \
-                         src/condense_last_n.c \
-                         src/condense_small.c \
-                         src/default_prec.c \
-                         src/div.c \
-                         src/error.c \
-                         src/exp.c \
-                         src/init.c \
-                         src/init2.c \
-                         src/internal_prec.c \
-                         src/inv.c \
-                         src/log.c \
-                         src/mul.c \
-                         src/neg.c \
-                         src/next_sym.c \
-                         src/prec.c \
-                         src/set_d.c \
-                         src/set_d_rad.c \
-                         src/set_str.c \
-                         src/set_str_rad.c \
-                         src/set_mpfr.c \
-                         src/set_mpfr_rad.c \
-                         src/set.c \
-                         src/sqrt.c \
-                         src/sub.c \
-                         src/sum.c \
-                         src/term.c
+lib_libmpfa_la_SOURCES = \
+	src/mpfa-impl.h	src/add.c src/affine_1.c src/affine_2.c		\
+	src/clear.c src/condense_last_n.c src/condense_small.c		\
+	src/default_prec.c src/div.c src/error.c src/exp.c src/init.c	\
+	src/init2.c src/internal_prec.c src/inv.c src/log.c src/mul.c	\
+	src/neg.c src/next_sym.c src/prec.c src/set_d.c			\
+	src/set_d_rad.c	src/set_str.c src/set_str_rad.c src/set_mpfr.c	\
+	src/set_mpfr_rad.c src/set.c src/sqrt.c	src/sub.c src/sum.c	\
+	src/term.c
+if WITH_MPFI
+lib_libmpfa_la_SOURCES += src/get_mpfi.c src/set_mpfi.c
+endif WITH_MPFI
 
-# MPFA testsuite library
+# Testsuite helper library
 check_LTLIBRARIES = tests/libmpfa-test.la
 
 tests_libmpfa_test_la_CPPFLAGS = -I$(top_srcdir)/include
 tests_libmpfa_test_la_LIBADD = lib/libmpfa.la
-tests_libmpfa_test_la_SOURCES = tests/test_mpfa.c \
-                                tests/test_random.c
+tests_libmpfa_test_la_SOURCES = \
+	tests/mpfa-test.h tests/test_mpfa.c tests/test_random.c
 if WITH_MPFI
 tests_libmpfa_test_la_SOURCES += tests/test_mpfi.c
 endif WITH_MPFI
 
-# MPFA test programs
+# Testsuite programs
 check_PROGRAMS = tests/test1 tests/morris_lecar
 
 tests_test1_CPPFLAGS = -I$(top_srcdir)/include

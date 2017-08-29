@@ -19,8 +19,7 @@
  * along with the MPFA library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "mpfa.h"
-#include <stdlib.h>
+#include "mpfa-test.h"
 
 // General parameters
 const static mpfa_uint_t sim_steps = 500;

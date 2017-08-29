@@ -19,8 +19,7 @@
  * along with the MPFA library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "mpfa.h"
-#include <stdlib.h>
+#include "mpfa-impl.h"
 
 /*
  * This affine inverse function uses a Chebyshev linear approximation.
@@ -109,7 +108,7 @@ void mpfa_inv (mpfa_ptr z, mpfa_srcptr x) {
             // compute delta
             mpfr_sub(delta, gamma, du, MPFR_RNDU);
             mpfr_sub(temp, db, gamma, MPFR_RNDU);
-            mpfr_max(delta, delta, temp, MPFR_RNDN);
+            mpfr_max(delta, delta, temp, MPFR_RNDU);
 
             if (sign < 0) {
                 mpfr_neg(gamma, gamma, MPFR_RNDN);

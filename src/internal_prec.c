@@ -19,7 +19,7 @@
  * along with the MPFA library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "mpfa.h"
+#include "mpfa-impl.h"
 
 static mpfa_prec_t mpfa_internal_prec = MPFA_DEFAULT_INTERNAL_PREC;
 

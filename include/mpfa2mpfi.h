@@ -1,7 +1,7 @@
 /*
- * sub.c -- Subtract one affine form from another.
+ * mpfa2mpfi.h -- MPFA public header file for MPFI support.
  *
- * Copyright 2016-2017 James Paul Turner.
+ * Copyright 2017 James Paul Turner.
  *
  * This file is part of the MPFA library.
  *
@@ -19,29 +19,21 @@
  * along with the MPFA library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "mpfa-impl.h"
+#ifndef MPFA2MPFI_H
+#define MPFA2MPFI_H
 
-void mpfa_sub (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
-    mpfr_t alpha, beta, gamma, delta;
-    mpfa_prec_t prec;
+#include <mpfi.h>
 
-    // Init temp vars.
-    prec = mpfa_get_prec(z);
-    mpfr_init2(alpha, prec);
-    mpfr_set_si(alpha, 1, MPFR_RNDN);
-    mpfr_init2(beta, prec);
-    mpfr_set_si(beta, -1, MPFR_RNDN);
-    mpfr_init2(gamma, prec);
-    mpfr_set_si(gamma, 0, MPFR_RNDN);
-    mpfr_init2(delta, prec);
-    mpfr_set_si(delta, 0, MPFR_RNDN);
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-    // z = x - y
-    mpfa_affine_2(z, x, y, alpha, beta, gamma, delta);
+// Get and set MPFI intervals.
+void mpfa_get_mpfi (mpfi_ptr z, mpfa_srcptr x);
+void mpfa_set_mpfi (mpfa_ptr z, mpfi_srcptr x);
 
-    // Clear temp vars.
-    mpfr_clear(alpha);
-    mpfr_clear(beta);
-    mpfr_clear(gamma);
-    mpfr_clear(delta);
+#ifdef __cplusplus
 }
+#endif
+
+#endif // MPFA2MPFI_H

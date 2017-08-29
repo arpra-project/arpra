@@ -19,9 +19,7 @@
  * along with the MPFA library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "mpfa.h"
-#include <stdlib.h>
-#include <stdarg.h>
+#include "mpfa-impl.h"
 
 void mpfa_clear (mpfa_ptr x) {
     mpfa_uint_t xTerm;

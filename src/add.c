@@ -19,7 +19,7 @@
  * along with the MPFA library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "mpfa.h"
+#include "mpfa-impl.h"
 
 void mpfa_add (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
     mpfr_t alpha, beta, gamma, delta;

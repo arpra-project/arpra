@@ -19,8 +19,7 @@
  * along with the MPFA library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "mpfa.h"
-#include <stdlib.h>
+#include "mpfa-impl.h"
 
 /*
  * This affine square root function uses a Chebyshev linear approximation.
@@ -102,7 +101,7 @@ void mpfa_sqrt (mpfa_ptr z, mpfa_srcptr x) {
             // compute delta
             mpfr_sub(delta, du, gamma, MPFR_RNDU);
             mpfr_sub(temp, gamma, da, MPFR_RNDU);
-            mpfr_max(delta, delta, temp, MPFR_RNDN);
+            mpfr_max(delta, delta, temp, MPFR_RNDU);
 
             // compute affine approximation
             mpfa_affine_1(z, x, alpha, gamma, delta);

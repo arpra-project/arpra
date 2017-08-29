@@ -19,7 +19,7 @@
  * along with the MPFA library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "mpfa.h"
+#include "mpfa-impl.h"
 
 mpfa_prec_t mpfa_get_prec (mpfa_srcptr x) {
     return mpfr_get_prec(&(x->centre));
