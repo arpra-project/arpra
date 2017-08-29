@@ -22,9 +22,9 @@
 #include "mpfa-impl.h"
 
 void mpfa_get_mpfi (mpfi_ptr z, mpfa_srcptr x) {
-    // Set lower bound.
+    // z_lo = x_0 - rad(x)
     mpfr_sub(&(z->left), &(x->centre), &(x->radius), MPFR_RNDD);
 
-    // Set upper bound.
+    // z_hi = x_0 + rad(x)
     mpfr_add(&(z->right), &(x->centre), &(x->radius), MPFR_RNDU);
 }

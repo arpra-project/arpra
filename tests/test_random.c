@@ -1,5 +1,5 @@
 /*
- * test_random.c -- Random test functions.
+ * test_random.c -- Functions for random test arguments.
  *
  * Copyright 2017 James Paul Turner.
  *
@@ -70,4 +70,16 @@ void mpfa_test_rand_clear ()
         fprintf(stderr, "Error: test is not initialised.\n");
         exit(EXIT_FAILURE);
     }
+}
+
+mpfa_uint_t mpfa_test_rand_ui (mpfa_uint_t n_bits)
+{
+    return gmp_urandomb_ui(mpfa_test_randstate, n_bits);
+}
+
+void mpfa_test_rand_mpfr (mpfr_ptr z)
+{
+    mpfr_urandomb(z, mpfa_test_randstate);
+
+    // TODO: RANDOM CHANGE OF SIGN AND MAGNITUDE BEYOND [0, 1)
 }

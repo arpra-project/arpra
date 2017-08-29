@@ -21,7 +21,7 @@
 
 #include "mpfa-test.h"
 
-int mpfa_test_mpfi (mpfa_srcptr x, mpfi_srcptr y)
+int mpfa_test_cmp_mpfi (mpfa_srcptr x, mpfi_srcptr y)
 {
     mpfi_t x_i;
     mpfa_prec_t prec_x;
@@ -45,4 +45,11 @@ int mpfa_test_mpfi (mpfa_srcptr x, mpfi_srcptr y)
     // Else return 0.
     mpfi_clear(x_i);
     return 0;
+}
+
+void mpfa_test_rand_mpfi (mpfi_ptr z)
+{
+    // Set random lower and upper bound.
+    mpfa_test_rand_mpfr(&(z->left));
+    mpfa_test_rand_mpfr(&(z->right));    
 }

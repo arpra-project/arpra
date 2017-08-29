@@ -37,7 +37,7 @@ int main (int argc, char *argv[]) {
     mpfi_t p;
     mpfi_init(p);
     mpfi_set_d(p, 2.0);
-    mpfa_test_mpfi(a, p);
+    mpfa_test_cmp_mpfi(a, p);
 #endif // WITH_MPFI
 
     mpfa_add(c, a, b);

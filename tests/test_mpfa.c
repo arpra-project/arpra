@@ -21,20 +21,20 @@
 
 #include "mpfa-test.h"
 
-int mpfa_test_mpfa (mpfa_srcptr x, mpfa_srcptr y)
+int mpfa_test_cmp_mpfa (mpfa_srcptr x, mpfa_srcptr y)
 {
     mpfa_uint_t term;
 
     // Return 1 if x and y differ.
-    if (x->nTerms != y->nTerms) {
-        return 1;
-    }
-
     if (!mpfr_equal_p(&(x->centre), &(y->centre))) {
         return 1;
     }
 
     if (!mpfr_equal_p(&(x->radius), &(y->radius))) {
+        return 1;
+    }
+
+    if (x->nTerms != y->nTerms) {
         return 1;
     }
 
@@ -50,4 +50,22 @@ int mpfa_test_mpfa (mpfa_srcptr x, mpfa_srcptr y)
 
     // Else return 0.
     return 0;
+}
+
+void mpfa_test_rand_mpfa (mpfa_ptr z)
+{
+    mpfa_uint_t zTerm;
+
+    // Set random centre and radius.
+    mpfa_test_rand_mpfr(&(z->centre));
+    mpfa_test_rand_mpfr(&(z->radius));
+
+    // set random deviation terms.
+    z->nTerms = mpfa_test_rand_ui(3);
+    z->symbols = malloc(z->nTerms * sizeof(mpfa_uint_t));
+    z->deviations = malloc(z->nTerms * sizeof(mpfr_t));
+    for (zTerm = 0; zTerm < z->nTerms; zTerm++) {
+        z->symbols[zTerm] = mpfa_next_sym();
+        mpfa_test_rand_mpfr(&(z->deviations[zTerm]));
+    }
 }

@@ -39,16 +39,22 @@
 extern "C" {
 #endif
 
-// RNG initialise and clear.
+// Initialise and clear RNG.
 void mpfa_test_rand_init ();
 void mpfa_test_rand_clear ();
 
-// Test functions.
-int mpfa_test_mpfa (mpfa_srcptr x, mpfa_srcptr y);
-
+// Generate random arguments.
+mpfa_uint_t mpfa_test_rand_ui (mpfa_uint_t n_bits);
+void mpfa_test_rand_mpfr (mpfr_ptr z);
+void mpfa_test_rand_mpfa (mpfa_ptr z);
 #ifdef WITH_MPFI
-// MPFI test functions.
-int mpfa_test_mpfi (mpfa_srcptr x, mpfi_srcptr y);
+void mpfa_test_rand_mpfi (mpfi_ptr z);
+#endif // WITH_MPFI
+
+// Compare function results.
+int mpfa_test_cmp_mpfa (mpfa_srcptr x, mpfa_srcptr y);
+#ifdef WITH_MPFI
+int mpfa_test_cmp_mpfi (mpfa_srcptr x, mpfi_srcptr y);
 #endif // WITH_MPFI
 
 #ifdef __cplusplus
