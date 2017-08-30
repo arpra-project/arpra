@@ -34,7 +34,7 @@ void mpfa_set (mpfa_ptr z, mpfa_srcptr x) {
     prec_internal = mpfa_get_internal_prec();
     mpfr_init2(temp, prec_internal);
     mpfr_init2(error, prec_internal);
-    mpfr_prec_round(&(z->radius), prec_internal, MPFR_RNDU);
+    mpfr_prec_round(&(z->radius), prec_internal, MPFR_RNDN);
     mpfr_set_si(error, 0, MPFR_RNDN);
     mpfr_set_si(&(z->radius), 0, MPFR_RNDN);
 
