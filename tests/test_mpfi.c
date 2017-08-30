@@ -47,9 +47,9 @@ int mpfa_test_cmp_mpfi (mpfa_srcptr x, mpfi_srcptr y)
     return 0;
 }
 
-void mpfa_test_rand_mpfi (mpfi_ptr z)
+void mpfa_test_rand_mpfi (mpfi_ptr z, enum mpfa_test_rand_mode mode)
 {
     // Set random lower and upper bound.
-    mpfa_test_rand_mpfr(&(z->left));
-    mpfa_test_rand_mpfr(&(z->right));    
+    mpfa_test_rand_mpfr(&(z->left), mode);
+    mpfa_test_rand_mpfr(&(z->right), mode);
 }

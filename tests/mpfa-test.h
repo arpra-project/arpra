@@ -35,6 +35,15 @@
 #include <mpfa2mpfi.h>
 #endif // WITH_MPFI
 
+// Modes of RNG output.
+enum mpfa_test_rand_mode {
+    MPFA_TEST_RAND_MIXED,
+    MPFA_TEST_RAND_SMALL,
+    MPFA_TEST_RAND_LARGE,
+    MPFA_TEST_RAND_POS,
+    MPFA_TEST_RAND_NEG
+};
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -45,10 +54,10 @@ void mpfa_test_rand_clear ();
 
 // Generate random arguments.
 mpfa_uint_t mpfa_test_rand_ui (mpfa_uint_t n_bits);
-void mpfa_test_rand_mpfr (mpfr_ptr z);
-void mpfa_test_rand_mpfa (mpfa_ptr z);
+void mpfa_test_rand_mpfr (mpfr_ptr z, enum mpfa_test_rand_mode mode);
+void mpfa_test_rand_mpfa (mpfa_ptr z, enum mpfa_test_rand_mode mode);
 #ifdef WITH_MPFI
-void mpfa_test_rand_mpfi (mpfi_ptr z);
+void mpfa_test_rand_mpfi (mpfi_ptr z, enum mpfa_test_rand_mode mode);
 #endif // WITH_MPFI
 
 // Compare function results.

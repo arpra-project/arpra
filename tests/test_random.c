@@ -77,42 +77,40 @@ mpfa_uint_t mpfa_test_rand_ui (mpfa_uint_t n_bits)
     return gmp_urandomb_ui(mpfa_test_randstate, n_bits);
 }
 
-void mpfa_test_rand_mpfr (mpfr_ptr z)
+void mpfa_test_rand_mpfr (mpfr_ptr z, enum mpfa_test_rand_mode mode)
 {
     mpfa_uint_t r;
 
-    r = mpfa_test_rand_ui (3);
+    // For MPFA_TEST_RAND_MIXED mode, we have:
+    // P(0 <= z < +1) = 1/4
+    // P(-1 < z <= 0) = 1/4
+    // P(+1 <= z < +oo) = 1/4
+    // P(-oo < z <= -1) = 1/4
 
-    if (r < 1) {
-        // P(z == +oo) = 1/8
-        mpfr_set_inf (z, +1);
-        return;
+    if (mode == MPFA_TEST_RAND_MIXED) {
+        r = mpfa_test_rand_ui (2);
     }
-    else if (r < 2) {
-        // P(z == -oo) = 1/8
-        mpfr_set_inf (z, -1);
-        return;
+    else if (mode == MPFA_TEST_RAND_SMALL) {
+        r = mpfa_test_rand_ui (1);
     }
-
-    mpfr_urandomb (z, mpfa_test_randstate);
-    if (r < 3) {
-        // P(0 <= z < +1) = 1/8
-        return;
+    else if (mode == MPFA_TEST_RAND_LARGE) {
+        r = mpfa_test_rand_ui (1) + 2;
     }
-    else if (r < 4) {
-        // P(-1 < z <= 0) = 1/8
-        mpfr_neg (z, z, MPFR_RNDD);
-        return;
+    else if (mode == MPFA_TEST_RAND_POS) {
+        r = mpfa_test_rand_ui (1) * 2;
+    }
+    else if (mode == MPFA_TEST_RAND_NEG) {
+        r = mpfa_test_rand_ui (1) * 2 + 1;
     }
 
-    mpfr_ui_div (z, 1, z, MPFR_RNDD);
-    if (r < 6) {
-        // P(+1 <= z < +oo) = 1/4
-        return;
+    if (r < 2) {
+        // Small number.
+        mpfr_urandomb (z, mpfa_test_randstate);
+        if (r == 1) mpfr_neg (z, z, MPFR_RNDD);
     }
     else {
-        // P(-oo < z <= -1) = 1/4
-        mpfr_neg (z, z, MPFR_RNDD);
-        return;
+        // Large number.
+        mpfr_ui_div (z, 1, z, MPFR_RNDD);
+        if (r == 3) mpfr_neg (z, z, MPFR_RNDD);
     }
 }

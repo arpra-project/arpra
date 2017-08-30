@@ -52,13 +52,13 @@ int mpfa_test_cmp_mpfa (mpfa_srcptr x, mpfa_srcptr y)
     return 0;
 }
 
-void mpfa_test_rand_mpfa (mpfa_ptr z)
+void mpfa_test_rand_mpfa (mpfa_ptr z, enum mpfa_test_rand_mode mode)
 {
     mpfa_uint_t zTerm;
 
     // Set random centre and radius.
-    mpfa_test_rand_mpfr(&(z->centre));
-    mpfa_test_rand_mpfr(&(z->radius));
+    mpfa_test_rand_mpfr(&(z->centre), mode);
+    mpfa_test_rand_mpfr(&(z->radius), mode);
 
     // set random deviation terms.
     z->nTerms = mpfa_test_rand_ui(3);
@@ -66,6 +66,6 @@ void mpfa_test_rand_mpfa (mpfa_ptr z)
     z->deviations = malloc(z->nTerms * sizeof(mpfr_t));
     for (zTerm = 0; zTerm < z->nTerms; zTerm++) {
         z->symbols[zTerm] = mpfa_next_sym();
-        mpfa_test_rand_mpfr(&(z->deviations[zTerm]));
+        mpfa_test_rand_mpfr(&(z->deviations[zTerm]), mode);
     }
 }
