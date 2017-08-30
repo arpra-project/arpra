@@ -95,26 +95,24 @@ void mpfa_test_rand_mpfr (mpfr_ptr z)
     }
 
     mpfr_urandomb (z, mpfa_test_randstate);
-
     if (r < 3) {
         // P(0 <= z < +1) = 1/8
         return;
     }
     else if (r < 4) {
         // P(-1 < z <= 0) = 1/8
-        mpfr_neg (z, z, MPFI_RNDD);
+        mpfr_neg (z, z, MPFR_RNDD);
         return;
     }
 
-    mpfr_ui_div (z, 1, z, MPFI_RNDD);
-
+    mpfr_ui_div (z, 1, z, MPFR_RNDD);
     if (r < 6) {
-        // P(+1 < z <= +oo) = 1/4
+        // P(+1 <= z < +oo) = 1/4
         return;
     }
     else {
-        // P(-oo <= z < -1) = 1/4
-        mpfr_neg (z, z, MPFI_RNDD);
+        // P(-oo < z <= -1) = 1/4
+        mpfr_neg (z, z, MPFR_RNDD);
         return;
     }
 }
