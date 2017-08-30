@@ -79,7 +79,42 @@ mpfa_uint_t mpfa_test_rand_ui (mpfa_uint_t n_bits)
 
 void mpfa_test_rand_mpfr (mpfr_ptr z)
 {
-    mpfr_urandomb(z, mpfa_test_randstate);
+    mpfa_uint_t r;
 
-    // TODO: RANDOM CHANGE OF SIGN AND MAGNITUDE BEYOND [0, 1)
+    r = mpfa_test_rand_ui (3);
+
+    if (r < 1) {
+        // P(z == +oo) = 1/8
+        mpfr_set_inf (z, +1);
+        return;
+    }
+    else if (r < 2) {
+        // P(z == -oo) = 1/8
+        mpfr_set_inf (z, -1);
+        return;
+    }
+
+    mpfr_urandomb (z, mpfa_test_randstate);
+
+    if (r < 3) {
+        // P(0 <= z < +1) = 1/8
+        return;
+    }
+    else if (r < 4) {
+        // P(-1 < z <= 0) = 1/8
+        mpfr_neg (z, z, MPFI_RNDD);
+        return;
+    }
+
+    mpfr_ui_div (z, 1, z, MPFI_RNDD);
+
+    if (r < 6) {
+        // P(+1 < z <= +oo) = 1/4
+        return;
+    }
+    else {
+        // P(-oo <= z < -1) = 1/4
+        mpfr_neg (z, z, MPFI_RNDD);
+        return;
+    }
 }
