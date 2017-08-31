@@ -45,40 +45,19 @@ void mpfa_set_str_rad (mpfa_ptr z, const char *centre, const char *radius, mpfa_
         mpfr_set_str(&(z->radius), radius, base, MPFR_RNDU);
     }
 
-    // If radius is zero:
-    if (mpfr_zero_p(&(z->radius))) {
-        // Clear noise terms.
-        if (z->nTerms > 0) {
-            for (zTerm = 0; zTerm < z->nTerms; zTerm++) {
-                mpfr_clear(&(z->deviations[zTerm]));
-            }
-            z->nTerms = 0;
-            free(z->symbols);
-            free(z->deviations);
-        }
-    }
+    // Clear existing noise terms.
+    mpfa_clear_terms(z);
 
-    // Else radius is nonzero:
-    else {
-        if (z->nTerms == 0) {
-            // If z has no noise term memory, allocate enough for one term.
-            z->symbols = malloc(sizeof(mpfa_uint_t));
-            z->deviations = malloc(sizeof(mpfa_t));
-            mpfr_init2(&(z->deviations[0]), prec_internal);
-        }
-        else if (z->nTerms >= 2) {
-            // Else if z has too much noise term memory, clear unused terms.
-            mpfr_prec_round(&(z->deviations[0]), prec_internal, MPFR_RNDN);
-            for (zTerm = 1; zTerm < z->nTerms; zTerm++) {
-                mpfr_clear(&(z->deviations[zTerm]));
-            }
-            z->symbols = realloc(z->symbols, sizeof(mpfa_uint_t));
-            z->deviations = realloc(z->deviations, sizeof(mpfa_t));
-        }
+    // If radius is nonzero:
+    if (!mpfr_zero_p(&(z->radius))) {
+        // Allocate one noise term.
         z->nTerms = 1;
+        z->symbols = malloc(sizeof(mpfa_uint_t));
+        z->deviations = malloc(sizeof(mpfa_t));
 
         // Set noise term.
         z->symbols[0] = mpfa_next_sym();
+        mpfr_init2(&(z->deviations[0]), prec_internal);
         mpfr_set(&(z->deviations[0]), &(z->radius), MPFR_RNDN);
     }
 }

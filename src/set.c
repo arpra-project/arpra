@@ -44,36 +44,15 @@ void mpfa_set (mpfa_ptr z, mpfa_srcptr x) {
         mpfr_add(error, error, temp, MPFR_RNDU);
     }
 
-    // If z has not enough noise term memory:
-    if (z->nTerms < x->nTerms) {
-        // Increase noise term memory.
-        if (z->nTerms == 0) {
-            z->symbols = malloc((x->nTerms + 1) * sizeof(mpfa_uint_t));
-            z->deviations = malloc((x->nTerms + 1) * sizeof(mpfa_t));
-        }
-        else {
-            z->symbols = realloc(z->symbols, (x->nTerms + 1) * sizeof(mpfa_uint_t));
-            z->deviations = realloc(z->deviations, (x->nTerms + 1) * sizeof(mpfa_t));
-        }
+    // Replace existing noise term memory.
+    mpfa_clear_terms(z);
+    z->nTerms = x->nTerms + 1;
+    z->symbols = malloc(z->nTerms * sizeof(mpfa_uint_t));
+    z->deviations = malloc(z->nTerms * sizeof(mpfa_t));
 
-        // Initialise new noise terms.
-        for (zTerm = 0; zTerm < z->nTerms; zTerm++) {
-            mpfr_prec_round(&(z->deviations[zTerm]), prec_internal, MPFR_RNDN);
-        }
-        for (zTerm = z->nTerms; zTerm < x->nTerms; zTerm++) {
-            mpfr_init2(&(z->deviations[zTerm]), prec_internal);
-        }
-    }
-
-    // Else if z has too much noise term memory:
-    else if (z->nTerms > x->nTerms) {
-        // Clear unused noise terms.
-        for (zTerm = 0; zTerm < x->nTerms; zTerm++) {
-            mpfr_prec_round(&(z->deviations[zTerm]), prec_internal, MPFR_RNDN);
-        }
-        for (zTerm = x->nTerms; zTerm < z->nTerms; zTerm++) {
-            mpfr_clear(&(z->deviations[zTerm]));
-        }
+    // Initialise new noise terms.
+    for (zTerm = 0; zTerm < z->nTerms; zTerm++) {
+        mpfr_init2(&(z->deviations[zTerm]), prec_internal);
     }
 
     // Copy noise terms over.
@@ -110,17 +89,17 @@ void mpfa_set (mpfa_ptr z, mpfa_srcptr x) {
     mpfr_prec_round(&(z->radius), prec, MPFR_RNDU);
 
     // Resize noise term memory, as required.
+    z->nTerms = zTerm;
     if (z->nTerms > 0) {
         if (zTerm == 0) {
             free(z->symbols);
             free(z->deviations);
         }
         else {
-            z->symbols = realloc(z->symbols, zTerm * sizeof(mpfa_uint_t));
-            z->deviations = realloc(z->deviations, zTerm * sizeof(mpfr_t));
+            z->symbols = realloc(z->symbols, z->nTerms * sizeof(mpfa_uint_t));
+            z->deviations = realloc(z->deviations, z->nTerms * sizeof(mpfr_t));
         }
     }
-    z->nTerms = zTerm;
 
     // Clear temp vars.
     mpfr_clear(temp);
