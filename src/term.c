@@ -1,5 +1,5 @@
 /*
- * term.c -- Compute a single deviation term of an affine form.
+ * term.c -- Compute a single noise term of an affine form.
  *
  * Copyright 2017 James Paul Turner.
  *

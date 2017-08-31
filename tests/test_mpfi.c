@@ -21,7 +21,7 @@
 
 #include "mpfa-test.h"
 
-int mpfa_test_cmp_mpfi (mpfa_srcptr x, mpfi_srcptr y)
+mpfa_int_t mpfa_test_cmp_mpfi (mpfa_srcptr x, mpfi_srcptr y)
 {
     mpfi_t x_i;
     mpfa_prec_t prec_x;
@@ -36,7 +36,6 @@ int mpfa_test_cmp_mpfi (mpfa_srcptr x, mpfi_srcptr y)
         mpfi_clear(x_i);
         return 1;
     }
-
     if (mpfr_less_p(&(x_i->right), &(y->right))) {
         mpfi_clear(x_i);
         return 1;

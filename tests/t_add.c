@@ -23,33 +23,49 @@
 
 int main (int argc, char *argv[])
 {
-    mpfa_t a, b;
+    const mpfa_prec_t prec = 53;
+    const mpfa_int_t n_tests = 1000;
+    mpfa_int_t i, success = 0;
+
+#ifdef WITH_MPFI
+    mpfa_t a_a, b_a, c_a;
+    mpfi_t a_i, b_i, c_i;
+
+    mpfa_set_default_prec(53);
+    mpfa_set_internal_prec(53);
 
     mpfa_test_rand_init();
-    mpfa_init(a);
-    mpfa_init(b)
-
-#ifdef WITH_MPFI
-    mpfi_t a_i, b_i;
-
+    mpfa_init(a_a);
+    mpfa_init(b_a);
+    mpfa_init(c_a);
     mpfi_init(a_i);
     mpfi_init(b_i);
-#endif // WITH_MPFI
+    mpfi_init(c_i);
 
+    for (i = 0; i < n_tests; i++) {
+        printf("i=%i\n", i);
 
+        mpfa_test_rand_mpfa(a_a, MPFA_TEST_RAND_SMALL);
+        mpfa_test_rand_mpfa(b_a, MPFA_TEST_RAND_SMALL);
 
+        mpfa_get_mpfi(a_i, a_a);
+        mpfa_get_mpfi(b_i, b_a);
 
+        mpfa_add(c_a, a_a, b_a);
+        mpfi_add(c_i, a_i, b_i);
 
-
+        success += mpfa_test_cmp_mpfi(c_a, c_i);
+    }
 
     mpfa_test_rand_clear();
-    mpfa_clear(a);
-    mpfa_clear(b);
-
-#ifdef WITH_MPFI
-    mpfi_init(a_i);
-    mpfi_init(b_i);
+    mpfa_clear(a_a);
+    mpfa_clear(b_a);
+    mpfa_clear(c_a);
+    mpfi_clear(a_i);
+    mpfi_clear(b_i);
+    mpfi_clear(c_i);
 #endif // WITH_MPFI
 
-    mpfr_clear_cache();
+    mpfr_free_cache();
+    return success;
 }

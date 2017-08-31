@@ -21,7 +21,8 @@
 
 #include "mpfa-impl.h"
 
-void mpfa_get_mpfi (mpfi_ptr z, mpfa_srcptr x) {
+void mpfa_get_mpfi (mpfi_ptr z, mpfa_srcptr x)
+{
     // z_lo = x_0 - rad(x)
     mpfr_sub(&(z->left), &(x->centre), &(x->radius), MPFR_RNDD);
 

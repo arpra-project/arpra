@@ -21,7 +21,7 @@
 
 #include "mpfa-test.h"
 
-int mpfa_test_cmp_mpfa (mpfa_srcptr x, mpfa_srcptr y)
+mpfa_int_t mpfa_test_cmp_mpfa (mpfa_srcptr x, mpfa_srcptr y)
 {
     mpfa_uint_t term;
 
@@ -68,12 +68,13 @@ void mpfa_test_rand_mpfa (mpfa_ptr z, enum mpfa_test_rand_mode mode)
     // Set random centre.
     mpfa_test_rand_mpfr(&(z->centre), mode);
 
-    // Randomly allocate between 0 and 15 deviation terms.
-    z->nTerms = mpfa_test_rand_ui(4);
+    // Randomly allocate between 0 and 7 noise terms.
+    mpfa_clear_terms(z);
+    z->nTerms = mpfa_test_rand_ui(3);
     z->symbols = malloc(z->nTerms * sizeof(mpfa_uint_t));
     z->deviations = malloc(z->nTerms * sizeof(mpfr_t));
 
-    // Randomly set the deviation terms.
+    // Randomly set the noise terms.
     for (zTerm = 0; zTerm < z->nTerms; zTerm++) {
         z->symbols[zTerm] = mpfa_next_sym();
         mpfr_init2(&(z->deviations[zTerm]), prec_internal);

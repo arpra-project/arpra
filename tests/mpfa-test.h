@@ -61,9 +61,9 @@ void mpfa_test_rand_mpfi (mpfi_ptr z, enum mpfa_test_rand_mode mode);
 #endif // WITH_MPFI
 
 // Compare function results.
-int mpfa_test_cmp_mpfa (mpfa_srcptr x, mpfa_srcptr y);
+mpfa_int_t mpfa_test_cmp_mpfa (mpfa_srcptr x, mpfa_srcptr y);
 #ifdef WITH_MPFI
-int mpfa_test_cmp_mpfi (mpfa_srcptr x, mpfi_srcptr y);
+mpfa_int_t mpfa_test_cmp_mpfi (mpfa_srcptr x, mpfi_srcptr y);
 #endif // WITH_MPFI
 
 #ifdef __cplusplus

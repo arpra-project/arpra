@@ -32,7 +32,7 @@ void mpfa_test_rand_init ()
     char *environment_seed;
 
     if (mpfa_test_rand_is_init) {
-        fprintf(stderr, "Error: test is alreay initialised.\n");
+        fprintf(stderr, "Error: RNG is alreay initialised.\n");
         exit(EXIT_FAILURE);
     }
 
@@ -67,7 +67,7 @@ void mpfa_test_rand_clear ()
         mpfa_test_rand_is_init = 0;
     }
     else {
-        fprintf(stderr, "Error: test is not initialised.\n");
+        fprintf(stderr, "Error: RNG is not initialised.\n");
         exit(EXIT_FAILURE);
     }
 }

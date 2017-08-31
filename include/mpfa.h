@@ -24,8 +24,8 @@
 
 #include <mpfr.h>
 
-typedef int mpfa_int_t;
-typedef unsigned int mpfa_uint_t;
+typedef long int mpfa_int_t;
+typedef unsigned long int mpfa_uint_t;
 
 typedef mpfr_prec_t mpfa_prec_t;
 typedef mpfr_exp_t mpfa_exp_t;
@@ -53,6 +53,7 @@ void mpfa_init2 (mpfa_ptr x, mpfa_prec_t prec);
 void mpfa_inits2 (mpfa_prec_t prec, mpfa_ptr x, ...);
 void mpfa_clear (mpfa_ptr x);
 void mpfa_clears (mpfa_ptr x, ...);
+void mpfa_clear_terms (mpfa_ptr x);
 
 // Set affine form
 void mpfa_set (mpfa_ptr z, mpfa_srcptr x);

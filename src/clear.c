@@ -21,24 +21,16 @@
 
 #include "mpfa-impl.h"
 
-void mpfa_clear (mpfa_ptr x) {
-    mpfa_uint_t xTerm;
-
-    // Clear existing noise terms.
-    if (x->nTerms > 0) {
-        for (xTerm = 0; xTerm < x->nTerms; xTerm++) {
-            mpfr_clear(&(x->deviations[xTerm]));
-        }
-        free(x->symbols);
-        free(x->deviations);
-    }
-
-    // Clear centre and radius.
+void mpfa_clear (mpfa_ptr x)
+{
+    // Clear centre, radius and noise terms.
     mpfr_clear(&(x->centre));
     mpfr_clear(&(x->radius));
+    mpfa_clear_terms(x);
 }
 
-void mpfa_clears (mpfa_ptr x, ...) {
+void mpfa_clears (mpfa_ptr x, ...)
+{
     va_list arg;
 
     // Clear each arguemnt.
@@ -48,4 +40,19 @@ void mpfa_clears (mpfa_ptr x, ...) {
         x = (mpfa_ptr) va_arg(arg, mpfa_ptr);
     }
     va_end(arg);
+}
+
+void mpfa_clear_terms (mpfa_ptr x)
+{
+    mpfa_uint_t xTerm;
+
+    // Clear existing noise terms.
+    if (x->nTerms > 0) {
+        for (xTerm = 0; xTerm < x->nTerms; xTerm++) {
+            mpfr_clear(&(x->deviations[xTerm]));
+        }
+        free(x->symbols);
+        free(x->deviations);
+        x->nTerms = 0;
+    }
 }
