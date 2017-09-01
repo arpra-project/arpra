@@ -52,8 +52,8 @@ void mpfa_set_str_rad (mpfa_ptr z, const char *centre, const char *radius, mpfa_
 
         // Set noise term.
         z->symbols[0] = mpfa_next_sym();
-        mpfr_init2(&(z->deviations[0]), prec_internal);
-        mpfr_set(&(z->deviations[0]), &(z->radius), MPFR_RNDN);
+        mpfr_init2(&(z->deviations[0]), prec);
+        mpfr_set(&(z->deviations[0]), &(z->radius), MPFR_RNDU);
     }
 
     // Clear temp vars.

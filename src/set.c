@@ -35,9 +35,9 @@ void mpfa_set (mpfa_ptr z, mpfa_srcptr x)
     prec_internal = mpfa_get_internal_prec();
     mpfr_init2(temp, prec_internal);
     mpfr_init2(error, prec_internal);
-    mpfr_prec_round(&(z->radius), prec_internal, MPFR_RNDN);
-    mpfr_set_si(error, 0, MPFR_RNDN);
-    mpfr_set_si(&(z->radius), 0, MPFR_RNDN);
+    mpfr_prec_round(&(z->radius), prec_internal, MPFR_RNDU);
+    mpfr_set_si(error, 0, MPFR_RNDU);
+    mpfr_set_si(&(z->radius), 0, MPFR_RNDU);
 
     // z_0 = x_0
     if (mpfr_set(&(z->centre), &(x->centre), MPFR_RNDN)) {
@@ -53,7 +53,7 @@ void mpfa_set (mpfa_ptr z, mpfa_srcptr x)
 
     // Initialise new noise terms.
     for (zTerm = 0; zTerm < z->nTerms; zTerm++) {
-        mpfr_init2(&(z->deviations[zTerm]), prec_internal);
+        mpfr_init2(&(z->deviations[zTerm]), prec);
     }
 
     // Copy noise terms over.
@@ -71,7 +71,7 @@ void mpfa_set (mpfa_ptr z, mpfa_srcptr x)
             mpfr_clear(&(z->deviations[zTerm]));
         }
         else {
-            mpfr_abs(temp, &(z->deviations[zTerm]), MPFR_RNDN);
+            mpfr_abs(temp, &(z->deviations[zTerm]), MPFR_RNDU);
             mpfr_add(&(z->radius), &(z->radius), temp, MPFR_RNDU);
             zTerm++;
         }
@@ -80,9 +80,9 @@ void mpfa_set (mpfa_ptr z, mpfa_srcptr x)
     // Store nonzero numerical error term.
     if (!mpfr_zero_p(error)) {
         z->symbols[zTerm] = mpfa_next_sym();
-        mpfr_init2(&(z->deviations[zTerm]), prec_internal);
-        mpfr_set(&(z->deviations[zTerm]), error, MPFR_RNDN);
-        mpfr_add(&(z->radius), &(z->radius), error, MPFR_RNDU);
+        mpfr_init2(&(z->deviations[zTerm]), prec);
+        mpfr_set(&(z->deviations[zTerm]), error, MPFR_RNDU);
+        mpfr_add(&(z->radius), &(z->radius), &(z->deviations[zTerm]), MPFR_RNDU);
         zTerm++;
     }
 

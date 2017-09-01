@@ -28,7 +28,6 @@ mpfa_prec_t mpfa_get_prec (mpfa_srcptr x)
 
 void mpfa_set_prec (mpfa_ptr x, mpfa_prec_t prec)
 {
-    mpfa_uint_t xTerm;
     mpfa_prec_t prec_internal;
 
     // Increase internal precision if < 'prec'.
@@ -38,10 +37,8 @@ void mpfa_set_prec (mpfa_ptr x, mpfa_prec_t prec)
         prec_internal = prec;
     }
 
-    // Reset internal noise term precision.
-    for (xTerm = 0; xTerm < x->nTerms; xTerm++) {
-        mpfr_set_prec(&(x->deviations[xTerm]), prec_internal);
-    }
+    // Clear existing noise terms.
+    mpfa_clear_terms(x);
 
     // Reset centre and radius with new working precision.
     mpfr_set_prec(&(x->centre), prec);

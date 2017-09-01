@@ -36,14 +36,14 @@ void mpfa_condense_small (mpfa_ptr z, double fraction)
     mpfr_init2(temp, prec_internal);
     mpfr_init2(error, prec_internal);
     mpfr_init2(threshold, prec_internal);
-    mpfr_set_si(error, 0, MPFR_RNDN);
+    mpfr_set_si(error, 0, MPFR_RNDU);
     mpfr_mul_d(threshold, &(z->radius), fraction, MPFR_RNDN);
     mpfr_prec_round(&(z->radius), prec_internal, MPFR_RNDU);
-    mpfr_set_si(&(z->radius), 0, MPFR_RNDN);
+    mpfr_set_si(&(z->radius), 0, MPFR_RNDU);
     zTerm = 0;
 
     for (zNext = 0; zNext < z->nTerms; zNext++) {
-        mpfr_abs(temp, &(z->deviations[zNext]), MPFR_RNDN);
+        mpfr_abs(temp, &(z->deviations[zNext]), MPFR_RNDU);
 
         if (mpfr_lessequal_p(temp, threshold)) {
             // If noise term is smaller than threshold, condense it.
@@ -51,12 +51,11 @@ void mpfa_condense_small (mpfa_ptr z, double fraction)
         }
         else {
             // Else shift noise term up, and add it to radius.
-            mpfr_prec_round(&(z->deviations[zTerm]), prec_internal, MPFR_RNDN);
             if (zTerm < zNext) {
                 z->symbols[zTerm] = z->symbols[zNext];
                 mpfr_set(&(z->deviations[zTerm]), &(z->deviations[zNext]), MPFR_RNDN);
             }
-            mpfr_add(&(z->radius), &(z->radius), temp, MPFR_RNDU);
+            mpfr_add(&(z->radius), &(z->radius), &(z->deviations[zTerm]), MPFR_RNDU);
             zTerm++;
         }
     }
@@ -64,7 +63,7 @@ void mpfa_condense_small (mpfa_ptr z, double fraction)
     // Store nonzero condensed noise term, and add it to radius.
     if (!mpfr_zero_p(error)) {
         z->symbols[zTerm] = mpfa_next_sym();
-        mpfr_prec_round(&(z->deviations[zTerm]), prec_internal, MPFR_RNDN);
+        mpfr_prec_round(&(z->deviations[zTerm]), prec, MPFR_RNDU);
         mpfr_set(&(z->deviations[zTerm]), error, MPFR_RNDU);
         mpfr_add(&(z->radius), &(z->radius), &(z->deviations[zTerm]), MPFR_RNDU);
         zTerm++;

@@ -36,8 +36,8 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y)
     mpfr_init2(error, prec_internal);
     mpfr_init2(&(zNew->centre), prec);
     mpfr_init2(&(zNew->radius), prec_internal);
-    mpfr_set_si(error, 0, MPFR_RNDN);
-    mpfr_set_si(&(zNew->radius), 0, MPFR_RNDN);
+    mpfr_set_si(error, 0, MPFR_RNDU);
+    mpfr_set_si(&(zNew->radius), 0, MPFR_RNDU);
 
     // z_0 = x_0 * y_0
     if (mpfr_mul(&(zNew->centre), &(x->centre), &(y->centre), MPFR_RNDN)) {
@@ -58,7 +58,7 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y)
     while (xHasNext || yHasNext) {
         if ((!yHasNext) || (xHasNext && (x->symbols[xTerm] < y->symbols[yTerm]))) {
             zNew->symbols[zTerm] = x->symbols[xTerm];
-            mpfr_init2(&(zNew->deviations[zTerm]), prec_internal);
+            mpfr_init2(&(zNew->deviations[zTerm]), prec);
 
             // z_i = (y_0 * x_i)
             if (mpfr_mul(&(zNew->deviations[zTerm]), &(y->centre), &(x->deviations[xTerm]), MPFR_RNDN)) {
@@ -70,7 +70,7 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y)
         }
         else if ((!xHasNext) || (yHasNext && (y->symbols[yTerm] < x->symbols[xTerm]))) {
             zNew->symbols[zTerm] = y->symbols[yTerm];
-            mpfr_init2(&(zNew->deviations[zTerm]), prec_internal);
+            mpfr_init2(&(zNew->deviations[zTerm]), prec);
 
             // z_i = (x_0 * y_i)
             if (mpfr_mul(&(zNew->deviations[zTerm]), &(x->centre), &(y->deviations[yTerm]), MPFR_RNDN)) {
@@ -82,7 +82,7 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y)
         }
         else {
             zNew->symbols[zTerm] = x->symbols[xTerm];
-            mpfr_init2(&(zNew->deviations[zTerm]), prec_internal);
+            mpfr_init2(&(zNew->deviations[zTerm]), prec);
 
             // z_i = (y_0 * x_i) + (x_0 * y_i)
             if (mpfa_term(&(zNew->deviations[zTerm]), &(x->deviations[xTerm]), &(y->deviations[yTerm]), &(y->centre), &(x->centre), NULL)) {
@@ -99,7 +99,7 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y)
             mpfr_clear(&(zNew->deviations[zTerm]));
         }
         else {
-            mpfr_abs(temp, &(zNew->deviations[zTerm]), MPFR_RNDN);
+            mpfr_abs(temp, &(zNew->deviations[zTerm]), MPFR_RNDU);
             mpfr_add(&(zNew->radius), &(zNew->radius), temp, MPFR_RNDU);
             zTerm++;
         }
@@ -208,9 +208,9 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y)
     // Store nonzero numerical error term.
     if (!mpfr_zero_p(error)) {
         zNew->symbols[zTerm] = mpfa_next_sym();
-        mpfr_init2(&(zNew->deviations[zTerm]), prec_internal);
-        mpfr_set(&(zNew->deviations[zTerm]), error, MPFR_RNDN);
-        mpfr_add(&(zNew->radius), &(zNew->radius), error, MPFR_RNDU);
+        mpfr_init2(&(zNew->deviations[zTerm]), prec);
+        mpfr_set(&(zNew->deviations[zTerm]), error, MPFR_RNDU);
+        mpfr_add(&(zNew->radius), &(zNew->radius), &(zNew->deviations[zTerm]), MPFR_RNDU);
         zTerm++;
     }
 

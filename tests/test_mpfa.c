@@ -79,11 +79,11 @@ void mpfa_test_rand_mpfa (mpfa_ptr z, enum mpfa_test_rand_mode mode)
     // Randomly set noise terms.
     for (zTerm = 0; zTerm < z->nTerms; zTerm++) {
         z->symbols[zTerm] = mpfa_next_sym();
-        mpfr_init2(&(z->deviations[zTerm]), prec_internal);
+        mpfr_init2(&(z->deviations[zTerm]), prec);
         mpfa_test_rand_mpfr(&(z->deviations[zTerm]), mode);
 
         // Add abs(term) to radius.
-        mpfr_abs(temp, &(z->deviations[zTerm]), MPFR_RNDN);
+        mpfr_abs(temp, &(z->deviations[zTerm]), MPFR_RNDU);
         mpfr_add(&(z->radius), &(z->radius), temp, MPFR_RNDU);
     }
 

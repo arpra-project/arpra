@@ -23,9 +23,9 @@
 
 int main (int argc, char *argv[])
 {
-    const mpfa_prec_t prec = 53;
-    const mpfa_int_t n_tests = 1000;
-    mpfa_int_t i, n_failed = 0;
+    //const mpfa_prec_t prec = 53;
+    const int n_tests = 1000;
+    int i, n_failed = 0;
 
 #ifdef WITH_MPFI
     mpfa_t a_a, b_a, c_a;
@@ -52,7 +52,7 @@ int main (int argc, char *argv[])
         n_failed += mpfa_test_cmp_mpfi(c_a, c_i);
     }
 
-    printf("Failed %i out of %i.\n", n_failed, n_tests);
+    printf("Failed %d out of %d.\n", n_failed, n_tests);
 
     mpfa_test_rand_clear();
     mpfa_clear(a_a);

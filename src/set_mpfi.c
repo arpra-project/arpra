@@ -29,7 +29,7 @@ void mpfa_set_mpfi (mpfa_ptr z, mpfi_srcptr x)
     // Init temp var.
     prec = mpfa_get_prec(z);
     prec_internal = mpfa_get_internal_prec();
-    mpfr_init2(temp, prec);
+    mpfr_init2(temp, prec_internal);
 
     // z_0 = (x_lo + x_hi) / 2
     mpfr_add(&(z->centre), &(x->left), &(x->right), MPFR_RNDN);
@@ -52,7 +52,7 @@ void mpfa_set_mpfi (mpfa_ptr z, mpfi_srcptr x)
 
         // Set noise term.
         z->symbols[0] = mpfa_next_sym();
-        mpfr_init2(&(z->deviations[0]), prec_internal);
-        mpfr_set(&(z->deviations[0]), &(z->radius), MPFR_RNDN);
+        mpfr_init2(&(z->deviations[0]), prec);
+        mpfr_set(&(z->deviations[0]), &(z->radius), MPFR_RNDU);
     }
 }

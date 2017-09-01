@@ -50,8 +50,8 @@ void mpfa_sum (mpfa_ptr z, const mpfa_ptr *x, mpfa_uint_t n)
     mpfr_init2(error, prec_internal);
     mpfr_init2(&(zNew->centre), prec);
     mpfr_init2(&(zNew->radius), prec_internal);
-    mpfr_set_si(error, 0, MPFR_RNDN);
-    mpfr_set_si(&(zNew->radius), 0, MPFR_RNDN);
+    mpfr_set_si(error, 0, MPFR_RNDU);
+    mpfr_set_si(&(zNew->radius), 0, MPFR_RNDU);
     xTerm = malloc(n * sizeof(mpfa_uint_t));
     summands = malloc(n * sizeof(mpfr_ptr));
 
@@ -93,7 +93,7 @@ void mpfa_sum (mpfa_ptr z, const mpfa_ptr *x, mpfa_uint_t n)
         zNew->symbols[zTerm] = xSymbol;
 
         // Compute the next deviation in z.
-        mpfr_init2(&(zNew->deviations[zTerm]), prec_internal);
+        mpfr_init2(&(zNew->deviations[zTerm]), prec);
         for (i = 0, j = 0; i < n; i++) {
             if (x[i]->symbols[xTerm[i]] == xSymbol) {
                 summands[j++] = &(x[i]->deviations[xTerm[i]]);
@@ -116,7 +116,7 @@ void mpfa_sum (mpfa_ptr z, const mpfa_ptr *x, mpfa_uint_t n)
             mpfr_clear(&(zNew->deviations[zTerm]));
         }
         else {
-            mpfr_abs(temp, &(zNew->deviations[zTerm]), MPFR_RNDN);
+            mpfr_abs(temp, &(zNew->deviations[zTerm]), MPFR_RNDU);
             mpfr_add(&(zNew->radius), &(zNew->radius), temp, MPFR_RNDU);
             zTerm++;
         }
@@ -125,9 +125,9 @@ void mpfa_sum (mpfa_ptr z, const mpfa_ptr *x, mpfa_uint_t n)
     // Store nonzero numerical error term.
     if (!mpfr_zero_p(error)) {
         zNew->symbols[zTerm] = mpfa_next_sym();
-        mpfr_init2(&(zNew->deviations[zTerm]), prec_internal);
-        mpfr_set(&(zNew->deviations[zTerm]), error, MPFR_RNDN);
-        mpfr_add(&(zNew->radius), &(zNew->radius), error, MPFR_RNDU);
+        mpfr_init2(&(zNew->deviations[zTerm]), prec);
+        mpfr_set(&(zNew->deviations[zTerm]), error, MPFR_RNDU);
+        mpfr_add(&(zNew->radius), &(zNew->radius), &(zNew->deviations[zTerm]), MPFR_RNDU);
         zTerm++;
     }
 

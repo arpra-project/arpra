@@ -138,15 +138,15 @@ void file_init (char *grp, char *var, mpfa_uint_t num,
     char fname[20];
 
     for (j = 0; j < num; j++) {
-        sprintf(fname, "%s_%03u_%s_c.dat", grp, j, var);
+        sprintf(fname, "%s_%03u_%s_c.dat", grp, (unsigned) j, var);
         c[j] = fopen(fname, "w");
-        sprintf(fname, "%s_%03u_%s_r.dat", grp, j, var);
+        sprintf(fname, "%s_%03u_%s_r.dat", grp, (unsigned) j, var);
         r[j] = fopen(fname, "w");
-        sprintf(fname, "%s_%03u_%s_n.dat", grp, j, var);
+        sprintf(fname, "%s_%03u_%s_n.dat", grp, (unsigned) j, var);
         n[j] = fopen(fname, "w");
-        sprintf(fname, "%s_%03u_%s_s.dat", grp, j, var);
+        sprintf(fname, "%s_%03u_%s_s.dat", grp, (unsigned) j, var);
         s[j] = fopen(fname, "w");
-        sprintf(fname, "%s_%03u_%s_d.dat", grp, j, var);
+        sprintf(fname, "%s_%03u_%s_d.dat", grp, (unsigned) j, var);
         d[j] = fopen(fname, "w");
     }
 }
@@ -175,9 +175,9 @@ void file_write (mpfa_srcptr A, mpfa_uint_t i,
     fputc('\n', c[i]);
     mpfr_out_str(r[i], 10, 80, &(A[i].radius), MPFR_RNDN);
     fputc('\n', r[i]);
-    fprintf(n[i], "%u\n", A[i].nTerms);
+    fprintf(n[i], "%u\n", (unsigned) A[i].nTerms);
     for (j = 0; j < A[i].nTerms; j++) {
-        fprintf(s[i], "%u ", A[i].symbols[j]);
+        fprintf(s[i], "%u ", (unsigned) A[i].symbols[j]);
         mpfr_out_str(d[i], 10, 80, &(A[i].deviations[j]), MPFR_RNDN);
         fputc(' ', d[i]);
     }
@@ -188,7 +188,7 @@ void file_write (mpfa_srcptr A, mpfa_uint_t i,
 
 int main (int argc, char *argv[])
 {
-    mpfa_uint_t i, j, N_mark, V_mark;
+    unsigned int i, j, N_mark, V_mark;
     mpfa_t dN, dV, dt, M;
 
     // Init parameters

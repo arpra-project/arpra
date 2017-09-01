@@ -37,14 +37,13 @@ void mpfa_condense_last_n (mpfa_ptr z, mpfa_uint_t n)
     prec_internal = mpfa_get_internal_prec();
     mpfr_init2(temp, prec_internal);
     mpfr_prec_round(&(z->radius), prec_internal, MPFR_RNDU);
-    mpfr_set_si(&(z->radius), 0, MPFR_RNDN);
+    mpfr_set_si(&(z->radius), 0, MPFR_RNDU);
     zTerm = z->nTerms - n;
     summands = malloc(n * sizeof(mpfr_ptr));
 
     // Add leading noise terms to radius.
     for (zNext = 0; zNext < zTerm; zNext++) {
-        mpfr_prec_round(&(z->deviations[zNext]), prec_internal, MPFR_RNDN);
-        mpfr_abs(temp, &(z->deviations[zNext]), MPFR_RNDN);
+        mpfr_abs(temp, &(z->deviations[zNext]), MPFR_RNDU);
         mpfr_add(&(z->radius), &(z->radius), temp, MPFR_RNDU);
     }
 
@@ -53,7 +52,7 @@ void mpfa_condense_last_n (mpfa_ptr z, mpfa_uint_t n)
         mpfr_abs(&(z->deviations[zNext]), &(z->deviations[zNext]), MPFR_RNDN);
         summands[zNext - zTerm] = &(z->deviations[zNext]);
     }
-    mpfr_prec_round(&(z->deviations[zTerm]), prec_internal, MPFR_RNDN);
+    mpfr_prec_round(&(z->deviations[zTerm]), prec, MPFR_RNDU);
     mpfr_sum(&(z->deviations[zTerm]), summands, n, MPFR_RNDU);
 
     // Store nonzero condensed noise term, and add it to radius.

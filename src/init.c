@@ -23,10 +23,13 @@
 
 void mpfa_init (mpfa_ptr x)
 {
+    mpfa_prec_t prec_internal;
+
     // Init centre and radius with working precision.
+    prec_internal = mpfa_get_internal_prec();
     x->nTerms = 0;
     mpfr_init(&(x->centre));
-    mpfr_init(&(x->radius));
+    mpfr_init2(&(x->radius), prec_internal);
 }
 
 void mpfa_inits (mpfa_ptr x, ...)
