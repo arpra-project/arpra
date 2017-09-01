@@ -26,14 +26,13 @@ void mpfa_condense_last_n (mpfa_ptr z, mpfa_uint_t n)
     mpfa_uint_t zTerm, zNext;
     mpfr_ptr *summands;
     mpfr_t temp;
-    mpfa_prec_t prec, prec_internal;
+    mpfa_prec_t prec_internal;
 
     // Check input, and handle trivial case.
     if (n > z->nTerms) n = z->nTerms;
     if (n < 2) return;
 
     // Init temp vars, and set internal precision.
-    prec = mpfa_get_prec(z);
     prec_internal = mpfa_get_internal_prec();
     mpfr_init2(temp, prec_internal);
     mpfr_prec_round(&(z->radius), prec_internal, MPFR_RNDU);
@@ -52,7 +51,6 @@ void mpfa_condense_last_n (mpfa_ptr z, mpfa_uint_t n)
         mpfr_abs(&(z->deviations[zNext]), &(z->deviations[zNext]), MPFR_RNDN);
         summands[zNext - zTerm] = &(z->deviations[zNext]);
     }
-    mpfr_prec_round(&(z->deviations[zTerm]), prec, MPFR_RNDU);
     mpfr_sum(&(z->deviations[zTerm]), summands, n, MPFR_RNDU);
 
     // Store nonzero condensed noise term, and add it to radius.
