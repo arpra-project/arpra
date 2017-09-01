@@ -35,14 +35,18 @@
 #include <mpfa2mpfi.h>
 #endif // WITH_MPFI
 
-// Modes of RNG output.
-enum mpfa_test_rand_mode
+// RNG output modes.
+enum test_rand_mode
 {
-    MPFA_TEST_RAND_MIXED,
-    MPFA_TEST_RAND_SMALL,
-    MPFA_TEST_RAND_LARGE,
-    MPFA_TEST_RAND_POS,
-    MPFA_TEST_RAND_NEG
+    TEST_RAND_MIXED = 0,
+    TEST_RAND_SMALL_POS,
+    TEST_RAND_SMALL_NEG,
+    TEST_RAND_LARGE_POS,
+    TEST_RAND_LARGE_NEG,
+    TEST_RAND_SMALL,
+    TEST_RAND_LARGE,
+    TEST_RAND_POS,
+    TEST_RAND_NEG
 };
 
 #ifdef __cplusplus
@@ -50,21 +54,21 @@ extern "C" {
 #endif
 
 // Initialise and clear RNG.
-void mpfa_test_rand_init ();
-void mpfa_test_rand_clear ();
+void test_rand_init ();
+void test_rand_clear ();
 
 // Generate random arguments.
-mpfa_uint_t mpfa_test_rand_ui (mpfa_uint_t n_bits);
-void mpfa_test_rand_mpfr (mpfr_ptr z, enum mpfa_test_rand_mode mode);
-void mpfa_test_rand_mpfa (mpfa_ptr z, enum mpfa_test_rand_mode mode);
+mpfa_uint_t test_rand_ui (mpfa_uint_t n_bits);
+void test_rand_mpfr (mpfr_ptr z, enum test_rand_mode mode);
+void test_rand_mpfa (mpfa_ptr z, enum test_rand_mode mode);
 #ifdef WITH_MPFI
-void mpfa_test_rand_mpfi (mpfi_ptr z, enum mpfa_test_rand_mode mode);
+void test_rand_mpfi (mpfi_ptr z, enum test_rand_mode mode);
 #endif // WITH_MPFI
 
 // Compare function results.
-mpfa_int_t mpfa_test_cmp_mpfa (mpfa_srcptr x, mpfa_srcptr y);
+mpfa_int_t test_cmp_mpfa (mpfa_srcptr x, mpfa_srcptr y);
 #ifdef WITH_MPFI
-mpfa_int_t mpfa_test_cmp_mpfi (mpfa_srcptr x, mpfi_srcptr y);
+mpfa_int_t test_cmp_mpfi (mpfa_srcptr x, mpfi_srcptr y);
 #endif // WITH_MPFI
 
 #ifdef __cplusplus

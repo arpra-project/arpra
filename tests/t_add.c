@@ -31,7 +31,7 @@ int main (int argc, char *argv[])
     mpfa_t a_a, b_a, c_a;
     mpfi_t a_i, b_i, c_i;
 
-    mpfa_test_rand_init();
+    test_rand_init();
     mpfa_init(a_a);
     mpfa_init(b_a);
     mpfa_init(c_a);
@@ -40,8 +40,8 @@ int main (int argc, char *argv[])
     mpfi_init(c_i);
 
     for (i = 0; i < n_tests; i++) {
-        mpfa_test_rand_mpfa(a_a, MPFA_TEST_RAND_MIXED);
-        mpfa_test_rand_mpfa(b_a, MPFA_TEST_RAND_MIXED);
+        test_rand_mpfa(a_a, TEST_RAND_MIXED);
+        test_rand_mpfa(b_a, TEST_RAND_MIXED);
 
         mpfa_get_mpfi(a_i, a_a);
         mpfa_get_mpfi(b_i, b_a);
@@ -49,12 +49,12 @@ int main (int argc, char *argv[])
         mpfa_add(c_a, a_a, b_a);
         mpfi_add(c_i, a_i, b_i);
 
-        n_failed += mpfa_test_cmp_mpfi(c_a, c_i);
+        n_failed += test_cmp_mpfi(c_a, c_i);
     }
 
     printf("Failed %d out of %d.\n", n_failed, n_tests);
 
-    mpfa_test_rand_clear();
+    test_rand_clear();
     mpfa_clear(a_a);
     mpfa_clear(b_a);
     mpfa_clear(c_a);
