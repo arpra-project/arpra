@@ -23,6 +23,7 @@
 
 static mpfa_uint_t mpfa_symbol = 0;
 
-mpfa_uint_t mpfa_next_sym() {
+mpfa_uint_t mpfa_next_sym ()
+{
     return mpfa_symbol++;
 }

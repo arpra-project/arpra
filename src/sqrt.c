@@ -25,7 +25,8 @@
  * This affine square root function uses a Chebyshev linear approximation.
  */
 
-void mpfa_sqrt (mpfa_ptr z, mpfa_srcptr x) {
+void mpfa_sqrt (mpfa_ptr z, mpfa_srcptr x)
+{
     mpfr_t temp, xa, xb, da, db, du, alpha, gamma, delta;
     mpfa_prec_t prec_internal;
 

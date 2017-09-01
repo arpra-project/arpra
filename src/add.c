@@ -21,7 +21,8 @@
 
 #include "mpfa-impl.h"
 
-void mpfa_add (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
+void mpfa_add (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y)
+{
     mpfr_t alpha, beta, gamma, delta;
     mpfa_prec_t prec;
 

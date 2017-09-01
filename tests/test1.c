@@ -21,7 +21,8 @@
 
 #include "mpfa-test.h"
 
-int main (int argc, char *argv[]) {
+int main (int argc, char *argv[])
+{
     mpfa_t a, b, c;
 
     mpfa_init(a);

@@ -21,7 +21,8 @@
 
 #include "mpfa-impl.h"
 
-void mpfa_sum (mpfa_ptr z, const mpfa_ptr *x, mpfa_uint_t n) {
+void mpfa_sum (mpfa_ptr z, const mpfa_ptr *x, mpfa_uint_t n)
+{
     mpfa_uint_t i, j;
     mpfa_uint_t xSymbol, zTerm;
     mpfa_uint_t *xTerm;
@@ -129,9 +130,6 @@ void mpfa_sum (mpfa_ptr z, const mpfa_ptr *x, mpfa_uint_t n) {
         mpfr_add(&(zNew->radius), &(zNew->radius), error, MPFR_RNDU);
         zTerm++;
     }
-
-    // Round internal precision of radius to working precision.
-    mpfr_prec_round(&(zNew->radius), prec, MPFR_RNDU);
 
     // Free noise term memory if number of terms is zero.
     zNew->nTerms = zTerm;

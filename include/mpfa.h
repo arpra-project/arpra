@@ -30,7 +30,8 @@ typedef unsigned long int mpfa_uint_t;
 typedef mpfr_prec_t mpfa_prec_t;
 typedef mpfr_exp_t mpfa_exp_t;
 
-struct __mpfa_struct {
+struct __mpfa_struct
+{
     __mpfr_struct centre;
     __mpfr_struct radius;
     __mpfr_struct *deviations;
@@ -93,7 +94,7 @@ mpfa_prec_t mpfa_get_internal_prec ();
 void mpfa_set_internal_prec (mpfa_prec_t prec);
 
 // Helper functions
-mpfa_uint_t mpfa_next_sym();
+mpfa_uint_t mpfa_next_sym ();
 mpfa_int_t mpfa_term (mpfr_ptr z, mpfr_srcptr x, mpfr_srcptr y, mpfr_srcptr alpha, mpfr_srcptr beta, mpfr_srcptr gamma);
 void mpfa_error (mpfr_ptr error, mpfr_srcptr x);
 

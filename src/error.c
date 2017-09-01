@@ -28,7 +28,8 @@
  * when x was flushed to zero.
  */
 
-void mpfa_error (mpfr_ptr error, mpfr_srcptr x) {
+void mpfa_error (mpfr_ptr error, mpfr_srcptr x)
+{
     mpfa_prec_t p;
     mpfa_exp_t e;
 

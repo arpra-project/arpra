@@ -25,7 +25,8 @@
  * For now we just multiply the numerator with the reciprocal of the denominator.
  */
 
-void mpfa_div (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
+void mpfa_div (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y)
+{
     mpfa_t zNew;
     mpfa_prec_t prec;
 

@@ -21,7 +21,8 @@
 
 #include "mpfa-impl.h"
 
-void mpfa_condense_small (mpfa_ptr z, double fraction) {
+void mpfa_condense_small (mpfa_ptr z, double fraction)
+{
     mpfa_uint_t zTerm, zNext;
     mpfr_t temp, error, threshold;
     mpfa_prec_t prec, prec_internal;
@@ -84,9 +85,6 @@ void mpfa_condense_small (mpfa_ptr z, double fraction) {
         z->deviations = realloc(z->deviations, zTerm * sizeof(mpfr_t));
     }
     z->nTerms = zTerm;
-
-    // Round internal precision of radius to working precision.
-    mpfr_prec_round(&(z->radius), prec, MPFR_RNDU);
 
     // Clear temp vars.
     mpfr_clear(temp);

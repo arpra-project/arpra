@@ -21,7 +21,8 @@
 
 #include "mpfa-impl.h"
 
-void mpfa_affine_1 (mpfa_ptr z, mpfa_srcptr x, mpfr_srcptr alpha, mpfr_srcptr gamma, mpfr_srcptr delta) {
+void mpfa_affine_1 (mpfa_ptr z, mpfa_srcptr x, mpfr_srcptr alpha, mpfr_srcptr gamma, mpfr_srcptr delta)
+{
     mpfa_uint_t xTerm, zTerm;
     mpfr_t temp, error;
     mpfa_prec_t prec, prec_internal;
@@ -77,9 +78,6 @@ void mpfa_affine_1 (mpfa_ptr z, mpfa_srcptr x, mpfr_srcptr alpha, mpfr_srcptr ga
         mpfr_add(&(zNew->radius), &(zNew->radius), error, MPFR_RNDU);
         zTerm++;
     }
-
-    // Round internal precision of radius to working precision.
-    mpfr_prec_round(&(zNew->radius), prec, MPFR_RNDU);
 
     // Free noise term memory if number of terms is zero.
     zNew->nTerms = zTerm;

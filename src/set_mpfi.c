@@ -21,8 +21,8 @@
 
 #include "mpfa-impl.h"
 
-void mpfa_set_mpfi (mpfa_ptr z, mpfi_srcptr x) {
-    mpfa_uint_t zTerm;
+void mpfa_set_mpfi (mpfa_ptr z, mpfi_srcptr x)
+{
     mpfa_prec_t prec, prec_internal;
     mpfr_t temp;
 

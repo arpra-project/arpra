@@ -21,7 +21,8 @@
 
 #include "mpfa-impl.h"
 
-void mpfa_set (mpfa_ptr z, mpfa_srcptr x) {
+void mpfa_set (mpfa_ptr z, mpfa_srcptr x)
+{
     mpfa_uint_t xTerm, zTerm;
     mpfa_prec_t prec, prec_internal;
     mpfr_t temp, error;
@@ -84,9 +85,6 @@ void mpfa_set (mpfa_ptr z, mpfa_srcptr x) {
         mpfr_add(&(z->radius), &(z->radius), error, MPFR_RNDU);
         zTerm++;
     }
-
-    // Round internal precision of radius to working precision.
-    mpfr_prec_round(&(z->radius), prec, MPFR_RNDU);
 
     // Resize noise term memory, as required.
     z->nTerms = zTerm;

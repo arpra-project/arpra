@@ -21,7 +21,8 @@
 
 #include "mpfa-impl.h"
 
-void mpfa_condense_last_n (mpfa_ptr z, mpfa_uint_t n) {
+void mpfa_condense_last_n (mpfa_ptr z, mpfa_uint_t n)
+{
     mpfa_uint_t zTerm, zNext;
     mpfr_ptr *summands;
     mpfr_t temp;
@@ -77,9 +78,6 @@ void mpfa_condense_last_n (mpfa_ptr z, mpfa_uint_t n) {
         z->deviations = realloc(z->deviations, zTerm * sizeof(mpfr_t));
     }
     z->nTerms = zTerm;
-
-    // Round internal precision of radius to working precision.
-    mpfr_prec_round(&(z->radius), prec, MPFR_RNDU);
 
     // Clear temp vars.
     mpfr_clear(temp);

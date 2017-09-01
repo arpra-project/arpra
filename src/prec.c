@@ -21,11 +21,13 @@
 
 #include "mpfa-impl.h"
 
-mpfa_prec_t mpfa_get_prec (mpfa_srcptr x) {
+mpfa_prec_t mpfa_get_prec (mpfa_srcptr x)
+{
     return mpfr_get_prec(&(x->centre));
 }
 
-void mpfa_set_prec (mpfa_ptr x, mpfa_prec_t prec) {
+void mpfa_set_prec (mpfa_ptr x, mpfa_prec_t prec)
+{
     mpfa_uint_t xTerm;
     mpfa_prec_t prec_internal;
 
@@ -43,5 +45,5 @@ void mpfa_set_prec (mpfa_ptr x, mpfa_prec_t prec) {
 
     // Reset centre and radius with new working precision.
     mpfr_set_prec(&(x->centre), prec);
-    mpfr_set_prec(&(x->radius), prec);
+    mpfr_set_prec(&(x->radius), prec_internal);
 }

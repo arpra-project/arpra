@@ -21,7 +21,8 @@
 
 #include "mpfa-impl.h"
 
-mpfa_int_t mpfa_term (mpfr_ptr z, mpfr_srcptr x, mpfr_srcptr y, mpfr_srcptr alpha, mpfr_srcptr beta, mpfr_srcptr gamma) {
+mpfa_int_t mpfa_term (mpfr_ptr z, mpfr_srcptr x, mpfr_srcptr y, mpfr_srcptr alpha, mpfr_srcptr beta, mpfr_srcptr gamma)
+{
     mpfa_int_t inexact;
     mpfr_t alpha_x, beta_y;
 

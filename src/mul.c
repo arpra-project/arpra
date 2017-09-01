@@ -21,7 +21,8 @@
 
 #include "mpfa-impl.h"
 
-void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
+void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y)
+{
     mpfa_uint_t xTerm, yTerm, zTerm;
     mpfa_int_t xHasNext, yHasNext;
     mpfr_t temp, error;
@@ -212,9 +213,6 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y) {
         mpfr_add(&(zNew->radius), &(zNew->radius), error, MPFR_RNDU);
         zTerm++;
     }
-
-    // Round internal precision radius to working precision.
-    mpfr_prec_round(&(zNew->radius), prec, MPFR_RNDU);
 
     // Free noise term memory if number of terms is zero.
     zNew->nTerms = zTerm;

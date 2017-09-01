@@ -23,7 +23,6 @@
 
 void mpfa_set_str (mpfa_ptr z, const char *centre, mpfa_int_t base)
 {
-    mpfa_uint_t zTerm;
     mpfa_prec_t prec_internal;
 
     prec_internal = mpfa_get_internal_prec();

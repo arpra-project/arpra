@@ -36,7 +36,8 @@
 #endif // WITH_MPFI
 
 // Modes of RNG output.
-enum mpfa_test_rand_mode {
+enum mpfa_test_rand_mode
+{
     MPFA_TEST_RAND_MIXED,
     MPFA_TEST_RAND_SMALL,
     MPFA_TEST_RAND_LARGE,

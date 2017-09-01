@@ -25,7 +25,8 @@
  * This affine inverse function uses a Chebyshev linear approximation.
  */
 
-void mpfa_inv (mpfa_ptr z, mpfa_srcptr x) {
+void mpfa_inv (mpfa_ptr z, mpfa_srcptr x)
+{
     mpfa_int_t sign;
     mpfr_t temp, xa, xb, da, db, du, alpha, gamma, delta;
     mpfa_prec_t prec_internal;

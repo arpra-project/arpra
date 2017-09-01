@@ -23,7 +23,6 @@
 
 void mpfa_set_d (mpfa_ptr z, const double centre)
 {
-    mpfa_uint_t zTerm;
     mpfa_prec_t prec_internal;
 
     prec_internal = mpfa_get_internal_prec();

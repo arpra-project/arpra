@@ -23,7 +23,6 @@
 
 void mpfa_set_d_rad (mpfa_ptr z, const double centre, const double radius)
 {
-    mpfa_uint_t zTerm;
     mpfa_prec_t prec, prec_internal;
     mpfr_t temp;
 
@@ -56,9 +55,6 @@ void mpfa_set_d_rad (mpfa_ptr z, const double centre, const double radius)
         mpfr_init2(&(z->deviations[0]), prec_internal);
         mpfr_set(&(z->deviations[0]), &(z->radius), MPFR_RNDN);
     }
-
-    // Round internal precision of radius to working precision.
-    mpfr_prec_round(&(z->radius), prec, MPFR_RNDU);
 
     // Clear temp vars.
     mpfr_clear(temp);
