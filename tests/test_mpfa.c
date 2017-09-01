@@ -88,7 +88,7 @@ void mpfa_test_rand_mpfa (mpfa_ptr z, enum mpfa_test_rand_mode mode)
     }
 
     // Round internal precision of radius to working precision.
-    mpfr_round_prec(&(z->radius), prec, MPFR_RNDU);
+    mpfr_prec_round(&(z->radius), prec, MPFR_RNDU);
 
     // Clear temp vars.
     mpfr_clear(temp);

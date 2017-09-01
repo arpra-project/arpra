@@ -58,7 +58,7 @@ void mpfa_set_str_rad (mpfa_ptr z, const char *centre, const char *radius, mpfa_
     }
 
     // Round internal precision of radius to working precision.
-    mpfr_round_prec(&(z->radius), prec, MPFR_RNDU);
+    mpfr_prec_round(&(z->radius), prec, MPFR_RNDU);
 
     // Clear temp vars.
     mpfr_clear(temp);
