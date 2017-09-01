@@ -31,47 +31,17 @@ int main (int argc, char *argv[])
     mpfa_t a_a, b_a, c_a;
     mpfi_t a_i, b_i, c_i;
 
-    mpfa_set_default_prec(53);
-    mpfa_set_internal_prec(53);
-
     mpfa_test_rand_init();
     mpfa_init(a_a);
     mpfa_init(b_a);
     mpfa_init(c_a);
-    //mpfi_init(a_i);
-    //mpfi_init(b_i);
-    //mpfi_init(c_i);
-    mpfi_init2(a_i, 54);
-    mpfi_init2(b_i, 54);
-    mpfi_init2(c_i, 53);
-
-    mpfr_t cen, rad;
-    mpfr_init(cen);
-    mpfr_init(rad);
+    mpfi_init(a_i);
+    mpfi_init(b_i);
+    mpfi_init(c_i);
 
     for (i = 0; i < n_tests; i++) {
-        printf("i=%i\n", i);
-
-        //mpfr_set_d(cen, 0.35443, MPFR_RNDN);
-        //mpfr_set_d(rad, 0.12426452533, MPFR_RNDN);
-        //mpfa_set_mpfr_rad(a_a, cen, rad);
-        //mpfr_set_d(cen, 0.25754556, MPFR_RNDN);
-        //mpfr_set_d(rad, 0.2353253235, MPFR_RNDN);
-        //mpfa_set_mpfr_rad(b_a, cen, rad);
-
-        /*
-        mpfa_test_rand_mpfr(cen, MPFA_TEST_RAND_SMALL);
-        mpfa_test_rand_mpfr(rad, MPFA_TEST_RAND_SMALL);
-        mpfa_set_mpfr_rad(a_a, cen, rad);
-        mpfa_test_rand_mpfr(cen, MPFA_TEST_RAND_SMALL);
-        mpfa_test_rand_mpfr(rad, MPFA_TEST_RAND_SMALL);
-        mpfa_set_mpfr_rad(b_a, cen, rad);
-        //*/
-
-        //*
-        mpfa_test_rand_mpfa(a_a, MPFA_TEST_RAND_SMALL);
-        mpfa_test_rand_mpfa(b_a, MPFA_TEST_RAND_SMALL);
-        //*/
+        mpfa_test_rand_mpfa(a_a, MPFA_TEST_RAND_MIXED);
+        mpfa_test_rand_mpfa(b_a, MPFA_TEST_RAND_MIXED);
 
         mpfa_get_mpfi(a_i, a_a);
         mpfa_get_mpfi(b_i, b_a);
@@ -83,9 +53,6 @@ int main (int argc, char *argv[])
     }
 
     printf("Failed %i out of %i.\n", n_failed, n_tests);
-
-    mpfr_clear(cen);
-    mpfr_clear(rad);
 
     mpfa_test_rand_clear();
     mpfa_clear(a_a);
