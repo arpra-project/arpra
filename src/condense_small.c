@@ -63,7 +63,6 @@ void mpfa_condense_small (mpfa_ptr z, double fraction)
     // Store nonzero condensed noise term, and add it to radius.
     if (!mpfr_zero_p(error)) {
         z->symbols[zTerm] = mpfa_next_sym();
-        mpfr_prec_round(&(z->deviations[zTerm]), prec, MPFR_RNDU);
         mpfr_set(&(z->deviations[zTerm]), error, MPFR_RNDU);
         mpfr_add(&(z->radius), &(z->radius), &(z->deviations[zTerm]), MPFR_RNDU);
         zTerm++;
