@@ -21,28 +21,24 @@
 
 #include "mpfa-impl.h"
 
-void mpfa_set_str_rad (mpfa_ptr z, const char *centre, const char *radius, mpfa_int_t base) {
+void mpfa_set_str_rad (mpfa_ptr z, const char *centre, const char *radius, mpfa_int_t base)
+{
     mpfa_uint_t zTerm;
     mpfa_prec_t prec, prec_internal;
     mpfr_t temp;
 
+    // Init temp vars and set internal precision.
     prec = mpfa_get_prec(z);
     prec_internal = mpfa_get_internal_prec();
+    mpfr_init2(temp, prec_internal);
+    mpfr_prec_round(&(z->radius), prec_internal, MPFR_RNDU);
+    mpfr_set_str(temp, radius, base, MPFR_RNDU);
+    mpfr_abs(&(z->radius), temp, MPFR_RNDU);
 
-    // If centre has rounding error:
+    // Add any centre rounding error to radius.
     if (mpfr_set_str(&(z->centre), centre, base, MPFR_RNDN)) {
-        mpfr_init2(temp, prec_internal);
         mpfa_error(temp, &(z->centre));
-        mpfr_prec_round(&(z->radius), prec_internal, MPFR_RNDU);
-        mpfr_set_str(&(z->radius), radius, base, MPFR_RNDU);
         mpfr_add(&(z->radius), &(z->radius), temp, MPFR_RNDU);
-        mpfr_prec_round(&(z->radius), prec, MPFR_RNDU);
-        mpfr_clear(temp);
-    }
-
-    // Else centre has no rounding error:
-    else {
-        mpfr_set_str(&(z->radius), radius, base, MPFR_RNDU);
     }
 
     // Clear existing noise terms.
@@ -60,4 +56,10 @@ void mpfa_set_str_rad (mpfa_ptr z, const char *centre, const char *radius, mpfa_
         mpfr_init2(&(z->deviations[0]), prec_internal);
         mpfr_set(&(z->deviations[0]), &(z->radius), MPFR_RNDN);
     }
+
+    // Round internal precision of radius to working precision.
+    mpfr_round_prec(&(z->radius), prec, MPFR_RNDU);
+
+    // Clear temp vars.
+    mpfr_clear(temp);
 }

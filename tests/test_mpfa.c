@@ -62,19 +62,21 @@ void mpfa_test_rand_mpfa (mpfa_ptr z, enum mpfa_test_rand_mode mode)
     prec = mpfa_get_prec(z);
     prec_internal = mpfa_get_internal_prec();
     mpfr_init2(temp, prec_internal);
-    mpfr_prec_round(&(z->radius), prec_internal, MPFR_RNDN);
+    mpfr_prec_round(&(z->radius), prec_internal, MPFR_RNDU);
     mpfr_set_ui(&(z->radius), 0, MPFR_RNDN);
 
     // Set random centre.
     mpfa_test_rand_mpfr(&(z->centre), mode);
 
-    // Randomly allocate between 0 and 7 noise terms.
+    // Clear existing noise terms.
     mpfa_clear_terms(z);
-    z->nTerms = mpfa_test_rand_ui(3);
+
+    // Randomly allocate between 0 and 7 noise terms.
+    mpfa_test_rand_ui(3);
     z->symbols = malloc(z->nTerms * sizeof(mpfa_uint_t));
     z->deviations = malloc(z->nTerms * sizeof(mpfr_t));
 
-    // Randomly set the noise terms.
+    // Randomly set noise terms.
     for (zTerm = 0; zTerm < z->nTerms; zTerm++) {
         z->symbols[zTerm] = mpfa_next_sym();
         mpfr_init2(&(z->deviations[zTerm]), prec_internal);

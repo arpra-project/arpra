@@ -21,20 +21,17 @@
 
 #include "mpfa-impl.h"
 
-void mpfa_set_d (mpfa_ptr z, const double centre) {
+void mpfa_set_d (mpfa_ptr z, const double centre)
+{
     mpfa_uint_t zTerm;
     mpfa_prec_t prec_internal;
 
     prec_internal = mpfa_get_internal_prec();
+    mpfr_set_si(&(z->radius), 0, MPFR_RNDU);
 
-    // If centre has rounding error:
+    // Add any centre rounding error to radius.
     if (mpfr_set_d(&(z->centre), centre, MPFR_RNDN)) {
         mpfa_error(&(z->radius), &(z->centre));
-    }
-
-    // Else centre has no rounding error:
-    else {
-        mpfr_set_si(&(z->radius), 0, MPFR_RNDU);
     }
 
     // Clear existing noise terms.

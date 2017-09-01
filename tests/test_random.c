@@ -103,13 +103,14 @@ void mpfa_test_rand_mpfr (mpfr_ptr z, enum mpfa_test_rand_mode mode)
         r = mpfa_test_rand_ui (1) * 2 + 1;
     }
 
-    if (r < 2) {
-        // Small number.
-        mpfr_urandomb (z, mpfa_test_randstate);
-        if (r == 1) mpfr_neg (z, z, MPFR_RNDD);
+    // Low magnitude number.
+    mpfr_urandomb (z, mpfa_test_randstate);
+    if (r == 1) {
+        mpfr_neg (z, z, MPFR_RNDD);
     }
-    else {
-        // Large number.
+
+    // High magnitude number.
+    else if (r >= 2) {
         mpfr_ui_div (z, 1, z, MPFR_RNDD);
         if (r == 3) mpfr_neg (z, z, MPFR_RNDD);
     }
