@@ -123,6 +123,10 @@ void test_rand_mpfr (mpfr_ptr z, enum test_rand_mode mode)
     case TEST_RAND_NEG:
         r = test_rand_ui (1) * 2 + 1;
         break;
+
+    default:
+        fprintf(stderr, "Error: unrecognised RNG mode.\n");
+        exit(EXIT_FAILURE);
     }
 
     // Generate number.

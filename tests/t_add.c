@@ -23,7 +23,7 @@
 
 int main (int argc, char *argv[])
 {
-    //const mpfa_prec_t prec = 53;
+    const mpfa_prec_t prec = 53;
     const int n_tests = 1000;
     int i, n_failed = 0;
 
@@ -32,12 +32,12 @@ int main (int argc, char *argv[])
     mpfi_t a_i, b_i, c_i;
 
     test_rand_init();
-    mpfa_init(a_a);
-    mpfa_init(b_a);
-    mpfa_init(c_a);
-    mpfi_init(a_i);
-    mpfi_init(b_i);
-    mpfi_init(c_i);
+    mpfa_init2(a_a, prec);
+    mpfa_init2(b_a, prec);
+    mpfa_init2(c_a, prec);
+    mpfi_init2(a_i, prec);
+    mpfi_init2(b_i, prec);
+    mpfi_init2(c_i, prec);
 
     for (i = 0; i < n_tests; i++) {
         test_rand_mpfa(a_a, TEST_RAND_MIXED);
