@@ -68,3 +68,7 @@ tests_morris_lecar_LDADD = tests/libmpfa-test.la
 tests_morris_lecar_SOURCES = tests/morris_lecar.c
 
 TESTS = $(check_PROGRAMS)
+
+# Clean miscellaneous files
+mostlyclean-local:
+	-rm -f *.dat
