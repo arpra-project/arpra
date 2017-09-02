@@ -66,12 +66,12 @@ int main (int argc, char *argv[])
     mpfi_clear(b_i);
     mpfi_clear(c_i);
     mpfr_free_cache();
-    return n_failed;
+    return n_failed > 0;
 
 #else // WITH_MPFI
     fprintf(stderr,
             "This test program uses the MPFI interval arithmetic library.\n"
             "Recompile MPFA with MPFI support enabled to run this test.\n");
-    exit(EXIT_FAILURE);
+    return 77; // Skip test code.
 #endif // WITH_MPFI
 }
