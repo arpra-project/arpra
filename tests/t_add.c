@@ -23,14 +23,15 @@
 
 int main (int argc, char *argv[])
 {
-    const mpfa_prec_t prec = 53;
-    const int n_tests = 1000;
-    int i, n_failed = 0;
-
 #ifdef WITH_MPFI
+    const int n_tests = 1000;
+    const mpfa_prec_t prec = 53;
+
+    int i, n_failed = 0;
     mpfa_t a_a, b_a, c_a;
     mpfi_t a_i, b_i, c_i;
 
+    // Init test, and set working precision.
     test_rand_init();
     mpfa_init2(a_a, prec);
     mpfa_init2(b_a, prec);
@@ -40,20 +41,23 @@ int main (int argc, char *argv[])
     mpfi_init2(c_i, prec);
 
     for (i = 0; i < n_tests; i++) {
+        // Set random A.
         test_rand_mpfa(a_a, TEST_RAND_MIXED);
-        test_rand_mpfa(b_a, TEST_RAND_MIXED);
-
         mpfa_get_mpfi(a_i, a_a);
+
+        // Set random B.
+        test_rand_mpfa(b_a, TEST_RAND_MIXED);
         mpfa_get_mpfi(b_i, b_a);
 
+        // Compare MPFA result with MPFI result.
         mpfa_add(c_a, a_a, b_a);
         mpfi_add(c_i, a_i, b_i);
-
         n_failed += test_cmp_mpfi(c_a, c_i);
     }
 
     printf("Failed %d out of %d.\n", n_failed, n_tests);
 
+    // Cleanup test.
     test_rand_clear();
     mpfa_clear(a_a);
     mpfa_clear(b_a);
@@ -61,8 +65,13 @@ int main (int argc, char *argv[])
     mpfi_clear(a_i);
     mpfi_clear(b_i);
     mpfi_clear(c_i);
-#endif // WITH_MPFI
-
     mpfr_free_cache();
     return n_failed;
+
+#else // WITH_MPFI
+    fprintf(stderr,
+            "This test program uses the MPFI interval arithmetic library.\n"
+            "Recompile MPFA with MPFI support enabled to run this test.\n");
+    exit(EXIT_FAILURE);
+#endif // WITH_MPFI
 }
