@@ -29,33 +29,36 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>
+#include <time.h>
 
 #include <mpfa.h>
 #ifdef WITH_MPFI
 #include <mpfa2mpfi.h>
 #endif // WITH_MPFI
 
-// RNG output modes.
+// RNG output mode enumeration.
 enum test_rand_mode
 {
-    TEST_RAND_MIXED = 0,
-    TEST_RAND_SMALL_POS,
-    TEST_RAND_SMALL_NEG,
-    TEST_RAND_LARGE_POS,
-    TEST_RAND_LARGE_NEG,
-    TEST_RAND_SMALL,
-    TEST_RAND_LARGE,
-    TEST_RAND_POS,
-    TEST_RAND_NEG
+    TEST_RAND_MIXED = 0,  // (-oo <  z  < +oo)
+    TEST_RAND_SMALL_POS,  // ( 0 <=  z  <  +1)
+    TEST_RAND_SMALL_NEG,  // (-1  <  z  <=  0)
+    TEST_RAND_LARGE_POS,  // (+1 <=  z  < +oo)
+    TEST_RAND_LARGE_NEG,  // (-oo <  z  <= -1)
+    TEST_RAND_SMALL,      // ( 0  < |z| <  +1)
+    TEST_RAND_LARGE,      // (+1 <= |z| < +oo)
+    TEST_RAND_POS,        // ( 0 <=  z  < +oo)
+    TEST_RAND_NEG,        // (-oo <  z  <=  0)
 };
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-// Initialise and clear RNG.
+// Random number generation.
 void test_rand_init ();
 void test_rand_clear ();
+int test_rand_is_init ();
+gmp_randstate_t *test_rand_get ();
 
 // Generate random arguments.
 mpfa_uint_t test_rand_ui (mpfa_uint_t n_bits);

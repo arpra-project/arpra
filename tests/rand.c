@@ -1,5 +1,5 @@
 /*
- * test_random.c -- Functions for random test arguments.
+ * rand.c -- Get, check, initialise and clear the RNG.
  *
  * Copyright 2017 James Paul Turner.
  *
@@ -20,24 +20,22 @@
  */
 
 #include "mpfa-test.h"
-#include <stdlib.h>
-#include <time.h>
 
 static gmp_randstate_t test_randstate;
-static char test_rand_is_init = 0;
+static int test_rand_initialised = 0;
 
 void test_rand_init ()
 {
     unsigned long int seed;
     char *environment_seed;
 
-    if (test_rand_is_init) {
+    if (test_rand_initialised) {
         fprintf(stderr, "Error: RNG is alreay initialised.\n");
         exit(EXIT_FAILURE);
     }
 
     gmp_randinit_default(test_randstate);
-    test_rand_is_init = 1;
+    test_rand_initialised = 1;
 
     environment_seed = getenv("MPFA_TEST_RAND_SEED");
     if (environment_seed != NULL) {
@@ -62,9 +60,9 @@ void test_rand_init ()
 
 void test_rand_clear ()
 {
-    if (test_rand_is_init) {
+    if (test_rand_initialised) {
         gmp_randclear(test_randstate);
-        test_rand_is_init = 0;
+        test_rand_initialised = 0;
     }
     else {
         fprintf(stderr, "Error: RNG is not initialised.\n");
@@ -72,70 +70,12 @@ void test_rand_clear ()
     }
 }
 
-mpfa_uint_t test_rand_ui (mpfa_uint_t n_bits)
+int test_rand_is_init ()
 {
-    return gmp_urandomb_ui(test_randstate, n_bits);
+    return test_rand_initialised;
 }
 
-void test_rand_mpfr (mpfr_ptr z, enum test_rand_mode mode)
+gmp_randstate_t *test_rand_get ()
 {
-    mpfa_uint_t r;
-
-    switch (mode) {
-    // For TEST_RAND_MIXED mode, we have:
-    // P(0 <= z < +1) = 1/4
-    // P(-1 < z <= 0) = 1/4
-    // P(+1 <= z < +oo) = 1/4
-    // P(-oo < z <= -1) = 1/4
-
-    case TEST_RAND_MIXED:
-        r = test_rand_ui (2);
-        break;
-
-    case TEST_RAND_SMALL_POS:
-        r = 0;
-        break;
-
-    case TEST_RAND_SMALL_NEG:
-        r = 1;
-        break;
-
-    case TEST_RAND_LARGE_POS:
-        r = 2;
-        break;
-
-    case TEST_RAND_LARGE_NEG:
-        r = 3;
-        break;
-
-    case TEST_RAND_SMALL:
-        r = test_rand_ui (1);
-        break;
-
-    case TEST_RAND_LARGE:
-        r = test_rand_ui (1) + 2;
-        break;
-
-    case TEST_RAND_POS:
-        r = test_rand_ui (1) * 2;
-        break;
-
-    case TEST_RAND_NEG:
-        r = test_rand_ui (1) * 2 + 1;
-        break;
-
-    default:
-        fprintf(stderr, "Error: unrecognised RNG mode.\n");
-        exit(EXIT_FAILURE);
-    }
-
-    // Generate number.
-    mpfr_urandomb (z, test_randstate);
-    if (r == 1) {
-        mpfr_neg (z, z, MPFR_RNDD);
-    }
-    else if (r >= 2) {
-        mpfr_ui_div (z, 1, z, MPFR_RNDD);
-        if (r == 3) mpfr_neg (z, z, MPFR_RNDD);
-    }
+    return &test_randstate;
 }

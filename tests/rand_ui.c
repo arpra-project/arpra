@@ -1,5 +1,5 @@
 /*
- * test_mpfi.c -- Test an affine form against an MPFI interval.
+ * rand_ui.c -- Generate a random unsigned integer.
  *
  * Copyright 2017 James Paul Turner.
  *
@@ -21,34 +21,16 @@
 
 #include "mpfa-test.h"
 
-mpfa_int_t test_cmp_mpfi (mpfa_srcptr x, mpfi_srcptr y)
+mpfa_uint_t test_rand_ui (mpfa_uint_t n_bits)
 {
-    mpfi_t x_i;
-    mpfa_prec_t prec_x;
+    gmp_randstate_t *rand;
 
-    // Convert x to an MPFI interval.
-    prec_x = mpfa_get_prec(x);
-    mpfi_init2(x_i, prec_x);
-    mpfa_get_mpfi(x_i, x);
-
-    // Return 1 if y is not a subinterval of x.
-    if (mpfr_greater_p(&(x_i->left), &(y->left))) {
-        mpfi_clear(x_i);
-        return 1;
+    if (test_rand_is_init()) {
+        rand = test_rand_get();
+        return gmp_urandomb_ui(*rand, n_bits);
     }
-    if (mpfr_less_p(&(x_i->right), &(y->right))) {
-        mpfi_clear(x_i);
-        return 1;
+    else {
+        fprintf(stderr, "Error: RNG is not initialised.\n");
+        exit(EXIT_FAILURE);
     }
-
-    // Else return 0.
-    mpfi_clear(x_i);
-    return 0;
-}
-
-void test_rand_mpfi (mpfi_ptr z, enum test_rand_mode mode)
-{
-    // Set random lower and upper bound.
-    test_rand_mpfr(&(z->left), mode);
-    test_rand_mpfr(&(z->right), mode);
 }
