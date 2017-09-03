@@ -54,19 +54,22 @@ enum test_rand_mode
 extern "C" {
 #endif
 
-// Random number generation.
+// RNG init, clear and get.
 void test_rand_init ();
 void test_rand_clear ();
 int test_rand_is_init ();
 gmp_randstate_t *test_rand_get ();
 
 // Generate random arguments.
-mpfa_uint_t test_rand_ui (mpfa_uint_t n_bits);
+mpfa_uint_t test_rand_ui (mpfa_uint_t n);
 void test_rand_mpfr (mpfr_ptr z, enum test_rand_mode mode);
 void test_rand_mpfa (mpfa_ptr z, enum test_rand_mode mode);
 #ifdef WITH_MPFI
 void test_rand_mpfi (mpfi_ptr z, enum test_rand_mode mode);
 #endif // WITH_MPFI
+
+// Adjust affine form symbols.
+void test_share_syms (mpfa_ptr x, mpfa_ptr y, const mpfa_uint_t share_chance);
 
 // Compare function results.
 mpfa_int_t test_cmp_mpfa (mpfa_srcptr x, mpfa_srcptr y);

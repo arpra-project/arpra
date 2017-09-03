@@ -30,7 +30,7 @@ void test_rand_mpfr (mpfr_ptr z, enum test_rand_mode mode)
     if (test_rand_is_init()) {
         switch (mode) {
         case TEST_RAND_MIXED:
-            r = test_rand_ui (2);
+            r = test_rand_ui(4);
             break;
 
         case TEST_RAND_SMALL_POS:
@@ -50,19 +50,19 @@ void test_rand_mpfr (mpfr_ptr z, enum test_rand_mode mode)
             break;
 
         case TEST_RAND_SMALL:
-            r = test_rand_ui (1);
+            r = test_rand_ui(2);
             break;
 
         case TEST_RAND_LARGE:
-            r = test_rand_ui (1) + 2;
+            r = test_rand_ui(2) + 2;
             break;
 
         case TEST_RAND_POS:
-            r = test_rand_ui (1) * 2;
+            r = test_rand_ui(2) * 2;
             break;
 
         case TEST_RAND_NEG:
-            r = test_rand_ui (1) * 2 + 1;
+            r = test_rand_ui(2) * 2 + 1;
             break;
 
         default:

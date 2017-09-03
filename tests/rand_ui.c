@@ -21,13 +21,13 @@
 
 #include "mpfa-test.h"
 
-mpfa_uint_t test_rand_ui (mpfa_uint_t n_bits)
+mpfa_uint_t test_rand_ui (mpfa_uint_t n)
 {
     gmp_randstate_t *rand;
 
     if (test_rand_is_init()) {
         rand = test_rand_get();
-        return gmp_urandomb_ui(*rand, n_bits);
+        return gmp_urandomm_ui(*rand, n);
     }
     else {
         fprintf(stderr, "Error: RNG is not initialised.\n");

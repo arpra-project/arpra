@@ -48,7 +48,8 @@ tests_libmpfa_test_la_CPPFLAGS = -I$(top_srcdir)/include
 tests_libmpfa_test_la_LIBADD = lib/libmpfa.la
 tests_libmpfa_test_la_SOURCES = \
 	tests/mpfa-test.h tests/rand.c tests/rand_ui.c			\
-	tests/rand_mpfr.c tests/rand_mpfa.c tests/cmp_mpfa.c
+	tests/rand_mpfr.c tests/rand_mpfa.c tests/cmp_mpfa.c		\
+	tests/share_syms.c
 if WITH_MPFI
 tests_libmpfa_test_la_SOURCES += tests/rand_mpfi.c tests/cmp_mpfi.c
 endif WITH_MPFI

@@ -40,8 +40,8 @@ void test_rand_mpfa (mpfa_ptr z, enum test_rand_mode mode)
     // Clear existing noise terms.
     mpfa_clear_terms(z);
 
-    // Randomly allocate between 0 and 7 noise terms.
-    test_rand_ui(3);
+    // Randomly allocate 0 to 9 noise terms.
+    test_rand_ui(10);
     z->symbols = malloc(z->nTerms * sizeof(mpfa_uint_t));
     z->deviations = malloc(z->nTerms * sizeof(mpfr_t));
 
