@@ -36,7 +36,7 @@ lib_libmpfa_la_SOURCES = \
 	src/neg.c src/next_sym.c src/prec.c src/set_d.c			\
 	src/set_d_rad.c	src/set_str.c src/set_str_rad.c src/set_mpfr.c	\
 	src/set_mpfr_rad.c src/set.c src/sqrt.c	src/sub.c src/sum.c	\
-	src/term.c
+	src/term.c src/get_bounds.c
 if WITH_MPFI
 lib_libmpfa_la_SOURCES += src/get_mpfi.c src/set_mpfi.c
 endif WITH_MPFI
