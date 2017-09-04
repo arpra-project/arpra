@@ -28,7 +28,7 @@ void test_share_syms (mpfa_ptr x, mpfa_ptr y, const mpfa_uint_t share_chance)
 
     // Symbol share chance should be from 0 to 9.
     if (share_chance > 9) {
-        fprintf(stderr, "Error: symbol share chance should be 0 to 9");
+        fprintf(stderr, "Error: symbol share chance should be 0 to 9.\n");
         exit(EXIT_FAILURE);
     }
 

@@ -24,8 +24,9 @@
 int main (int argc, char *argv[])
 {
 #ifdef WITH_MPFI
-    const int n_tests = 1000;
+    const int n_tests = 100000;
     const mpfa_prec_t prec = 53;
+    const mpfa_prec_t prec_arg = prec + 10;
 
     int i, n_failed = 0;
     mpfa_t a_a, b_a, c_a;
@@ -33,11 +34,11 @@ int main (int argc, char *argv[])
 
     // Init test, and set working precision.
     test_rand_init();
-    mpfa_init2(a_a, prec);
-    mpfa_init2(b_a, prec);
+    mpfa_init2(a_a, prec_arg);
+    mpfa_init2(b_a, prec_arg);
     mpfa_init2(c_a, prec);
-    mpfi_init2(a_i, prec);
-    mpfi_init2(b_i, prec);
+    mpfi_init2(a_i, prec_arg);
+    mpfi_init2(b_i, prec_arg);
     mpfi_init2(c_i, prec);
 
     for (i = 0; i < n_tests; i++) {
@@ -49,10 +50,13 @@ int main (int argc, char *argv[])
         test_rand_mpfa(b_a, TEST_RAND_MIXED);
         mpfa_get_mpfi(b_i, b_a);
 
+        // Randomly share symbols.
+        test_share_syms(a_a, b_a, 5);
+
         // Compare MPFA result with MPFI result.
         mpfa_add(c_a, a_a, b_a);
         mpfi_add(c_i, a_i, b_i);
-        n_failed += test_cmp_mpfi(c_a, c_i);
+        n_failed += test_compare_mpfi(c_a, c_i);
     }
 
     printf("Failed %d out of %d.\n", n_failed, n_tests);
@@ -72,6 +76,6 @@ int main (int argc, char *argv[])
     fprintf(stderr,
             "This test program uses the MPFI interval arithmetic library.\n"
             "Recompile MPFA with MPFI support enabled to run this test.\n");
-    return 77; // Skip test code.
+    return 77; // Skip test return code.
 #endif // WITH_MPFI
 }

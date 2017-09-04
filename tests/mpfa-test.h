@@ -71,10 +71,10 @@ void test_rand_mpfi (mpfi_ptr z, enum test_rand_mode mode);
 // Adjust affine form symbols.
 void test_share_syms (mpfa_ptr x, mpfa_ptr y, const mpfa_uint_t share_chance);
 
-// Compare function results.
-mpfa_int_t test_cmp_mpfa (mpfa_srcptr x, mpfa_srcptr y);
+// Compare variables.
+mpfa_int_t test_compare_mpfa (mpfa_srcptr x, mpfa_srcptr y);
 #ifdef WITH_MPFI
-mpfa_int_t test_cmp_mpfi (mpfa_srcptr x, mpfi_srcptr y);
+mpfa_int_t test_compare_mpfi (mpfa_srcptr x, mpfi_srcptr y);
 #endif // WITH_MPFI
 
 #ifdef __cplusplus

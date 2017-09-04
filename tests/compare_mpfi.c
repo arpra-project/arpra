@@ -1,5 +1,5 @@
 /*
- * cmp_mpfa.c -- Test an affine form against another affine form.
+ * compare_mpfi.c -- Test an MPFA result against an MPFI result.
  *
  * Copyright 2017 James Paul Turner.
  *
@@ -21,33 +21,21 @@
 
 #include "mpfa-test.h"
 
-mpfa_int_t test_cmp_mpfa (mpfa_srcptr x, mpfa_srcptr y)
+mpfa_int_t test_compare_mpfi (mpfa_srcptr x, mpfi_srcptr y)
 {
-    mpfa_uint_t term;
+    mpfa_int_t inside;
+    mpfa_prec_t prec_x;
+    mpfi_t x_i;
 
-    // Return 1 if x and y differ.
-    if (!mpfr_equal_p(&(x->centre), &(y->centre))) {
-        return 1;
-    }
+    // Convert x to an MPFI interval.
+    prec_x = mpfa_get_prec(x);
+    mpfi_init2(x_i, prec_x);
+    mpfa_get_mpfi(x_i, x);
 
-    if (!mpfr_equal_p(&(x->radius), &(y->radius))) {
-        return 1;
-    }
+    // Return 1 if x is inside y, else 0.
+    inside = mpfi_is_strictly_inside(x_i, y);
 
-    if (x->nTerms != y->nTerms) {
-        return 1;
-    }
-
-    for (term = 0; term < x->nTerms; term++) {
-        if (x->symbols[term] != y->symbols[term]) {
-            return 1;
-        }
-
-        if (!mpfr_equal_p(&(x->deviations[term]), &(y->deviations[term]))) {
-            return 1;
-        }
-    }
-
-    // Else return 0.
-    return 0;
+    // Clear temp vars.
+    mpfi_clear(x_i);
+    return inside;
 }
