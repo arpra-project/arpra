@@ -48,14 +48,14 @@ tests_libmpfa_test_la_CPPFLAGS = -I$(top_srcdir)/include
 tests_libmpfa_test_la_LIBADD = lib/libmpfa.la
 tests_libmpfa_test_la_SOURCES = \
 	tests/mpfa-test.h tests/rand.c tests/rand_ui.c			\
-	tests/rand_mpfr.c tests/rand_mpfa.c tests/compare_mpfa.c	\
-	tests/share_syms.c
+	tests/rand_mpfr.c tests/rand_mpfa.c tests/share_syms.c		\
+	tests/compare_bounds.c tests/compare_mpfa.c
 if WITH_MPFI
 tests_libmpfa_test_la_SOURCES += tests/rand_mpfi.c tests/compare_mpfi.c
 endif WITH_MPFI
 
 # Testsuite programs
-check_PROGRAMS = tests/test1 tests/t_add tests/morris_lecar
+check_PROGRAMS = tests/test1 tests/t_add #tests/morris_lecar
 
 tests_test1_CPPFLAGS = -I$(top_srcdir)/include
 tests_test1_LDADD = tests/libmpfa-test.la
@@ -65,11 +65,14 @@ tests_t_add_CPPFLAGS = -I$(top_srcdir)/include
 tests_t_add_LDADD = tests/libmpfa-test.la
 tests_t_add_SOURCES = tests/t_add.c
 
-tests_morris_lecar_CPPFLAGS = -I$(top_srcdir)/include
-tests_morris_lecar_LDADD = tests/libmpfa-test.la
-tests_morris_lecar_SOURCES = tests/morris_lecar.c
-
 TESTS = $(check_PROGRAMS)
+
+# Extra programs
+EXTRA_PROGRAMS = extra/morris_lecar
+
+extra_morris_lecar_CPPFLAGS = -I$(top_srcdir)/include
+extra_morris_lecar_LDADD = lib/libmpfa.la
+extra_morris_lecar_SOURCES = extra/morris_lecar.c
 
 # Clean miscellaneous files
 mostlyclean-local:
