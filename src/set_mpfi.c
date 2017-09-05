@@ -55,4 +55,7 @@ void mpfa_set_mpfi (mpfa_ptr z, mpfi_srcptr x)
         mpfr_init2(&(z->deviations[0]), prec);
         mpfr_set(&(z->deviations[0]), &(z->radius), MPFR_RNDU);
     }
+
+    // Clear temp vars.
+    mpfr_clear(temp);
 }
