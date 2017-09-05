@@ -42,8 +42,10 @@ void test_rand_mpfa (mpfa_ptr z, enum test_rand_mode mode)
 
     // Randomly allocate 0 to 9 noise terms.
     z->nTerms = test_rand_ui(10);
-    z->symbols = malloc(z->nTerms * sizeof(mpfa_uint_t));
-    z->deviations = malloc(z->nTerms * sizeof(mpfr_t));
+    if (z->nTerms > 0) {
+        z->symbols = malloc(z->nTerms * sizeof(mpfa_uint_t));
+        z->deviations = malloc(z->nTerms * sizeof(mpfr_t));
+    }
 
     // Randomly set noise terms.
     for (zTerm = 0; zTerm < z->nTerms; zTerm++) {
