@@ -23,59 +23,106 @@
 
 int main (int argc, char *argv[])
 {
-#ifdef WITH_MPFI
-    const int n_tests = 100000;
+    const mpfa_uint_t n_tests = 100000;
     const mpfa_prec_t prec = 53;
-    const mpfa_prec_t prec_arg = prec + 10;
+    const mpfa_prec_t prec_internal = 128;
 
-    int i, n_failed = 0;
-    mpfa_t a_a, b_a, c_a;
-    mpfi_t a_i, b_i, c_i;
+    mpfa_uint_t i, total_fail, t1_fail, t2_fail;
+    mpfa_t a, b, c;
+    mpfr_t a_lo, a_hi;
+    mpfr_t b_lo, b_hi;
+    mpfr_t c_lo, c_hi;
 
-    // Init test, and set working precision.
+    // Init test.
     test_rand_init();
-    mpfa_init2(a_a, prec_arg);
-    mpfa_init2(b_a, prec_arg);
-    mpfa_init2(c_a, prec);
-    mpfi_init2(a_i, prec_arg);
-    mpfi_init2(b_i, prec_arg);
-    mpfi_init2(c_i, prec);
+    mpfa_set_internal_prec(prec_internal);
+    mpfa_init2(a, prec);
+    mpfa_init2(b, prec);
+    mpfa_init2(c, prec);
+    mpfr_init2(a_lo, prec);
+    mpfr_init2(a_hi, prec);
+    mpfr_init2(b_lo, prec);
+    mpfr_init2(b_hi, prec);
+    mpfr_init2(c_lo, prec);
+    mpfr_init2(c_hi, prec);
+    total_fail = 0;
 
-    for (i = 0; i < n_tests; i++) {
+    for (t1_fail = 0, i = 0; i < n_tests; i++) {
         // Set random A.
-        test_rand_mpfa(a_a, TEST_RAND_MIXED);
-        mpfa_get_mpfi(a_i, a_a);
+        test_rand_mpfa(a, TEST_RAND_MIXED);
+        mpfa_get_bounds(a_lo, a_hi, a);
 
         // Set random B.
-        test_rand_mpfa(b_a, TEST_RAND_MIXED);
-        mpfa_get_mpfi(b_i, b_a);
+        test_rand_mpfa(b, TEST_RAND_MIXED);
+        mpfa_get_bounds(b_lo, b_hi, b);
 
         // Randomly share symbols.
-        test_share_syms(a_a, b_a, 5);
+        //test_share_syms(a, b, 5);
 
-        // Compare MPFA result with MPFI result.
-        mpfa_add(c_a, a_a, b_a);
-        mpfi_add(c_i, a_i, b_i);
-        n_failed += test_compare_mpfi(c_a, c_i);
+        // Compare MPFA result with MPFR bound results.
+        mpfa_add(c, a, b);
+        mpfr_add(c_lo, a_lo, b_lo, MPFR_RNDD);
+        mpfr_add(c_hi, a_hi, b_hi, MPFR_RNDU);
+        t1_fail += test_compare_bounds(c, c_lo, c_hi);
     }
 
-    printf("Failed %d out of %d.\n", n_failed, n_tests);
+    total_fail += t1_fail;
+    printf("Test one: %llu out of %llu failed.\n", t1_fail, n_tests);
 
-    // Cleanup test.
-    test_rand_clear();
-    mpfa_clear(a_a);
-    mpfa_clear(b_a);
-    mpfa_clear(c_a);
-    mpfi_clear(a_i);
-    mpfi_clear(b_i);
-    mpfi_clear(c_i);
-    mpfr_free_cache();
-    return n_failed > 0;
+#ifdef WITH_MPFI
+    // Compare with the MPFI interval arithmetic library.
+    mpfi_t ai, bi, ci;
+
+    // Init test vars, and set working precision.
+    mpfi_init2(ai, prec);
+    mpfi_init2(bi, prec);
+    mpfi_init2(ci, prec);
+
+    for (t2_fail = 0, i = 0; i < n_tests; i++) {
+        // Set random A.
+        test_rand_mpfa(a, TEST_RAND_MIXED);
+        mpfa_get_mpfi(ai, a);
+        mpfa_set_mpfi(a, ai);
+
+        // Set random B.
+        test_rand_mpfa(b, TEST_RAND_MIXED);
+        mpfa_get_mpfi(bi, b);
+        mpfa_set_mpfi(b, bi);
+
+        // Randomly share symbols.
+        //test_share_syms(a, b, 5);
+
+        // Compare MPFA result with MPFI result.
+        mpfa_add(c, a, b);
+        mpfi_add(ci, ai, bi);
+        t2_fail += test_compare_mpfi(c, ci);
+    }
+
+    total_fail += t2_fail;
+    printf("Test two: %llu out of %llu failed.\n", t2_fail, n_tests);
+
+    // Cleanup test vars.
+    mpfi_clear(ai);
+    mpfi_clear(bi);
+    mpfi_clear(ci);
 
 #else // WITH_MPFI
     fprintf(stderr,
-            "This test program uses the MPFI interval arithmetic library.\n"
-            "Recompile MPFA with MPFI support enabled to run this test.\n");
-    return 77; // Skip test return code.
+            "Part of this test uses the MPFI interval arithmetic library.\n"
+            "Recompile with MPFI support enabled to run the full test.\n");
 #endif // WITH_MPFI
+
+    // Cleanup test.
+    mpfa_clear(a);
+    mpfa_clear(b);
+    mpfa_clear(c);
+    mpfr_clear(a_lo);
+    mpfr_clear(a_hi);
+    mpfr_clear(b_lo);
+    mpfr_clear(b_hi);
+    mpfr_clear(c_lo);
+    mpfr_clear(c_hi);
+    test_rand_clear();
+    mpfr_free_cache();
+    return total_fail > 0;
 }

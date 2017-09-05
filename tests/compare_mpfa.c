@@ -23,31 +23,18 @@
 
 mpfa_int_t test_compare_mpfa (mpfa_srcptr x, mpfa_srcptr y)
 {
+    mpfa_int_t fail;
     mpfa_uint_t term;
 
-    // Return 1 if x and y differ.
-    if (!mpfr_equal_p(&(x->centre), &(y->centre))) {
-        return 1;
-    }
-
-    if (!mpfr_equal_p(&(x->radius), &(y->radius))) {
-        return 1;
-    }
-
-    if (x->nTerms != y->nTerms) {
-        return 1;
-    }
-
+    // Return the number of differences in x and y.
+    fail = 0;
+    if (!mpfr_equal_p(&(x->centre), &(y->centre))) fail++;
+    if (!mpfr_equal_p(&(x->radius), &(y->radius))) fail++;
+    if (x->nTerms != y->nTerms) fail++;
     for (term = 0; term < x->nTerms; term++) {
-        if (x->symbols[term] != y->symbols[term]) {
-            return 1;
-        }
-
-        if (!mpfr_equal_p(&(x->deviations[term]), &(y->deviations[term]))) {
-            return 1;
-        }
+        if (x->symbols[term] != y->symbols[term]) fail++;
+        if (!mpfr_equal_p(&(x->deviations[term]), &(y->deviations[term]))) fail++;
     }
 
-    // Else return 0.
-    return 0;
+    return fail;
 }

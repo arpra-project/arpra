@@ -26,7 +26,7 @@ mpfa_uint_t test_rand_ui (mpfa_uint_t n)
     gmp_randstate_t *rand;
 
     if (test_rand_is_init()) {
-        rand = test_rand_get();
+        rand = test_randstate_get();
         return gmp_urandomm_ui(*rand, n);
     }
     else {

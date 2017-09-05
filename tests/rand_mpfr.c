@@ -23,65 +23,69 @@
 
 void test_rand_mpfr (mpfr_ptr z, enum test_rand_mode mode)
 {
-    mpfa_uint_t r;
+    mpfa_uint_t r_ui;
     gmp_randstate_t *rand;
+    mpfr_t r_mpfr;
 
     // Check RNG mode.
     if (test_rand_is_init()) {
         switch (mode) {
         case TEST_RAND_MIXED:
-            r = test_rand_ui(4);
-            break;
+            r_ui = test_rand_ui(4);
+            break; // (-oo <  z  < +oo)
 
         case TEST_RAND_SMALL_POS:
-            r = 0;
-            break;
+            r_ui = 0;
+            break; // (+0 <=  z  <  +1)
 
         case TEST_RAND_SMALL_NEG:
-            r = 1;
-            break;
+            r_ui = 1;
+            break; // (-1  <  z  <= -0)
 
         case TEST_RAND_LARGE_POS:
-            r = 2;
-            break;
+            r_ui = 2;
+            break; // (+1 <=  z  < +oo)
 
         case TEST_RAND_LARGE_NEG:
-            r = 3;
-            break;
+            r_ui = 3;
+            break; // (-oo <  z  <= -1)
 
         case TEST_RAND_SMALL:
-            r = test_rand_ui(2);
-            break;
+            r_ui = test_rand_ui(2);
+            break; // (+0 <= |z| <  +1)
 
         case TEST_RAND_LARGE:
-            r = test_rand_ui(2) + 2;
-            break;
+            r_ui = test_rand_ui(2) + 2;
+            break; // (+1 <= |z| < +oo)
 
         case TEST_RAND_POS:
-            r = test_rand_ui(2) * 2;
-            break;
+            r_ui = test_rand_ui(2) * 2;
+            break; // (+0 <=  z  < +oo)
 
         case TEST_RAND_NEG:
-            r = test_rand_ui(2) * 2 + 1;
-            break;
+            r_ui = test_rand_ui(2) * 2 + 1;
+            break; // (-oo <  z  <= -0)
 
         default:
             fprintf(stderr, "Error: unrecognised RNG mode.\n");
             exit(EXIT_FAILURE);
         }
 
-        // Generate number.
-        rand = test_rand_get();
-        mpfr_urandomb (z, *rand);
-        if (r == 1) {
-            mpfr_neg (z, z, MPFR_RNDD);
+        // Generate random number with 5-bit precision.
+        rand = test_randstate_get();
+        mpfr_init2(r_mpfr, 5);
+        mpfr_urandomb (r_mpfr, *rand);
+        if (r_ui == 1) {
+            mpfr_neg (r_mpfr, r_mpfr, MPFR_RNDD);
         }
-        else if (r >= 2) {
-            mpfr_ui_div (z, 1, z, MPFR_RNDD);
-            if (r == 3) {
-                mpfr_neg (z, z, MPFR_RNDD);
+        else if (r_ui >= 2) {
+            mpfr_ui_div (r_mpfr, 1, r_mpfr, MPFR_RNDD);
+            if (r_ui == 3) {
+                mpfr_neg (r_mpfr, r_mpfr, MPFR_RNDD);
             }
         }
+        mpfr_set(z, r_mpfr, MPFR_RNDN);
+        mpfr_clear(r_mpfr);
     }
     else {
         fprintf(stderr, "Error: RNG is not initialised.\n");

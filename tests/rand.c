@@ -75,7 +75,7 @@ int test_rand_is_init ()
     return test_rand_initialised;
 }
 
-gmp_randstate_t *test_rand_get ()
+gmp_randstate_t *test_randstate_get ()
 {
     return &test_randstate;
 }

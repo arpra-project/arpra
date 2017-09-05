@@ -23,7 +23,7 @@
 
 mpfa_int_t test_compare_mpfi (mpfa_srcptr x, mpfi_srcptr y)
 {
-    mpfa_int_t inside;
+    mpfa_int_t fail;
     mpfa_prec_t prec;
     mpfi_t x_i;
 
@@ -33,9 +33,9 @@ mpfa_int_t test_compare_mpfi (mpfa_srcptr x, mpfi_srcptr y)
     mpfa_get_mpfi(x_i, x);
 
     // Return nonzero if x does not include y.
-    inside = mpfi_is_strictly_inside(x_i, y);
+    fail = mpfi_is_strictly_inside(x_i, y);
 
     // Clear temp vars.
     mpfi_clear(x_i);
-    return inside;
+    return fail;
 }
