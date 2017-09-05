@@ -51,14 +51,10 @@ void mpfa_set (mpfa_ptr z, mpfa_srcptr x)
     z->symbols = malloc(z->nTerms * sizeof(mpfa_uint_t));
     z->deviations = malloc(z->nTerms * sizeof(mpfa_t));
 
-    // Initialise new noise terms.
-    for (zTerm = 0; zTerm < z->nTerms; zTerm++) {
-        mpfr_init2(&(z->deviations[zTerm]), prec);
-    }
-
     // Copy noise terms over.
     for (xTerm = 0, zTerm = 0; xTerm < x->nTerms; xTerm++) {
         z->symbols[zTerm] = x->symbols[zTerm];
+        mpfr_init2(&(z->deviations[zTerm]), prec);
 
         // z_i = x_i
         if (mpfr_set(&(z->deviations[zTerm]), &(x->deviations[xTerm]), MPFR_RNDN)) {
@@ -87,17 +83,17 @@ void mpfa_set (mpfa_ptr z, mpfa_srcptr x)
     }
 
     // Resize noise term memory, as required.
-    z->nTerms = zTerm;
     if (z->nTerms > 0) {
         if (zTerm == 0) {
             free(z->symbols);
             free(z->deviations);
         }
         else {
-            z->symbols = realloc(z->symbols, z->nTerms * sizeof(mpfa_uint_t));
-            z->deviations = realloc(z->deviations, z->nTerms * sizeof(mpfr_t));
+            z->symbols = realloc(z->symbols, zTerm * sizeof(mpfa_uint_t));
+            z->deviations = realloc(z->deviations, zTerm * sizeof(mpfr_t));
         }
     }
+    z->nTerms = zTerm;
 
     // Clear temp vars.
     mpfr_clear(temp);
