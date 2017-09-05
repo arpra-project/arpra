@@ -1,5 +1,5 @@
 /*
- * compare_mpfi.c -- Test an MPFA result against an MPFI result.
+ * compare_bounds.c -- Test an MPFA result against upper and lower bounds.
  *
  * Copyright 2017 James Paul Turner.
  *
@@ -21,21 +21,23 @@
 
 #include "mpfa-test.h"
 
-mpfa_int_t test_compare_mpfi (mpfa_srcptr x, mpfi_srcptr y)
+mpfa_int_t test_compare_bounds (mpfa_srcptr x, mpfr_srcptr lo, mpfr_srcptr hi)
 {
     mpfa_int_t inside;
     mpfa_prec_t prec;
-    mpfi_t x_i;
+    mpfr_t x_lo, x_hi;
 
-    // Convert x to an MPFI interval.
+    // Get lower and upper bounds of x.
     prec = mpfa_get_prec(x);
-    mpfi_init2(x_i, prec);
-    mpfa_get_mpfi(x_i, x);
+    mpfr_init2(x_lo, prec);
+    mpfr_init2(x_hi, prec);
+    mpfa_get_bounds(x_lo, x_hi, x);
 
-    // Return nonzero if x does not include y.
-    inside = mpfi_is_strictly_inside(x_i, y);
+    // Return nonzero if x does not include [lo, hi].
+    inside = mpfr_greater_p(lo, x_lo) || mpfr_less_p(hi, x_hi);
 
     // Clear temp vars.
-    mpfi_clear(x_i);
+    mpfr_clear(x_lo);
+    mpfr_clear(x_hi);
     return inside;
 }

@@ -78,7 +78,9 @@ void test_rand_mpfr (mpfr_ptr z, enum test_rand_mode mode)
         }
         else if (r >= 2) {
             mpfr_ui_div (z, 1, z, MPFR_RNDD);
-            if (r == 3) mpfr_neg (z, z, MPFR_RNDD);
+            if (r == 3) {
+                mpfr_neg (z, z, MPFR_RNDD);
+            }
         }
     }
     else {
