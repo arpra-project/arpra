@@ -34,7 +34,8 @@ mpfa_int_t test_compare_bounds (mpfa_srcptr x, mpfr_srcptr lo, mpfr_srcptr hi)
     mpfa_get_bounds(x_lo, x_hi, x);
 
     // Return nonzero if x does not include [lo, hi].
-    fail = mpfr_greater_p(lo, x_lo) || mpfr_less_p(hi, x_hi);
+    fail = mpfr_cmp(lo, x_lo) < 0
+           || mpfr_cmp(hi, x_hi) > 0;
 
     // Clear temp vars.
     mpfr_clear(x_lo);

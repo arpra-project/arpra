@@ -25,17 +25,18 @@ mpfa_int_t test_compare_mpfi (mpfa_srcptr x, mpfi_srcptr y)
 {
     mpfa_int_t fail;
     mpfa_prec_t prec;
-    mpfi_t x_i;
+    mpfi_t xi;
 
     // Convert x to an MPFI interval.
     prec = mpfa_get_prec(x);
-    mpfi_init2(x_i, prec);
-    mpfa_get_mpfi(x_i, x);
+    mpfi_init2(xi, prec);
+    mpfa_get_mpfi(xi, x);
 
     // Return nonzero if x does not include y.
-    fail = mpfi_is_strictly_inside(x_i, y);
+    fail = mpfr_cmp(&(y->left), &(xi->left)) < 0
+           || mpfr_cmp(&(y->right), &(xi->right)) > 0;
 
     // Clear temp vars.
-    mpfi_clear(x_i);
+    mpfi_clear(xi);
     return fail;
 }

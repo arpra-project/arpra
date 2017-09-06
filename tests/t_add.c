@@ -49,11 +49,11 @@ int main (int argc, char *argv[])
 
     for (t1_fail = 0, i = 0; i < n_tests; i++) {
         // Set random A.
-        test_rand_mpfa(a, TEST_RAND_MIXED);
+        test_rand_mpfa(a, TEST_RAND_SMALL);
         mpfa_get_bounds(a_lo, a_hi, a);
 
         // Set random B.
-        test_rand_mpfa(b, TEST_RAND_MIXED);
+        test_rand_mpfa(b, TEST_RAND_SMALL);
         mpfa_get_bounds(b_lo, b_hi, b);
 
         // Randomly share symbols.
@@ -80,14 +80,12 @@ int main (int argc, char *argv[])
 
     for (t2_fail = 0, i = 0; i < n_tests; i++) {
         // Set random A.
-        test_rand_mpfa(a, TEST_RAND_MIXED);
+        test_rand_mpfa(a, TEST_RAND_SMALL);
         mpfa_get_mpfi(ai, a);
-        mpfa_set_mpfi(a, ai);
 
         // Set random B.
-        test_rand_mpfa(b, TEST_RAND_MIXED);
+        test_rand_mpfa(b, TEST_RAND_SMALL);
         mpfa_get_mpfi(bi, b);
-        mpfa_set_mpfi(b, bi);
 
         // Randomly share symbols.
         //test_share_syms(a, b, 5);
