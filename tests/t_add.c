@@ -28,50 +28,55 @@ int main (int argc, char *argv[])
     const mpfa_prec_t prec = 53;
     const mpfa_prec_t prec_internal = 128;
 
-    mpfa_t a, b, c;
-    mpfi_t ai, bi, ci;
+    mpfa_t a_A, b_A, c_A;
+    mpfi_t a_I, b_I, c_I, c_AI;
     mpfa_uint_t i, total_fail;
     mpfa_uint_t t1_fail, t2_fail;
 
     // Init test.
     test_rand_init();
     mpfa_set_internal_prec(prec_internal);
-    mpfa_init2(a, prec);
-    mpfa_init2(b, prec);
-    mpfa_init2(c, prec);
-    mpfi_init2(ai, prec);
-    mpfi_init2(bi, prec);
-    mpfi_init2(ci, prec);
+    mpfa_init2(a_A, prec);
+    mpfa_init2(b_A, prec);
+    mpfa_init2(c_A, prec);
+    mpfi_init2(a_I, prec);
+    mpfi_init2(b_I, prec);
+    mpfi_init2(c_I, prec);
+    mpfi_init2(c_AI, prec);
     total_fail = 0;
 
     for (t1_fail = 0, i = 0; i < n_tests; i++) {
         // Set random A.
-        test_rand_mpfa(a, TEST_RAND_SMALL);
-        mpfa_get_mpfi(ai, a);
+        test_rand_mpfa(a_A, TEST_RAND_SMALL);
+        mpfa_get_mpfi(a_I, a_A);
 
         // Set random B.
-        test_rand_mpfa(b, TEST_RAND_SMALL);
-        mpfa_get_mpfi(bi, b);
+        test_rand_mpfa(b_A, TEST_RAND_SMALL);
+        mpfa_get_mpfi(b_I, b_A);
 
         // Randomly share symbols.
-        //test_share_syms(a, b, 5);
+        //test_share_syms(a_A, b_A, 5);
+
+        // MPFA and MPFI operations.
+        mpfa_add(c_A, a_A, b_A);
+        mpfi_add(c_I, a_I, b_I);
 
         // Compare MPFA result with MPFI result.
-        mpfa_add(c, a, b);
-        mpfi_add(ci, ai, bi);
-        t1_fail += test_compare_mpfi(c, ci);
+        mpfa_get_mpfi(c_AI, c_A);
+        t1_fail += !mpfi_is_inside(c_I, c_AI);
     }
 
     total_fail += t1_fail;
     printf("Test one: %llu out of %llu failed.\n", t1_fail, n_tests);
 
     // Cleanup test.
-    mpfa_clear(a);
-    mpfa_clear(b);
-    mpfa_clear(c);
-    mpfi_clear(ai);
-    mpfi_clear(bi);
-    mpfi_clear(ci);
+    mpfa_clear(a_A);
+    mpfa_clear(b_A);
+    mpfa_clear(c_A);
+    mpfi_clear(a_I);
+    mpfi_clear(b_I);
+    mpfi_clear(c_I);
+    mpfi_clear(c_AI);
     test_rand_clear();
     mpfr_free_cache();
     return total_fail > 0;
@@ -80,6 +85,6 @@ int main (int argc, char *argv[])
     fprintf(stderr,
             "This test uses the MPFI interval arithmetic library.\n"
             "Recompile with MPFI support enabled to run this test.\n");
-    return 77; // Exit code 77 skips this test.
+    return 77; // Exit code 77: skip test.
 #endif // WITH_MPFI
 }
