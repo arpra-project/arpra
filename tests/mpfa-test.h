@@ -59,7 +59,7 @@ extern "C" {
 extern gmp_randstate_t test_randstate;
 extern int test_rand_ready;
 
-// Global log variables.
+// Global logfile variables.
 extern FILE *test_log;
 extern int test_log_ready;
 
