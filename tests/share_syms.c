@@ -51,7 +51,7 @@ void test_share_syms (mpfa_ptr x, mpfa_ptr y, const mpfa_uint_t share_chance)
         }
 
         else {
-            if (test_rand_ui(10) < share_chance) {
+            if (gmp_urandomm_ui(test_randstate, 10) < share_chance) {
                 // x and y share this symbol.
                 x->symbols[term] = symbol;
                 y->symbols[term] = symbol;

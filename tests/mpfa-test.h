@@ -72,7 +72,6 @@ void test_log_init (const char *test_name);
 void test_log_clear ();
 
 // Generate random arguments.
-mpfa_uint_t test_rand_ui (mpfa_uint_t n);
 void test_rand_mpfr (mpfr_ptr z, enum test_rand_mode mode);
 void test_rand_mpfa (mpfa_ptr z, enum test_rand_mode mode);
 #ifdef WITH_MPFI

@@ -30,7 +30,7 @@ void test_rand_mpfr (mpfr_ptr z, enum test_rand_mode mode)
     if (test_rand_ready) {
         switch (mode) {
         case TEST_RAND_MIXED:
-            r_ui = test_rand_ui(4);
+            r_ui = gmp_urandomm_ui(test_randstate, 4);
             break; // (-oo <  z  < +oo)
 
         case TEST_RAND_SMALL_POS:
@@ -50,19 +50,19 @@ void test_rand_mpfr (mpfr_ptr z, enum test_rand_mode mode)
             break; // (-oo <  z  <= -1)
 
         case TEST_RAND_SMALL:
-            r_ui = test_rand_ui(2);
+            r_ui = gmp_urandomm_ui(test_randstate, 2);
             break; // (+0 <= |z| <  +1)
 
         case TEST_RAND_LARGE:
-            r_ui = test_rand_ui(2) + 2;
+            r_ui = gmp_urandomm_ui(test_randstate, 2) + 2;
             break; // (+1 <= |z| < +oo)
 
         case TEST_RAND_POS:
-            r_ui = test_rand_ui(2) * 2;
+            r_ui = gmp_urandomm_ui(test_randstate, 2) * 2;
             break; // (+0 <=  z  < +oo)
 
         case TEST_RAND_NEG:
-            r_ui = test_rand_ui(2) * 2 + 1;
+            r_ui = gmp_urandomm_ui(test_randstate, 2) * 2 + 1;
             break; // (-oo <  z  <= -0)
 
         default:
