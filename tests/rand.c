@@ -1,5 +1,5 @@
 /*
- * rand.c -- Get, check, initialise and clear the RNG.
+ * rand.c -- Intialise and clear the RNG.
  *
  * Copyright 2017 James Paul Turner.
  *
@@ -21,61 +21,55 @@
 
 #include "mpfa-test.h"
 
-static gmp_randstate_t test_randstate;
-static int test_rand_initialised = 0;
+gmp_randstate_t test_randstate;
+int test_rand_ready = 0;
 
 void test_rand_init ()
 {
     unsigned long int seed;
     char *environment_seed;
 
-    if (test_rand_initialised) {
-        fprintf(stderr, "Error: RNG is alreay initialised.\n");
-        exit(EXIT_FAILURE);
-    }
+    // Ensure that we do not double-initialise.
+    if (!test_rand_ready) {
+        test_rand_ready = 1;
 
-    gmp_randinit_default(test_randstate);
-    test_rand_initialised = 1;
-
-    environment_seed = getenv("MPFA_TEST_RAND_SEED");
-    if (environment_seed != NULL) {
-        seed = strtoul(environment_seed, NULL, 10);
-        gmp_randseed_ui(test_randstate, seed);
-        printf("Seeding with MPFA_TEST_RAND_SEED=%lu.\n", seed);
+        // Try to get seed from environment.
+        gmp_randinit_default(test_randstate);
+        environment_seed = getenv("MPFA_TEST_RAND_SEED");
+        if (environment_seed != NULL) {
+            seed = strtoul(environment_seed, NULL, 10);
+            gmp_randseed_ui(test_randstate, seed);
+            printf("Seeding with MPFA_TEST_RAND_SEED=%lu.\n", seed);
+        }
+        else {
+#ifdef HAVE_CLOCK_GETTIME
+            // Seed with clock_gettime.
+            struct timespec t;
+            clock_gettime(CLOCK_REALTIME, &t);
+            seed = t.tv_sec + t.tv_nsec;
+#else
+            // Else seed with stdlib clock.
+            time(&seed);
+#endif
+            gmp_randseed_ui(test_randstate, seed);
+            printf("Seeding with %lu.\n", seed);
+        }
     }
     else {
-#ifdef HAVE_CLOCK_GETTIME
-        // Seed with clock_gettime.
-        struct timespec t;
-        clock_gettime(CLOCK_REALTIME, &t);
-        seed = t.tv_sec + t.tv_nsec;
-#else
-        // Else seed with stdlib clock.
-        time(&seed);
-#endif
-        gmp_randseed_ui(test_randstate, seed);
-        printf("Seeding with %lu.\n", seed);
+        fprintf(stderr, "Error: RNG is alreay initialised.\n");
+        exit(EXIT_FAILURE);
     }
 }
 
 void test_rand_clear ()
 {
-    if (test_rand_initialised) {
+    // Ensure that we do not double-clear.
+    if (test_rand_ready) {
+        test_rand_ready = 0;
         gmp_randclear(test_randstate);
-        test_rand_initialised = 0;
     }
     else {
         fprintf(stderr, "Error: RNG is not initialised.\n");
         exit(EXIT_FAILURE);
     }
-}
-
-int test_rand_is_init ()
-{
-    return test_rand_initialised;
-}
-
-gmp_randstate_t *test_randstate_get ()
-{
-    return &test_randstate;
 }

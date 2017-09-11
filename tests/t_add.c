@@ -24,59 +24,71 @@
 int main (int argc, char *argv[])
 {
 #ifdef WITH_MPFI
-    const mpfa_uint_t n_tests = 100000;
     const mpfa_prec_t prec = 53;
     const mpfa_prec_t prec_internal = 128;
+    const mpfa_uint_t n_tests = 100000;
 
-    mpfa_t a_A, b_A, c_A;
-    mpfi_t a_I, b_I, c_I, c_AI;
-    mpfa_uint_t i, total_fail;
-    mpfa_uint_t t1_fail, t2_fail;
+    mpfa_t x_A, y_A, z_A;
+    mpfi_t x_I, y_I, z_I, z_AI;
+    mpfa_uint_t i, n_fail, total_fail;
 
     // Init test.
     test_rand_init();
     mpfa_set_internal_prec(prec_internal);
-    mpfa_init2(a_A, prec);
-    mpfa_init2(b_A, prec);
-    mpfa_init2(c_A, prec);
-    mpfi_init2(a_I, prec);
-    mpfi_init2(b_I, prec);
-    mpfi_init2(c_I, prec);
-    mpfi_init2(c_AI, prec);
+    mpfa_init2(x_A, prec);
+    mpfa_init2(y_A, prec);
+    mpfa_init2(z_A, prec);
+    mpfi_init2(x_I, prec);
+    mpfi_init2(y_I, prec);
+    mpfi_init2(z_I, prec);
+    mpfi_init2(z_AI, prec);
     total_fail = 0;
 
-    for (t1_fail = 0, i = 0; i < n_tests; i++) {
-        // Set random A.
-        test_rand_mpfa(a_A, TEST_RAND_SMALL);
-        mpfa_get_mpfi(a_I, a_A);
+    for (n_fail = 0, i = 0; i < n_tests; i++) {
+        // Set random x and y.
+        test_rand_mpfa(x_A, TEST_RAND_SMALL);
+        test_rand_mpfa(y_A, TEST_RAND_SMALL);
+        mpfa_get_mpfi(x_I, x_A);
+        mpfa_get_mpfi(y_I, y_A);
 
-        // Set random B.
-        test_rand_mpfa(b_A, TEST_RAND_SMALL);
-        mpfa_get_mpfi(b_I, b_A);
+        // Compute z.
+        mpfa_add(z_A, x_A, y_A);
+        mpfi_add(z_I, x_I, y_I);
+        mpfa_get_mpfi(z_AI, z_A);
 
-        // Randomly share symbols.
-        //test_share_syms(a_A, b_A, 5);
-
-        // MPFA and MPFI operations.
-        mpfa_add(c_A, a_A, b_A);
-        mpfi_add(c_I, a_I, b_I);
-
-        // Compare MPFA result with MPFI result.
-        mpfa_get_mpfi(c_AI, c_A);
-        t1_fail += !mpfi_is_inside(c_I, c_AI);
+        // Compare results.
+        n_fail += !mpfi_is_inside(z_I, z_AI);
     }
 
-    total_fail += t1_fail;
-    printf("Test one: %llu out of %llu failed.\n", t1_fail, n_tests);
+    total_fail += n_fail;
+    printf("Test one: %llu out of %llu failed.\n", n_fail, n_tests);
+
+
+    for (i = 0; i < n_tests; i++) {
+        // Set random x and y.
+        test_rand_mpfa(x_A, TEST_RAND_SMALL);
+        test_rand_mpfa(y_A, TEST_RAND_SMALL);
+        mpfa_get_mpfi(x_I, x_A);
+        mpfa_get_mpfi(y_I, y_A);
+
+        // Randomly share symbols.
+        //test_share_syms(x_A, y_A, 5);
+
+        // Compute z.
+        mpfa_add(z_A, x_A, y_A);
+        mpfi_add(z_I, x_I, y_I);
+        mpfa_get_mpfi(z_AI, z_A);
+    }
+
 
     // Cleanup test.
-    mpfa_clear(a_A);
-    mpfa_clear(b_A);
-    mpfa_clear(c_A);
-    mpfi_clear(a_I);
-    mpfi_clear(b_I);
-    mpfi_clear(c_I);
-    mpfi_clear(c_AI);
+    mpfa_clear(x_A);
+    mpfa_clear(y_A);
+    mpfa_clear(z_A);
+    mpfi_clear(x_I);
+    mpfi_clear(y_I);
+    mpfi_clear(z_I);
+    mpfi_clear(z_AI);
     test_rand_clear();
     mpfr_free_cache();
     return total_fail > 0;

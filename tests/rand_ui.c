@@ -23,11 +23,8 @@
 
 mpfa_uint_t test_rand_ui (mpfa_uint_t n)
 {
-    gmp_randstate_t *rand;
-
-    if (test_rand_is_init()) {
-        rand = test_randstate_get();
-        return gmp_urandomm_ui(*rand, n);
+    if (test_rand_ready) {
+        return gmp_urandomm_ui(test_randstate, n);
     }
     else {
         fprintf(stderr, "Error: RNG is not initialised.\n");

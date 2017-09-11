@@ -47,7 +47,7 @@ check_LTLIBRARIES = tests/libmpfa-test.la
 tests_libmpfa_test_la_CPPFLAGS = -I$(top_srcdir)/include
 tests_libmpfa_test_la_LIBADD = lib/libmpfa.la
 tests_libmpfa_test_la_SOURCES = \
-	tests/mpfa-test.h tests/rand.c tests/rand_ui.c			\
+	tests/mpfa-test.h tests/logfile.c tests/rand.c tests/rand_ui.c	\
 	tests/rand_mpfr.c tests/rand_mpfa.c tests/share_syms.c		\
 	tests/compare_bounds.c tests/compare_mpfa.c
 if WITH_MPFI
@@ -55,7 +55,7 @@ tests_libmpfa_test_la_SOURCES += tests/rand_mpfi.c tests/compare_mpfi.c
 endif WITH_MPFI
 
 # Testsuite programs
-check_PROGRAMS = tests/test1 tests/t_add #tests/morris_lecar
+check_PROGRAMS = tests/test1 tests/t_add
 
 tests_test1_CPPFLAGS = -I$(top_srcdir)/include
 tests_test1_LDADD = tests/libmpfa-test.la

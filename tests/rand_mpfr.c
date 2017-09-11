@@ -24,11 +24,10 @@
 void test_rand_mpfr (mpfr_ptr z, enum test_rand_mode mode)
 {
     mpfa_uint_t r_ui;
-    gmp_randstate_t *rand;
     mpfr_t r_mpfr;
 
     // Check RNG mode.
-    if (test_rand_is_init()) {
+    if (test_rand_ready) {
         switch (mode) {
         case TEST_RAND_MIXED:
             r_ui = test_rand_ui(4);
@@ -72,9 +71,8 @@ void test_rand_mpfr (mpfr_ptr z, enum test_rand_mode mode)
         }
 
         // Generate random number with 5-bit precision.
-        rand = test_randstate_get();
         mpfr_init2(r_mpfr, 5);
-        mpfr_urandomb (r_mpfr, *rand);
+        mpfr_urandomb (r_mpfr, test_randstate);
         if (r_ui == 1) {
             mpfr_neg (r_mpfr, r_mpfr, MPFR_RNDD);
         }

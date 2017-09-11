@@ -29,6 +29,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>
+#include <string.h>
 #include <time.h>
 
 #include <mpfa.h>
@@ -54,11 +55,21 @@ enum test_rand_mode
 extern "C" {
 #endif
 
-// RNG init, clear and get.
+// Global RNG variables.
+extern gmp_randstate_t test_randstate;
+extern int test_rand_ready;
+
+// Global log variables.
+extern FILE *test_log;
+extern int test_log_ready;
+
+// RNG initialise and clear.
 void test_rand_init ();
 void test_rand_clear ();
-int test_rand_is_init ();
-gmp_randstate_t *test_randstate_get ();
+
+// Logfile initialise and clear.
+void test_log_init (const char *test_name);
+void test_log_clear ();
 
 // Generate random arguments.
 mpfa_uint_t test_rand_ui (mpfa_uint_t n);
