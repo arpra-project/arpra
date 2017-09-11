@@ -44,6 +44,7 @@ int main (int argc, char *argv[])
     mpfi_init2(z_AI, prec);
     total_fail = 0;
 
+    test_log_init("add_uniquesyms");
     for (n_fail = 0, i = 0; i < n_tests; i++) {
         // Set random x and y.
         test_rand_mpfa(x_A, TEST_RAND_SMALL);
@@ -59,11 +60,12 @@ int main (int argc, char *argv[])
         // Compare results.
         n_fail += !mpfi_is_inside(z_I, z_AI);
     }
-
     total_fail += n_fail;
     printf("Test one: %llu out of %llu failed.\n", n_fail, n_tests);
+    test_log_clear();
 
 
+    test_log_init("add_mixedsyms");
     for (i = 0; i < n_tests; i++) {
         // Set random x and y.
         test_rand_mpfa(x_A, TEST_RAND_SMALL);
@@ -72,13 +74,14 @@ int main (int argc, char *argv[])
         mpfa_get_mpfi(y_I, y_A);
 
         // Randomly share symbols.
-        //test_share_syms(x_A, y_A, 5);
+        test_share_syms(x_A, y_A, 5);
 
         // Compute z.
         mpfa_add(z_A, x_A, y_A);
         mpfi_add(z_I, x_I, y_I);
         mpfa_get_mpfi(z_AI, z_A);
     }
+    test_log_clear();
 
 
     // Cleanup test.

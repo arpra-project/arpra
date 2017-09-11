@@ -26,7 +26,7 @@ int test_log_ready = 0;
 
 void test_log_init (const char *test_name)
 {
-    char *filename;
+    char filename[100];
 
     // Ensure that we do not double-initialise.
     if (!test_log_ready) {
