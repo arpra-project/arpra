@@ -30,6 +30,7 @@ int main (int argc, char *argv[])
 
     mpfa_t x_A, y_A, z_A;
     mpfi_t x_I, y_I, z_I, z_AI;
+    mpfr_t rdiam_I, rdiam_AI, difference;
     mpfa_uint_t i, n_fail, total_fail;
 
     // Init test.
@@ -42,9 +43,13 @@ int main (int argc, char *argv[])
     mpfi_init2(y_I, prec);
     mpfi_init2(z_I, prec);
     mpfi_init2(z_AI, prec);
+    mpfr_init2(rdiam_I, prec_internal);
+    mpfr_init2(rdiam_AI, prec_internal);
+    mpfr_init2(difference, prec_internal);
     total_fail = 0;
 
-    test_log_init("add_uniquesyms");
+    // Test unshared symbols.
+    test_log_init("add_unshared");
     for (n_fail = 0, i = 0; i < n_tests; i++) {
         // Set random x and y.
         test_rand_mpfa(x_A, TEST_RAND_SMALL);
@@ -57,6 +62,13 @@ int main (int argc, char *argv[])
         mpfi_add(z_I, x_I, y_I);
         mpfa_get_mpfi(z_AI, z_A);
 
+        // Compute and log z diameter difference.
+        mpfi_diam_rel(rdiam_AI, z_AI);
+        mpfi_diam_rel(rdiam_I, z_I);
+        mpfr_sub(difference, rdiam_I, rdiam_AI, MPFR_RNDN);
+        mpfr_out_str (test_log, 10, 100, difference, MPFR_RNDN);
+        fputs("\n", test_log);
+
         // Compare results.
         n_fail += !mpfi_is_inside(z_I, z_AI);
     }
@@ -64,8 +76,8 @@ int main (int argc, char *argv[])
     printf("Test one: %llu out of %llu failed.\n", n_fail, n_tests);
     test_log_clear();
 
-
-    test_log_init("add_mixedsyms");
+    // Test partially shared symbols.
+    test_log_init("add_partshared");
     for (i = 0; i < n_tests; i++) {
         // Set random x and y.
         test_rand_mpfa(x_A, TEST_RAND_SMALL);
@@ -80,9 +92,41 @@ int main (int argc, char *argv[])
         mpfa_add(z_A, x_A, y_A);
         mpfi_add(z_I, x_I, y_I);
         mpfa_get_mpfi(z_AI, z_A);
+
+        // Compute and log z diameter difference.
+        mpfi_diam_rel(rdiam_AI, z_AI);
+        mpfi_diam_rel(rdiam_I, z_I);
+        mpfr_sub(difference, rdiam_I, rdiam_AI, MPFR_RNDN);
+        mpfr_out_str (test_log, 10, 100, difference, MPFR_RNDN);
+        fputs("\n", test_log);
     }
     test_log_clear();
 
+    // Test completely shared symbols.
+    test_log_init("add_shared");
+    for (i = 0; i < n_tests; i++) {
+        // Set random x and y.
+        test_rand_mpfa(x_A, TEST_RAND_SMALL);
+        test_rand_mpfa(y_A, TEST_RAND_SMALL);
+        mpfa_get_mpfi(x_I, x_A);
+        mpfa_get_mpfi(y_I, y_A);
+
+        // Share all symbols.
+        test_share_syms(x_A, y_A, 9);
+
+        // Compute z.
+        mpfa_add(z_A, x_A, y_A);
+        mpfi_add(z_I, x_I, y_I);
+        mpfa_get_mpfi(z_AI, z_A);
+
+        // Compute and log z diameter difference.
+        mpfi_diam_rel(rdiam_AI, z_AI);
+        mpfi_diam_rel(rdiam_I, z_I);
+        mpfr_sub(difference, rdiam_I, rdiam_AI, MPFR_RNDN);
+        mpfr_out_str (test_log, 10, 100, difference, MPFR_RNDN);
+        fputs("\n", test_log);
+    }
+    test_log_clear();
 
     // Cleanup test.
     mpfa_clear(x_A);
@@ -92,6 +136,9 @@ int main (int argc, char *argv[])
     mpfi_clear(y_I);
     mpfi_clear(z_I);
     mpfi_clear(z_AI);
+    mpfr_clear(rdiam_I);
+    mpfr_clear(rdiam_AI);
+    mpfr_clear(difference);
     test_rand_clear();
     mpfr_free_cache();
     return total_fail > 0;
