@@ -59,15 +59,7 @@ void mpfa_sqrt (mpfa_ptr z, mpfa_srcptr x)
 
         // Set NaN if x contains some p <= 0.
         if (mpfr_sgn(xa) <= 0) {
-            if (z->nTerms > 0) {
-                mpfa_uint_t zTerm;
-                for (zTerm = 0; zTerm < z->nTerms; zTerm++) {
-                    mpfr_clear(&(z->deviations[zTerm]));
-                }
-                z->nTerms = 0;
-                free(z->symbols);
-                free(z->deviations);
-            }
+            mpfa_clear_terms(z);
 
             // TODO: find a better representation for Inf
             mpfr_set_nan(&(z->centre));
