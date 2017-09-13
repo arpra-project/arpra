@@ -46,12 +46,11 @@ void mpfa_sqrt (mpfa_ptr z, mpfa_srcptr x)
     if (mpfr_zero_p(&(x->radius))) {
         if (mpfr_sqrt(temp, &(x->centre), MPFR_RNDN)) {
             mpfa_error(delta, temp);
+            mpfa_set_mpfr_rad(z, temp, delta);
         }
         else {
-            mpfr_set_si(delta, 0, MPFR_RNDN);
+            mpfa_set_mpfr(z, temp);
         }
-
-        mpfa_set_mpfr_rad(z, temp, delta);
     }
     else {
         mpfr_sub(xa, &(x->centre), &(x->radius), MPFR_RNDD);
