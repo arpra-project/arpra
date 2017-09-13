@@ -1,5 +1,5 @@
 /*
- * t_add.c -- Test the MPFA add function.
+ * t_add.c -- Test the mpfa_add function.
  *
  * Copyright 2017 James Paul Turner.
  *
@@ -26,7 +26,7 @@ int main (int argc, char *argv[])
 #ifdef WITH_MPFI
     const mpfa_prec_t prec = 53;
     const mpfa_prec_t prec_internal = 128;
-    const mpfa_uint_t n_tests = 100000;
+    const mpfa_uint_t n_tests = 1000000;
 
     mpfa_t x_A, y_A, z_A;
     mpfi_t x_I, y_I, z_I, z_AI;
