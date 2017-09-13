@@ -55,15 +55,15 @@ tests_libmpfa_test_la_SOURCES += tests/rand_mpfi.c tests/compare_mpfi.c
 endif WITH_MPFI
 
 # Testsuite programs
-check_PROGRAMS = tests/test1 tests/t_add
-
-tests_test1_CPPFLAGS = -I$(top_srcdir)/include
-tests_test1_LDADD = tests/libmpfa-test.la
-tests_test1_SOURCES = tests/test1.c
+check_PROGRAMS = tests/t_add tests/t_sub
 
 tests_t_add_CPPFLAGS = -I$(top_srcdir)/include
 tests_t_add_LDADD = tests/libmpfa-test.la
 tests_t_add_SOURCES = tests/t_add.c
+
+tests_t_sub_CPPFLAGS = -I$(top_srcdir)/include
+tests_t_sub_LDADD = tests/libmpfa-test.la
+tests_t_sub_SOURCES = tests/t_sub.c
 
 TESTS = $(check_PROGRAMS)
 
