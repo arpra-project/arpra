@@ -26,7 +26,7 @@ int main (int argc, char *argv[])
 #ifdef WITH_MPFI
     const mpfa_prec_t prec = 53;
     const mpfa_prec_t prec_internal = 128;
-    const mpfa_uint_t n_tests = 1000000;
+    const mpfa_uint_t n_tests = 100000;
 
     mpfa_t x_A, z_A;
     mpfi_t x_I, z_I, z_AI;
