@@ -26,7 +26,7 @@ mpfa_prec_t mpfa_get_prec (mpfa_srcptr x)
     return mpfr_get_prec(&(x->centre));
 }
 
-void mpfa_set_prec (mpfa_ptr x, mpfa_prec_t prec)
+void mpfa_set_prec (mpfa_ptr z, mpfa_prec_t prec)
 {
     mpfa_prec_t prec_internal;
 
@@ -38,9 +38,9 @@ void mpfa_set_prec (mpfa_ptr x, mpfa_prec_t prec)
     }
 
     // Clear existing noise terms.
-    mpfa_clear_terms(x);
+    mpfa_clear_terms(z);
 
     // Reset centre and radius with new working precision.
-    mpfr_set_prec(&(x->centre), prec);
-    mpfr_set_prec(&(x->radius), prec_internal);
+    mpfr_set_prec(&(z->centre), prec);
+    mpfr_set_prec(&(z->radius), prec_internal);
 }

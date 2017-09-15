@@ -56,6 +56,9 @@ void mpfa_clear (mpfa_ptr x);
 void mpfa_clears (mpfa_ptr x, ...);
 void mpfa_clear_terms (mpfa_ptr x);
 
+// Get from an affine form.
+void mpfa_get_bounds (mpfr_ptr lo, mpfr_ptr hi, mpfa_srcptr x);
+
 // Set to an affine form.
 void mpfa_set (mpfa_ptr z, mpfa_srcptr x);
 void mpfa_set_d (mpfa_ptr z, const double centre);
@@ -65,8 +68,10 @@ void mpfa_set_str_rad (mpfa_ptr z, const char *centre, const char *radius, mpfa_
 void mpfa_set_mpfr (mpfa_ptr z, mpfr_srcptr centre);
 void mpfa_set_mpfr_rad (mpfa_ptr z, mpfr_srcptr centre, mpfr_srcptr radius);
 
-// Get from an affine form.
-void mpfa_get_bounds (mpfr_ptr lo, mpfr_ptr hi, mpfa_srcptr x);
+// Set special values.
+void mpfa_set_nan (mpfa_ptr z);
+void mpfa_set_inf (mpfa_ptr z);
+void mpfa_set_zero (mpfa_ptr z);
 
 // Affine operations.
 void mpfa_affine_1 (mpfa_ptr z, mpfa_srcptr x, mpfr_srcptr alpha, mpfr_srcptr gamma, mpfr_srcptr delta);
@@ -84,12 +89,14 @@ void mpfa_exp (mpfa_ptr z, mpfa_srcptr x);
 void mpfa_log (mpfa_ptr z, mpfa_srcptr x);
 void mpfa_inv (mpfa_ptr z, mpfa_srcptr x);
 
-// Get and set precision.
+// Get precision.
 mpfa_prec_t mpfa_get_prec (mpfa_srcptr x);
-void mpfa_set_prec (mpfa_ptr x, mpfa_prec_t prec);
 mpfa_prec_t mpfa_get_default_prec ();
-void mpfa_set_default_prec (mpfa_prec_t prec);
 mpfa_prec_t mpfa_get_internal_prec ();
+
+// Set precision.
+void mpfa_set_prec (mpfa_ptr z, mpfa_prec_t prec);
+void mpfa_set_default_prec (mpfa_prec_t prec);
 void mpfa_set_internal_prec (mpfa_prec_t prec);
 
 // Condense deviation terms.
@@ -97,8 +104,8 @@ void mpfa_condense_last_n (mpfa_ptr z, mpfa_uint_t n);
 void mpfa_condense_small (mpfa_ptr z, double fraction);
 
 // Predicates on affine forms.
-int mpfa_inf_p (mpfa_srcptr x);
 int mpfa_nan_p (mpfa_srcptr x);
+int mpfa_inf_p (mpfa_srcptr x);
 
 // Get new deviation symbols.
 mpfa_uint_t mpfa_next_sym ();

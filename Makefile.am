@@ -33,10 +33,10 @@ lib_libmpfa_la_SOURCES = \
 	src/clear.c src/condense_last_n.c src/condense_small.c		\
 	src/default_prec.c src/div.c src/error.c src/exp.c src/init.c	\
 	src/init2.c src/internal_prec.c src/inv.c src/log.c src/mul.c	\
-	src/neg.c src/next_sym.c src/prec.c src/set_d.c			\
+	src/neg.c src/next_sym.c src/prec.c src/set_d.c src/set.c	\
 	src/set_d_rad.c	src/set_str.c src/set_str_rad.c src/set_mpfr.c	\
-	src/set_mpfr_rad.c src/set.c src/sqrt.c	src/sub.c src/sum.c	\
-	src/term.c src/get_bounds.c
+	src/set_mpfr_rad.c src/set_special.c src/sqrt.c src/sub.c	\
+	src/sum.c src/term.c src/get_bounds.c src/predicates.c
 if WITH_MPFI
 lib_libmpfa_la_SOURCES += src/get_mpfi.c src/set_mpfi.c
 endif WITH_MPFI
@@ -47,7 +47,7 @@ check_LTLIBRARIES = tests/libmpfa-test.la
 tests_libmpfa_test_la_CPPFLAGS = -I$(top_srcdir)/include
 tests_libmpfa_test_la_LIBADD = lib/libmpfa.la
 tests_libmpfa_test_la_SOURCES = \
-	tests/mpfa-test.h tests/logfile.c  tests/share_syms.c		\
+	tests/mpfa-test.h tests/logfile.c tests/share_syms.c		\
 	tests/rand.c tests/rand_mpfr.c tests/rand_mpfa.c		\
 	tests/compare_bounds.c tests/compare_mpfa.c
 if WITH_MPFI

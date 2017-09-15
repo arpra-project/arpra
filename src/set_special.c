@@ -1,5 +1,5 @@
 /*
- * predicates.c -- Predicates on affine forms.
+ * set_special.c -- Set special values.
  *
  * Copyright 2017 James Paul Turner.
  *
@@ -21,12 +21,32 @@
 
 #include "mpfa-impl.h"
 
-int mpfa_nan_p (mpfa_srcptr x)
+void mpfa_set_nan (mpfa_ptr z)
 {
-    return mpfr_nan_p(&(x->centre));
+    // Clear existing noise terms.
+    mpfa_clear_terms(z);
+
+    // Set centre to NaN and radius to NaN.
+    mpfr_set_nan(&(z->centre));
+    mpfr_set_nan(&(z->radius));
 }
 
-int mpfa_inf_p (mpfa_srcptr x)
+void mpfa_set_inf (mpfa_ptr z)
 {
-    return mpfr_inf_p(&(x->radius));
+    // Clear existing noise terms.
+    mpfa_clear_terms(z);
+
+    // Set centre to +0 and radius to +Inf.
+    mpfr_set_zero(&(z->centre), 1);
+    mpfr_set_inf(&(z->radius), 1);
+}
+
+void mpfa_set_zero (mpfa_ptr z)
+{
+    // Clear existing noise terms.
+    mpfa_clear_terms(z);
+
+    // Set centre to +0 and radius to +0.
+    mpfr_set_zero(&(z->centre), 1);
+    mpfr_set_zero(&(z->radius), 1);
 }
