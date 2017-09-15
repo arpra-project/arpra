@@ -69,8 +69,8 @@ void mpfa_set_mpfr (mpfa_ptr z, mpfr_srcptr centre);
 void mpfa_set_mpfr_rad (mpfa_ptr z, mpfr_srcptr centre, mpfr_srcptr radius);
 
 // Set special values.
-void mpfa_set_nan (mpfa_ptr z);
-void mpfa_set_inf (mpfa_ptr z);
+void mpfa_set_none (mpfa_ptr z);
+void mpfa_set_any (mpfa_ptr z);
 void mpfa_set_zero (mpfa_ptr z);
 
 // Affine operations.
@@ -104,8 +104,8 @@ void mpfa_condense_last_n (mpfa_ptr z, mpfa_uint_t n);
 void mpfa_condense_small (mpfa_ptr z, double fraction);
 
 // Predicates on affine forms.
-int mpfa_nan_p (mpfa_srcptr x);
-int mpfa_inf_p (mpfa_srcptr x);
+int mpfa_none_p (mpfa_srcptr x);
+int mpfa_any_p (mpfa_srcptr x);
 
 // Get new deviation symbols.
 mpfa_uint_t mpfa_next_sym ();

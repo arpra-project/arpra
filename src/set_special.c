@@ -21,7 +21,7 @@
 
 #include "mpfa-impl.h"
 
-void mpfa_set_nan (mpfa_ptr z)
+void mpfa_set_none (mpfa_ptr z)
 {
     // Clear existing noise terms.
     mpfa_clear_terms(z);
@@ -31,7 +31,7 @@ void mpfa_set_nan (mpfa_ptr z)
     mpfr_set_nan(&(z->radius));
 }
 
-void mpfa_set_inf (mpfa_ptr z)
+void mpfa_set_any (mpfa_ptr z)
 {
     // Clear existing noise terms.
     mpfa_clear_terms(z);

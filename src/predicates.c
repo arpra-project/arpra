@@ -21,12 +21,12 @@
 
 #include "mpfa-impl.h"
 
-int mpfa_nan_p (mpfa_srcptr x)
+int mpfa_none_p (mpfa_srcptr x)
 {
     return mpfr_nan_p(&(x->centre));
 }
 
-int mpfa_inf_p (mpfa_srcptr x)
+int mpfa_any_p (mpfa_srcptr x)
 {
     return mpfr_inf_p(&(x->radius));
 }
