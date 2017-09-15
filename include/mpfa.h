@@ -47,7 +47,7 @@ typedef __gmp_const struct __mpfa_struct *mpfa_srcptr;
 extern "C" {
 #endif
 
-// Initialise and clear
+// Initialise and clear.
 void mpfa_init (mpfa_ptr x);
 void mpfa_inits (mpfa_ptr x, ...);
 void mpfa_init2 (mpfa_ptr x, mpfa_prec_t prec);
@@ -56,7 +56,7 @@ void mpfa_clear (mpfa_ptr x);
 void mpfa_clears (mpfa_ptr x, ...);
 void mpfa_clear_terms (mpfa_ptr x);
 
-// Set to an affine form
+// Set to an affine form.
 void mpfa_set (mpfa_ptr z, mpfa_srcptr x);
 void mpfa_set_d (mpfa_ptr z, const double centre);
 void mpfa_set_d_rad (mpfa_ptr z, const double centre, const double radius);
@@ -68,7 +68,7 @@ void mpfa_set_mpfr_rad (mpfa_ptr z, mpfr_srcptr centre, mpfr_srcptr radius);
 // Get from an affine form.
 void mpfa_get_bounds (mpfr_ptr lo, mpfr_ptr hi, mpfa_srcptr x);
 
-// Affine operations
+// Affine operations.
 void mpfa_affine_1 (mpfa_ptr z, mpfa_srcptr x, mpfr_srcptr alpha, mpfr_srcptr gamma, mpfr_srcptr delta);
 void mpfa_affine_2 (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y, mpfr_srcptr alpha, mpfr_srcptr beta, mpfr_srcptr gamma, mpfr_srcptr delta);
 void mpfa_add (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y);
@@ -76,7 +76,7 @@ void mpfa_sub (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y);
 void mpfa_neg (mpfa_ptr z, mpfa_srcptr x);
 void mpfa_sum (mpfa_ptr z, const mpfa_ptr *x, mpfa_uint_t n);
 
-// Non-affine operations
+// Non-affine operations.
 void mpfa_mul(mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y);
 void mpfa_div (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y);
 void mpfa_sqrt (mpfa_ptr z, mpfa_srcptr x);
@@ -84,11 +84,7 @@ void mpfa_exp (mpfa_ptr z, mpfa_srcptr x);
 void mpfa_log (mpfa_ptr z, mpfa_srcptr x);
 void mpfa_inv (mpfa_ptr z, mpfa_srcptr x);
 
-// Condense functions.
-void mpfa_condense_last_n (mpfa_ptr z, mpfa_uint_t n);
-void mpfa_condense_small (mpfa_ptr z, double fraction);
-
-// Get and set precision
+// Get and set precision.
 mpfa_prec_t mpfa_get_prec (mpfa_srcptr x);
 void mpfa_set_prec (mpfa_ptr x, mpfa_prec_t prec);
 mpfa_prec_t mpfa_get_default_prec ();
@@ -96,10 +92,16 @@ void mpfa_set_default_prec (mpfa_prec_t prec);
 mpfa_prec_t mpfa_get_internal_prec ();
 void mpfa_set_internal_prec (mpfa_prec_t prec);
 
-// Helper functions
+// Condense deviation terms.
+void mpfa_condense_last_n (mpfa_ptr z, mpfa_uint_t n);
+void mpfa_condense_small (mpfa_ptr z, double fraction);
+
+// Predicates on affine forms.
+int mpfa_inf_p (mpfa_srcptr x);
+int mpfa_nan_p (mpfa_srcptr x);
+
+// Get new deviation symbols.
 mpfa_uint_t mpfa_next_sym ();
-mpfa_int_t mpfa_term (mpfr_ptr z, mpfr_srcptr x, mpfr_srcptr y, mpfr_srcptr alpha, mpfr_srcptr beta, mpfr_srcptr gamma);
-void mpfa_error (mpfr_ptr error, mpfr_srcptr x);
 
 #ifdef __cplusplus
 }
