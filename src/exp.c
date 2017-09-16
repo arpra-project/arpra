@@ -42,7 +42,7 @@ void mpfa_exp (mpfa_ptr z, mpfa_srcptr x)
     mpfr_init2(gamma, prec_internal);
     mpfr_init2(delta, prec_internal);
 
-    // Handle trivial case, where x has zero radius.
+    // Handle x with zero radius.
     if (mpfr_zero_p(&(x->radius))) {
         if (mpfr_exp(temp, &(x->centre), MPFR_RNDN)) {
             mpfa_error(delta, temp);
@@ -53,8 +53,7 @@ void mpfa_exp (mpfa_ptr z, mpfa_srcptr x)
         }
     }
     else {
-        mpfr_sub(xa, &(x->centre), &(x->radius), MPFR_RNDD);
-        mpfr_add(xb, &(x->centre), &(x->radius), MPFR_RNDU);
+        mpfa_get_bounds(xa, xb, x);
 
         // compute alpha
         mpfr_exp(alpha, xb, MPFR_RNDN);

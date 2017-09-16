@@ -42,7 +42,7 @@ void mpfa_log (mpfa_ptr z, mpfa_srcptr x)
     mpfr_init2(gamma, prec_internal);
     mpfr_init2(delta, prec_internal);
 
-    // Handle trivial case, where x has zero radius.
+    // Handle x with zero radius.
     if (mpfr_zero_p(&(x->radius))) {
         if (mpfr_log(temp, &(x->centre), MPFR_RNDN)) {
             mpfa_error(delta, temp);
@@ -53,16 +53,19 @@ void mpfa_log (mpfa_ptr z, mpfa_srcptr x)
         }
     }
     else {
-        mpfr_sub(xa, &(x->centre), &(x->radius), MPFR_RNDD);
-        mpfr_add(xb, &(x->centre), &(x->radius), MPFR_RNDU);
+        mpfa_get_bounds(xa, xb, x);
 
-        // Set NaN if x contains some p <= 0.
         if (mpfr_sgn(xa) <= 0) {
-            mpfa_clear_terms(z);
-
-            // TODO: find a better representation for Inf
-            mpfr_set_nan(&(z->centre));
+            // Set any value if x lower bound is zero.
+            if (mpfr_sgn(xa) == 0) {
+                mpfa_set_any(z);
+            }
+            // Set no value if x is all or partly negative.
+            else {
+                mpfa_set_none(z);
+            }
         }
+
         else {
             // compute alpha
             mpfr_log(alpha, xb, MPFR_RNDN);
@@ -84,7 +87,7 @@ void mpfa_log (mpfa_ptr z, mpfa_srcptr x)
             mpfr_min(da, da, db, MPFR_RNDN);
 
             // compute difference (log(u) - alpha u)
-            mpfr_si_div(du, 1, alpha, MPFR_RNDU);
+            mpfr_ui_div(du, 1, alpha, MPFR_RNDU);
             mpfr_log(du, du, MPFR_RNDU);
             mpfr_sub_si(du, du, 1, MPFR_RNDU);
 

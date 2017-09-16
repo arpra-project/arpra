@@ -43,9 +43,9 @@ void mpfa_inv (mpfa_ptr z, mpfa_srcptr x)
     mpfr_init2(gamma, prec_internal);
     mpfr_init2(delta, prec_internal);
 
-    // Handle trivial case, where x has zero radius.
+    // Handle x with zero radius.
     if (mpfr_zero_p(&(x->radius))) {
-        if (mpfr_si_div(temp, 1, &(x->centre), MPFR_RNDN)) {
+        if (mpfr_ui_div(temp, 1, &(x->centre), MPFR_RNDN)) {
             mpfa_error(delta, temp);
             mpfa_set_mpfr_rad(z, temp, delta);
         }
@@ -54,18 +54,17 @@ void mpfa_inv (mpfa_ptr z, mpfa_srcptr x)
         }
     }
     else {
-        mpfr_sub(xa, &(x->centre), &(x->radius), MPFR_RNDD);
-        mpfr_add(xb, &(x->centre), &(x->radius), MPFR_RNDU);
+        mpfa_get_bounds(xa, xb, x);
 
-        // Set NaN if x straddles zero.
-        sign = mpfr_sgn(xa);
-        if ((sign != mpfr_sgn(xb) || (sign == 0))) {
-            mpfa_clear_terms(z);
-
-            // TODO: find a better representation for Inf
-            mpfr_set_nan(&(z->centre));
+        // Set any value if x straddles zero.
+        if (mpfr_sgn(xa) != mpfr_sgn(xb)) {
+            mpfa_set_any(z);
         }
+
         else {
+            sign = mpfr_sgn(xa);
+
+            // For negative x.
             if (sign < 0) {
                 mpfr_set(temp, xa, MPFR_RNDN);
                 mpfr_neg(xa, xb, MPFR_RNDN);
@@ -78,12 +77,12 @@ void mpfa_inv (mpfa_ptr z, mpfa_srcptr x)
 
             // compute difference (1/a - alpha a)
             mpfr_mul(da, alpha, xa, MPFR_RNDD);
-            mpfr_si_div(temp, 1, xa, MPFR_RNDU);
+            mpfr_ui_div(temp, 1, xa, MPFR_RNDU);
             mpfr_sub(da, temp, da, MPFR_RNDU);
 
             // compute difference (1/b - alpha b)
             mpfr_mul(db, alpha, xb, MPFR_RNDD);
-            mpfr_si_div(temp, 1, xb, MPFR_RNDU);
+            mpfr_ui_div(temp, 1, xb, MPFR_RNDU);
             mpfr_sub(db, temp, db, MPFR_RNDU);
 
             mpfr_max(db, da, db, MPFR_RNDN);
@@ -102,6 +101,7 @@ void mpfa_inv (mpfa_ptr z, mpfa_srcptr x)
             mpfr_sub(temp, db, gamma, MPFR_RNDU);
             mpfr_max(delta, delta, temp, MPFR_RNDU);
 
+            // For negative x.
             if (sign < 0) {
                 mpfr_neg(gamma, gamma, MPFR_RNDN);
             }

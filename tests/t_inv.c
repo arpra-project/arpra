@@ -46,7 +46,7 @@ int main (int argc, char *argv[])
     mpfr_init2(difference, prec_internal);
     total_fail = 0;
 
-    // Test.
+    // Run test.
     test_log_init("inv");
     for (n_fail = 0, i = 0; i < n_tests; i++) {
         // Set random x and y.
