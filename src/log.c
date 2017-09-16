@@ -56,15 +56,17 @@ void mpfa_log (mpfa_ptr z, mpfa_srcptr x)
         mpfa_get_bounds(xa, xb, x);
 
         // Handle domain violations.
-        if (mpfr_sgn(xa) <= 0) {
-            if (mpfr_sgn(xa) < 0) {
-                mpfa_set_none(z);
-            }
-            else {
-                mpfa_set_any(z);
-            }
+        if (mpfr_nan_p(xa) || mpfr_nan_p(xb)) {
+            mpfa_set_none(z);
+        }
+        else if (mpfr_sgn(xa) < 0) {
+            mpfa_set_none(z);
+        }
+        else if (mpfr_sgn(xa) == 0) {
+            mpfa_set_any(z);
         }
 
+        // Domain is OK.
         else {
             // compute alpha
             mpfr_log(alpha, xb, MPFR_RNDN);
