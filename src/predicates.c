@@ -30,3 +30,8 @@ int mpfa_any_p (mpfa_srcptr x)
 {
     return mpfr_inf_p(&(x->radius));
 }
+
+int mpfa_zero_p (mpfa_srcptr x)
+{
+    return mpfr_zero_p(&(x->centre)) && mpfr_zero_p(&(x->radius));
+}

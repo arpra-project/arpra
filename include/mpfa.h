@@ -106,6 +106,7 @@ void mpfa_condense_small (mpfa_ptr z, double fraction);
 // Predicates on affine forms.
 int mpfa_none_p (mpfa_srcptr x);
 int mpfa_any_p (mpfa_srcptr x);
+int mpfa_zero_p (mpfa_srcptr x);
 
 // Get new deviation symbols.
 mpfa_uint_t mpfa_next_sym ();
