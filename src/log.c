@@ -55,14 +55,13 @@ void mpfa_log (mpfa_ptr z, mpfa_srcptr x)
     else {
         mpfa_get_bounds(xa, xb, x);
 
+        // Handle domain violations.
         if (mpfr_sgn(xa) <= 0) {
-            // Set any value if x lower bound is zero.
-            if (mpfr_sgn(xa) == 0) {
-                mpfa_set_any(z);
-            }
-            // Set no value if x is all or partly negative.
-            else {
+            if (mpfr_sgn(xa) < 0) {
                 mpfa_set_none(z);
+            }
+            else {
+                mpfa_set_any(z);
             }
         }
 

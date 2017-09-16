@@ -56,7 +56,7 @@ void mpfa_inv (mpfa_ptr z, mpfa_srcptr x)
     else {
         mpfa_get_bounds(xa, xb, x);
 
-        // Set any value if x straddles zero.
+        // Handle domain violations.
         if (mpfr_sgn(xa) != mpfr_sgn(xb)) {
             mpfa_set_any(z);
         }

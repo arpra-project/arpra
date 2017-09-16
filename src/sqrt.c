@@ -55,7 +55,7 @@ void mpfa_sqrt (mpfa_ptr z, mpfa_srcptr x)
     else {
         mpfa_get_bounds(xa, xb, x);
 
-        // Set no value if x is all or partly negative.
+        // Handle domain violations.
         if (mpfr_sgn(xa) < 0) {
             mpfa_set_none(z);
         }
