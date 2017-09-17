@@ -83,15 +83,13 @@ void mpfa_set (mpfa_ptr z, mpfa_srcptr x)
     }
 
     // Resize noise term memory, as required.
-    if (z->nTerms > 0) {
-        if (zTerm == 0) {
-            free(z->symbols);
-            free(z->deviations);
-        }
-        else {
-            z->symbols = realloc(z->symbols, zTerm * sizeof(mpfa_uint_t));
-            z->deviations = realloc(z->deviations, zTerm * sizeof(mpfr_t));
-        }
+    if (zTerm == 0) {
+        free(z->symbols);
+        free(z->deviations);
+    }
+    else {
+        z->symbols = realloc(z->symbols, zTerm * sizeof(mpfa_uint_t));
+        z->deviations = realloc(z->deviations, zTerm * sizeof(mpfr_t));
     }
     z->nTerms = zTerm;
 
