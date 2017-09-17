@@ -43,7 +43,7 @@ void mpfa_exp (mpfa_ptr z, mpfa_srcptr x)
     mpfr_init2(delta, prec_internal);
 
     // Handle x with zero radius.
-    if (mpfr_zero_p(&(x->radius))) {
+    if (x->nTerms == 0) {
         if (mpfr_exp(temp, &(x->centre), MPFR_RNDN)) {
             mpfa_error(delta, temp);
             mpfa_set_mpfr_rad(z, temp, delta);
