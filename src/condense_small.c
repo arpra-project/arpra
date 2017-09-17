@@ -73,15 +73,15 @@ void mpfa_condense_small (mpfa_ptr z, double fraction)
     }
 
     // Resize noise term memory.
-    if (zTerm == 0) {
+    z->nTerms = zTerm;
+    if (z->nTerms == 0) {
         free(z->symbols);
         free(z->deviations);
     }
     else {
-        z->symbols = realloc(z->symbols, zTerm * sizeof(mpfa_uint_t));
-        z->deviations = realloc(z->deviations, zTerm * sizeof(mpfr_t));
+        z->symbols = realloc(z->symbols, z->nTerms * sizeof(mpfa_uint_t));
+        z->deviations = realloc(z->deviations, z->nTerms * sizeof(mpfr_t));
     }
-    z->nTerms = zTerm;
 
     // Clear temp vars.
     mpfr_clear(temp);
