@@ -26,10 +26,11 @@ void mpfa_set_mpfi (mpfa_ptr z, mpfi_srcptr x)
     mpfa_prec_t prec, prec_internal;
     mpfr_t temp;
 
-    // Init temp var.
+    // Init temp vars, and set internal precision.
     prec = mpfa_get_prec(z);
     prec_internal = mpfa_get_internal_prec();
     mpfr_init2(temp, prec_internal);
+    mpfr_prec_round(&(z->radius), prec_internal, MPFR_RNDU);
 
     // z_0 = (x_lo + x_hi) / 2
     mpfr_add(&(z->centre), &(x->left), &(x->right), MPFR_RNDN);
