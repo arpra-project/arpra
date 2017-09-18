@@ -23,12 +23,12 @@
 
 int mpfa_none_p (mpfa_srcptr x)
 {
-    return mpfr_nan_p(&(x->centre));
+    return mpfr_nan_p(&(x->centre)) || mpfr_nan_p(&(x->radius));
 }
 
 int mpfa_any_p (mpfa_srcptr x)
 {
-    return mpfr_inf_p(&(x->radius));
+    return !mpfr_nan_p(&(x->centre)) && mpfr_inf_p(&(x->radius));
 }
 
 int mpfa_zero_p (mpfa_srcptr x)
