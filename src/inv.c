@@ -69,7 +69,7 @@ void mpfa_inv (mpfa_ptr z, mpfa_srcptr x)
 
         // Domain is OK.
         else {
-            // For negative x.
+            // Handle negative x.
             sign = mpfr_sgn(xa);
             if (sign < 0) {
                 mpfr_set(temp, xa, MPFR_RNDN);
@@ -107,7 +107,7 @@ void mpfa_inv (mpfa_ptr z, mpfa_srcptr x)
             mpfr_sub(temp, db, gamma, MPFR_RNDU);
             mpfr_max(delta, delta, temp, MPFR_RNDU);
 
-            // For negative x.
+            // Handle negative x.
             if (sign < 0) {
                 mpfr_neg(gamma, gamma, MPFR_RNDN);
             }

@@ -32,15 +32,34 @@ void mpfa_sum (mpfa_ptr z, const mpfa_ptr *x, mpfa_uint_t n)
     mpfa_prec_t prec, prec_internal;
     mpfa_t zNew;
 
-    // Check input, and handle trivial case.
-    if (n < 3) {
+    // Handle trivial cases.
+    if (n <= 2) {
         if (n == 2) {
             mpfa_add(z, x[0], x[1]);
+            return;
         }
         else if (n == 1) {
             mpfa_set(z, x[0]);
+            return;
         }
-        else return;
+        else {
+            mpfa_set_none(z);
+            return;
+        }
+    }
+
+    // Handle domain violations.
+    for (i = 0; i < n; i++) {
+        if (mpfa_none_p(x[i])) {
+            mpfa_set_none(z);
+            return;
+        }
+    }
+    for (i = 0; i < n; i++) {
+        if (mpfa_any_p(x[i])) {
+            mpfa_set_any(z);
+            return;
+        }
     }
 
     // Init temp vars, and set internal precision.
@@ -68,7 +87,7 @@ void mpfa_sum (mpfa_ptr z, const mpfa_ptr *x, mpfa_uint_t n)
         mpfr_add(error, error, temp, MPFR_RNDU);
     }
 
-    // Allocate memory for all possible noise terms in z.
+    // Allocate memory for all possible noise terms.
     zNew->nTerms = 1;
     for (i = 0; i < n; i++) {
         zNew->nTerms += x[i]->nTerms;
@@ -131,11 +150,19 @@ void mpfa_sum (mpfa_ptr z, const mpfa_ptr *x, mpfa_uint_t n)
         zTerm++;
     }
 
-    // Free noise term memory if number of terms is zero.
+    // Handle domain violations, and free unused memory.
     zNew->nTerms = zTerm;
-    if (zNew->nTerms == 0) {
-        free(zNew->symbols);
-        free(zNew->deviations);
+    if (mpfr_nan_p(&(zNew->centre)) || mpfr_nan_p(&(zNew->radius))) {
+        mpfa_set_none(zNew);
+    }
+    else if (mpfr_inf_p(&(zNew->centre)) || mpfr_inf_p(&(zNew->radius))) {
+        mpfa_set_any(zNew);
+    }
+    else {
+        if (zNew->nTerms == 0) {
+            free(zNew->symbols);
+            free(zNew->deviations);
+        }
     }
 
     // Clear temp vars, and set z.

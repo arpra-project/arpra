@@ -27,10 +27,20 @@ void mpfa_set (mpfa_ptr z, mpfa_srcptr x)
     mpfa_prec_t prec, prec_internal;
     mpfr_t temp, error;
 
-    // Check input, and handle trivial case.
+    // Handle trivial cases.
     if (z == x) return;
 
-    // Init temp vars and set internal precision.
+    // Handle domain violations.
+    if (mpfa_none_p(x)) {
+        mpfa_set_none(z);
+        return;
+    }
+    if (mpfa_any_p(x)) {
+        mpfa_set_any(z);
+        return;
+    }
+
+    // Init temp vars, and set internal precision.
     prec = mpfa_get_prec(z);
     prec_internal = mpfa_get_internal_prec();
     mpfr_init2(temp, prec_internal);
@@ -82,15 +92,23 @@ void mpfa_set (mpfa_ptr z, mpfa_srcptr x)
         zTerm++;
     }
 
-    // Resize noise term memory, as required.
+    // Handle domain violations, and resize memory.
     z->nTerms = zTerm;
-    if (z->nTerms == 0) {
-        free(z->symbols);
-        free(z->deviations);
+    if (mpfr_nan_p(&(z->centre)) || mpfr_nan_p(&(z->radius))) {
+        mpfa_set_none(z);
+    }
+    else if (mpfr_inf_p(&(z->centre)) || mpfr_inf_p(&(z->radius))) {
+        mpfa_set_any(z);
     }
     else {
-        z->symbols = realloc(z->symbols, z->nTerms * sizeof(mpfa_uint_t));
-        z->deviations = realloc(z->deviations, z->nTerms * sizeof(mpfr_t));
+        if (z->nTerms == 0) {
+            free(z->symbols);
+            free(z->deviations);
+        }
+        else {
+            z->symbols = realloc(z->symbols, z->nTerms * sizeof(mpfa_uint_t));
+            z->deviations = realloc(z->deviations, z->nTerms * sizeof(mpfr_t));
+        }
     }
 
     // Clear temp vars.
