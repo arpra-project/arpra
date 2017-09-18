@@ -110,24 +110,25 @@ void mpfa_sum (mpfa_ptr z, const mpfa_ptr *x, mpfa_uint_t n)
             }
         }
         zNew->symbols[zTerm] = xSymbol;
-
-        // Compute the next deviation in z.
         mpfr_init2(&(zNew->deviations[zTerm]), prec);
+
+        // For all x with the next symbol:
         for (i = 0, j = 0; i < n; i++) {
             if (x[i]->symbols[xTerm[i]] == xSymbol) {
+                // Get next deviation pointer of x[i].
                 summands[j++] = &(x[i]->deviations[xTerm[i]]);
 
-                // z_i = x[1]_i + ... + x[n]_i
-                if (mpfr_sum(&(zNew->deviations[zTerm]), summands, j, MPFR_RNDN)) {
-                    mpfa_error(temp, &(zNew->deviations[zTerm]));
-                    mpfr_add(error, error, temp, MPFR_RNDU);
-                }
-
-                // Check for another symbol.
+                // Check for more symbols in x[i].
                 if (++xTerm[i] < x[i]->nTerms) {
                     xHasNext = 1;
                 }
             }
+        }
+
+        // z_i = x[1]_i + ... + x[n]_i
+        if (mpfr_sum(&(zNew->deviations[zTerm]), summands, j, MPFR_RNDN)) {
+            mpfa_error(temp, &(zNew->deviations[zTerm]));
+            mpfr_add(error, error, temp, MPFR_RNDU);
         }
 
         // Store nonzero noise terms.
