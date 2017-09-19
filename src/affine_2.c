@@ -34,8 +34,22 @@ void mpfa_affine_2 (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y, mpfr_srcptr alpha,
         mpfa_set_nan(z);
         return;
     }
-    if (mpfa_inf_p(x) || mpfa_inf_p(y)) {
-        mpfa_set_inf(z);
+    if (mpfa_inf_p(x)) {
+        if (mpfa_inf_p(y)) {
+            mpfa_set_nan(z);
+        }
+        else {
+            mpfa_set_inf(z);
+        }
+        return;
+    }
+    if (mpfa_inf_p(y)) {
+        if (mpfa_inf_p(x)) {
+            mpfa_set_nan(z);
+        }
+        else {
+            mpfa_set_inf(z);
+        }
         return;
     }
 
