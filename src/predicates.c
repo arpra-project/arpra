@@ -35,3 +35,8 @@ int mpfa_zero_p (mpfa_srcptr x)
 {
     return mpfr_zero_p(&(x->centre)) && mpfr_zero_p(&(x->radius));
 }
+
+int mpfa_has_zero_p (mpfa_srcptr x)
+{
+    return mpfr_cmpabs(&(x->centre), &(x->radius)) <= 0;
+}
