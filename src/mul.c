@@ -34,8 +34,17 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y)
         mpfa_set_nan(z);
         return;
     }
-    if (mpfa_inf_p(x) || mpfa_inf_p(y)) {
-        if (mpfa_has_zero_p(x) || mpfa_has_zero_p(y)) {
+    if (mpfa_inf_p(x)) {
+        if (mpfa_inf_p(y) || mpfa_has_zero_p(y)) {
+            mpfa_set_nan(z);
+        }
+        else {
+            mpfa_set_inf(z);
+        }
+        return;
+    }
+    if (mpfa_inf_p(y)) {
+        if (mpfa_inf_p(x) || mpfa_has_zero_p(x)) {
             mpfa_set_nan(z);
         }
         else {
