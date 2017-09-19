@@ -26,7 +26,17 @@ void mpfa_set_mpfi (mpfa_ptr z, mpfi_srcptr x)
     mpfa_prec_t prec, prec_internal;
     mpfr_t temp;
 
-    // Init temp vars, and set internal precision.
+    // Handle domain violations.
+    if (mpfi_nan_p(x)) {
+        mpfa_set_nan(z);
+        return;
+    }
+    if (mpfi_inf_p(x)) {
+        mpfa_set_inf(z);
+        return;
+    }
+
+    // Initialise vars.
     prec = mpfa_get_prec(z);
     prec_internal = mpfa_get_internal_prec();
     mpfr_init2(temp, prec_internal);
@@ -41,22 +51,30 @@ void mpfa_set_mpfi (mpfa_ptr z, mpfi_srcptr x)
     mpfr_sub(temp, &(x->right), &(z->centre), MPFR_RNDU);
     mpfr_max(&(z->radius), &(z->radius), temp, MPFR_RNDU);
 
-    // Clear existing noise terms.
+    // Clear existing deviation terms.
     mpfa_clear_terms(z);
 
     // If radius is nonzero:
     if (!mpfr_zero_p(&(z->radius))) {
-        // Allocate one noise term.
+        // Allocate one deviation term.
         z->nTerms = 1;
         z->symbols = malloc(sizeof(mpfa_uint_t));
         z->deviations = malloc(sizeof(mpfa_t));
 
-        // Set noise term.
+        // Set deviation term.
         z->symbols[0] = mpfa_next_sym();
         mpfr_init2(&(z->deviations[0]), prec);
         mpfr_set(&(z->deviations[0]), &(z->radius), MPFR_RNDU);
     }
 
-    // Clear temp vars.
+    // Handle domain violations.
+    if (mpfr_nan_p(&(z->centre)) || mpfr_nan_p(&(z->deviations[0]))) {
+        mpfa_set_nan(z);
+    }
+    else if (mpfr_inf_p(&(z->centre)) || mpfr_inf_p(&(z->deviations[0]))) {
+        mpfa_set_inf(z);
+    }
+
+    // Clear vars.
     mpfr_clear(temp);
 }

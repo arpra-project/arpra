@@ -31,23 +31,23 @@ void mpfa_set (mpfa_ptr z, mpfa_srcptr x)
     if (z == x) return;
 
     // Handle domain violations.
-    if (mpfa_none_p(x)) {
-        mpfa_set_none(z);
+    if (mpfa_nan_p(x)) {
+        mpfa_set_nan(z);
         return;
     }
-    if (mpfa_any_p(x)) {
-        mpfa_set_any(z);
+    if (mpfa_inf_p(x)) {
+        mpfa_set_inf(z);
         return;
     }
 
-    // Init temp vars, and set internal precision.
+    // Initialise vars.
     prec = mpfa_get_prec(z);
     prec_internal = mpfa_get_internal_prec();
     mpfr_init2(temp, prec_internal);
     mpfr_init2(error, prec_internal);
     mpfr_prec_round(&(z->radius), prec_internal, MPFR_RNDU);
-    mpfr_set_si(error, 0, MPFR_RNDU);
-    mpfr_set_si(&(z->radius), 0, MPFR_RNDU);
+    mpfr_set_ui(error, 0, MPFR_RNDU);
+    mpfr_set_ui(&(z->radius), 0, MPFR_RNDU);
 
     // z_0 = x_0
     if (mpfr_set(&(z->centre), &(x->centre), MPFR_RNDN)) {
@@ -55,13 +55,13 @@ void mpfa_set (mpfa_ptr z, mpfa_srcptr x)
         mpfr_add(error, error, temp, MPFR_RNDU);
     }
 
-    // Replace existing noise term memory.
+    // Replace existing deviation term memory.
     mpfa_clear_terms(z);
     z->nTerms = x->nTerms + 1;
     z->symbols = malloc(z->nTerms * sizeof(mpfa_uint_t));
     z->deviations = malloc(z->nTerms * sizeof(mpfa_t));
 
-    // Copy noise terms over.
+    // Copy deviation terms over.
     for (xTerm = 0, zTerm = 0; xTerm < x->nTerms; xTerm++) {
         z->symbols[zTerm] = x->symbols[zTerm];
         mpfr_init2(&(z->deviations[zTerm]), prec);
@@ -72,7 +72,7 @@ void mpfa_set (mpfa_ptr z, mpfa_srcptr x)
             mpfr_add(error, error, temp, MPFR_RNDU);
         }
 
-        // Store nonzero noise terms.
+        // Store nonzero deviation terms.
         if (mpfr_zero_p(&(z->deviations[zTerm]))) {
             mpfr_clear(&(z->deviations[zTerm]));
         }
@@ -95,10 +95,10 @@ void mpfa_set (mpfa_ptr z, mpfa_srcptr x)
     // Handle domain violations, and resize memory.
     z->nTerms = zTerm;
     if (mpfr_nan_p(&(z->centre)) || mpfr_nan_p(&(z->radius))) {
-        mpfa_set_none(z);
+        mpfa_set_nan(z);
     }
     else if (mpfr_inf_p(&(z->centre)) || mpfr_inf_p(&(z->radius))) {
-        mpfa_set_any(z);
+        mpfa_set_inf(z);
     }
     else {
         if (z->nTerms == 0) {
@@ -111,7 +111,7 @@ void mpfa_set (mpfa_ptr z, mpfa_srcptr x)
         }
     }
 
-    // Clear temp vars.
+    // Clear vars.
     mpfr_clear(temp);
     mpfr_clear(error);
 }

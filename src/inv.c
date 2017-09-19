@@ -31,7 +31,7 @@ void mpfa_inv (mpfa_ptr z, mpfa_srcptr x)
     mpfa_prec_t prec_internal;
     mpfa_int_t sign;
 
-    // Init temp vars with internal precision.
+    // Initialise vars.
     prec_internal = mpfa_get_internal_prec();
     mpfr_init2(temp, prec_internal);
     mpfr_init2(xa, prec_internal);
@@ -58,13 +58,13 @@ void mpfa_inv (mpfa_ptr z, mpfa_srcptr x)
 
         // Handle domain violations.
         if (mpfr_nan_p(xa) || mpfr_nan_p(xb)) {
-            mpfa_set_none(z);
+            mpfa_set_nan(z);
         }
         else if (mpfr_zero_p(xa) || mpfr_zero_p(xb)) {
-            mpfa_set_any(z);
+            mpfa_set_inf(z);
         }
         else if (mpfr_sgn(xa) != mpfr_sgn(xb)) {
-            mpfa_set_any(z);
+            mpfa_set_inf(z);
         }
 
         // Domain is OK.
@@ -117,7 +117,7 @@ void mpfa_inv (mpfa_ptr z, mpfa_srcptr x)
         }
     }
 
-    // Clear temp vars.
+    // Clear vars.
     mpfr_clear(temp);
     mpfr_clear(xa);
     mpfr_clear(xb);

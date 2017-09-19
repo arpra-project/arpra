@@ -27,7 +27,7 @@ void test_rand_mpfa (mpfa_ptr z, enum test_rand_mode mode)
     mpfa_prec_t prec, prec_internal;
     mpfr_t temp;
 
-    // Init temp vars and set internal precision.
+    // Initialise vars.
     prec = mpfa_get_prec(z);
     prec_internal = mpfa_get_internal_prec();
     mpfr_init2(temp, prec_internal);
@@ -37,17 +37,17 @@ void test_rand_mpfa (mpfa_ptr z, enum test_rand_mode mode)
     // Set random centre.
     test_rand_mpfr(&(z->centre), mode);
 
-    // Clear existing noise terms.
+    // Clear existing deviation terms.
     mpfa_clear_terms(z);
 
-    // Randomly allocate 0 to 9 noise terms.
+    // Randomly allocate 0 to 9 deviation terms.
     z->nTerms = gmp_urandomm_ui(test_randstate, 10);
     if (z->nTerms > 0) {
         z->symbols = malloc(z->nTerms * sizeof(mpfa_uint_t));
         z->deviations = malloc(z->nTerms * sizeof(mpfr_t));
     }
 
-    // Randomly set noise terms.
+    // Randomly set deviation terms.
     for (zTerm = 0; zTerm < z->nTerms; zTerm++) {
         z->symbols[zTerm] = mpfa_next_sym();
         mpfr_init2(&(z->deviations[zTerm]), prec);
@@ -58,6 +58,6 @@ void test_rand_mpfa (mpfa_ptr z, enum test_rand_mode mode)
         mpfr_add(&(z->radius), &(z->radius), temp, MPFR_RNDU);
     }
 
-    // Clear temp vars.
+    // Clear vars.
     mpfr_clear(temp);
 }

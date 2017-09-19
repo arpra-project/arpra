@@ -37,7 +37,7 @@ void mpfa_set_prec (mpfa_ptr z, mpfa_prec_t prec)
         prec_internal = prec;
     }
 
-    // Clear existing noise terms.
+    // Clear existing deviation terms.
     mpfa_clear_terms(z);
 
     // Reset centre and radius with new working precision.

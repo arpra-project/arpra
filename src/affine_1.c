@@ -29,16 +29,16 @@ void mpfa_affine_1 (mpfa_ptr z, mpfa_srcptr x, mpfr_srcptr alpha, mpfr_srcptr ga
     mpfa_t zNew;
 
     // Handle domain violations.
-    if (mpfa_none_p(x)) {
-        mpfa_set_none(z);
+    if (mpfa_nan_p(x)) {
+        mpfa_set_nan(z);
         return;
     }
-    if (mpfa_any_p(x)) {
-        mpfa_set_any(z);
+    if (mpfa_inf_p(x)) {
+        mpfa_set_inf(z);
         return;
     }
 
-    // Init temp vars, and set internal precision.
+    // Initialise vars.
     prec = mpfa_get_prec(z);
     prec_internal = mpfa_get_internal_prec();
     mpfr_init2(temp, prec_internal);
@@ -54,7 +54,7 @@ void mpfa_affine_1 (mpfa_ptr z, mpfa_srcptr x, mpfr_srcptr alpha, mpfr_srcptr ga
         mpfr_add(error, error, temp, MPFR_RNDU);
     }
 
-    // Allocate memory for all possible noise terms.
+    // Allocate memory for all possible deviation terms.
     zNew->nTerms = x->nTerms + 1;
     zNew->symbols = malloc(zNew->nTerms * sizeof(mpfa_uint_t));
     zNew->deviations = malloc(zNew->nTerms * sizeof(mpfr_t));
@@ -69,7 +69,7 @@ void mpfa_affine_1 (mpfa_ptr z, mpfa_srcptr x, mpfr_srcptr alpha, mpfr_srcptr ga
             mpfr_add(error, error, temp, MPFR_RNDU);
         }
 
-        // Store nonzero noise terms.
+        // Store nonzero deviation terms.
         if (mpfr_zero_p(&(zNew->deviations[zTerm]))) {
             mpfr_clear(&(zNew->deviations[zTerm]));
         }
@@ -92,10 +92,10 @@ void mpfa_affine_1 (mpfa_ptr z, mpfa_srcptr x, mpfr_srcptr alpha, mpfr_srcptr ga
     // Handle domain violations, and free unused memory.
     zNew->nTerms = zTerm;
     if (mpfr_nan_p(&(zNew->centre)) || mpfr_nan_p(&(zNew->radius))) {
-        mpfa_set_none(zNew);
+        mpfa_set_nan(zNew);
     }
     else if (mpfr_inf_p(&(zNew->centre)) || mpfr_inf_p(&(zNew->radius))) {
-        mpfa_set_any(zNew);
+        mpfa_set_inf(zNew);
     }
     else {
         if (zNew->nTerms == 0) {
@@ -104,7 +104,7 @@ void mpfa_affine_1 (mpfa_ptr z, mpfa_srcptr x, mpfr_srcptr alpha, mpfr_srcptr ga
         }
     }
 
-    // Clear temp vars, and set z.
+    // Clear vars, and set z.
     mpfr_clear(temp);
     mpfr_clear(error);
     mpfa_set(z, zNew);

@@ -25,30 +25,39 @@ void mpfa_set_str (mpfa_ptr z, const char *centre, mpfa_int_t base)
 {
     mpfa_prec_t prec, prec_internal;
 
-    // Set internal precision.
+    // Initialise vars.
     prec = mpfa_get_prec(z);
     prec_internal = mpfa_get_internal_prec();
     mpfr_prec_round(&(z->radius), prec_internal, MPFR_RNDU);
-    mpfr_set_si(&(z->radius), 0, MPFR_RNDU);
+    mpfr_set_ui(&(z->radius), 0, MPFR_RNDU);
 
-    // Add any centre rounding error to radius.
+    // Add centre rounding error to deviation.
     if (mpfr_set_str(&(z->centre), centre, base, MPFR_RNDN)) {
         mpfa_error(&(z->radius), &(z->centre));
     }
 
-    // Clear existing noise terms.
+    // Clear existing deviation terms.
     mpfa_clear_terms(z);
 
     // If radius is nonzero:
     if (!mpfr_zero_p(&(z->radius))) {
-        // Allocate one noise term.
+        // Allocate one deviation term.
         z->nTerms = 1;
         z->symbols = malloc(sizeof(mpfa_uint_t));
         z->deviations = malloc(sizeof(mpfa_t));
 
-        // Set noise term.
+        // Set deviation term.
         z->symbols[0] = mpfa_next_sym();
         mpfr_init2(&(z->deviations[0]), prec);
         mpfr_set(&(z->deviations[0]), &(z->radius), MPFR_RNDU);
+        mpfr_set(&(z->radius), &(z->deviations[0]), MPFR_RNDU);
+    }
+
+    // Handle domain violations.
+    if (mpfr_nan_p(&(z->centre)) || mpfr_nan_p(&(z->radius))) {
+        mpfa_set_nan(z);
+    }
+    else if (mpfr_inf_p(&(z->centre)) || mpfr_inf_p(&(z->radius))) {
+        mpfa_set_inf(z);
     }
 }

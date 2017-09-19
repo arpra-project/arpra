@@ -23,7 +23,7 @@
 
 void mpfa_clear (mpfa_ptr x)
 {
-    // Clear centre, radius and noise terms.
+    // Clear centre, radius and deviation terms.
     mpfr_clear(&(x->centre));
     mpfr_clear(&(x->radius));
     mpfa_clear_terms(x);
@@ -46,7 +46,7 @@ void mpfa_clear_terms (mpfa_ptr x)
 {
     mpfa_uint_t xTerm;
 
-    // Clear existing noise terms.
+    // Clear existing deviation terms.
     if (x->nTerms > 0) {
         for (xTerm = 0; xTerm < x->nTerms; xTerm++) {
             mpfr_clear(&(x->deviations[xTerm]));
