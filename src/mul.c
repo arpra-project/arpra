@@ -35,7 +35,12 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y)
         return;
     }
     if (mpfa_inf_p(x) || mpfa_inf_p(y)) {
-        mpfa_set_inf(z);
+        if (mpfa_has_zero_p(x) || mpfa_has_zero_p(y)) {
+            mpfa_set_nan(z);
+        }
+        else {
+            mpfa_set_inf(z);
+        }
         return;
     }
 
