@@ -40,7 +40,7 @@ void mpfa_set_mpfi (mpfa_ptr z, mpfi_srcptr x)
     prec = mpfa_get_prec(z);
     prec_internal = mpfa_get_internal_prec();
     mpfr_init2(temp, prec_internal);
-    mpfr_prec_round(&(z->radius), prec_internal, MPFR_RNDU);
+    mpfr_set_prec(&(z->radius), prec_internal);
 
     // z_0 = (x_lo + x_hi) / 2
     mpfr_add(&(z->centre), &(x->left), &(x->right), MPFR_RNDN);

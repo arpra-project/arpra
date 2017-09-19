@@ -39,7 +39,7 @@ void mpfa_condense_last_n (mpfa_ptr z, mpfa_uint_t n)
     // Initialise vars.
     prec_internal = mpfa_get_internal_prec();
     mpfr_init2(temp, prec_internal);
-    mpfr_prec_round(&(z->radius), prec_internal, MPFR_RNDU);
+    mpfr_set_prec(&(z->radius), prec_internal);
     mpfr_set_ui(&(z->radius), 0, MPFR_RNDU);
     zTerm = z->nTerms - n;
     summands = malloc(n * sizeof(mpfr_ptr));

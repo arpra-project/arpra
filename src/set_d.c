@@ -38,7 +38,7 @@ void mpfa_set_d (mpfa_ptr z, const double centre)
     // Initialise vars.
     prec = mpfa_get_prec(z);
     prec_internal = mpfa_get_internal_prec();
-    mpfr_prec_round(&(z->radius), prec_internal, MPFR_RNDU);
+    mpfr_set_prec(&(z->radius), prec_internal);
     mpfr_set_ui(&(z->radius), 0, MPFR_RNDU);
 
     // Add centre rounding error to deviation.

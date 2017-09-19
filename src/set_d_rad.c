@@ -40,8 +40,8 @@ void mpfa_set_d_rad (mpfa_ptr z, const double centre, const double radius)
     prec = mpfa_get_prec(z);
     prec_internal = mpfa_get_internal_prec();
     mpfr_init2(temp, prec_internal);
-    mpfr_prec_round(&(z->radius), prec_internal, MPFR_RNDU);
     mpfr_set_d(temp, radius, MPFR_RNDU);
+    mpfr_set_prec(&(z->radius), prec_internal);
     mpfr_abs(&(z->radius), temp, MPFR_RNDU);
 
     // Add centre rounding error to deviation.

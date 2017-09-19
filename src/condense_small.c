@@ -41,7 +41,7 @@ void mpfa_condense_small (mpfa_ptr z, double fraction)
     mpfr_mul_d(threshold, &(z->radius), fraction, MPFR_RNDN);
     mpfr_init2(error, prec_internal);
     mpfr_set_ui(error, 0, MPFR_RNDU);
-    mpfr_prec_round(&(z->radius), prec_internal, MPFR_RNDU);
+    mpfr_set_prec(&(z->radius), prec_internal);
     mpfr_set_ui(&(z->radius), 0, MPFR_RNDU);
     zTerm = 0;
 
