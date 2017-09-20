@@ -24,7 +24,7 @@
 void test_log_mpfi (mpfi_srcptr x, const char *var_name)
 {
     if (test_log_ready) {
-        // Record variable name and bounds in logfile.
+        // Write variable name and bounds to logfile.
         fprintf(test_log, "%s: ", var_name);
         mpfr_out_str(test_log, 10, 80, &(x->left), MPFR_RNDN);
         fputs(" ", test_log);

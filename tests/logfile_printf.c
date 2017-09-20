@@ -1,5 +1,5 @@
 /*
- * logfile_text.c -- Record arbitrary text in the logfile.
+ * logfile_printf.c -- Record formatted text in the logfile.
  *
  * Copyright 2017 James Paul Turner.
  *
@@ -21,12 +21,15 @@
 
 #include "mpfa-test.h"
 
-void test_log_text (const char *text)
+void test_log_printf (const char *format, ...)
 {
+    va_list arg;
+
     if (test_log_ready) {
-        // Record text in logfile.
-        fputs(text, test_log);
-        fputs("\n", test_log);
+        // Write formatted text to logfile.
+        va_start(arg, format);
+        vfprintf(test_log, format, arg);
+        va_end(arg);
     }
     else {
         fprintf(stderr, "Error: Logfile is not initialised.\n");
