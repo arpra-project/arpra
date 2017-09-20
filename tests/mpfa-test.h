@@ -79,6 +79,7 @@ void test_log_init (const char *test_name);
 void test_log_clear ();
 
 // Write to logfile.
+void test_log_text (const char *text);
 #ifdef WITH_MPFI
 void test_log_mpfi (mpfi_srcptr x, const char *var_name);
 #endif // WITH_MPFI
