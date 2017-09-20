@@ -80,6 +80,7 @@ void test_log_clear ();
 
 // Write to logfile.
 void test_log_printf (const char *format, ...);
+void test_log_mpfr (mpfr_srcptr x, const char *var_name);
 #ifdef WITH_MPFI
 void test_log_mpfi (mpfi_srcptr x, const char *var_name);
 #endif // WITH_MPFI

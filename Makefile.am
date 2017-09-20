@@ -48,9 +48,10 @@ check_LTLIBRARIES = tests/libmpfa-test.la
 tests_libmpfa_test_la_CPPFLAGS = -I$(top_srcdir)/include
 tests_libmpfa_test_la_LIBADD = lib/libmpfa.la
 tests_libmpfa_test_la_SOURCES = \
-	tests/mpfa-test.h tests/logfile.c tests/logfile_printf.c	\
-	tests/share_syms.c tests/rand.c tests/rand_mpfr.c		\
-	tests/rand_mpfa.c tests/compare_bounds.c tests/compare_mpfa.c
+	tests/mpfa-test.h tests/share_syms.c tests/logfile.c		\
+	tests/logfile_printf.c tests/logfile_mpfr.c tests/rand.c	\
+	tests/rand_mpfr.c tests/rand_mpfa.c tests/compare_bounds.c	\
+	tests/compare_mpfa.c
 if WITH_MPFI
 tests_libmpfa_test_la_SOURCES += \
 	tests/rand_mpfi.c tests/logfile_mpfi.c tests/compare_mpfi.c
