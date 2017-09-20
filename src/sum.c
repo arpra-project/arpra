@@ -32,6 +32,33 @@ void mpfa_sum (mpfa_ptr z, const mpfa_ptr *x, mpfa_uint_t n)
     mpfa_prec_t prec, prec_internal;
     mpfa_t zNew;
 
+    // Domain violations:
+    // NaN  +  NaN  +  ...  =  NaN
+    // NaN  +  r    +  ...  =  NaN
+    // Inf  +  Inf  +  ...  =  NaN
+    // Inf  +  r    +  ...  =  Inf
+    // s.t. (r in R)
+
+    // Handle domain violations.
+    for (i = 0; i < n; i++) {
+        if (mpfa_nan_p(x[i])) {
+            mpfa_set_nan(z);
+            return;
+        }
+    }
+    for (i = 0; i < n; i++) {
+        if (mpfa_inf_p(x[i])) {
+            for (++i; i < n; i++) {
+                if (mpfa_inf_p(x[i])) {
+                    mpfa_set_nan(z);
+                    return;
+                }
+            }
+            mpfa_set_inf(z);
+            return;
+        }
+    }
+
     // Handle trivial cases.
     if (n <= 2) {
         if (n == 2) {
@@ -44,20 +71,6 @@ void mpfa_sum (mpfa_ptr z, const mpfa_ptr *x, mpfa_uint_t n)
         }
         else {
             mpfa_set_nan(z);
-            return;
-        }
-    }
-
-    // Handle domain violations.
-    for (i = 0; i < n; i++) {
-        if (mpfa_nan_p(x[i])) {
-            mpfa_set_nan(z);
-            return;
-        }
-    }
-    for (i = 0; i < n; i++) {
-        if (mpfa_inf_p(x[i])) {
-            mpfa_set_inf(z);
             return;
         }
     }

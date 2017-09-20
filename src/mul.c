@@ -29,6 +29,14 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y)
     mpfa_prec_t prec, prec_internal;
     mpfa_t zNew;
 
+    // Domain violations:
+    // NaN  *  NaN  =  NaN
+    // NaN  *  r    =  NaN
+    // Inf  *  Inf  =  NaN
+    // Inf  *  0    =  NaN
+    // Inf  *  s    =  Inf
+    // s.t. (r in R) ^ (s in R \ {0})
+
     // Handle domain violations.
     if (mpfa_nan_p(x) || mpfa_nan_p(y)) {
         mpfa_set_nan(z);

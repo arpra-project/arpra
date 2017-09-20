@@ -28,6 +28,10 @@ void mpfa_affine_1 (mpfa_ptr z, mpfa_srcptr x, mpfr_srcptr alpha, mpfr_srcptr ga
     mpfa_prec_t prec, prec_internal;
     mpfa_t zNew;
 
+    // Domain violations:
+    // NaN  =  Nan
+    // Inf  =  Inf
+
     // Handle domain violations.
     if (mpfa_nan_p(x)) {
         mpfa_set_nan(z);
