@@ -51,7 +51,8 @@ tests_libmpfa_test_la_SOURCES = \
 	tests/rand.c tests/rand_mpfr.c tests/rand_mpfa.c		\
 	tests/compare_bounds.c tests/compare_mpfa.c
 if WITH_MPFI
-tests_libmpfa_test_la_SOURCES += tests/rand_mpfi.c tests/compare_mpfi.c
+tests_libmpfa_test_la_SOURCES += tests/rand_mpfi.c tests/logfile_mpfi.c \
+	tests/compare_mpfi.c
 endif WITH_MPFI
 
 # Testsuite programs

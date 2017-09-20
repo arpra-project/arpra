@@ -26,8 +26,8 @@ void test_rand_mpfr (mpfr_ptr z, enum test_rand_mode mode)
     mpfa_uint_t r_ui;
     mpfr_t r_mpfr;
 
-    // Check RNG mode.
     if (test_rand_ready) {
+        // Check RNG mode.
         switch (mode) {
         case TEST_RAND_MIXED:
             r_ui = gmp_urandomm_ui(test_randstate, 4);

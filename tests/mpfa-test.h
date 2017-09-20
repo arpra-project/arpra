@@ -67,15 +67,20 @@ extern int test_log_ready;
 void test_rand_init ();
 void test_rand_clear ();
 
-// Logfile initialise and clear.
-void test_log_init (const char *test_name);
-void test_log_clear ();
-
 // Generate random arguments.
 void test_rand_mpfr (mpfr_ptr z, enum test_rand_mode mode);
 void test_rand_mpfa (mpfa_ptr z, enum test_rand_mode mode);
 #ifdef WITH_MPFI
 void test_rand_mpfi (mpfi_ptr z, enum test_rand_mode mode);
+#endif // WITH_MPFI
+
+// Logfile initialise and clear.
+void test_log_init (const char *test_name);
+void test_log_clear ();
+
+// Write to logfile.
+#ifdef WITH_MPFI
+void test_log_mpfi (mpfi_srcptr x, const char *var_name);
 #endif // WITH_MPFI
 
 // Adjust affine form symbols.
