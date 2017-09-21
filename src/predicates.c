@@ -31,6 +31,11 @@ int mpfa_inf_p (mpfa_srcptr x)
     return !mpfr_nan_p(&(x->centre)) && mpfr_inf_p(&(x->radius));
 }
 
+int mpfa_bounded_p (mpfa_srcptr x)
+{
+    return mpfr_number_p(&(x->centre)) && mpfr_number_p(&(x->radius));
+}
+
 int mpfa_zero_p (mpfa_srcptr x)
 {
     return mpfr_zero_p(&(x->centre)) && mpfr_zero_p(&(x->radius));

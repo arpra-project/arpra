@@ -106,6 +106,7 @@ void mpfa_condense_small (mpfa_ptr z, double fraction);
 // Predicates on affine forms.
 int mpfa_nan_p (mpfa_srcptr x);
 int mpfa_inf_p (mpfa_srcptr x);
+int mpfa_bounded_p (mpfa_srcptr x);
 int mpfa_zero_p (mpfa_srcptr x);
 int mpfa_has_zero_p (mpfa_srcptr x);
 
