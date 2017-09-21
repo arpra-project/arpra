@@ -55,6 +55,15 @@ enum test_rand_mode
 extern "C" {
 #endif
 
+// Global test variables.
+extern mpfa_t x_A, y_A, z_A;
+extern mpfa_uint_t i, n_fail, total_fail;
+extern int test_fixture_ready;
+#ifdef WITH_MPFI
+extern mpfi_t x_I, y_I, z_I, z_AI;
+extern mpfr_t rdiam_I, rdiam_AI, rdiam_diff;
+#endif // WITH_MPFI
+
 // Global RNG variables.
 extern gmp_randstate_t test_randstate;
 extern int test_rand_ready;
@@ -63,29 +72,29 @@ extern int test_rand_ready;
 extern FILE *test_log;
 extern int test_log_ready;
 
-// RNG initialise and clear.
+// Test fixture functions.
+void test_fixture_init (mpfa_prec_t prec, mpfa_prec_t prec_internal);
+void test_fixture_clear ();
+
+// RNG functions.
 void test_rand_init ();
 void test_rand_clear ();
-
-// Generate random arguments.
 void test_rand_mpfr (mpfr_ptr z, enum test_rand_mode mode);
 void test_rand_mpfa (mpfa_ptr z, enum test_rand_mode mode);
 #ifdef WITH_MPFI
 void test_rand_mpfi (mpfi_ptr z, enum test_rand_mode mode);
 #endif // WITH_MPFI
 
-// Logfile initialise and clear.
+// Logfile functions.
 void test_log_init (const char *test_name);
 void test_log_clear ();
-
-// Write to logfile.
 void test_log_printf (const char *format, ...);
 void test_log_mpfr (mpfr_srcptr x, const char *var_name);
 #ifdef WITH_MPFI
 void test_log_mpfi (mpfi_srcptr x, const char *var_name);
 #endif // WITH_MPFI
 
-// Adjust affine form symbols.
+// Affine form symbol adjustments.
 void test_share_syms (mpfa_ptr x, mpfa_ptr y, const mpfa_uint_t share_chance);
 
 // Compare functions.
