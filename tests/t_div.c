@@ -28,25 +28,9 @@ int main (int argc, char *argv[])
     const mpfa_prec_t prec_internal = 128;
     const mpfa_uint_t n_tests = 100000;
 
-    mpfa_t x_A, y_A, z_A;
-    mpfi_t x_I, y_I, z_I, z_AI;
-    mpfr_t rdiam_I, rdiam_AI, diff;
-    mpfa_uint_t i, n_fail, total_fail;
-
     // Init test.
     test_rand_init();
-    mpfa_set_internal_prec(prec_internal);
-    mpfa_init2(x_A, prec);
-    mpfa_init2(y_A, prec);
-    mpfa_init2(z_A, prec);
-    mpfi_init2(x_I, prec);
-    mpfi_init2(y_I, prec);
-    mpfi_init2(z_I, prec);
-    mpfi_init2(z_AI, prec);
-    mpfr_init2(rdiam_I, prec_internal);
-    mpfr_init2(rdiam_AI, prec_internal);
-    mpfr_init2(diff, prec_internal);
-    total_fail = 0;
+    test_fixture_init(prec, prec_internal);
 
     // Test without shared symbols.
     test_log_init("div_not_shared");
@@ -65,7 +49,7 @@ int main (int argc, char *argv[])
         // Compute relative diameter difference in z.
         mpfi_diam_rel(rdiam_AI, z_AI);
         mpfi_diam_rel(rdiam_I, z_I);
-        mpfr_sub(diff, rdiam_I, rdiam_AI, MPFR_RNDN);
+        mpfr_sub(rdiam_diff, rdiam_I, rdiam_AI, MPFR_RNDN);
 
         // Log operands and results.
         if (mpfi_is_inside(z_I, z_AI)) {
@@ -82,7 +66,7 @@ int main (int argc, char *argv[])
         test_log_mpfi(y_I, "y");
         test_log_mpfi(z_I, "zI");
         test_log_mpfi(z_AI, "zA");
-        test_log_mpfr(diff, "zD");
+        test_log_mpfr(rdiam_diff, "zD");
         test_log_printf("\n");
     }
     total_fail += n_fail;
@@ -109,7 +93,7 @@ int main (int argc, char *argv[])
         // Compute relative diameter difference in z.
         mpfi_diam_rel(rdiam_AI, z_AI);
         mpfi_diam_rel(rdiam_I, z_I);
-        mpfr_sub(diff, rdiam_I, rdiam_AI, MPFR_RNDN);
+        mpfr_sub(rdiam_diff, rdiam_I, rdiam_AI, MPFR_RNDN);
 
         // Log operands and results.
         if (mpfi_bounded_p(z_I) == mpfi_bounded_p(z_AI)) {
@@ -123,7 +107,7 @@ int main (int argc, char *argv[])
         test_log_mpfi(y_I, "y");
         test_log_mpfi(z_I, "zI");
         test_log_mpfi(z_AI, "zA");
-        test_log_mpfr(diff, "zD");
+        test_log_mpfr(rdiam_diff, "zD");
         test_log_printf("\n");
     }
     total_fail += n_fail;
@@ -150,7 +134,7 @@ int main (int argc, char *argv[])
         // Compute relative diameter difference in z.
         mpfi_diam_rel(rdiam_AI, z_AI);
         mpfi_diam_rel(rdiam_I, z_I);
-        mpfr_sub(diff, rdiam_I, rdiam_AI, MPFR_RNDN);
+        mpfr_sub(rdiam_diff, rdiam_I, rdiam_AI, MPFR_RNDN);
 
         // Log operands and results.
         if (mpfi_bounded_p(z_I) == mpfi_bounded_p(z_AI)) {
@@ -164,7 +148,7 @@ int main (int argc, char *argv[])
         test_log_mpfi(y_I, "y");
         test_log_mpfi(z_I, "zI");
         test_log_mpfi(z_AI, "zA");
-        test_log_mpfr(diff, "zD");
+        test_log_mpfr(rdiam_diff, "zD");
         test_log_printf("\n");
     }
     total_fail += n_fail;
@@ -172,18 +156,8 @@ int main (int argc, char *argv[])
     test_log_clear();
 
     // Cleanup test.
-    mpfa_clear(x_A);
-    mpfa_clear(y_A);
-    mpfa_clear(z_A);
-    mpfi_clear(x_I);
-    mpfi_clear(y_I);
-    mpfi_clear(z_I);
-    mpfi_clear(z_AI);
-    mpfr_clear(rdiam_I);
-    mpfr_clear(rdiam_AI);
-    mpfr_clear(diff);
     test_rand_clear();
-    mpfr_free_cache();
+    test_fixture_clear();
     return total_fail > 0;
 
 #else // WITH_MPFI
