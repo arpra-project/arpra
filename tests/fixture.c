@@ -22,7 +22,6 @@
 #include "mpfa-test.h"
 
 mpfa_t x_A, y_A, z_A;
-mpfa_uint_t i, n_fail, total_fail;
 int test_fixture_ready = 0;
 #ifdef WITH_MPFI
 mpfi_t x_I, y_I, z_I, z_AI;
@@ -34,6 +33,9 @@ void test_fixture_init (mpfa_prec_t prec, mpfa_prec_t prec_internal)
     // Ensure that we do not double-initialise.
     if (!test_fixture_ready) {
         test_fixture_ready = 1;
+
+        // Set internal precision.
+        mpfa_set_internal_prec(prec_internal);
 
         // Initialise MPFA variables.
         mpfa_init2(x_A, prec);

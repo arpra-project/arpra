@@ -57,7 +57,6 @@ extern "C" {
 
 // Global test variables.
 extern mpfa_t x_A, y_A, z_A;
-extern mpfa_uint_t i, n_fail, total_fail;
 extern int test_fixture_ready;
 #ifdef WITH_MPFI
 extern mpfi_t x_I, y_I, z_I, z_AI;
