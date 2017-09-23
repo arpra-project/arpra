@@ -54,10 +54,6 @@ void test_fixture_init (mpfa_prec_t prec, mpfa_prec_t prec_internal)
         mpfr_init2(rdiam_AI, prec_internal);
         mpfr_init2(rdiam_diff, prec_internal);
 #endif // WITH_MPFI
-
-        // All else.
-        n_fail = 0;
-        total_fail = 0;
     }
     else {
         fprintf(stderr, "Error: test fixture is alreay initialised.\n");
