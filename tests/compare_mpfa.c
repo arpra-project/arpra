@@ -1,5 +1,5 @@
 /*
- * compare_mpfa.c -- Test an MPFA result against another MPFA result.
+ * compare_mpfa.c -- Check the number of differences in two affine forms.
  *
  * Copyright 2017 James Paul Turner.
  *
@@ -21,13 +21,12 @@
 
 #include "mpfa-test.h"
 
-mpfa_int_t test_compare_mpfa (mpfa_srcptr x, mpfa_srcptr y)
+int test_compare_mpfa (mpfa_srcptr x, mpfa_srcptr y)
 {
-    mpfa_int_t fail;
+    int fail = 0;
     mpfa_uint_t term;
 
     // Return the number of differences in x and y.
-    fail = 0;
     if (!mpfr_equal_p(&(x->centre), &(y->centre))) fail++;
     if (!mpfr_equal_p(&(x->radius), &(y->radius))) fail++;
     if (x->nTerms != y->nTerms) fail++;

@@ -51,10 +51,10 @@ tests_libmpfa_test_la_SOURCES = \
 	tests/mpfa-test.h tests/share_syms.c tests/fixture.c		\
 	tests/logfile.c tests/logfile_printf.c tests/logfile_mpfr.c	\
 	tests/rand.c tests/rand_mpfr.c tests/rand_mpfa.c		\
-	tests/compare_bounds.c tests/compare_mpfa.c
+	tests/compare_mpfa.c
 if WITH_MPFI
 tests_libmpfa_test_la_SOURCES += \
-	tests/rand_mpfi.c tests/logfile_mpfi.c tests/compare_mpfi.c
+	tests/bivariate_mpfi.c tests/rand_mpfi.c tests/logfile_mpfi.c
 endif WITH_MPFI
 
 # Testsuite programs

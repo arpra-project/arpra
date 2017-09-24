@@ -1,5 +1,5 @@
 /*
- * share_syms.c -- Randomly share noise symbols between two affine forms.
+ * share_syms.c -- Share noise symbols between two affine forms.
  *
  * Copyright 2017 James Paul Turner.
  *
@@ -21,16 +21,36 @@
 
 #include "mpfa-test.h"
 
-void test_share_syms (mpfa_ptr x, mpfa_ptr y, const mpfa_uint_t share_chance)
+void test_share_all_syms (mpfa_ptr x, mpfa_ptr y)
 {
+
     mpfa_uint_t symbol, term;
     mpfa_int_t x_has_next, y_has_next;
 
-    // Symbol share chance should be from 0 to 9.
-    if (share_chance > 9) {
-        fprintf(stderr, "Error: symbol share chance should be 0 to 9.\n");
-        exit(EXIT_FAILURE);
+    term = 0;
+    x_has_next = x->nTerms > 0;
+    y_has_next = y->nTerms > 0;
+    while (x_has_next || y_has_next) {
+        symbol = mpfa_next_sym();
+
+        // Set x and y symbol if they exist.
+        if (x_has_next) {
+            x->symbols[term] = symbol;
+        }
+        if (y_has_next) {
+            y->symbols[term] = symbol;
+        }
+
+        term++;
+        x_has_next = term < x->nTerms;
+        y_has_next = term < y->nTerms;
     }
+}
+
+void test_share_rand_syms (mpfa_ptr x, mpfa_ptr y)
+{
+    mpfa_uint_t symbol, term;
+    mpfa_int_t x_has_next, y_has_next;
 
     term = 0;
     x_has_next = x->nTerms > 0;
@@ -41,17 +61,16 @@ void test_share_syms (mpfa_ptr x, mpfa_ptr y, const mpfa_uint_t share_chance)
         // Set x symbol if y has no more terms.
         if (!y_has_next) {
             x->symbols[term] = symbol;
-            x_has_next = ++term < x->nTerms;
         }
 
         // Set y symbol if x has no more terms.
         else if (!x_has_next) {
             y->symbols[term] = symbol;
-            y_has_next = ++term < y->nTerms;
         }
 
+        // x and y have symbols left.
         else {
-            if (gmp_urandomm_ui(test_randstate, 10) < share_chance) {
+            if (gmp_urandomb_ui(test_randstate, 1)) {
                 // x and y share this symbol.
                 x->symbols[term] = symbol;
                 y->symbols[term] = symbol;
@@ -61,10 +80,10 @@ void test_share_syms (mpfa_ptr x, mpfa_ptr y, const mpfa_uint_t share_chance)
                 x->symbols[term] = symbol;
                 y->symbols[term] = mpfa_next_sym();
             }
-
-            term++;
-            x_has_next = term < x->nTerms;
-            y_has_next = term < y->nTerms;
         }
+
+        term++;
+        x_has_next = term < x->nTerms;
+        y_has_next = term < y->nTerms;
     }
 }

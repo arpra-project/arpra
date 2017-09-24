@@ -26,139 +26,32 @@ int main (int argc, char *argv[])
 #ifdef WITH_MPFI
     const mpfa_prec_t prec = 53;
     const mpfa_prec_t prec_internal = 128;
-    const mpfa_uint_t n_tests = 100000;
+    const mpfa_uint_t test_n = 100000;
+    mpfa_uint_t i, fail_n;
 
     // Init test.
-    test_rand_init();
     test_fixture_init(prec, prec_internal);
+    test_rand_init();
+    test_log_init("div");
+    fail_n = 0;
 
-    // Test without shared symbols.
-    test_log_init("div_not_shared");
-    for (n_fail = 0, i = 0; i < n_tests; i++) {
-        // Set random x and y.
-        test_rand_mpfa(x_A, TEST_RAND_SMALL);
-        test_rand_mpfa(y_A, TEST_RAND_SMALL);
-        mpfa_get_mpfi(x_I, x_A);
-        mpfa_get_mpfi(y_I, y_A);
-
-        // Compute z with MPFA and MPFI.
-        mpfa_div(z_A, x_A, y_A);
-        mpfi_div(z_I, x_I, y_I);
-        mpfa_get_mpfi(z_AI, z_A);
-
-        // Compute relative diameter difference in z.
-        mpfi_diam_rel(rdiam_AI, z_AI);
-        mpfi_diam_rel(rdiam_I, z_I);
-        mpfr_sub(rdiam_diff, rdiam_I, rdiam_AI, MPFR_RNDN);
-
-        // Log operands and results.
-        if (mpfi_is_inside(z_I, z_AI)) {
-            test_log_printf("#%lu: Pass\n", i);
-        }
-        else if (!mpfi_bounded_p(z_I) && !mpfi_bounded_p(z_AI)) {
-            test_log_printf("#%lu: Pass\n", i);
+    // Start test.
+    for (i = 0; i < test_n; i++) {
+        if (test_bivariate_mpfi(mpfa_div, mpfi_div)) {
+            test_log_printf("#%lu: FAIL\n\n", i);
+            fail_n++;
         }
         else {
-            test_log_printf("#%lu: Fail\n", i);
-            n_fail++;
+            test_log_printf("#%lu: PASS\n\n", i);
         }
-        test_log_mpfi(x_I, "x");
-        test_log_mpfi(y_I, "y");
-        test_log_mpfi(z_I, "zI");
-        test_log_mpfi(z_AI, "zA");
-        test_log_mpfr(rdiam_diff, "zD");
-        test_log_printf("\n");
     }
-    total_fail += n_fail;
-    printf("Not shared sym: %llu out of %llu failed.\n", n_fail, n_tests);
-    test_log_clear();
-
-    // Test with some shared symbols.
-    test_log_init("div_some_shared");
-    for (n_fail = 0, i = 0; i < n_tests; i++) {
-        // Set random x and y.
-        test_rand_mpfa(x_A, TEST_RAND_SMALL);
-        test_rand_mpfa(y_A, TEST_RAND_SMALL);
-        mpfa_get_mpfi(x_I, x_A);
-        mpfa_get_mpfi(y_I, y_A);
-
-        // Randomly share symbols.
-        test_share_syms(x_A, y_A, 5);
-
-        // Compute z with MPFA and MPFI.
-        mpfa_div(z_A, x_A, y_A);
-        mpfi_div(z_I, x_I, y_I);
-        mpfa_get_mpfi(z_AI, z_A);
-
-        // Compute relative diameter difference in z.
-        mpfi_diam_rel(rdiam_AI, z_AI);
-        mpfi_diam_rel(rdiam_I, z_I);
-        mpfr_sub(rdiam_diff, rdiam_I, rdiam_AI, MPFR_RNDN);
-
-        // Log operands and results.
-        if (mpfi_bounded_p(z_I) == mpfi_bounded_p(z_AI)) {
-            test_log_printf("#%lu: Pass\n", i);
-        }
-        else {
-            test_log_printf("#%lu: Fail\n", i);
-            n_fail++;
-        }
-        test_log_mpfi(x_I, "x");
-        test_log_mpfi(y_I, "y");
-        test_log_mpfi(z_I, "zI");
-        test_log_mpfi(z_AI, "zA");
-        test_log_mpfr(rdiam_diff, "zD");
-        test_log_printf("\n");
-    }
-    total_fail += n_fail;
-    printf("Some shared sym: %llu out of %llu failed.\n", n_fail, n_tests);
-    test_log_clear();
-
-    // Test with all shared symbols.
-    test_log_init("div_all_shared");
-    for (n_fail = 0, i = 0; i < n_tests; i++) {
-        // Set random x and y.
-        test_rand_mpfa(x_A, TEST_RAND_SMALL);
-        test_rand_mpfa(y_A, TEST_RAND_SMALL);
-        mpfa_get_mpfi(x_I, x_A);
-        mpfa_get_mpfi(y_I, y_A);
-
-        // Share all symbols.
-        test_share_syms(x_A, y_A, 9);
-
-        // Compute z with MPFA and MPFI.
-        mpfa_div(z_A, x_A, y_A);
-        mpfi_div(z_I, x_I, y_I);
-        mpfa_get_mpfi(z_AI, z_A);
-
-        // Compute relative diameter difference in z.
-        mpfi_diam_rel(rdiam_AI, z_AI);
-        mpfi_diam_rel(rdiam_I, z_I);
-        mpfr_sub(rdiam_diff, rdiam_I, rdiam_AI, MPFR_RNDN);
-
-        // Log operands and results.
-        if (mpfi_bounded_p(z_I) == mpfi_bounded_p(z_AI)) {
-            test_log_printf("#%lu: Pass\n", i);
-        }
-        else {
-            test_log_printf("#%lu: Fail\n", i);
-            n_fail++;
-        }
-        test_log_mpfi(x_I, "x");
-        test_log_mpfi(y_I, "y");
-        test_log_mpfi(z_I, "zI");
-        test_log_mpfi(z_AI, "zA");
-        test_log_mpfr(rdiam_diff, "zD");
-        test_log_printf("\n");
-    }
-    total_fail += n_fail;
-    printf("All shared sym: %llu out of %llu failed.\n", n_fail, n_tests);
-    test_log_clear();
 
     // Cleanup test.
-    test_rand_clear();
+    printf("%llu out of %llu failed.\n", fail_n, test_n);
     test_fixture_clear();
-    return total_fail > 0;
+    test_rand_clear();
+    test_log_clear();
+    return fail_n > 0;
 
 #else // WITH_MPFI
     fprintf(stderr,

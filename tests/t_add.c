@@ -86,7 +86,7 @@ int main (int argc, char *argv[])
         mpfa_get_mpfi(y_I, y_A);
 
         // Randomly share symbols.
-        test_share_syms(x_A, y_A, 5);
+        test_share_rand_syms(x_A, y_A);
 
         // Compute z.
         mpfa_add(z_A, x_A, y_A);
@@ -112,7 +112,7 @@ int main (int argc, char *argv[])
         mpfa_get_mpfi(y_I, y_A);
 
         // Share all symbols.
-        test_share_syms(x_A, y_A, 9);
+        test_share_all_syms(x_A, y_A);
 
         // Compute z.
         mpfa_add(z_A, x_A, y_A);

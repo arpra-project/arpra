@@ -93,14 +93,16 @@ void test_log_mpfr (mpfr_srcptr x, const char *var_name);
 void test_log_mpfi (mpfi_srcptr x, const char *var_name);
 #endif // WITH_MPFI
 
-// Affine form symbol adjustments.
-void test_share_syms (mpfa_ptr x, mpfa_ptr y, const mpfa_uint_t share_chance);
+// Symbol adjustments.
+void test_share_all_syms (mpfa_ptr x, mpfa_ptr y);
+void test_share_rand_syms (mpfa_ptr x, mpfa_ptr y);
 
 // Compare functions.
-mpfa_int_t test_compare_bounds (mpfa_srcptr x, mpfr_srcptr lo, mpfr_srcptr hi);
-mpfa_int_t test_compare_mpfa (mpfa_srcptr x, mpfa_srcptr y);
+int test_compare_mpfa (mpfa_srcptr x, mpfa_srcptr y);
 #ifdef WITH_MPFI
-mpfa_int_t test_compare_mpfi (mpfa_srcptr x, mpfi_srcptr y);
+int test_bivariate_mpfi (
+    void (*f_MPFA) (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y),
+    int  (*f_MPFI) (mpfi_ptr z, mpfi_srcptr x, mpfi_srcptr y));
 #endif // WITH_MPFI
 
 #ifdef __cplusplus
