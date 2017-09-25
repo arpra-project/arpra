@@ -100,6 +100,9 @@ void test_share_rand_syms (mpfa_ptr x, mpfa_ptr y);
 // Compare functions.
 int test_compare_mpfa (mpfa_srcptr x, mpfa_srcptr y);
 #ifdef WITH_MPFI
+int test_univariate_mpfi (
+    void (*f_MPFA) (mpfa_ptr z, mpfa_srcptr x),
+    int  (*f_MPFI) (mpfi_ptr z, mpfi_srcptr x));
 int test_bivariate_mpfi (
     void (*f_MPFA) (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y),
     int  (*f_MPFI) (mpfi_ptr z, mpfi_srcptr x, mpfi_srcptr y));

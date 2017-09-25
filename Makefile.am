@@ -54,7 +54,8 @@ tests_libmpfa_test_la_SOURCES = \
 	tests/compare_mpfa.c
 if WITH_MPFI
 tests_libmpfa_test_la_SOURCES += \
-	tests/bivariate_mpfi.c tests/rand_mpfi.c tests/logfile_mpfi.c
+	tests/univariate_mpfi.c tests/bivariate_mpfi.c			\
+	tests/rand_mpfi.c tests/logfile_mpfi.c
 endif WITH_MPFI
 
 # Testsuite programs
