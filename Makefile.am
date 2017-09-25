@@ -86,4 +86,4 @@ extra_morris_lecar_SOURCES = extra/morris_lecar.c
 
 # Clean miscellaneous files
 mostlyclean-local:
-	-rm -f *.dat
+	-rm -f *.log
