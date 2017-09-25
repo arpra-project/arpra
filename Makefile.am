@@ -17,6 +17,7 @@
 # along with the MPFA library. If not, see <http://www.gnu.org/licenses/>.
 
 ACLOCAL_AMFLAGS = -I m4
+AM_CPPFLAGS = -I$(top_srcdir)/include
 
 # Public headers
 include_HEADERS = include/mpfa.h
@@ -26,8 +27,6 @@ endif WITH_MPFI
 
 # MPFA library
 lib_LTLIBRARIES = lib/libmpfa.la
-
-lib_libmpfa_la_CPPFLAGS = -I$(top_srcdir)/include
 lib_libmpfa_la_SOURCES = \
 	src/mpfa-impl.h	src/add.c src/affine_1.c src/affine_2.c		\
 	src/clear.c src/condense_last_n.c src/condense_small.c		\
@@ -44,8 +43,6 @@ endif WITH_MPFI
 
 # Testsuite helper library
 check_LTLIBRARIES = tests/libmpfa-test.la
-
-tests_libmpfa_test_la_CPPFLAGS = -I$(top_srcdir)/include
 tests_libmpfa_test_la_LIBADD = lib/libmpfa.la
 tests_libmpfa_test_la_SOURCES = \
 	tests/mpfa-test.h tests/share_syms.c tests/fixture.c		\
@@ -58,36 +55,32 @@ tests_libmpfa_test_la_SOURCES += \
 	tests/rand_mpfi.c tests/logfile_mpfi.c
 endif WITH_MPFI
 
-# Testsuite programs
+# Testsuite test programs
 check_PROGRAMS = \
-	tests/t_add tests/t_sub tests/t_mul tests/t_div	tests/t_inv
-
-tests_t_add_CPPFLAGS = -I$(top_srcdir)/include
+	tests/t_add tests/t_sub tests/t_mul tests/t_div	tests/t_neg	\
+	tests/t_inv #tests/t_sqrt tests/t_exp tests/t_log
 tests_t_add_LDADD = tests/libmpfa-test.la
 tests_t_add_SOURCES = tests/t_add.c
-
-tests_t_sub_CPPFLAGS = -I$(top_srcdir)/include
 tests_t_sub_LDADD = tests/libmpfa-test.la
 tests_t_sub_SOURCES = tests/t_sub.c
-
-tests_t_mul_CPPFLAGS = -I$(top_srcdir)/include
 tests_t_mul_LDADD = tests/libmpfa-test.la
 tests_t_mul_SOURCES = tests/t_mul.c
-
-tests_t_div_CPPFLAGS = -I$(top_srcdir)/include
 tests_t_div_LDADD = tests/libmpfa-test.la
 tests_t_div_SOURCES = tests/t_div.c
-
-tests_t_inv_CPPFLAGS = -I$(top_srcdir)/include
+tests_t_neg_LDADD = tests/libmpfa-test.la
+tests_t_neg_SOURCES = tests/t_neg.c
 tests_t_inv_LDADD = tests/libmpfa-test.la
 tests_t_inv_SOURCES = tests/t_inv.c
-
+#tests_t_sqrt_LDADD = tests/libmpfa-test.la
+#tests_t_sqrt_SOURCES = tests/t_sqrt.c
+#tests_t_exp_LDADD = tests/libmpfa-test.la
+#tests_t_exp_SOURCES = tests/t_exp.c
+#tests_t_log_LDADD = tests/libmpfa-test.la
+#tests_t_log_SOURCES = tests/t_log.c
 TESTS = $(check_PROGRAMS)
 
 # Extra programs
 EXTRA_PROGRAMS = extra/morris_lecar
-
-extra_morris_lecar_CPPFLAGS = -I$(top_srcdir)/include
 extra_morris_lecar_LDADD = lib/libmpfa.la
 extra_morris_lecar_SOURCES = extra/morris_lecar.c
 
