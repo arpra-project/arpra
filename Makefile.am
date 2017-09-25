@@ -58,7 +58,7 @@ endif WITH_MPFI
 # Testsuite test programs
 check_PROGRAMS = \
 	tests/t_add tests/t_sub tests/t_mul tests/t_div	tests/t_neg	\
-	tests/t_inv #tests/t_sqrt tests/t_exp tests/t_log
+	tests/t_inv tests/t_sqrt tests/t_exp tests/t_log
 tests_t_add_LDADD = tests/libmpfa-test.la
 tests_t_add_SOURCES = tests/t_add.c
 tests_t_sub_LDADD = tests/libmpfa-test.la
@@ -71,12 +71,12 @@ tests_t_neg_LDADD = tests/libmpfa-test.la
 tests_t_neg_SOURCES = tests/t_neg.c
 tests_t_inv_LDADD = tests/libmpfa-test.la
 tests_t_inv_SOURCES = tests/t_inv.c
-#tests_t_sqrt_LDADD = tests/libmpfa-test.la
-#tests_t_sqrt_SOURCES = tests/t_sqrt.c
-#tests_t_exp_LDADD = tests/libmpfa-test.la
-#tests_t_exp_SOURCES = tests/t_exp.c
-#tests_t_log_LDADD = tests/libmpfa-test.la
-#tests_t_log_SOURCES = tests/t_log.c
+tests_t_sqrt_LDADD = tests/libmpfa-test.la
+tests_t_sqrt_SOURCES = tests/t_sqrt.c
+tests_t_exp_LDADD = tests/libmpfa-test.la
+tests_t_exp_SOURCES = tests/t_exp.c
+tests_t_log_LDADD = tests/libmpfa-test.la
+tests_t_log_SOURCES = tests/t_log.c
 TESTS = $(check_PROGRAMS)
 
 # Extra programs
