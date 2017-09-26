@@ -37,13 +37,7 @@ int main (int argc, char *argv[])
 
     // Start test.
     for (i = 0; i < test_n; i++) {
-        if (test_univariate_mpfi(mpfa_inv, mpfi_inv)) {
-            test_log_printf("#%lu: FAIL\n\n", i);
-            fail_n++;
-        }
-        else {
-            test_log_printf("#%lu: PASS\n\n", i);
-        }
+        if (test_univariate_mpfi(mpfa_inv, mpfi_inv)) fail_n++;
     }
 
     // Cleanup test.

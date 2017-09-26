@@ -47,17 +47,18 @@ int test_bivariate_mpfi (
     mpfr_sub(rdiam_diff, rdiam_I, rdiam_AI, MPFR_RNDN);
 
     // Log unshared symbol result.
-    if ((mpfr_cmp(&(z_I->left), &(z_AI->left)) >= 0)
-            || (mpfr_cmp(&(z_I->right), &(z_AI->right)) <= 0)) {
-        // Fail if MPFA range does not include MPFI range.
-        test_log_printf("Unshared symbol: PASS\n");
+    test_log_printf("Result (unshared symbol): ");
+    if (mpfi_bounded_p(z_I) != mpfi_bounded_p(z_AI)) {
+        test_log_printf("FAIL\n");
+        fail = 1;
     }
-    else if (!mpfi_bounded_p(z_I) && !mpfi_bounded_p(z_AI)) {
-        test_log_printf("Unshared symbol: PASS\n");
+    else if ((mpfr_cmp(&(z_I->left), &(z_AI->left)) < 0)
+             || (mpfr_cmp(&(z_I->right), &(z_AI->right)) > 0)) {
+        test_log_printf("FAIL\n");
+        fail = 1;
     }
     else {
-        test_log_printf("Unshared symbol: FAIL\n");;
-        fail++;
+        test_log_printf("PASS\n");;
     }
     test_log_mpfi(z_AI, "z_A");
     test_log_mpfr(rdiam_diff, "z_D");
@@ -71,12 +72,13 @@ int test_bivariate_mpfi (
     mpfr_sub(rdiam_diff, rdiam_I, rdiam_AI, MPFR_RNDN);
 
     // Log randomly shared symbol result.
+    test_log_printf("Result (randomly shared symbol): ");
     if (mpfi_bounded_p(z_I) == mpfi_bounded_p(z_AI)) {
-        test_log_printf("Randomly shared symbol: PASS\n");
+        test_log_printf("PASS\n");
     }
     else {
-        test_log_printf("Randomly shared symbol: FAIL\n");
-        fail++;
+        test_log_printf("FAIL\n");
+        fail = 1;
     }
     test_log_mpfi(z_AI, "z_A");
     test_log_mpfr(rdiam_diff, "z_D");
@@ -90,15 +92,17 @@ int test_bivariate_mpfi (
     mpfr_sub(rdiam_diff, rdiam_I, rdiam_AI, MPFR_RNDN);
 
     // Log all shared symbol result.
+    test_log_printf("Result (all shared symbol): ");
     if (mpfi_bounded_p(z_I) == mpfi_bounded_p(z_AI)) {
-        test_log_printf("All shared symbol: PASS\n");
+        test_log_printf("PASS\n");
     }
     else {
-        test_log_printf("All shared symbol: FAIL\n");
-        fail++;
+        test_log_printf("FAIL\n");
+        fail = 1;
     }
     test_log_mpfi(z_AI, "z_A");
     test_log_mpfr(rdiam_diff, "z_D");
 
+    test_log_printf("\n");
     return fail;
 }

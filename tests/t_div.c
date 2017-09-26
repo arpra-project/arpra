@@ -37,13 +37,7 @@ int main (int argc, char *argv[])
 
     // Start test.
     for (i = 0; i < test_n; i++) {
-        if (test_bivariate_mpfi(mpfa_div, mpfi_div)) {
-            test_log_printf("#%lu: FAIL\n\n", i);
-            fail_n++;
-        }
-        else {
-            test_log_printf("#%lu: PASS\n\n", i);
-        }
+        if (test_bivariate_mpfi(mpfa_div, mpfi_div)) fail_n++;
     }
 
     // Cleanup test.

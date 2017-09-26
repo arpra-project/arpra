@@ -44,20 +44,22 @@ int test_univariate_mpfi (
     mpfr_sub(rdiam_diff, rdiam_I, rdiam_AI, MPFR_RNDN);
 
     // Log result.
-    if ((mpfr_cmp(&(z_I->left), &(z_AI->left)) >= 0)
-            || (mpfr_cmp(&(z_I->right), &(z_AI->right)) <= 0)) {
-        // Fail if MPFA range does not include MPFI range.
-        test_log_printf("Unshared symbol: PASS\n");
+    test_log_printf("Result: ");
+    if (mpfi_bounded_p(z_I) != mpfi_bounded_p(z_AI)) {
+        test_log_printf("FAIL\n");
+        fail = 1;
     }
-    else if (!mpfi_bounded_p(z_I) && !mpfi_bounded_p(z_AI)) {
-        test_log_printf("Unshared symbol: PASS\n");
+    else if ((mpfr_cmp(&(z_I->left), &(z_AI->left)) < 0)
+             || (mpfr_cmp(&(z_I->right), &(z_AI->right)) > 0)) {
+        test_log_printf("FAIL\n");
+        fail = 1;
     }
     else {
-        test_log_printf("Unshared symbol: FAIL\n");;
-        fail++;
+        test_log_printf("PASS\n");;
     }
     test_log_mpfi(z_AI, "z_A");
     test_log_mpfr(rdiam_diff, "z_D");
 
+    test_log_printf("\n");
     return fail;
 }
