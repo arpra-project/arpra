@@ -27,24 +27,26 @@ int test_bivariate_mpfi (
 {
     int fail = 0;
 
-    // Set and log random x and y.
-    test_rand_mpfa(x_A, TEST_RAND_SMALL);
-    test_rand_mpfa(y_A, TEST_RAND_SMALL);
-    test_log_mpfi(x_I, "x_I");
-    test_log_mpfi(y_I, "y_I");
-
-    // Compute and log z with MPFI.
+    // Convert arguments.
     mpfa_get_mpfi(x_I, x_A);
     mpfa_get_mpfi(y_I, y_A);
+    test_log_mpfi(x_I, "x  ");
+    test_log_mpfi(y_I, "y  ");
+
+    // Compute z with MPFI.
     f_MPFI(z_I, x_I, y_I);
     test_log_mpfi(z_I, "z_I");
 
     // Compute z with MPFA (unshared symbols).
     f_MPFA(z_A, x_A, y_A);
     mpfa_get_mpfi(z_AI, z_A);
+    test_log_mpfi(z_AI, "z_A");
+
+    // Compute relative diameter difference.
     mpfi_diam_rel(rdiam_I, z_I);
     mpfi_diam_rel(rdiam_AI, z_AI);
     mpfr_sub(rdiam_diff, rdiam_I, rdiam_AI, MPFR_RNDN);
+    test_log_mpfr(rdiam_diff, "z_D");
 
     // Log unshared symbol result.
     test_log_printf("Result (unshared symbol): ");
@@ -58,18 +60,20 @@ int test_bivariate_mpfi (
         fail = 1;
     }
     else {
-        test_log_printf("PASS\n");;
+        test_log_printf("PASS\n");
     }
-    test_log_mpfi(z_AI, "z_A");
-    test_log_mpfr(rdiam_diff, "z_D");
 
     // Compute z with MPFA (randomly shared symbols).
     test_share_rand_syms(x_A, y_A);
     f_MPFA(z_A, x_A, y_A);
     mpfa_get_mpfi(z_AI, z_A);
+    test_log_mpfi(z_AI, "z_A");
+
+    // Compute relative diameter difference.
     mpfi_diam_rel(rdiam_I, z_I);
     mpfi_diam_rel(rdiam_AI, z_AI);
     mpfr_sub(rdiam_diff, rdiam_I, rdiam_AI, MPFR_RNDN);
+    test_log_mpfr(rdiam_diff, "z_D");
 
     // Log randomly shared symbol result.
     test_log_printf("Result (randomly shared symbol): ");
@@ -80,16 +84,18 @@ int test_bivariate_mpfi (
         test_log_printf("FAIL\n");
         fail = 1;
     }
-    test_log_mpfi(z_AI, "z_A");
-    test_log_mpfr(rdiam_diff, "z_D");
 
     // Compute z with MPFA (all shared symbols).
     test_share_all_syms(x_A, y_A);
     f_MPFA(z_A, x_A, y_A);
     mpfa_get_mpfi(z_AI, z_A);
+    test_log_mpfi(z_AI, "z_A");
+
+    // Compute relative diameter difference.
     mpfi_diam_rel(rdiam_I, z_I);
     mpfi_diam_rel(rdiam_AI, z_AI);
     mpfr_sub(rdiam_diff, rdiam_I, rdiam_AI, MPFR_RNDN);
+    test_log_mpfr(rdiam_diff, "z_D");
 
     // Log all shared symbol result.
     test_log_printf("Result (all shared symbol): ");
@@ -100,8 +106,6 @@ int test_bivariate_mpfi (
         test_log_printf("FAIL\n");
         fail = 1;
     }
-    test_log_mpfi(z_AI, "z_A");
-    test_log_mpfr(rdiam_diff, "z_D");
 
     test_log_printf("\n");
     return fail;

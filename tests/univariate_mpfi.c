@@ -27,21 +27,24 @@ int test_univariate_mpfi (
 {
     int fail = 0;
 
-    // Set and log random x.
-    test_rand_mpfa(x_A, TEST_RAND_SMALL);
-    test_log_mpfi(x_I, "x_I");
-
-    // Compute and log z with MPFI.
+    // Convert arguments.
     mpfa_get_mpfi(x_I, x_A);
+    test_log_mpfi(x_I, "x  ");
+
+    // Compute z with MPFI.
     f_MPFI(z_I, x_I);
     test_log_mpfi(z_I, "z_I");
 
     // Compute z with MPFA.
     f_MPFA(z_A, x_A);
     mpfa_get_mpfi(z_AI, z_A);
+    test_log_mpfi(z_AI, "z_A");
+
+    // Compute relative diameter difference.
     mpfi_diam_rel(rdiam_I, z_I);
     mpfi_diam_rel(rdiam_AI, z_AI);
     mpfr_sub(rdiam_diff, rdiam_I, rdiam_AI, MPFR_RNDN);
+    test_log_mpfr(rdiam_diff, "z_D");
 
     // Log result.
     test_log_printf("Result: ");
@@ -55,10 +58,8 @@ int test_univariate_mpfi (
         fail = 1;
     }
     else {
-        test_log_printf("PASS\n");;
+        test_log_printf("PASS\n");
     }
-    test_log_mpfi(z_AI, "z_A");
-    test_log_mpfr(rdiam_diff, "z_D");
 
     test_log_printf("\n");
     return fail;

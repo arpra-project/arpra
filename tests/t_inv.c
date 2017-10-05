@@ -37,7 +37,10 @@ int main (int argc, char *argv[])
 
     // Start test.
     for (i = 0; i < test_n; i++) {
-        if (test_univariate_mpfi(mpfa_inv, mpfi_inv)) fail_n++;
+        test_rand_mpfa(x_A, TEST_RAND_SMALL);
+        if (test_univariate_mpfi(mpfa_inv, mpfi_inv)) {
+            fail_n++;
+        }
     }
 
     // Cleanup test.
