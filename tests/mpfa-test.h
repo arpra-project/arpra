@@ -79,9 +79,13 @@ void test_fixture_clear ();
 void test_rand_init ();
 void test_rand_clear ();
 void test_rand_mpfr (mpfr_ptr z, enum test_rand_mode mode);
-void test_rand_mpfa (mpfa_ptr z, enum test_rand_mode mode);
+void test_rand_mpfa (mpfa_ptr z,
+                     enum test_rand_mode mode_centre,
+                     enum test_rand_mode mode_deviations);
 #ifdef WITH_MPFI
-void test_rand_mpfi (mpfi_ptr z, enum test_rand_mode mode);
+void test_rand_mpfi (mpfi_ptr z,
+                     enum test_rand_mode mode_low,
+                     enum test_rand_mode mode_high);
 #endif // WITH_MPFI
 
 // Logfile functions.

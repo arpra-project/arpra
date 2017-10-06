@@ -37,7 +37,7 @@ int main (int argc, char *argv[])
 
     // Start test.
     for (i = 0; i < test_n; i++) {
-        test_rand_mpfa(x_A, TEST_RAND_SMALL);
+        test_rand_mpfa(x_A, TEST_RAND_POS, TEST_RAND_SMALL);
         if (test_univariate_mpfi(mpfa_sqrt, mpfi_sqrt)) {
             fail_n++;
         }

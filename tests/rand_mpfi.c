@@ -21,9 +21,11 @@
 
 #include "mpfa-test.h"
 
-void test_rand_mpfi (mpfi_ptr z, enum test_rand_mode mode)
+void test_rand_mpfi (mpfi_ptr z,
+                     enum test_rand_mode mode_low,
+                     enum test_rand_mode mode_high)
 {
     // Set random lower and upper bound.
-    test_rand_mpfr(&(z->left), mode);
-    test_rand_mpfr(&(z->right), mode);
+    test_rand_mpfr(&(z->left), mode_low);
+    test_rand_mpfr(&(z->right), mode_high);
 }

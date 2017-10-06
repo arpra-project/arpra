@@ -21,7 +21,9 @@
 
 #include "mpfa-test.h"
 
-void test_rand_mpfa (mpfa_ptr z, enum test_rand_mode mode)
+void test_rand_mpfa (mpfa_ptr z,
+                     enum test_rand_mode mode_centre,
+                     enum test_rand_mode mode_deviations)
 {
     mpfa_uint_t zTerm;
     mpfa_prec_t prec, prec_internal;
@@ -35,7 +37,7 @@ void test_rand_mpfa (mpfa_ptr z, enum test_rand_mode mode)
     mpfr_set_ui(&(z->radius), 0, MPFR_RNDN);
 
     // Set random centre.
-    test_rand_mpfr(&(z->centre), mode);
+    test_rand_mpfr(&(z->centre), mode_centre);
 
     // Clear existing deviation terms.
     mpfa_clear_terms(z);
@@ -51,11 +53,19 @@ void test_rand_mpfa (mpfa_ptr z, enum test_rand_mode mode)
     for (zTerm = 0; zTerm < z->nTerms; zTerm++) {
         z->symbols[zTerm] = mpfa_next_sym();
         mpfr_init2(&(z->deviations[zTerm]), prec);
-        test_rand_mpfr(&(z->deviations[zTerm]), mode);
+        test_rand_mpfr(&(z->deviations[zTerm]), mode_deviations);
 
         // Add abs(term) to radius.
         mpfr_abs(temp, &(z->deviations[zTerm]), MPFR_RNDU);
         mpfr_add(&(z->radius), &(z->radius), temp, MPFR_RNDU);
+    }
+
+    // Handle domain violations.
+    if (mpfr_nan_p(&(z->centre)) || mpfr_nan_p(&(z->radius))) {
+        mpfa_set_nan(z);
+    }
+    else if (mpfr_inf_p(&(z->centre)) || mpfr_inf_p(&(z->radius))) {
+        mpfa_set_inf(z);
     }
 
     // Clear vars.
