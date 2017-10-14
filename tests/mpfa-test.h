@@ -101,13 +101,13 @@ void test_log_mpfi (mpfi_srcptr x, const char *var_name);
 void test_share_all_syms (mpfa_ptr x, mpfa_ptr y);
 void test_share_rand_syms (mpfa_ptr x, mpfa_ptr y);
 
-// Compare functions.
+// Test functions.
 int test_compare_mpfa (mpfa_srcptr x, mpfa_srcptr y);
 #ifdef WITH_MPFI
-int test_univariate_mpfi (
+void test_univariate (
     void (*f_MPFA) (mpfa_ptr z, mpfa_srcptr x),
     int  (*f_MPFI) (mpfi_ptr z, mpfi_srcptr x));
-int test_bivariate_mpfi (
+void test_bivariate (
     void (*f_MPFA) (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y),
     int  (*f_MPFI) (mpfi_ptr z, mpfi_srcptr x, mpfi_srcptr y));
 #endif // WITH_MPFI
