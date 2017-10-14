@@ -74,8 +74,10 @@ void mpfa_set_inf (mpfa_ptr z);
 void mpfa_set_zero (mpfa_ptr z);
 
 // Affine operations.
-void mpfa_affine_1 (mpfa_ptr z, mpfa_srcptr x, mpfr_srcptr alpha, mpfr_srcptr gamma, mpfr_srcptr delta);
-void mpfa_affine_2 (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y, mpfr_srcptr alpha, mpfr_srcptr beta, mpfr_srcptr gamma, mpfr_srcptr delta);
+void mpfa_affine_1 (mpfa_ptr z, mpfa_srcptr x,
+                    mpfr_srcptr alpha, mpfr_srcptr gamma, mpfr_srcptr delta);
+void mpfa_affine_2 (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y,
+                    mpfr_srcptr alpha, mpfr_srcptr beta, mpfr_srcptr gamma, mpfr_srcptr delta);
 void mpfa_add (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y);
 void mpfa_sub (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y);
 void mpfa_neg (mpfa_ptr z, mpfa_srcptr x);
@@ -109,6 +111,8 @@ int mpfa_inf_p (mpfa_srcptr x);
 int mpfa_bounded_p (mpfa_srcptr x);
 int mpfa_zero_p (mpfa_srcptr x);
 int mpfa_has_zero_p (mpfa_srcptr x);
+int mpfa_has_pos_p (mpfa_srcptr x);
+int mpfa_has_neg_p (mpfa_srcptr x);
 
 // Get new deviation symbols.
 mpfa_uint_t mpfa_next_sym ();

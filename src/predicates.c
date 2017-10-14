@@ -43,5 +43,18 @@ int mpfa_zero_p (mpfa_srcptr x)
 
 int mpfa_has_zero_p (mpfa_srcptr x)
 {
-    return !mpfa_nan_p(x) && mpfr_cmpabs(&(x->centre), &(x->radius)) <= 0;
+    return !mpfa_nan_p(x)
+           && mpfr_cmpabs(&(x->centre), &(x->radius)) <= 0;
+}
+
+int mpfa_has_pos_p (mpfa_srcptr x)
+{
+    return mpfr_sgn(&(x->centre)) > 0
+           || mpfr_cmpabs(&(x->centre), &(x->radius)) < 0;
+}
+
+int mpfa_has_neg_p (mpfa_srcptr x)
+{
+    return mpfr_sgn(&(x->centre)) < 0
+           || mpfr_cmpabs(&(x->centre), &(x->radius)) < 0;
 }
