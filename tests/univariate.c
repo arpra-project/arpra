@@ -1,5 +1,5 @@
 /*
- * univariate_mpfi.c -- Test bivariate MPFA function against MPFI function.
+ * univariate.c -- Compare univariate MPFA and MPFI functions.
  *
  * Copyright 2017 James Paul Turner.
  *
@@ -21,12 +21,10 @@
 
 #include "mpfa-test.h"
 
-int test_univariate_mpfi (
+void test_univariate (
     void (*f_MPFA) (mpfa_ptr z, mpfa_srcptr x),
     int  (*f_MPFI) (mpfi_ptr z, mpfi_srcptr x))
 {
-    int fail = 0;
-
     // Convert arguments.
     mpfa_get_mpfi(x_I, x_A);
     test_log_mpfi(x_I, "x  ");
@@ -43,24 +41,6 @@ int test_univariate_mpfi (
     // Compute relative diameter difference.
     mpfi_diam_rel(rdiam_I, z_I);
     mpfi_diam_rel(rdiam_AI, z_AI);
-    mpfr_sub(rdiam_diff, rdiam_I, rdiam_AI, MPFR_RNDN);
+    mpfr_sub(rdiam_diff, rdiam_AI, rdiam_I, MPFR_RNDN);
     test_log_mpfr(rdiam_diff, "z_D");
-
-    // Log result.
-    test_log_printf("Result: ");
-    if (mpfi_bounded_p(z_I) != mpfi_bounded_p(z_AI)) {
-        test_log_printf("FAIL\n");
-        fail = 1;
-    }
-    else if ((mpfr_cmp(&(z_I->left), &(z_AI->left)) < 0)
-             || (mpfr_cmp(&(z_I->right), &(z_AI->right)) > 0)) {
-        test_log_printf("FAIL\n");
-        fail = 1;
-    }
-    else {
-        test_log_printf("PASS\n");
-    }
-
-    test_log_printf("\n");
-    return fail;
 }
