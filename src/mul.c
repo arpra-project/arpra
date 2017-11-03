@@ -32,10 +32,10 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y)
     // Domain violations:
     // NaN  *  NaN  =  NaN
     // NaN  *  r    =  NaN
-    // Inf  *  Inf  =  NaN
     // Inf  *  0    =  NaN
+    // Inf  *  Inf  =  Inf
     // Inf  *  s    =  Inf
-    // s.t. (r in R) ^ (s in R \ {0})
+    // s.t. (r in R) and (s in R \ {0})
 
     // Handle domain violations.
     if (mpfa_nan_p(x) || mpfa_nan_p(y)) {
@@ -43,7 +43,7 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y)
         return;
     }
     if (mpfa_inf_p(x)) {
-        if (mpfa_inf_p(y) || mpfa_has_zero_p(y)) {
+        if (mpfa_has_zero_p(y)) {
             mpfa_set_nan(z);
         }
         else {
@@ -52,7 +52,7 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y)
         return;
     }
     if (mpfa_inf_p(y)) {
-        if (mpfa_inf_p(x) || mpfa_has_zero_p(x)) {
+        if (mpfa_has_zero_p(x)) {
             mpfa_set_nan(z);
         }
         else {

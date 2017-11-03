@@ -55,7 +55,8 @@
  */
 
 // Internal helper functions.
-mpfa_int_t mpfa_term (mpfr_ptr z, mpfr_srcptr x, mpfr_srcptr y, mpfr_srcptr alpha, mpfr_srcptr beta, mpfr_srcptr gamma);
+mpfa_int_t mpfa_term (mpfr_ptr z, mpfr_srcptr x, mpfr_srcptr y,
+                      mpfr_srcptr alpha, mpfr_srcptr beta, mpfr_srcptr gamma);
 void mpfa_error (mpfr_ptr error, mpfr_srcptr x);
 
 #endif // MPFA_IMPL_H
