@@ -53,21 +53,18 @@ void mpfa_log (mpfa_ptr z, mpfa_srcptr x)
         }
     }
     else {
-        mpfa_get_bounds(xa, xb, x);
-
         // Handle domain violations.
-        if (mpfr_nan_p(xa) || mpfr_nan_p(xb)) {
+        if (mpfa_nan_p(x) || mpfa_has_neg_p(x)) {
             mpfa_set_nan(z);
         }
-        else if (mpfr_sgn(xa) < 0) {
-            mpfa_set_nan(z);
-        }
-        else if (mpfr_sgn(xa) == 0) {
+        else if (mpfa_has_zero_p(x)) {
             mpfa_set_inf(z);
         }
 
         // Domain is OK.
         else {
+            mpfa_get_bounds(xa, xb, x);
+
             // compute alpha
             mpfr_log(alpha, xb, MPFR_RNDN);
             mpfr_log(temp, xa, MPFR_RNDN);

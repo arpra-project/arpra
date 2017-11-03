@@ -54,21 +54,18 @@ void mpfa_inv (mpfa_ptr z, mpfa_srcptr x)
         }
     }
     else {
-        mpfa_get_bounds(xa, xb, x);
-
         // Handle domain violations.
-        if (mpfr_nan_p(xa) || mpfr_nan_p(xb)) {
+        if (mpfa_nan_p(x)) {
             mpfa_set_nan(z);
         }
-        else if (mpfr_zero_p(xa) || mpfr_zero_p(xb)) {
-            mpfa_set_inf(z);
-        }
-        else if (mpfr_sgn(xa) != mpfr_sgn(xb)) {
+        else if (mpfa_has_zero_p(x)) {
             mpfa_set_inf(z);
         }
 
         // Domain is OK.
         else {
+            mpfa_get_bounds(xa, xb, x);
+
             // Handle negative x.
             sign = mpfr_sgn(xa);
             if (sign < 0) {

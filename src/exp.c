@@ -53,18 +53,18 @@ void mpfa_exp (mpfa_ptr z, mpfa_srcptr x)
         }
     }
     else {
-        mpfa_get_bounds(xa, xb, x);
-
         // Handle domain violations.
-        if (mpfr_nan_p(xa) || mpfr_nan_p(xb)) {
+        if (mpfa_nan_p(x)) {
             mpfa_set_nan(z);
         }
-        else if (mpfr_inf_p(xb)) {
+        else if (mpfa_inf_p(x)) {
             mpfa_set_inf(z);
         }
 
         // Domain is OK.
         else {
+            mpfa_get_bounds(xa, xb, x);
+
             // compute alpha
             mpfr_exp(alpha, xb, MPFR_RNDN);
             mpfr_exp(temp, xa, MPFR_RNDN);
