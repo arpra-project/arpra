@@ -31,14 +31,27 @@ int main (int argc, char *argv[])
 
     // Init test.
     test_fixture_init(prec, prec_internal);
-    test_rand_init();
     test_log_init("inv");
+    test_rand_init();
     fail_n = 0;
 
-    // Start test.
+    // Run test.
     for (i = 0; i < test_n; i++) {
         test_rand_mpfa(x_A, TEST_RAND_MIXED, TEST_RAND_SMALL);
-        if (test_univariate_mpfi(mpfa_inv, mpfi_inv)) {
+
+        // Pass criteria:
+        // 1) MPFA x contains 0 and MPFA z = Inf.
+        // 2) MPFA z contains MPFI z.
+        test_univariate(mpfa_inv, mpfi_inv);
+        if (mpfa_has_zero_p(x_A) && mpfa_inf_p(z_A)) {
+            test_log_printf("Result: PASS\n\n");
+        }
+        else if (mpfr_greaterequal_p(&(z_I->left), &(z_AI->left))
+                 && mpfr_lessequal_p(&(z_I->right), &(z_AI->right))) {
+            test_log_printf("Result: PASS\n\n");
+        }
+        else {
+            test_log_printf("Result: FAIL\n\n");
             fail_n++;
         }
     }
@@ -46,8 +59,8 @@ int main (int argc, char *argv[])
     // Cleanup test.
     printf("%llu out of %llu failed.\n", fail_n, test_n);
     test_fixture_clear();
-    test_rand_clear();
     test_log_clear();
+    test_rand_clear();
     return fail_n > 0;
 
 #else // WITH_MPFI

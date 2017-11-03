@@ -27,28 +27,68 @@ int main (int argc, char *argv[])
     const mpfa_prec_t prec = 53;
     const mpfa_prec_t prec_internal = 128;
     const mpfa_uint_t test_n = 100000;
-    mpfa_uint_t i, fail_n;
+    mpfa_uint_t i, fail, fail_n;
 
     // Init test.
     test_fixture_init(prec, prec_internal);
-    test_rand_init();
     test_log_init("sub");
+    test_rand_init();
     fail_n = 0;
 
-    // Start test.
+    // Run test.
     for (i = 0; i < test_n; i++) {
+        fail = 0;
         test_rand_mpfa(x_A, TEST_RAND_MIXED, TEST_RAND_SMALL);
         test_rand_mpfa(y_A, TEST_RAND_MIXED, TEST_RAND_SMALL);
-        if (test_bivariate_mpfi(mpfa_sub, mpfi_sub)) {
-            fail_n++;
+
+        // Pass criteria (unshared symbols):
+        // 1) MPFA z contains MPFI z.
+        // 2) MPFA z unbounded and MPFI z unbounded.
+        test_bivariate(mpfa_sub, mpfi_sub);
+        if (mpfr_greaterequal_p(&(z_I->left), &(z_AI->left))
+                && mpfr_lessequal_p(&(z_I->right), &(z_AI->right))) {
+            test_log_printf("Result (unshared symbols): PASS\n\n");
         }
+        else if (!mpfa_bounded_p(z_A) && !mpfi_bounded_p(z_I)) {
+            test_log_printf("Result (unshared symbols): PASS\n\n");
+        }
+        else {
+            test_log_printf("Result (unshared symbols): FAIL\n\n");
+            fail = 1;
+        }
+
+        // Pass criteria (random shared symbols):
+        // 1) bounded(MPFA z) = bounded(MPFI z).
+        test_share_rand_syms(x_A, y_A);
+        test_bivariate(mpfa_sub, mpfi_sub);
+        if (mpfa_bounded_p(z_A) == mpfi_bounded_p(z_I)) {
+            test_log_printf("Result (random shared symbols): PASS\n\n");
+        }
+        else {
+            test_log_printf("Result (random shared symbols): FAIL\n\n");
+            fail = 1;
+        }
+
+        // Pass criteria (all shared symbols):
+        // 1) bounded(MPFA z) = bounded(MPFI z).
+        test_share_all_syms(x_A, y_A);
+        test_bivariate(mpfa_sub, mpfi_sub);
+        if (mpfa_bounded_p(z_A) == mpfi_bounded_p(z_I)) {
+            test_log_printf("Result (all shared symbols): PASS\n\n");
+        }
+        else {
+            test_log_printf("Result (all shared symbols): FAIL\n\n");
+            fail = 1;
+        }
+
+        if (fail) fail_n++;
     }
 
     // Cleanup test.
     printf("%llu out of %llu failed.\n", fail_n, test_n);
     test_fixture_clear();
-    test_rand_clear();
     test_log_clear();
+    test_rand_clear();
     return fail_n > 0;
 
 #else // WITH_MPFI
