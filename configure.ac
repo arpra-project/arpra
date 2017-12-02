@@ -17,7 +17,7 @@
 # along with the MPFA library. If not, see <http://www.gnu.org/licenses/>.
 
 AC_PREREQ([2.65])
-AC_INIT([MPFA], [1.0.0-dev], [https://github.com/jamesturner246/mpfa/issues])
+AC_INIT([MPFA], [0.0.0], [https://github.com/jamesturner246/mpfa/issues])
 
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_SRCDIR([include/mpfa.h])
