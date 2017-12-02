@@ -48,13 +48,13 @@ AC_CHECK_LIB([mpfr], [mpfr_init], [],
 
 # Interval support (requires MPFI)
 AC_ARG_WITH([mpfi],
-  [AS_HELP_STRING([--without-mpfi], [disable MPFI interval support])],
+  [AS_HELP_STRING([--with-mpfi], [enable MPFI interval support])],
   [case "${withval}" in
     yes) with_mpfi=yes ;;
     no)  with_mpfi=no ;;
-    *) AC_MSG_ERROR([bad value ${withval} for --without-mpfi: yes or no]) ;;
+    *) AC_MSG_ERROR([bad value ${withval} for --with-mpfi: yes or no]) ;;
   esac],
-  [with_mpfi=yes])
+  [with_mpfi=no])
 AS_IF([test "x${with_mpfi}" = xyes],
   [AC_DEFINE([WITH_MPFI], [1], [Define if MPFI interval support is enabled.])
    AC_CHECK_HEADER([mpfi.h], [],
