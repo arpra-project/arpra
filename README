@@ -57,7 +57,8 @@ typical installation procedure consists of the following commands:
     make
     sudo make install
 
-The software can be uninstalled by running the following:
+All installed MPFA files can be cleanly uninstalled from the system by
+running the following command:
 
     sudo make uninstall
 
@@ -70,15 +71,14 @@ arithmetic library built on top of GNU MPFR. Enable support by passing
     sudo make install
 
 Note that the MPFI package must already be installed correctly on the
-system. If MPFA was configured with MPFI support, a suite of test
-programs, for testing MPFA functionality, can be executed with the
-following command:
+system. See <http://perso.ens-lyon.fr/nathalie.revol/software.html> for
+more information on the MPFI interval arithmetic library. If MPFA was
+configured with MPFI support, a suite of test programs, for testing MPFA
+functionality, can be executed with the following command:
 
     ./configure --with-mpfi
     make check
 
-See <http://perso.ens-lyon.fr/nathalie.revol/software.html> for more
-on the MPFI interval arithmetic library.
 
 Contribute
 ==========
