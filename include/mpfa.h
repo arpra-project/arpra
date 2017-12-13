@@ -41,7 +41,7 @@ struct __mpfa_struct
 
 typedef struct __mpfa_struct mpfa_t[1];
 typedef struct __mpfa_struct *mpfa_ptr;
-typedef __gmp_const struct __mpfa_struct *mpfa_srcptr;
+typedef const struct __mpfa_struct *mpfa_srcptr;
 
 #ifdef __cplusplus
 extern "C" {
