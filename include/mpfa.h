@@ -101,9 +101,9 @@ void mpfa_set_prec (mpfa_ptr z, mpfa_prec_t prec);
 void mpfa_set_default_prec (mpfa_prec_t prec);
 void mpfa_set_internal_prec (mpfa_prec_t prec);
 
-// Condense deviation terms.
-void mpfa_condense_last_n (mpfa_ptr z, mpfa_uint_t n);
-void mpfa_condense_small (mpfa_ptr z, double fraction);
+// Deviation term reduction.
+void mpfa_reduce_last_n (mpfa_ptr z, mpfa_uint_t n);
+void mpfa_reduce_small (mpfa_ptr z, double fraction);
 
 // Predicates on affine forms.
 int mpfa_nan_p (mpfa_srcptr x);

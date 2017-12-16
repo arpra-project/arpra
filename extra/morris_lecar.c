@@ -30,8 +30,8 @@ const static double step_size = 1.0;
 const static mpfa_uint_t n_grp1 = 10;
 const static mpfa_uint_t n_grp2 = 10;
 
-const static mpfa_uint_t condense_step = 50;
-const static double condense_ratio = 0.3;
+const static mpfa_uint_t reduce_step = 50;
+const static double reduce_ratio = 0.3;
 
 const static mpfa_prec_t prec = 53;
 
@@ -316,12 +316,12 @@ int main (int argc, char *argv[])
             mpfa_mul(dV, dV, dt);
             mpfa_add(&(nrn1_V[j]), &(nrn1_V[j]), dV);
 
-            mpfa_condense_last_n(&(nrn1_N[j]), (nrn1_N[j].nTerms - N_mark));
-            mpfa_condense_last_n(&(nrn1_V[j]), (nrn1_V[j].nTerms - V_mark));
+            mpfa_reduce_last_n(&(nrn1_N[j]), (nrn1_N[j].nTerms - N_mark));
+            mpfa_reduce_last_n(&(nrn1_V[j]), (nrn1_V[j].nTerms - V_mark));
 
-            if (i % condense_step == 0) {
-                mpfa_condense_small(&(nrn1_N[j]), condense_ratio);
-                mpfa_condense_small(&(nrn1_V[j]), condense_ratio);
+            if (i % reduce_step == 0) {
+                mpfa_reduce_small(&(nrn1_N[j]), reduce_ratio);
+                mpfa_reduce_small(&(nrn1_V[j]), reduce_ratio);
             }
 
             file_write(nrn1_N, j, f_nrn1_N_c, f_nrn1_N_r, f_nrn1_N_n, f_nrn1_N_s, f_nrn1_N_d);
@@ -353,12 +353,12 @@ int main (int argc, char *argv[])
             mpfa_mul(dV, dV, dt);
             mpfa_add(&(nrn2_V[j]), &(nrn2_V[j]), dV);
 
-            mpfa_condense_last_n(&(nrn2_N[j]), (nrn2_N[j].nTerms - N_mark));
-            mpfa_condense_last_n(&(nrn2_V[j]), (nrn2_V[j].nTerms - V_mark));
+            mpfa_reduce_last_n(&(nrn2_N[j]), (nrn2_N[j].nTerms - N_mark));
+            mpfa_reduce_last_n(&(nrn2_V[j]), (nrn2_V[j].nTerms - V_mark));
 
-            if (i % condense_step == 0) {
-                mpfa_condense_small(&(nrn2_N[j]), condense_ratio);
-                mpfa_condense_small(&(nrn2_V[j]), condense_ratio);
+            if (i % reduce_step == 0) {
+                mpfa_reduce_small(&(nrn2_N[j]), reduce_ratio);
+                mpfa_reduce_small(&(nrn2_V[j]), reduce_ratio);
             }
 
             file_write(nrn2_N, j, f_nrn2_N_c, f_nrn2_N_r, f_nrn2_N_n, f_nrn2_N_s, f_nrn2_N_d);

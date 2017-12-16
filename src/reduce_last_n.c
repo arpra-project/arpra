@@ -1,5 +1,5 @@
 /*
- * condense_last_n.c -- Condense the last n terms.
+ * reduce_last_n.c -- Reduce the last n terms.
  *
  * Copyright 2017 James Paul Turner.
  *
@@ -21,7 +21,7 @@
 
 #include "mpfa-impl.h"
 
-void mpfa_condense_last_n (mpfa_ptr z, mpfa_uint_t n)
+void mpfa_reduce_last_n (mpfa_ptr z, mpfa_uint_t n)
 {
     mpfa_uint_t zTerm, zNext;
     mpfr_ptr *summands;
@@ -50,14 +50,14 @@ void mpfa_condense_last_n (mpfa_ptr z, mpfa_uint_t n)
         mpfr_add(&(z->radius), &(z->radius), temp, MPFR_RNDU);
     }
 
-    // Condense the last n deviation terms.
+    // Merge the last n deviation terms.
     for (zNext = zTerm; zNext < z->nTerms; zNext++) {
         mpfr_abs(&(z->deviations[zNext]), &(z->deviations[zNext]), MPFR_RNDN);
         summands[zNext - zTerm] = &(z->deviations[zNext]);
     }
     mpfr_sum(&(z->deviations[zTerm]), summands, n, MPFR_RNDU);
 
-    // Store nonzero condensed deviation term.
+    // Store nonzero merged deviation term.
     if (!mpfr_zero_p(&(z->deviations[zTerm]))) {
         z->symbols[zTerm] = mpfa_next_sym();
         mpfr_add(&(z->radius), &(z->radius), &(z->deviations[zTerm]), MPFR_RNDU);

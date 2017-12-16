@@ -29,7 +29,7 @@ endif WITH_MPFI
 lib_LTLIBRARIES = lib/libmpfa.la
 lib_libmpfa_la_SOURCES = \
 	src/mpfa-impl.h	src/add.c src/affine_1.c src/affine_2.c		\
-	src/clear.c src/condense_last_n.c src/condense_small.c		\
+	src/clear.c src/reduce_last_n.c src/reduce_small.c		\
 	src/default_prec.c src/div.c src/error.c src/exp.c src/init.c	\
 	src/init2.c src/internal_prec.c src/inv.c src/log.c src/mul.c	\
 	src/neg.c src/next_sym.c src/prec.c src/set_d.c src/set.c	\

@@ -1,5 +1,5 @@
 /*
- * condense_small.c -- Condense terms less than some fraction of the radius.
+ * reduce_small.c -- Reduce terms less than some fraction of the radius.
  *
  * Copyright 2017 James Paul Turner.
  *
@@ -21,7 +21,7 @@
 
 #include "mpfa-impl.h"
 
-void mpfa_condense_small (mpfa_ptr z, double fraction)
+void mpfa_reduce_small (mpfa_ptr z, double fraction)
 {
     mpfa_uint_t zTerm, zNext;
     mpfr_t temp, error, threshold;
@@ -49,7 +49,7 @@ void mpfa_condense_small (mpfa_ptr z, double fraction)
         mpfr_abs(temp, &(z->deviations[zNext]), MPFR_RNDU);
 
         if (mpfr_lessequal_p(temp, threshold)) {
-            // If deviation term is small, condense it.
+            // If deviation term is small, merge it.
             mpfr_add(error, error, temp, MPFR_RNDU);
         }
         else {
@@ -63,7 +63,7 @@ void mpfa_condense_small (mpfa_ptr z, double fraction)
         }
     }
 
-    // Store nonzero condensed deviation term.
+    // Store nonzero merged deviation term.
     if (!mpfr_zero_p(error)) {
         z->symbols[zTerm] = mpfa_next_sym();
         mpfr_set(&(z->deviations[zTerm]), error, MPFR_RNDU);
