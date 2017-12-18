@@ -25,7 +25,7 @@ Introduction
 ============
 
 The MPFA library (henceforth MPFA) is an arbitrary-precision affine
-arithmetic library based on GNU MPFR. The main use-case of MPFA is to
+arithmetic C library based on GNU MPFR. The main use-case of MPFA is to
 maintain a computed upper and lower bound of numerical error for all
 variables, at all times, throughout a computation.
 
@@ -81,13 +81,12 @@ arithmetic library built on top of GNU MPFR. Enable support by passing
     make
     sudo make install
 
-Note that the MPFI package must already be installed correctly on the
+Note that the MPFI package must already be present and working on the
 system. See <http://perso.ens-lyon.fr/nathalie.revol/software.html> for
 more information on the MPFI interval arithmetic library. If MPFA was
-configured with MPFI support, a suite of test programs, for testing MPFA
-functionality, can be executed with the following command:
+configured with MPFI support, a suite of test programs can be executed
+with the following command:
 
-    ./configure --with-mpfi
     make check
 
 
