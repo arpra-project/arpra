@@ -84,6 +84,10 @@ EXTRA_PROGRAMS = extra/morris_lecar
 extra_morris_lecar_LDADD = lib/libmpfa.la
 extra_morris_lecar_SOURCES = extra/morris_lecar.c
 
+# Documentation
+info_TEXINFOS = doc/mpfa.texi
+doc_mpfa_TEXINFOS = doc/fdl-1.3.texi
+
 # Clean miscellaneous files
 mostlyclean-local:
 	-rm -f *.log
