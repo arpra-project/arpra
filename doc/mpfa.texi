@@ -12,7 +12,8 @@
 
 @c License
 @copying
-This manual is for MPFA version @value{VERSION}.
+This manual is for MPFA, version @value{VERSION}. MPFA is an arbitrary
+precision affine arithmetic library, based on GNU MPFR.
 
 Copyright @copyright{} 2016-2017 James Paul Turner.
 
@@ -21,8 +22,8 @@ Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
 any later version published by the Free Software Foundation; with no
 Invariant Sections, with no Front-Cover Texts, and with no Back-Cover
-Texts.  A copy of the license is included in the section entitled
-``GNU Free Documentation License''.
+Texts.  A copy of the license is included in
+@ref{GNU Free Documentation License}.
 @end quotation
 @end copying
 
@@ -34,13 +35,13 @@ Texts.  A copy of the license is included in the section entitled
 @end direntry
 
 
-@c Front pages
+@c Front page
 @titlepage
 @title MPFA
 @subtitle The Arbitrary-Precision Affine Arithmetic Library
 @subtitle Version @value{VERSION} (@value{UPDATED-MONTH})
 @author James Paul Turner
-@email{jamesturner246@@gmail.com}
+@email{mpfa@@freelists.org}
 @page
 @vskip 0pt plus 1filll
 @insertcopying
@@ -59,11 +60,12 @@ Texts.  A copy of the license is included in the section entitled
 
 @insertcopying
 
-MPFA is an arbitrary precision affine arithmetic library, based on GNU MPFR.
-
 @menu
-* Introduction::
-* A Chapter::
+* Copying Conditions::          Your rights.
+* Introduction::                MPFA in brief.
+* Installation::                Configuring and installing.
+* Basic Usage::                 Quickstart guide for new users.
+* API Reference::               Functions, types and macros.
 * GNU Free Documentation License::
 * Index::
 @end menu
@@ -71,7 +73,40 @@ MPFA is an arbitrary precision affine arithmetic library, based on GNU MPFR.
 @end ifnottex
 
 
-@c Introduction
+@node Copying Conditions
+@unnumbered Copying Conditions
+
+The MPFA library is @dfn{free software}; this means that everyone is
+free to  use it and free to redistribute it on certain conditions.
+The MPFA library is not in the public domain; it is copyrighted and
+there are restrictions on its distribution, but these restrictions are
+designed to permit everything that a good cooperating citizen would
+want to do. What is not allowed is to try to prevent others from further
+sharing any version of the MPFA library that they might get from you.
+
+Specifically, we want to make sure that you have the right to give away
+copies of the MPFA library, that you receive source code or else can get
+it if you want it, that you can change the library or use pieces of it
+in new free programs, and that you know you can do these things.
+
+To make sure that everyone has such rights, we have to forbid you to
+deprive anyone else of these rights.  For example, if you distribute
+copies of the MPFA library, you must give the recipients all the rights
+that you have.  You must make sure that they, too, receive or can get
+the source code.  And you must tell them their rights.
+
+Also, for our own protection, we must make certain that everyone finds
+out that there is no warranty for the MPFA library. If these programs
+are modified by someone else and passed on, we want their recipients
+to know that what they have is not what we distributed, so that any
+problems introduced by others will not reflect on our reputation.
+
+The precise conditions of the license for the MPFA library are found in
+the GNU Lesser General Public License (LGPL) files that accompany the
+source code (see COPYING and COPYING.LESSER).  This manual is covered by
+the license found at @ref{GNU Free Documentation License}.
+
+
 @node Introduction
 @chapter Introduction
 
@@ -89,9 +124,8 @@ elit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices
 posuere cubilia Curae; Phasellus faucibus purus non orci auctor sagittis.
 
 
-@c A Chapter
-@node A Chapter
-@chapter A Chapter
+@node Installation
+@chapter Installation
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam fringilla
 massa vel sapien rhoncus, non tincidunt nulla facilisis. In non justo
@@ -107,7 +141,59 @@ elit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices
 posuere cubilia Curae; Phasellus faucibus purus non orci auctor sagittis.
 
 
-@c FDL node
+@node Basic Usage
+@chapter Basic Usage
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam fringilla
+massa vel sapien rhoncus, non tincidunt nulla facilisis. In non justo
+metus. Class aptent taciti sociosqu ad litora torquent per conubia nostra,
+per inceptos himenaeos. Aenean at ex mattis, lacinia lectus id, tristique
+magna. Nunc bibendum porta euismod. Vivamus egestas eget felis a pulvinar.
+Integer eget ex finibus, rutrum nisl at, tempor eros. Pellentesque rhoncus
+odio lectus, a iaculis turpis feugiat in. In hac habitasse platea dictumst.
+Etiam a nisi suscipit, lacinia tortor a, efficitur lectus. Pellentesque
+luctus eu neque tempor tempor. Phasellus ornare, velit vitae vulputate
+mollis, augue dui vestibulum nulla, facilisis bibendum ipsum tortor vel
+elit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices
+posuere cubilia Curae; Phasellus faucibus purus non orci auctor sagittis.
+
+
+@node API Reference
+@chapter API Reference
+
+This chapter documents all functions, types and macros provided by the
+MPFA library. By convention, all symbols are prefixed with @code{mpfa_},
+in order to distinguish them as symbols provided by this library.
+
+@menu
+* Initialisation Functions::
+* Assignment Functions::
+* Conversion Functions::
+* Affine Functions::
+* Non-Affine Functions::
+* Deviation Term Functions::
+@end menu
+
+@node Initialisation Functions
+@section Initialisation Functions
+
+@node Assignment Functions
+@section Assignment Functions
+
+@node Conversion Functions
+@section Conversion Functions
+
+@node Affine Functions
+@section Affine Functions
+
+@node Non-Affine Functions
+@section Non-Affine Functions
+
+@node Deviation Term Functions
+@section Deviation Term Functions
+
+
+@c FDL Appendix
 @node GNU Free Documentation License
 @appendix GNU Free Documentation License
 
