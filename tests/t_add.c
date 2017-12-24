@@ -1,33 +1,33 @@
 /*
- * t_add.c -- Test the mpfa_add function.
+ * t_add.c -- Test the arpra_add function.
  *
  * Copyright 2017 James Paul Turner.
  *
- * This file is part of the MPFA library.
+ * This file is part of the ArPRA library.
  *
- * The MPFA library is free software: you can redistribute it and/or modify
+ * The ArPRA library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The MPFA library is distributed in the hope that it will be useful, but
+ * The ArPRA library is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
  * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
  * License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with the MPFA library. If not, see <http://www.gnu.org/licenses/>.
+ * along with the ArPRA library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "mpfa-test.h"
+#include "arpra-test.h"
 
 int main (int argc, char *argv[])
 {
 #ifdef WITH_MPFI
-    const mpfa_prec_t prec = 53;
-    const mpfa_prec_t prec_internal = 128;
-    const mpfa_uint_t test_n = 100000;
-    mpfa_uint_t i, fail, fail_n;
+    const arpra_prec_t prec = 53;
+    const arpra_prec_t prec_internal = 128;
+    const arpra_uint_t test_n = 100000;
+    arpra_uint_t i, fail, fail_n;
 
     // Init test.
     test_fixture_init(prec, prec_internal);
@@ -38,18 +38,18 @@ int main (int argc, char *argv[])
     // Run test.
     for (i = 0; i < test_n; i++) {
         fail = 0;
-        test_rand_mpfa(x_A, TEST_RAND_MIXED, TEST_RAND_SMALL);
-        test_rand_mpfa(y_A, TEST_RAND_MIXED, TEST_RAND_SMALL);
+        test_rand_arpra(x_A, TEST_RAND_MIXED, TEST_RAND_SMALL);
+        test_rand_arpra(y_A, TEST_RAND_MIXED, TEST_RAND_SMALL);
 
         // Pass criteria (unshared symbols):
-        // 1) MPFA z contains MPFI z.
-        // 2) MPFA z unbounded and MPFI z unbounded.
-        test_bivariate(mpfa_add, mpfi_add);
+        // 1) ArPRA z contains MPFI z.
+        // 2) ArPRA z unbounded and MPFI z unbounded.
+        test_bivariate(arpra_add, mpfi_add);
         if (mpfr_greaterequal_p(&(z_I->left), &(z_AI->left))
                 && mpfr_lessequal_p(&(z_I->right), &(z_AI->right))) {
             test_log_printf("Result (unshared symbols): PASS\n\n");
         }
-        else if (!mpfa_bounded_p(z_A) && !mpfi_bounded_p(z_I)) {
+        else if (!arpra_bounded_p(z_A) && !mpfi_bounded_p(z_I)) {
             test_log_printf("Result (unshared symbols): PASS\n\n");
         }
         else {
@@ -58,10 +58,10 @@ int main (int argc, char *argv[])
         }
 
         // Pass criteria (random shared symbols):
-        // 1) bounded(MPFA z) = bounded(MPFI z).
+        // 1) bounded(ArPRA z) = bounded(MPFI z).
         test_share_rand_syms(x_A, y_A);
-        test_bivariate(mpfa_add, mpfi_add);
-        if (mpfa_bounded_p(z_A) == mpfi_bounded_p(z_I)) {
+        test_bivariate(arpra_add, mpfi_add);
+        if (arpra_bounded_p(z_A) == mpfi_bounded_p(z_I)) {
             test_log_printf("Result (random shared symbols): PASS\n\n");
         }
         else {
@@ -70,10 +70,10 @@ int main (int argc, char *argv[])
         }
 
         // Pass criteria (all shared symbols):
-        // 1) bounded(MPFA z) = bounded(MPFI z).
+        // 1) bounded(ArPRA z) = bounded(MPFI z).
         test_share_all_syms(x_A, y_A);
-        test_bivariate(mpfa_add, mpfi_add);
-        if (mpfa_bounded_p(z_A) == mpfi_bounded_p(z_I)) {
+        test_bivariate(arpra_add, mpfi_add);
+        if (arpra_bounded_p(z_A) == mpfi_bounded_p(z_I)) {
             test_log_printf("Result (all shared symbols): PASS\n\n");
         }
         else {

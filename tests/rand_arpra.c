@@ -1,37 +1,37 @@
 /*
- * rand_mpfa.c -- Generate a random affine form.
+ * rand_arpra.c -- Generate a random arpra variable.
  *
  * Copyright 2017 James Paul Turner.
  *
- * This file is part of the MPFA library.
+ * This file is part of the ArPRA library.
  *
- * The MPFA library is free software: you can redistribute it and/or modify
+ * The ArPRA library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The MPFA library is distributed in the hope that it will be useful, but
+ * The ArPRA library is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
  * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
  * License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with the MPFA library. If not, see <http://www.gnu.org/licenses/>.
+ * along with the ArPRA library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "mpfa-test.h"
+#include "arpra-test.h"
 
-void test_rand_mpfa (mpfa_ptr z,
-                     enum test_rand_mode mode_centre,
-                     enum test_rand_mode mode_deviations)
+void test_rand_arpra (arpra_ptr z,
+                      enum test_rand_mode mode_centre,
+                      enum test_rand_mode mode_deviations)
 {
-    mpfa_uint_t zTerm;
-    mpfa_prec_t prec, prec_internal;
+    arpra_uint_t zTerm;
+    arpra_prec_t prec, prec_internal;
     mpfr_t temp;
 
     // Initialise vars.
-    prec = mpfa_get_prec(z);
-    prec_internal = mpfa_get_internal_prec();
+    prec = arpra_get_prec(z);
+    prec_internal = arpra_get_internal_prec();
     mpfr_init2(temp, prec_internal);
     mpfr_set_prec(&(z->radius), prec_internal);
     mpfr_set_ui(&(z->radius), 0, MPFR_RNDN);
@@ -40,18 +40,18 @@ void test_rand_mpfa (mpfa_ptr z,
     test_rand_mpfr(&(z->centre), mode_centre);
 
     // Clear existing deviation terms.
-    mpfa_clear_terms(z);
+    arpra_clear_terms(z);
 
     // Randomly allocate 0 to 5 deviation terms.
     z->nTerms = gmp_urandomm_ui(test_randstate, 6);
     if (z->nTerms > 0) {
-        z->symbols = malloc(z->nTerms * sizeof(mpfa_uint_t));
+        z->symbols = malloc(z->nTerms * sizeof(arpra_uint_t));
         z->deviations = malloc(z->nTerms * sizeof(mpfr_t));
     }
 
     // Randomly set deviation terms.
     for (zTerm = 0; zTerm < z->nTerms; zTerm++) {
-        z->symbols[zTerm] = mpfa_next_sym();
+        z->symbols[zTerm] = arpra_next_sym();
         mpfr_init2(&(z->deviations[zTerm]), prec);
         test_rand_mpfr(&(z->deviations[zTerm]), mode_deviations);
 
@@ -62,10 +62,10 @@ void test_rand_mpfa (mpfa_ptr z,
 
     // Handle domain violations.
     if (mpfr_nan_p(&(z->centre)) || mpfr_nan_p(&(z->radius))) {
-        mpfa_set_nan(z);
+        arpra_set_nan(z);
     }
     else if (mpfr_inf_p(&(z->centre)) || mpfr_inf_p(&(z->radius))) {
-        mpfa_set_inf(z);
+        arpra_set_inf(z);
     }
 
     // Clear vars.

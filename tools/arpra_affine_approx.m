@@ -1,5 +1,5 @@
 
-function mpfa_affine_approx(f)
+function arpra_affine_approx(f)
 
 % Chebyshev approximation of f in [a, b]
 disp(f);

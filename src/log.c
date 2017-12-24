@@ -1,37 +1,37 @@
 /*
- * log.c -- Compute the natural logarithm of an affine form.
+ * log.c -- Compute the natural logarithm of an arpra_t.
  *
  * Copyright 2017 James Paul Turner.
  *
- * This file is part of the MPFA library.
+ * This file is part of the ArPRA library.
  *
- * The MPFA library is free software: you can redistribute it and/or modify
+ * The ArPRA library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The MPFA library is distributed in the hope that it will be useful, but
+ * The ArPRA library is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
  * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
  * License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with the MPFA library. If not, see <http://www.gnu.org/licenses/>.
+ * along with the ArPRA library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "mpfa-impl.h"
+#include "arpra-impl.h"
 
 /*
  * This affine natural log function uses a Chebyshev linear approximation.
  */
 
-void mpfa_log (mpfa_ptr z, mpfa_srcptr x)
+void arpra_log (arpra_ptr z, arpra_srcptr x)
 {
     mpfr_t temp, xa, xb, da, db, du, alpha, gamma, delta;
-    mpfa_prec_t prec_internal;
+    arpra_prec_t prec_internal;
 
     // Initialise vars.
-    prec_internal = mpfa_get_internal_prec();
+    prec_internal = arpra_get_internal_prec();
     mpfr_init2(temp, prec_internal);
     mpfr_init2(xa, prec_internal);
     mpfr_init2(xb, prec_internal);
@@ -45,25 +45,25 @@ void mpfa_log (mpfa_ptr z, mpfa_srcptr x)
     // Handle x with zero radius.
     if (mpfr_zero_p(&(x->radius))) {
         if (mpfr_log(temp, &(x->centre), MPFR_RNDN)) {
-            mpfa_error(delta, temp);
-            mpfa_set_mpfr_rad(z, temp, delta);
+            arpra_error(delta, temp);
+            arpra_set_mpfr_rad(z, temp, delta);
         }
         else {
-            mpfa_set_mpfr(z, temp);
+            arpra_set_mpfr(z, temp);
         }
     }
     else {
         // Handle domain violations.
-        if (mpfa_nan_p(x) || mpfa_has_neg_p(x)) {
-            mpfa_set_nan(z);
+        if (arpra_nan_p(x) || arpra_has_neg_p(x)) {
+            arpra_set_nan(z);
         }
-        else if (mpfa_has_zero_p(x)) {
-            mpfa_set_inf(z);
+        else if (arpra_has_zero_p(x)) {
+            arpra_set_inf(z);
         }
 
         // Domain is OK.
         else {
-            mpfa_get_bounds(xa, xb, x);
+            arpra_get_bounds(xa, xb, x);
 
             // compute alpha
             mpfr_log(alpha, xb, MPFR_RNDN);
@@ -99,7 +99,7 @@ void mpfa_log (mpfa_ptr z, mpfa_srcptr x)
             mpfr_max(delta, delta, temp, MPFR_RNDU);
 
             // compute affine approximation
-            mpfa_affine_1(z, x, alpha, gamma, delta);
+            arpra_affine_1(z, x, alpha, gamma, delta);
         }
     }
 

@@ -3,23 +3,23 @@
  *
  * Copyright 2017 James Paul Turner.
  *
- * This file is part of the MPFA library.
+ * This file is part of the ArPRA library.
  *
- * The MPFA library is free software: you can redistribute it and/or modify
+ * The ArPRA library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The MPFA library is distributed in the hope that it will be useful, but
+ * The ArPRA library is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
  * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
  * License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with the MPFA library. If not, see <http://www.gnu.org/licenses/>.
+ * along with the ArPRA library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "mpfa-impl.h"
+#include "arpra-impl.h"
 
 /*
  * This function assumes that rounding error has occured - i.e. an MPFR call
@@ -28,10 +28,10 @@
  * when x was flushed to zero.
  */
 
-void mpfa_error (mpfr_ptr error, mpfr_srcptr x)
+void arpra_error (mpfr_ptr error, mpfr_srcptr x)
 {
-    mpfa_prec_t p;
-    mpfa_exp_t e;
+    arpra_prec_t p;
+    arpra_exp_t e;
 
     if (mpfr_zero_p(x)) {
         // error = nextabove(x)
