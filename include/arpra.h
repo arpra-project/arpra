@@ -27,7 +27,7 @@
 typedef long int arpra_int_t;
 typedef unsigned long int arpra_uint_t;
 
-typedef mpfr_prec_t arpraa_prec_t;
+typedef mpfr_prec_t arpra_prec_t;
 typedef mpfr_exp_t arpra_exp_t;
 
 struct __arpra_struct
