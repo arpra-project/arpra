@@ -1,33 +1,33 @@
 /*
- * mul.c -- Multiply one affine form by another.
+ * mul.c -- Multiply one arpra_t by another.
  *
  * Copyright 2016-2017 James Paul Turner.
  *
- * This file is part of the MPFA library.
+ * This file is part of the ArPRA library.
  *
- * The MPFA library is free software: you can redistribute it and/or modify
+ * The ArPRA library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The MPFA library is distributed in the hope that it will be useful, but
+ * The ArPRA library is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
  * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
  * License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with the MPFA library. If not, see <http://www.gnu.org/licenses/>.
+ * along with the ArPRA library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "mpfa-impl.h"
+#include "arpra-impl.h"
 
-void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y)
+void arpra_mul (arpra_ptr z, arpra_srcptr x, arpra_srcptr y)
 {
-    mpfa_uint_t xTerm, yTerm, zTerm;
-    mpfa_int_t xHasNext, yHasNext;
+    arpra_uint_t xTerm, yTerm, zTerm;
+    arpra_int_t xHasNext, yHasNext;
     mpfr_t temp, error;
-    mpfa_prec_t prec, prec_internal;
-    mpfa_t zNew;
+    arpra_prec_t prec, prec_internal;
+    arpra_t zNew;
 
     // Domain violations:
     // NaN  *  NaN  =  NaN
@@ -38,32 +38,32 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y)
     // s.t. (r in R) and (s in R \ {0})
 
     // Handle domain violations.
-    if (mpfa_nan_p(x) || mpfa_nan_p(y)) {
-        mpfa_set_nan(z);
+    if (arpra_nan_p(x) || arpra_nan_p(y)) {
+        arpra_set_nan(z);
         return;
     }
-    if (mpfa_inf_p(x)) {
-        if (mpfa_has_zero_p(y)) {
-            mpfa_set_nan(z);
+    if (arpra_inf_p(x)) {
+        if (arpra_has_zero_p(y)) {
+            arpra_set_nan(z);
         }
         else {
-            mpfa_set_inf(z);
+            arpra_set_inf(z);
         }
         return;
     }
-    if (mpfa_inf_p(y)) {
-        if (mpfa_has_zero_p(x)) {
-            mpfa_set_nan(z);
+    if (arpra_inf_p(y)) {
+        if (arpra_has_zero_p(x)) {
+            arpra_set_nan(z);
         }
         else {
-            mpfa_set_inf(z);
+            arpra_set_inf(z);
         }
         return;
     }
 
     // Initialise vars.
-    prec = mpfa_get_prec(z);
-    prec_internal = mpfa_get_internal_prec();
+    prec = arpra_get_prec(z);
+    prec_internal = arpra_get_internal_prec();
     mpfr_init2(temp, prec_internal);
     mpfr_init2(error, prec_internal);
     mpfr_init2(&(zNew->centre), prec);
@@ -73,13 +73,13 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y)
 
     // z_0 = x_0 * y_0
     if (mpfr_mul(&(zNew->centre), &(x->centre), &(y->centre), MPFR_RNDN)) {
-        mpfa_error(temp, &(zNew->centre));
+        arpra_error(temp, &(zNew->centre));
         mpfr_add(error, error, temp, MPFR_RNDU);
     }
 
     // Allocate memory for all possible deviation terms.
     zNew->nTerms = x->nTerms + y->nTerms + 1;
-    zNew->symbols = malloc(zNew->nTerms * sizeof(mpfa_uint_t));
+    zNew->symbols = malloc(zNew->nTerms * sizeof(arpra_uint_t));
     zNew->deviations = malloc(zNew->nTerms * sizeof(mpfr_t));
 
     xTerm = 0;
@@ -94,7 +94,7 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y)
 
             // z_i = (y_0 * x_i)
             if (mpfr_mul(&(zNew->deviations[zTerm]), &(y->centre), &(x->deviations[xTerm]), MPFR_RNDN)) {
-                mpfa_error(temp, &(zNew->deviations[zTerm]));
+                arpra_error(temp, &(zNew->deviations[zTerm]));
                 mpfr_add(error, error, temp, MPFR_RNDU);
             }
 
@@ -106,7 +106,7 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y)
 
             // z_i = (x_0 * y_i)
             if (mpfr_mul(&(zNew->deviations[zTerm]), &(x->centre), &(y->deviations[yTerm]), MPFR_RNDN)) {
-                mpfa_error(temp, &(zNew->deviations[zTerm]));
+                arpra_error(temp, &(zNew->deviations[zTerm]));
                 mpfr_add(error, error, temp, MPFR_RNDU);
             }
 
@@ -117,8 +117,8 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y)
             mpfr_init2(&(zNew->deviations[zTerm]), prec);
 
             // z_i = (y_0 * x_i) + (x_0 * y_i)
-            if (mpfa_term(&(zNew->deviations[zTerm]), &(x->deviations[xTerm]), &(y->deviations[yTerm]), &(y->centre), &(x->centre), NULL)) {
-                mpfa_error(temp, &(zNew->deviations[zTerm]));
+            if (arpra_term(&(zNew->deviations[zTerm]), &(x->deviations[xTerm]), &(y->deviations[yTerm]), &(y->centre), &(x->centre), NULL)) {
+                arpra_error(temp, &(zNew->deviations[zTerm]));
                 mpfr_add(error, error, temp, MPFR_RNDU);
             }
 
@@ -137,12 +137,12 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y)
         }
     }
 
-#ifdef MPFA_TIGHT_MUL
+#ifdef ARPRA_TIGHT_MUL
     // Linear approximation of the quadratic term is defined the same as in (26) of:
     // S. M. Rump and M. Kashiwagi, Implementation and improvements of affine arithmetic,
     // Nonlinear Theory an Its Applications, IEICE, vol. 6, no. 3, pp. 341-359, 2015.
 
-    mpfa_uint_t xNext, yNext;
+    arpra_uint_t xNext, yNext;
     mpfr_t xiyiPos, xiyiNeg;
 
     // Init extra temp vars.
@@ -239,7 +239,7 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y)
 
     // Store nonzero numerical error term.
     if (!mpfr_zero_p(error)) {
-        zNew->symbols[zTerm] = mpfa_next_sym();
+        zNew->symbols[zTerm] = arpra_next_sym();
         mpfr_init2(&(zNew->deviations[zTerm]), prec);
         mpfr_set(&(zNew->deviations[zTerm]), error, MPFR_RNDU);
         mpfr_add(&(zNew->radius), &(zNew->radius), &(zNew->deviations[zTerm]), MPFR_RNDU);
@@ -249,10 +249,10 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y)
     // Handle domain violations, and free unused memory.
     zNew->nTerms = zTerm;
     if (mpfr_nan_p(&(zNew->centre)) || mpfr_nan_p(&(zNew->radius))) {
-        mpfa_set_nan(zNew);
+        arpra_set_nan(zNew);
     }
     else if (mpfr_inf_p(&(zNew->centre)) || mpfr_inf_p(&(zNew->radius))) {
-        mpfa_set_inf(zNew);
+        arpra_set_inf(zNew);
     }
     else {
         if (zNew->nTerms == 0) {
@@ -264,6 +264,6 @@ void mpfa_mul (mpfa_ptr z, mpfa_srcptr x, mpfa_srcptr y)
     // Clear vars, and set z.
     mpfr_clear(temp);
     mpfr_clear(error);
-    mpfa_set(z, zNew);
-    mpfa_clear(zNew);
+    arpra_set(z, zNew);
+    arpra_clear(zNew);
 }

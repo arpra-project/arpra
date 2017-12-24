@@ -3,23 +3,23 @@
  *
  * Copyright 2017 James Paul Turner.
  *
- * This file is part of the MPFA library.
+ * This file is part of the ArPRA library.
  *
- * The MPFA library is free software: you can redistribute it and/or modify
+ * The ArPRA library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The MPFA library is distributed in the hope that it will be useful, but
+ * The ArPRA library is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
  * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
  * License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with the MPFA library. If not, see <http://www.gnu.org/licenses/>.
+ * along with the ArPRA library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "mpfa-test.h"
+#include "arpra-test.h"
 
 gmp_randstate_t test_randstate;
 int test_rand_ready = 0;
@@ -35,11 +35,11 @@ void test_rand_init ()
 
         // Try to get seed from environment.
         gmp_randinit_default(test_randstate);
-        environment_seed = getenv("MPFA_TEST_RAND_SEED");
+        environment_seed = getenv("ARPRA_TEST_RAND_SEED");
         if (environment_seed != NULL) {
             seed = strtoul(environment_seed, NULL, 10);
             gmp_randseed_ui(test_randstate, seed);
-            printf("Seeding with MPFA_TEST_RAND_SEED=%lu.\n", seed);
+            printf("Seeding with ARPRA_TEST_RAND_SEED=%lu.\n", seed);
         }
         else {
 #ifdef HAVE_CLOCK_GETTIME

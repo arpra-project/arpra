@@ -1,5 +1,5 @@
 
-function mpfa_joint_range (x, y, t_start, t_stop)
+function arpra_affine_joint_range (x, y, t_start, t_stop)
 
 xc_data = fopen([x, '_c.dat']);
 xr_data = fopen([x, '_r.dat']);

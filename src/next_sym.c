@@ -1,29 +1,29 @@
 /*
- * next_symbol.c -- Get a brand new noise symbol.
+ * next_symbol.c -- Get a new noise symbol.
  *
  * Copyright 2016-2017 James Paul Turner.
  *
- * This file is part of the MPFA library.
+ * This file is part of the ArPRA library.
  *
- * The MPFA library is free software: you can redistribute it and/or modify
+ * The ArPRA library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The MPFA library is distributed in the hope that it will be useful, but
+ * The ArPRA library is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
  * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
  * License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with the MPFA library. If not, see <http://www.gnu.org/licenses/>.
+ * along with the ArPRA library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "mpfa-impl.h"
+#include "arpra-impl.h"
 
-static mpfa_uint_t mpfa_symbol = 0;
+static arpra_uint_t arpra_symbol = 0;
 
-mpfa_uint_t mpfa_next_sym ()
+arpra_uint_t arpra_next_sym ()
 {
-    return mpfa_symbol++;
+    return arpra_symbol++;
 }

@@ -1,26 +1,26 @@
 /*
- * mpfa.h -- MPFA private header file, used in compilation.
+ * arpra-impl.h -- Private header file, used in compilation.
  *
  * Copyright 2016-2017 James Paul Turner.
  *
- * This file is part of the MPFA library.
+ * This file is part of the ArPRA library.
  *
- * The MPFA library is free software: you can redistribute it and/or modify
+ * The ArPRA library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The MPFA library is distributed in the hope that it will be useful, but
+ * The ArPRA library is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
  * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
  * License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with the MPFA library. If not, see <http://www.gnu.org/licenses/>.
+ * along with the ArPRA library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MPFA_IMPL_H
-#define MPFA_IMPL_H
+#ifndef ARPRA_IMPL_H
+#define ARPRA_IMPL_H
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -31,20 +31,20 @@
 #include <stdarg.h>
 #include <math.h>
 
-#include <mpfa.h>
+#include <arpra.h>
 #ifdef WITH_MPFI
-#include <mpfa2mpfi.h>
+#include <arpra2mpfi.h>
 #endif // WITH_MPFI
 
 // Internal precision default value.
-#define MPFA_DEFAULT_INTERNAL_PREC 128
+#define ARPRA_DEFAULT_INTERNAL_PREC 128
 
-// Use tighter mpfa_mul approximation.
-#define MPFA_TIGHT_MUL
+// Use tighter arpra_mul approximation.
+#define ARPRA_TIGHT_MUL
 
 /*
- * If MPFA_TIGHT_MUL is defined, then the linear approximation of the quadratic term of
- * mpfa_mul (in mul.c) is defined the same as in (26) of:
+ * If ARPRA_TIGHT_MUL is defined, then the linear approximation of the quadratic term of
+ * arpra_mul (in mul.c) is defined the same as in (26) of:
  *
  * S. M. Rump and M. Kashiwagi, Implementation and improvements of affine arithmetic,
  * Nonlinear Theory an Its Applications, IEICE, vol. 6, no. 3, pp. 341-359, 2015.
@@ -55,8 +55,8 @@
  */
 
 // Internal helper functions.
-mpfa_int_t mpfa_term (mpfr_ptr z, mpfr_srcptr x, mpfr_srcptr y,
-                      mpfr_srcptr alpha, mpfr_srcptr beta, mpfr_srcptr gamma);
-void mpfa_error (mpfr_ptr error, mpfr_srcptr x);
+arpra_int_t arpra_term (mpfr_ptr z, mpfr_srcptr x, mpfr_srcptr y,
+                        mpfr_srcptr alpha, mpfr_srcptr beta, mpfr_srcptr gamma);
+void arpra_error (mpfr_ptr error, mpfr_srcptr x);
 
-#endif // MPFA_IMPL_H
+#endif // ARPRA_IMPL_H

@@ -3,39 +3,39 @@
  *
  * Copyright 2017 James Paul Turner.
  *
- * This file is part of the MPFA library.
+ * This file is part of the ArPRA library.
  *
- * The MPFA library is free software: you can redistribute it and/or modify
+ * The ArPRA library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The MPFA library is distributed in the hope that it will be useful, but
+ * The ArPRA library is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
  * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
  * License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with the MPFA library. If not, see <http://www.gnu.org/licenses/>.
+ * along with the ArPRA library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "mpfa-impl.h"
+#include "arpra-impl.h"
 
-void mpfa_reduce_small (mpfa_ptr z, double fraction)
+void arpra_reduce_small (arpra_ptr z, double fraction)
 {
-    mpfa_uint_t zTerm, zNext;
+    arpra_uint_t zTerm, zNext;
     mpfr_t temp, error, threshold;
-    mpfa_prec_t prec_internal;
+    arpra_prec_t prec_internal;
 
     // Handle trivial cases.
     if ((z->nTerms < 2) || (fraction >= 1)) return;
 
     // Handle domain violations.
-    if (mpfa_nan_p(z)) return;
-    if (mpfa_inf_p(z)) return;
+    if (arpra_nan_p(z)) return;
+    if (arpra_inf_p(z)) return;
 
     // Initialise vars.
-    prec_internal = mpfa_get_internal_prec();
+    prec_internal = arpra_get_internal_prec();
     mpfr_init2(temp, prec_internal);
     mpfr_init2(threshold, prec_internal);
     mpfr_mul_d(threshold, &(z->radius), fraction, MPFR_RNDN);
@@ -65,7 +65,7 @@ void mpfa_reduce_small (mpfa_ptr z, double fraction)
 
     // Store nonzero merged deviation term.
     if (!mpfr_zero_p(error)) {
-        z->symbols[zTerm] = mpfa_next_sym();
+        z->symbols[zTerm] = arpra_next_sym();
         mpfr_set(&(z->deviations[zTerm]), error, MPFR_RNDU);
         mpfr_add(&(z->radius), &(z->radius), &(z->deviations[zTerm]), MPFR_RNDU);
         zTerm++;
@@ -79,10 +79,10 @@ void mpfa_reduce_small (mpfa_ptr z, double fraction)
     // Handle domain violations, and resize memory.
     z->nTerms = zTerm;
     if (mpfr_nan_p(&(z->centre)) || mpfr_nan_p(&(z->radius))) {
-        mpfa_set_nan(z);
+        arpra_set_nan(z);
     }
     else if (mpfr_inf_p(&(z->centre)) || mpfr_inf_p(&(z->radius))) {
-        mpfa_set_inf(z);
+        arpra_set_inf(z);
     }
     else {
         if (z->nTerms == 0) {
@@ -90,7 +90,7 @@ void mpfa_reduce_small (mpfa_ptr z, double fraction)
             free(z->deviations);
         }
         else {
-            z->symbols = realloc(z->symbols, z->nTerms * sizeof(mpfa_uint_t));
+            z->symbols = realloc(z->symbols, z->nTerms * sizeof(arpra_uint_t));
             z->deviations = realloc(z->deviations, z->nTerms * sizeof(mpfr_t));
         }
     }

@@ -1,19 +1,19 @@
 Copyright 2016-2017 James Paul Turner.
 
-This file is part of the MPFA library.
+This file is part of the ArPRA library.
 
-The MPFA library is free software: you can redistribute it and/or modify
+The ArPRA library is free software: you can redistribute it and/or modify
 it under the terms of the GNU Lesser General Public License as published
 by the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-The MPFA library is distributed in the hope that it will be useful, but
+The ArPRA library is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
 or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the MPFA library. If not, see <http://www.gnu.org/licenses/>.
+along with the ArPRA library. If not, see <http://www.gnu.org/licenses/>.
 
 For any copyright year range specified as YYYY-ZZZZ in this package,
 note that the range specifies every single year in that closed interval.
@@ -24,10 +24,11 @@ note that the range specifies every single year in that closed interval.
 Introduction
 ============
 
-The MPFA library (henceforth MPFA) is an arbitrary-precision affine
-arithmetic C library based on GNU MPFR. The main use-case of MPFA is to
-maintain a computed upper and lower bound of numerical error for all
-variables, at all times, throughout a computation.
+The ArPRA library (henceforth ArPRA) is an (Ar)bitrary-(P)recision (R)ange
+(A)nalysis C library based on GNU MPFR. The main use-case of ArPRA is
+to maintain a computed upper and lower bound of numerical error for all
+variables, at all times, throughout a computation. ArPRA uses affine
+arithmetic to do this.
 
 Affine arithmetic is a variant of interval arithmetic which accounts for
 variable correlations. As such, it does not suffer from the so-called
@@ -35,7 +36,7 @@ variable correlations. As such, it does not suffer from the so-called
 consideration for variable correlations. The problem is described further
 at <https://en.wikipedia.org/wiki/Interval_arithmetic#Dependency_problem>.
 
-MPFA implements affine arithmetic using a GNU MPFR backend. MPFR is an
+ArPRA implements affine arithmetic using a GNU MPFR backend. MPFR is an
 arbitrary-precision floating-point library, meaning the floating-point
 MPFR variables can be of arbitrary precision. For more information,
 refer to the MPFR project website at <http://www.mpfr.org/>.
@@ -50,7 +51,7 @@ interval arithmetic suffers from.
 Quickstart
 ==========
 
-MPFA follows the familiar GNU/Linux software building paradigm. The
+ArPRA follows the familiar GNU/Linux software building paradigm. The
 typical installation procedure consists of the following.
 
 If installing from the Git source repository (i.e. not a dist tarball),
@@ -68,12 +69,12 @@ commands:
     make
     sudo make install
 
-All installed MPFA files can be cleanly uninstalled from the system by
+All installed ArPRA files can be cleanly uninstalled from the system by
 running the following command:
 
     sudo make uninstall
 
-MPFA can be built to support MPFI interval variables. MPFI is an interval
+ArPRA can be built to support MPFI interval variables. MPFI is an interval
 arithmetic library built on top of GNU MPFR. Enable support by passing
 --with-mpfi as a configure option (required for testing):
 
@@ -83,7 +84,7 @@ arithmetic library built on top of GNU MPFR. Enable support by passing
 
 Note that the MPFI package must already be present and working on the
 system. See <http://perso.ens-lyon.fr/nathalie.revol/software.html> for
-more information on the MPFI interval arithmetic library. If MPFA was
+more information on the MPFI interval arithmetic library. If ArPRA was
 configured with MPFI support, a suite of test programs can be executed
 with the following command:
 
@@ -95,8 +96,8 @@ Contribute
 
 All contributions (e.g. bug reports, feature requests, expert knowledge,
 source code and documentation) are gratefully received via the issue
-tracker <https://github.com/jamesturner246/mpfa/issues>.
+tracker <https://github.com/jamesturner246/arpra/issues>.
 
-The source code repository for MPFA is hosted at GitHub. Clone it using:
+The source code repository for ArPRA is hosted at GitHub. Clone it using:
 
-    git clone https://github.com/jamesturner246/mpfa
+    git clone https://github.com/jamesturner246/arpra
