@@ -3,20 +3,20 @@
  *
  * Copyright 2017 James Paul Turner.
  *
- * This file is part of the ArPRA library.
+ * This file is part of the Arpra library.
  *
- * The ArPRA library is free software: you can redistribute it and/or modify
+ * The Arpra library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The ArPRA library is distributed in the hope that it will be useful, but
+ * The Arpra library is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
  * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
  * License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with the ArPRA library. If not, see <http://www.gnu.org/licenses/>.
+ * along with the Arpra library. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "arpra-test.h"
@@ -37,7 +37,7 @@ void test_fixture_init (arpra_prec_t prec, arpra_prec_t prec_internal)
         // Set internal precision.
         arpra_set_internal_prec(prec_internal);
 
-        // Initialise ArPRA variables.
+        // Initialise Arpra variables.
         arpra_init2(x_A, prec);
         arpra_init2(y_A, prec);
         arpra_init2(z_A, prec);
@@ -67,7 +67,7 @@ void test_fixture_clear ()
     if (test_fixture_ready) {
         test_fixture_ready = 0;
 
-        // Clear ArPRA variables.
+        // Clear Arpra variables.
         arpra_clear(x_A);
         arpra_clear(y_A);
         arpra_clear(z_A);

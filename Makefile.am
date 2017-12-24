@@ -1,20 +1,20 @@
 # Copyright 2016-2017 James Paul Turner.
 #
-# This file is part of the ArPRA library.
+# This file is part of the Arpra library.
 # Process this file with automake to produce a Makefile.in file.
 #
-# The ArPRA library is free software: you can redistribute it and/or modify
+# The Arpra library is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published
 # by the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# The ArPRA library is distributed in the hope that it will be useful, but
+# The Arpra library is distributed in the hope that it will be useful, but
 # WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
 # or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
 # License for more details.
 #
 # You should have received a copy of the GNU Lesser General Public License
-# along with the ArPRA library. If not, see <http://www.gnu.org/licenses/>.
+# along with the Arpra library. If not, see <http://www.gnu.org/licenses/>.
 
 ACLOCAL_AMFLAGS = -I m4
 AM_CPPFLAGS = -I$(top_srcdir)/include
@@ -25,7 +25,7 @@ if WITH_MPFI
 include_HEADERS += include/arpra2mpfi.h
 endif WITH_MPFI
 
-# ArPRA library
+# Arpra library
 lib_LTLIBRARIES = lib/libarpra.la
 lib_libarpra_la_SOURCES = \
 	src/arpra-impl.h src/add.c src/affine_1.c src/affine_2.c	\

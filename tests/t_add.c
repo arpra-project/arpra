@@ -3,20 +3,20 @@
  *
  * Copyright 2017 James Paul Turner.
  *
- * This file is part of the ArPRA library.
+ * This file is part of the Arpra library.
  *
- * The ArPRA library is free software: you can redistribute it and/or modify
+ * The Arpra library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The ArPRA library is distributed in the hope that it will be useful, but
+ * The Arpra library is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
  * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
  * License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with the ArPRA library. If not, see <http://www.gnu.org/licenses/>.
+ * along with the Arpra library. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "arpra-test.h"
@@ -42,8 +42,8 @@ int main (int argc, char *argv[])
         test_rand_arpra(y_A, TEST_RAND_MIXED, TEST_RAND_SMALL);
 
         // Pass criteria (unshared symbols):
-        // 1) ArPRA z contains MPFI z.
-        // 2) ArPRA z unbounded and MPFI z unbounded.
+        // 1) Arpra z contains MPFI z.
+        // 2) Arpra z unbounded and MPFI z unbounded.
         test_bivariate(arpra_add, mpfi_add);
         if (mpfr_greaterequal_p(&(z_I->left), &(z_AI->left))
                 && mpfr_lessequal_p(&(z_I->right), &(z_AI->right))) {
@@ -58,7 +58,7 @@ int main (int argc, char *argv[])
         }
 
         // Pass criteria (random shared symbols):
-        // 1) bounded(ArPRA z) = bounded(MPFI z).
+        // 1) bounded(Arpra z) = bounded(MPFI z).
         test_share_rand_syms(x_A, y_A);
         test_bivariate(arpra_add, mpfi_add);
         if (arpra_bounded_p(z_A) == mpfi_bounded_p(z_I)) {
@@ -70,7 +70,7 @@ int main (int argc, char *argv[])
         }
 
         // Pass criteria (all shared symbols):
-        // 1) bounded(ArPRA z) = bounded(MPFI z).
+        // 1) bounded(Arpra z) = bounded(MPFI z).
         test_share_all_syms(x_A, y_A);
         test_bivariate(arpra_add, mpfi_add);
         if (arpra_bounded_p(z_A) == mpfi_bounded_p(z_I)) {

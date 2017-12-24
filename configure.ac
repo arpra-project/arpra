@@ -1,23 +1,23 @@
 # Copyright 2016-2017 James Paul Turner.
 #
-# This file is part of the ArPRA library.
+# This file is part of the Arpra library.
 # Process this file with autoconf to produce a configure script.
 #
-# The ArPRA library is free software: you can redistribute it and/or modify
+# The Arpra library is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published
 # by the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# The ArPRA library is distributed in the hope that it will be useful, but
+# The Arpra library is distributed in the hope that it will be useful, but
 # WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
 # or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
 # License for more details.
 #
 # You should have received a copy of the GNU Lesser General Public License
-# along with the ArPRA library. If not, see <http://www.gnu.org/licenses/>.
+# along with the Arpra library. If not, see <http://www.gnu.org/licenses/>.
 
 AC_PREREQ([2.65])
-AC_INIT([ArPRA], [0.0.0], [https://github.com/jamesturner246/arpra/issues])
+AC_INIT([Arpra], [0.0.0], [https://github.com/jamesturner246/arpra/issues])
 
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_SRCDIR([include/arpra.h])
