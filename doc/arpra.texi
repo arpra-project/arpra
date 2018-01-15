@@ -12,17 +12,16 @@
 
 @c License
 @copying
-This manual is for Arpra, version @value{VERSION}. Arpra is an
-(Ar)bitrary (p)recision (r)ange (a)nalysis library, based on GNU MPFR.
+This manual is for Arpra, version @value{VERSION} (@value{UPDATED-MONTH}).
 
-Copyright @copyright{} 2016-2017 James Paul Turner.
+Copyright @copyright{} 2016-2018 James Paul Turner.
 
 @quotation
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
 any later version published by the Free Software Foundation; with no
 Invariant Sections, with no Front-Cover Texts, and with no Back-Cover
-Texts.  A copy of the license is included in
+Texts. A copy of the license is included in
 @ref{GNU Free Documentation License}.
 @end quotation
 @end copying
@@ -31,7 +30,7 @@ Texts.  A copy of the license is included in
 @c Info listing
 @dircategory Software libraries
 @direntry
-* arpra: (arpra).                 Arbitrary-Precision Range Analysis.
+* arpra: (arpra).                 Arbitrary-precision range analysis.
 @end direntry
 
 
@@ -41,11 +40,12 @@ Texts.  A copy of the license is included in
 @subtitle The Arbitrary-Precision Range Analysis Library
 @subtitle Version @value{VERSION} (@value{UPDATED-MONTH})
 @author James Paul Turner
-@email{arpra@@freelists.org}
+@url{https://github.com/jamesturner246/arpra}
 @page
 @vskip 0pt plus 1filll
 @insertcopying
 @end titlepage
+
 
 @c Table of contents (TeX only)
 @iftex
@@ -57,20 +57,18 @@ Texts.  A copy of the license is included in
 @ifnottex
 @node Top
 @top Arpra
-
 @insertcopying
+@end ifnottex
 
 @menu
 * Copying Conditions::          Your rights.
-* Introduction::                Arpra in brief.
-* Installation::                Configuring and installing.
+* Introduction::                Overview of Arpra.
+* Installing::                  Configuring and installing.
 * Basic Usage::                 Quickstart guide for new users.
 * API Reference::               Functions, types and macros.
 * GNU Free Documentation License::
 * Index::
 @end menu
-
-@end ifnottex
 
 
 @node Copying Conditions
@@ -90,10 +88,10 @@ it if you want it, that you can change the library or use pieces of it
 in new free programs, and that you know you can do these things.
 
 To make sure that everyone has such rights, we have to forbid you to
-deprive anyone else of these rights.  For example, if you distribute
+deprive anyone else of these rights. For example, if you distribute
 copies of the Arpra library, you must give the recipients all the rights
-that you have.  You must make sure that they, too, receive or can get
-the source code.  And you must tell them their rights.
+that you have. You must make sure that they, too, receive or can get
+the source code. And you must tell them their rights.
 
 Also, for our own protection, we must make certain that everyone finds
 out that there is no warranty for the Arpra library. If these programs
@@ -103,29 +101,94 @@ problems introduced by others will not reflect on our reputation.
 
 The precise conditions of the license for the Arpra library are found in
 the GNU Lesser General Public License (LGPL) files that accompany the
-source code (see COPYING and COPYING.LESSER).  This manual is covered by
+source code (see COPYING and COPYING.LESSER). This manual is covered by
 the license found at @ref{GNU Free Documentation License}.
 
 
 @node Introduction
 @chapter Introduction
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam fringilla
-massa vel sapien rhoncus, non tincidunt nulla facilisis. In non justo
-metus. Class aptent taciti sociosqu ad litora torquent per conubia nostra,
-per inceptos himenaeos. Aenean at ex mattis, lacinia lectus id, tristique
-magna. Nunc bibendum porta euismod. Vivamus egestas eget felis a pulvinar.
-Integer eget ex finibus, rutrum nisl at, tempor eros. Pellentesque rhoncus
-odio lectus, a iaculis turpis feugiat in. In hac habitasse platea dictumst.
-Etiam a nisi suscipit, lacinia tortor a, efficitur lectus. Pellentesque
-luctus eu neque tempor tempor. Phasellus ornare, velit vitae vulputate
-mollis, augue dui vestibulum nulla, facilisis bibendum ipsum tortor vel
-elit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices
-posuere cubilia Curae; Phasellus faucibus purus non orci auctor sagittis.
+Arpra is an arbitrary precision range analysis library, based on the GNU
+MPFR library. It lives at @url{https://github.com/jamesturner246/arpra},
+and is used to bound numerical error and other noise in computer software.
+
+This chapter explains some core range analysis concepts, providing the user
+with a minimal theoretical understanding of how Arpra does what it does.
+
+@menu
+* Range Analysis::
+* Data Uncertainty::
+* Arbitrary-Precision::
+@end menu
 
 
-@node Installation
-@chapter Installation
+@node Range Analysis
+@section Range Analysis
+
+Numerical error and input noise are often overlooked in software engineering.
+In unstable problems and algorithms, a tiny error in a result could be
+magnified severalfold as it propagates through the program. Depending on the
+application, the behaviour of software can be anything from misleading
+to outright dangerous. Therefore, it is in everyone's best interests to know
+exactly how these perturbations affect our software. This is where range
+analysis comes in.
+
+Simply put, range analysis is a set of methods for maintaining an upper and
+lower bound of all variables, throughout a computation. All real-valued input,
+intermediate and output variables are replaced with intervals, representing
+the uncertainty of the variable's true value at any particular time.
+
+If an operation introduces uncertainty, then the absolute value of that
+uncertainty is added to the radius of the result interval, rounding upwards.
+By doing this consistently, the @emph{fundamental invariant of range analysis}
+is ensured; that is to say that, for all operations, the exact result is
+guaranteed to be contained by the computed interval.
+
+
+@node Data Uncertainty
+@section Data Uncertainty
+
+There may be many sources of external uncertainty to consider, such as that
+from imperfect sensors, operator mistakes and data corruption. However, in
+addition to uncertainty in the input data, the numerical error incurred
+throughout the computation must also be considered. This numerical error is
+classified into two types: rounding error and truncation error.
+
+Rounding errors occur when real number operations are performed on computers.
+This is because floating-point numbers (binary-representable real numbers) are
+in fact a discrete subset of the real numbers, and all values must be rounded
+to an element of this subset in order to be representable on a computer.
+
+Truncation errors occur in numerical approximations based on infinite series.
+For example, a first-order Taylor series approximation truncates the infinite
+Taylor series after the first term, incurring a second-order truncation error.
+
+External uncertainty and numerical error propagate through the program,
+interacting in non-trivial ways. As such, it can often be impossible to keep
+track of uncertainty in output data. To solve this problem, one of the range
+analysis methods may be used, each with its own strengths and weaknesses.
+
+
+@c TODO: Interval Arithmetic
+@c TODO: Affine Arithmetic
+@c TODO: Taylor Methods? Future Work?
+
+
+@node Arbitrary-Precision
+@section Arbitrary-Precision
+
+Operations in Arpra are computed in arbitrary-precision floating-point
+arithmetic, as provided by the GNU MPFR library. This means that the number of
+bits used to store real-valued data can be controlled by the user. Since the
+number of bits corresponds to the precision of the value, the trade-off for
+the user is essentially less uncertainty with higher precision versus faster
+computation with lower precision.
+
+The GNU MPFR library can be found at @url{http://www.mpfr.org}.
+
+
+@node Installing
+@chapter Installing
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam fringilla
 massa vel sapien rhoncus, non tincidunt nulla facilisis. In non justo
@@ -174,20 +237,26 @@ in order to distinguish them as symbols provided by this library.
 * Deviation Term Functions::
 @end menu
 
+
 @node Initialisation Functions
 @section Initialisation Functions
+
 
 @node Assignment Functions
 @section Assignment Functions
 
+
 @node Conversion Functions
 @section Conversion Functions
+
 
 @node Affine Functions
 @section Affine Functions
 
+
 @node Non-Affine Functions
 @section Non-Affine Functions
+
 
 @node Deviation Term Functions
 @section Deviation Term Functions

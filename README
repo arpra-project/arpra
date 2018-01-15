@@ -25,7 +25,7 @@ Introduction
 ============
 
 The Arpra library is an (Ar)bitrary-(p)recision (r)ange (a)nalysis C
-library based on GNU MPFR. The main use-case of Arpra is to maintain
+library, based on GNU MPFR. The main use-case of Arpra is to maintain
 computed upper and lower bounds of numerical error for all variables,
 at all times, throughout a computation. Arpra uses affine arithmetic to
 accomplish this.
