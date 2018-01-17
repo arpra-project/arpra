@@ -1,7 +1,7 @@
 /*
  * set_str_rad.c -- Set centre and radius using C strings.
  *
- * Copyright 2017 James Paul Turner.
+ * Copyright 2017-2018 James Paul Turner.
  *
  * This file is part of the Arpra library.
  *

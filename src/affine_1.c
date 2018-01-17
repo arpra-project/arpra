@@ -1,7 +1,7 @@
 /*
  * affine_1.c -- Compute a univariate affine function of an arpra_t.
  *
- * Copyright 2016-2017 James Paul Turner.
+ * Copyright 2016-2018 James Paul Turner.
  *
  * This file is part of the Arpra library.
  *

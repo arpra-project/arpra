@@ -1,4 +1,4 @@
-# Copyright 2016-2017 James Paul Turner.
+# Copyright 2016-2018 James Paul Turner.
 #
 # This file is part of the Arpra library.
 # Process this file with autoconf to produce a configure script.
@@ -17,7 +17,7 @@
 # along with the Arpra library. If not, see <http://www.gnu.org/licenses/>.
 
 AC_PREREQ([2.65])
-AC_INIT([Arpra], [0.1.0], [https://github.com/jamesturner246/arpra/issues])
+AC_INIT([Arpra], [0.1.0], [https://github.com/arpra-project/arpra/issues])
 
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_SRCDIR([include/arpra.h])

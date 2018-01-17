@@ -40,7 +40,7 @@ Texts. A copy of the license is included in
 @subtitle The Arbitrary-Precision Range Analysis Library
 @subtitle Version @value{VERSION} (@value{UPDATED-MONTH})
 @author James Paul Turner
-@url{https://github.com/jamesturner246/arpra}
+@url{http://www.arpra.org}
 @page
 @vskip 0pt plus 1filll
 @insertcopying
@@ -109,8 +109,8 @@ the license found at @ref{GNU Free Documentation License}.
 @chapter Introduction
 
 Arpra is an arbitrary precision range analysis library, based on the GNU
-MPFR library. It lives at @url{https://github.com/jamesturner246/arpra},
-and is used to bound numerical error and other noise in computer software.
+MPFR library. It lives at @url{http://www.arpra.org}, and is used to bound
+numerical error and other noise in computer software.
 
 This chapter explains some core range analysis concepts, providing the user
 with a minimal theoretical understanding of how Arpra does what it does.

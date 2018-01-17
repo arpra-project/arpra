@@ -1,7 +1,7 @@
 /*
  * compare_arpra.c -- Check the number of differences in two arpra variables.
  *
- * Copyright 2017 James Paul Turner.
+ * Copyright 2017-2018 James Paul Turner.
  *
  * This file is part of the  library.
  *

@@ -1,7 +1,7 @@
 /*
  * set_str.c -- Set centre using a C string.
  *
- * Copyright 2017 James Paul Turner.
+ * Copyright 2017-2018 James Paul Turner.
  *
  * This file is part of the Arpra library.
  *

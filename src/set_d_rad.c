@@ -1,7 +1,7 @@
 /*
  * set_d_rad.c -- Set centre and radius using double-precision floats.
  *
- * Copyright 2016-2017 James Paul Turner.
+ * Copyright 2016-2018 James Paul Turner.
  *
  * This file is part of the Arpra library.
  *

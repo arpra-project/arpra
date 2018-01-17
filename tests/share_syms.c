@@ -1,7 +1,7 @@
 /*
  * share_syms.c -- Share noise symbols between two affine forms.
  *
- * Copyright 2017 James Paul Turner.
+ * Copyright 2017-2018 James Paul Turner.
  *
  * This file is part of the Arpra library.
  *

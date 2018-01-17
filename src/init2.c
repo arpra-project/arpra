@@ -1,7 +1,7 @@
 /*
  * init2.c -- Initialise one or more arpra_t, and set their precision.
  *
- * Copyright 2016-2017 James Paul Turner.
+ * Copyright 2016-2018 James Paul Turner.
  *
  * This file is part of the Arpra library.
  *

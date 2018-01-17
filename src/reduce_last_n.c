@@ -1,7 +1,7 @@
 /*
  * reduce_last_n.c -- Reduce the last n terms.
  *
- * Copyright 2017 James Paul Turner.
+ * Copyright 2017-2018 James Paul Turner.
  *
  * This file is part of the Arpra library.
  *

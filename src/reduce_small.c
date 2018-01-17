@@ -1,7 +1,7 @@
 /*
  * reduce_small.c -- Reduce terms less than some fraction of the radius.
  *
- * Copyright 2017 James Paul Turner.
+ * Copyright 2017-2018 James Paul Turner.
  *
  * This file is part of the Arpra library.
  *

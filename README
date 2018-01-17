@@ -1,4 +1,4 @@
-Copyright 2016-2017 James Paul Turner.
+Copyright 2016-2018 James Paul Turner.
 
 This file is part of the Arpra library.
 
@@ -96,8 +96,8 @@ Contribute
 
 All contributions (e.g. bug reports, feature requests, expert knowledge,
 source code and documentation) are gratefully received via the issue
-tracker <https://github.com/jamesturner246/arpra/issues>.
+tracker <https://github.com/arpra-project/arpra/issues>.
 
 The source code repository for Arpra is hosted at GitHub. Clone it using:
 
-    git clone https://github.com/jamesturner246/arpra
+    git clone https://github.com/arpra-project/arpra

@@ -1,7 +1,7 @@
 /*
  * affine_2.c -- Compute a bivariate affine function of two arpra_t.
  *
- * Copyright 2016-2017 James Paul Turner.
+ * Copyright 2016-2018 James Paul Turner.
  *
  * This file is part of the Arpra library.
  *
