@@ -49,6 +49,16 @@ static arpra_t V4;    // Reciprocal of voltage dependence slope of N_ss(V) (mV)
 static arpra_t phi;   // (s^-1)
 static arpra_t C;     // Membrane capacitance (uF/cm^2)
 
+// Neuron group 1 state variables
+arpra_ptr nrn1_N;     // Fraction of open K+ channels
+arpra_ptr nrn1_V;     // Membrane potential (mV)
+arpra_ptr nrn1_I;     // Applied current (uA/cm^2)
+
+// Neuron group 2 state variables
+arpra_ptr nrn2_N;     // Fraction of open K+ channels
+arpra_ptr nrn2_V;     // Membrane potential (mV)
+arpra_ptr nrn2_I;     // Applied current (uA/cm^2)
+
 // Constants
 static arpra_t one, two, neg_two;
 
@@ -227,10 +237,9 @@ int main (int argc, char *argv[])
     arpra_set_d(neg_two, -2.0);
 
     // Init neuron group 1 state variables
-    arpra_ptr nrn1_N = malloc(n_grp1 * sizeof(arpra_t));  // Fraction of open K+ channels
-    arpra_ptr nrn1_V = malloc(n_grp1 * sizeof(arpra_t));  // Membrane potential (mV)
-    arpra_ptr nrn1_I = malloc(n_grp1 * sizeof(arpra_t));  // Applied current (uA/cm^2)
-
+    nrn1_N = malloc(n_grp1 * sizeof(arpra_t));
+    nrn1_V = malloc(n_grp1 * sizeof(arpra_t));
+    nrn1_I = malloc(n_grp1 * sizeof(arpra_t));
     for (j = 0; j < n_grp1; j++) {
         arpra_init2(&(nrn1_N[j]), prec);
         arpra_init2(&(nrn1_V[j]), prec);
@@ -256,10 +265,9 @@ int main (int argc, char *argv[])
     file_init("nrn1", "V", n_grp1, f_nrn1_V_c, f_nrn1_V_r, f_nrn1_V_n, f_nrn1_V_s, f_nrn1_V_d);
 
     // Init neuron group 2 state variables
-    arpra_ptr nrn2_N = malloc(n_grp2 * sizeof(arpra_t));  // Fraction of open K+ channels
-    arpra_ptr nrn2_V = malloc(n_grp2 * sizeof(arpra_t));  // Membrane potential (mV)
-    arpra_ptr nrn2_I = malloc(n_grp2 * sizeof(arpra_t));  // Applied current (uA/cm^2)
-
+    nrn2_N = malloc(n_grp2 * sizeof(arpra_t));
+    nrn2_V = malloc(n_grp2 * sizeof(arpra_t));
+    nrn2_I = malloc(n_grp2 * sizeof(arpra_t));
     for (j = 0; j < n_grp2; j++) {
         arpra_init2(&(nrn2_N[j]), prec);
         arpra_init2(&(nrn2_V[j]), prec);
@@ -431,4 +439,20 @@ int main (int argc, char *argv[])
 
     mpfr_free_cache();
     return 0;
+}
+
+
+
+// ALL VARIABLES GLOBAL - DO WHOLE ARRAY IN STEPPER FUNCTIONS
+// ALL UNITS SHARE THE LOWEST TIME STEP IN THE GROUP
+
+
+void rk3 (arpra_t y, arpra_t dy)
+{
+    
+}
+
+void rk4 (arpra_t y, arpra_t dy)
+{
+    
 }
