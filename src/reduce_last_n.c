@@ -71,10 +71,10 @@ void arpra_reduce_last_n (arpra_ptr z, arpra_uint_t n)
 
     // Handle domain violations, and resize memory.
     z->nTerms = zTerm;
-    if (mpfr_nan_p(&(z->centre)) || mpfr_nan_p(&(z->radius))) {
+    if (mpfr_nan_p(&(z->radius))) {
         arpra_set_nan(z);
     }
-    else if (mpfr_inf_p(&(z->centre)) || mpfr_inf_p(&(z->radius))) {
+    else if (mpfr_inf_p(&(z->radius))) {
         arpra_set_inf(z);
     }
     else {
