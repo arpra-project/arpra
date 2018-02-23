@@ -444,15 +444,16 @@ int main (int argc, char *argv[])
 
 
 // ALL VARIABLES GLOBAL - DO WHOLE ARRAY IN STEPPER FUNCTIONS
-// ALL UNITS SHARE THE LOWEST TIME STEP IN THE GROUP
 
 
-void rk3 (arpra_t y, arpra_t dy)
+// args: (function ptr, var array ptr, total step time)
+
+void rk3 (arpra_ptr y, arpra_scptr dy)
 {
     
 }
 
-void rk4 (arpra_t y, arpra_t dy)
+void rk4 (arpra_ptr y, arpra_srcptr dy)
 {
     
 }
