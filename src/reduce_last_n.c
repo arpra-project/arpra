@@ -44,18 +44,18 @@ void arpra_reduce_last_n (arpra_ptr z, arpra_uint_t n)
     zTerm = z->nTerms - n;
     summands = malloc(n * sizeof(mpfr_ptr));
 
-    // Add leading deviation terms to radius.
-    for (zNext = 0; zNext < zTerm; zNext++) {
-        mpfr_abs(temp, &(z->deviations[zNext]), MPFR_RNDU);
-        mpfr_add(&(z->radius), &(z->radius), temp, MPFR_RNDU);
-    }
-
     // Merge the last n deviation terms.
     for (zNext = zTerm; zNext < z->nTerms; zNext++) {
         mpfr_abs(&(z->deviations[zNext]), &(z->deviations[zNext]), MPFR_RNDN);
         summands[zNext - zTerm] = &(z->deviations[zNext]);
     }
     mpfr_sum(&(z->deviations[zTerm]), summands, n, MPFR_RNDU);
+
+    // Add the remaining deviation terms to radius.
+    for (zNext = 0; zNext < zTerm; zNext++) {
+        mpfr_abs(temp, &(z->deviations[zNext]), MPFR_RNDU);
+        mpfr_add(&(z->radius), &(z->radius), temp, MPFR_RNDU);
+    }
 
     // Store nonzero merged deviation term.
     if (!mpfr_zero_p(&(z->deviations[zTerm]))) {
