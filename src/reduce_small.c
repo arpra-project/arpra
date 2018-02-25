@@ -24,7 +24,8 @@
 void arpra_reduce_small (arpra_ptr z, double fraction)
 {
     arpra_uint_t zTerm, zNext;
-    mpfr_t temp, error, threshold;
+    mpfr_ptr *summands;
+    mpfr_t temp, threshold;
     arpra_prec_t prec_internal;
 
     // Handle trivial cases.
@@ -39,34 +40,38 @@ void arpra_reduce_small (arpra_ptr z, double fraction)
     mpfr_init2(temp, prec_internal);
     mpfr_init2(threshold, prec_internal);
     mpfr_mul_d(threshold, &(z->radius), fraction, MPFR_RNDN);
-    mpfr_init2(error, prec_internal);
-    mpfr_set_ui(error, 0, MPFR_RNDU);
     mpfr_set_prec(&(z->radius), prec_internal);
     mpfr_set_ui(&(z->radius), 0, MPFR_RNDU);
     zTerm = 0;
 
+    // Shift small deviation terms to back.
     for (zNext = 0; zNext < z->nTerms; zNext++) {
-        mpfr_abs(temp, &(z->deviations[zNext]), MPFR_RNDU);
-
-        if (mpfr_lessequal_p(temp, threshold)) {
-            // If deviation term is small, merge it.
-            mpfr_add(error, error, temp, MPFR_RNDU);
-        }
-        else {
-            // Else shift deviation term up.
+        if (mpfr_cmpabs(&(z->deviations[zNext]), threshold) > 0) {
             if (zTerm < zNext) {
                 z->symbols[zTerm] = z->symbols[zNext];
-                mpfr_set(&(z->deviations[zTerm]), &(z->deviations[zNext]), MPFR_RNDN);
+                mpfr_swap(&(z->deviations[zTerm]), &(z->deviations[zNext]));
             }
-            mpfr_add(&(z->radius), &(z->radius), &(z->deviations[zTerm]), MPFR_RNDU);
             zTerm++;
         }
     }
+    summands = malloc((zNext - zTerm) * sizeof(mpfr_ptr));
+
+    // Merge the small deviation terms.
+    for (zNext = zTerm; zNext < z->nTerms; zNext++) {
+        mpfr_abs(&(z->deviations[zNext]), &(z->deviations[zNext]), MPFR_RNDN);
+        summands[zNext - zTerm] = &(z->deviations[zNext]);
+    }
+    mpfr_sum(&(z->deviations[zTerm]), summands, (zNext - zTerm), MPFR_RNDU);
+
+    // Add the remaining deviation terms to radius.
+    for (zNext = 0; zNext < zTerm; zNext++) {
+        mpfr_abs(temp, &(z->deviations[zTerm]), MPFR_RNDU);
+        mpfr_add(&(z->radius), &(z->radius), temp, MPFR_RNDU);
+    }
 
     // Store nonzero merged deviation term.
-    if (!mpfr_zero_p(error)) {
+    if (!mpfr_zero_p(&(z->deviations[zTerm]))) {
         z->symbols[zTerm] = arpra_next_sym();
-        mpfr_set(&(z->deviations[zTerm]), error, MPFR_RNDU);
         mpfr_add(&(z->radius), &(z->radius), &(z->deviations[zTerm]), MPFR_RNDU);
         zTerm++;
     }
@@ -78,10 +83,10 @@ void arpra_reduce_small (arpra_ptr z, double fraction)
 
     // Handle domain violations, and resize memory.
     z->nTerms = zTerm;
-    if (mpfr_nan_p(&(z->centre)) || mpfr_nan_p(&(z->radius))) {
+    if (mpfr_nan_p(&(z->radius))) {
         arpra_set_nan(z);
     }
-    else if (mpfr_inf_p(&(z->centre)) || mpfr_inf_p(&(z->radius))) {
+    else if (mpfr_inf_p(&(z->radius))) {
         arpra_set_inf(z);
     }
     else {
@@ -97,6 +102,6 @@ void arpra_reduce_small (arpra_ptr z, double fraction)
 
     // Clear vars.
     mpfr_clear(temp);
-    mpfr_clear(error);
     mpfr_clear(threshold);
+    free(summands);
 }
