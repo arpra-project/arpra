@@ -21,9 +21,9 @@
 
 #include "arpra-impl.h"
 
-arpra_int_t arpra_term (mpfr_ptr z, mpfr_srcptr x, mpfr_srcptr y, mpfr_srcptr alpha, mpfr_srcptr beta, mpfr_srcptr gamma)
+arpra_int arpra_term (mpfr_ptr z, mpfr_srcptr x, mpfr_srcptr y, mpfr_srcptr alpha, mpfr_srcptr beta, mpfr_srcptr gamma)
 {
-    arpra_int_t inexact;
+    arpra_int inexact;
     mpfr_t alpha_x, beta_y;
 
     // alpha * x needs precision prec(alpha) + prec(x) to be exact.

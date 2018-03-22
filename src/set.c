@@ -23,8 +23,8 @@
 
 void arpra_set (arpra_ptr z, arpra_srcptr x)
 {
-    arpra_uint_t xTerm, zTerm;
-    arpra_prec_t prec, prec_internal;
+    arpra_uint xTerm, zTerm;
+    arpra_precision prec, prec_internal;
     mpfr_t temp, error;
 
     // Handle trivial cases.
@@ -41,8 +41,8 @@ void arpra_set (arpra_ptr z, arpra_srcptr x)
     }
 
     // Initialise vars.
-    prec = arpra_get_prec(z);
-    prec_internal = arpra_get_internal_prec();
+    prec = arpra_get_precision(z);
+    prec_internal = arpra_get_internal_precision();
     mpfr_init2(temp, prec_internal);
     mpfr_init2(error, prec_internal);
     mpfr_set_ui(error, 0, MPFR_RNDU);
@@ -58,7 +58,7 @@ void arpra_set (arpra_ptr z, arpra_srcptr x)
     // Replace existing deviation term memory.
     arpra_clear_terms(z);
     z->nTerms = x->nTerms + 1;
-    z->symbols = malloc(z->nTerms * sizeof(arpra_uint_t));
+    z->symbols = malloc(z->nTerms * sizeof(arpra_uint));
     z->deviations = malloc(z->nTerms * sizeof(arpra_t));
 
     // Copy deviation terms over.
@@ -106,7 +106,7 @@ void arpra_set (arpra_ptr z, arpra_srcptr x)
             free(z->deviations);
         }
         else {
-            z->symbols = realloc(z->symbols, z->nTerms * sizeof(arpra_uint_t));
+            z->symbols = realloc(z->symbols, z->nTerms * sizeof(arpra_uint));
             z->deviations = realloc(z->deviations, z->nTerms * sizeof(mpfr_t));
         }
     }

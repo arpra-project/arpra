@@ -28,14 +28,14 @@ mpfi_t x_I, y_I, z_I, z_AI;
 mpfr_t rdiam_I, rdiam_AI, rdiam_diff;
 #endif // WITH_MPFI
 
-void test_fixture_init (arpra_prec_t prec, arpra_prec_t prec_internal)
+void test_fixture_init (arpra_precision prec, arpra_precision prec_internal)
 {
     // Ensure that we do not double-initialise.
     if (!test_fixture_ready) {
         test_fixture_ready = 1;
 
         // Set internal precision.
-        arpra_set_internal_prec(prec_internal);
+        arpra_set_internal_precision(prec_internal);
 
         // Initialise Arpra variables.
         arpra_init2(x_A, prec);

@@ -28,10 +28,10 @@
 void arpra_sqrt (arpra_ptr z, arpra_srcptr x)
 {
     mpfr_t temp, xa, xb, da, db, du, alpha, gamma, delta;
-    arpra_prec_t prec_internal;
+    arpra_precision prec_internal;
 
     // Initialise vars.
-    prec_internal = arpra_get_internal_prec();
+    prec_internal = arpra_get_internal_precision();
     mpfr_init2(temp, prec_internal);
     mpfr_init2(xa, prec_internal);
     mpfr_init2(xb, prec_internal);

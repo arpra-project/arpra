@@ -32,12 +32,13 @@
 #include <math.h>
 
 #include <arpra.h>
+#include <arpra_ode.h>
 #ifdef WITH_MPFI
 #include <arpra2mpfi.h>
 #endif // WITH_MPFI
 
 // Internal precision default value.
-#define ARPRA_DEFAULT_INTERNAL_PREC 128
+#define ARPRA_DEFAULT_INTERNAL_PRECISION 128
 
 // Use tighter arpra_mul approximation.
 #define ARPRA_TIGHT_MUL
@@ -55,7 +56,7 @@
  */
 
 // Internal helper functions.
-arpra_int_t arpra_term (mpfr_ptr z, mpfr_srcptr x, mpfr_srcptr y,
+arpra_int arpra_term (mpfr_ptr z, mpfr_srcptr x, mpfr_srcptr y,
                         mpfr_srcptr alpha, mpfr_srcptr beta, mpfr_srcptr gamma);
 void arpra_error (mpfr_ptr error, mpfr_srcptr x);
 

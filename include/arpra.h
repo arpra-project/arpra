@@ -1,5 +1,5 @@
 /*
- * arpra.h -- Arpra public header file.
+ * arpra.h -- Arpra main public header.
  *
  * Copyright 2016-2018 James Paul Turner.
  *
@@ -24,24 +24,30 @@
 
 #include <mpfr.h>
 
-typedef long int arpra_int_t;
-typedef unsigned long int arpra_uint_t;
+// Primitive type definitions.
+typedef long int arpra_int;
+typedef unsigned long int arpra_uint;
+typedef mpfr_prec_t arpra_precision;
 
-typedef mpfr_prec_t arpra_prec_t;
-typedef mpfr_exp_t arpra_exp_t;
-
+// The Arpra range type.
 struct __arpra_struct
 {
     __mpfr_struct centre;
     __mpfr_struct radius;
     __mpfr_struct *deviations;
-    arpra_uint_t *symbols;
-    arpra_uint_t nTerms;
+    arpra_uint *symbols;
+    arpra_uint nTerms;
 };
+
+
+
 
 typedef struct __arpra_struct arpra_t[1];
 typedef struct __arpra_struct *arpra_ptr;
 typedef const struct __arpra_struct *arpra_srcptr;
+
+
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -50,8 +56,8 @@ extern "C" {
 // Initialise and clear.
 void arpra_init (arpra_ptr x);
 void arpra_inits (arpra_ptr x, ...);
-void arpra_init2 (arpra_ptr x, arpra_prec_t prec);
-void arpra_inits2 (arpra_prec_t prec, arpra_ptr x, ...);
+void arpra_init2 (arpra_ptr x, arpra_precision prec);
+void arpra_inits2 (arpra_precision prec, arpra_ptr x, ...);
 void arpra_clear (arpra_ptr x);
 void arpra_clears (arpra_ptr x, ...);
 void arpra_clear_terms (arpra_ptr x);
@@ -63,8 +69,8 @@ void arpra_get_bounds (mpfr_ptr lo, mpfr_ptr hi, arpra_srcptr x);
 void arpra_set (arpra_ptr z, arpra_srcptr x);
 void arpra_set_d (arpra_ptr z, const double centre);
 void arpra_set_d_rad (arpra_ptr z, const double centre, const double radius);
-void arpra_set_str (arpra_ptr z, const char *centre, arpra_int_t base);
-void arpra_set_str_rad (arpra_ptr z, const char *centre, const char *radius, arpra_int_t base);
+void arpra_set_str (arpra_ptr z, const char *centre, arpra_int base);
+void arpra_set_str_rad (arpra_ptr z, const char *centre, const char *radius, arpra_int base);
 void arpra_set_mpfr (arpra_ptr z, mpfr_srcptr centre);
 void arpra_set_mpfr_rad (arpra_ptr z, mpfr_srcptr centre, mpfr_srcptr radius);
 
@@ -81,7 +87,7 @@ void arpra_affine_2 (arpra_ptr z, arpra_srcptr x, arpra_srcptr y,
 void arpra_add (arpra_ptr z, arpra_srcptr x, arpra_srcptr y);
 void arpra_sub (arpra_ptr z, arpra_srcptr x, arpra_srcptr y);
 void arpra_neg (arpra_ptr z, arpra_srcptr x);
-void arpra_sum (arpra_ptr z, const arpra_ptr *x, arpra_uint_t n);
+void arpra_sum (arpra_ptr z, const arpra_ptr *x, arpra_uint n);
 
 // Non-affine operations.
 void arpra_mul(arpra_ptr z, arpra_srcptr x, arpra_srcptr y);
@@ -91,18 +97,16 @@ void arpra_exp (arpra_ptr z, arpra_srcptr x);
 void arpra_log (arpra_ptr z, arpra_srcptr x);
 void arpra_inv (arpra_ptr z, arpra_srcptr x);
 
-// Get precision.
-arpra_prec_t arpra_get_prec (arpra_srcptr x);
-arpra_prec_t arpra_get_default_prec ();
-arpra_prec_t arpra_get_internal_prec ();
-
-// Set precision.
-void arpra_set_prec (arpra_ptr z, arpra_prec_t prec);
-void arpra_set_default_prec (arpra_prec_t prec);
-void arpra_set_internal_prec (arpra_prec_t prec);
+// Numerical precision.
+arpra_precision arpra_get_precision (arpra_srcptr x);
+arpra_precision arpra_get_default_precision ();
+arpra_precision arpra_get_internal_precision ();
+void arpra_set_precision (arpra_ptr z, arpra_precision precision);
+void arpra_set_default_precision (arpra_precision precision);
+void arpra_set_internal_precision (arpra_precision precision);
 
 // Deviation term reduction.
-void arpra_reduce_last_n (arpra_ptr z, arpra_uint_t n);
+void arpra_reduce_last_n (arpra_ptr z, arpra_uint n);
 void arpra_reduce_small (arpra_ptr z, double fraction);
 
 // Predicates on arpra_t.
@@ -115,7 +119,7 @@ int arpra_has_pos_p (arpra_srcptr x);
 int arpra_has_neg_p (arpra_srcptr x);
 
 // Get new deviation symbols.
-arpra_uint_t arpra_next_sym ();
+arpra_uint arpra_next_sym ();
 
 #ifdef __cplusplus
 }

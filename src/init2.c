@@ -21,14 +21,14 @@
 
 #include "arpra-impl.h"
 
-void arpra_init2 (arpra_ptr x, arpra_prec_t prec)
+void arpra_init2 (arpra_ptr x, arpra_precision prec)
 {
-    arpra_prec_t prec_internal;
+    arpra_precision prec_internal;
 
     // Increase internal precision if < 'prec'.
-    prec_internal = arpra_get_internal_prec();
+    prec_internal = arpra_get_internal_precision();
     if (prec_internal < prec) {
-        arpra_set_internal_prec(prec);
+        arpra_set_internal_precision(prec);
         prec_internal = prec;
     }
 
@@ -38,7 +38,7 @@ void arpra_init2 (arpra_ptr x, arpra_prec_t prec)
     mpfr_init2(&(x->radius), prec_internal);
 }
 
-void arpra_inits2 (arpra_prec_t prec, arpra_ptr x, ...)
+void arpra_inits2 (arpra_precision prec, arpra_ptr x, ...)
 {
     va_list arg;
 

@@ -23,7 +23,7 @@
 
 void arpra_set_mpfr_rad (arpra_ptr z, mpfr_srcptr centre, mpfr_srcptr radius)
 {
-    arpra_prec_t prec, prec_internal;
+    arpra_precision prec, prec_internal;
     mpfr_t temp;
 
     // Handle domain violations.
@@ -37,8 +37,8 @@ void arpra_set_mpfr_rad (arpra_ptr z, mpfr_srcptr centre, mpfr_srcptr radius)
     }
 
     // Initialise vars.
-    prec = arpra_get_prec(z);
-    prec_internal = arpra_get_internal_prec();
+    prec = arpra_get_precision(z);
+    prec_internal = arpra_get_internal_precision();
     mpfr_init2(temp, prec_internal);
     mpfr_set_prec(&(z->radius), prec_internal);
     mpfr_abs(&(z->radius), radius, MPFR_RNDU);
@@ -56,7 +56,7 @@ void arpra_set_mpfr_rad (arpra_ptr z, mpfr_srcptr centre, mpfr_srcptr radius)
     if (!mpfr_zero_p(&(z->radius))) {
         // Allocate one deviation term.
         z->nTerms = 1;
-        z->symbols = malloc(sizeof(arpra_uint_t));
+        z->symbols = malloc(sizeof(arpra_uint));
         z->deviations = malloc(sizeof(arpra_t));
 
         // Set deviation term.

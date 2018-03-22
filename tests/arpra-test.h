@@ -72,7 +72,7 @@ extern FILE *test_log;
 extern int test_log_ready;
 
 // Test fixture functions.
-void test_fixture_init (arpra_prec_t prec, arpra_prec_t prec_internal);
+void test_fixture_init (arpra_precision prec, arpra_precision prec_internal);
 void test_fixture_clear ();
 
 // RNG functions.

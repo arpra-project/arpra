@@ -24,10 +24,10 @@
 int main (int argc, char *argv[])
 {
 #ifdef WITH_MPFI
-    const arpra_prec_t prec = 53;
-    const arpra_prec_t prec_internal = 128;
-    const arpra_uint_t test_n = 100000;
-    arpra_uint_t i, fail, fail_n;
+    const arpra_precision prec = 53;
+    const arpra_precision prec_internal = 128;
+    const arpra_uint test_n = 100000;
+    arpra_uint i, fail, fail_n;
 
     // Init test.
     test_fixture_init(prec, prec_internal);

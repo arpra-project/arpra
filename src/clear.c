@@ -44,7 +44,7 @@ void arpra_clears (arpra_ptr x, ...)
 
 void arpra_clear_terms (arpra_ptr x)
 {
-    arpra_uint_t xTerm;
+    arpra_uint xTerm;
 
     // Clear existing deviation terms.
     if (x->nTerms > 0) {

@@ -21,9 +21,9 @@
 
 #include "arpra-impl.h"
 
-static arpra_uint_t arpra_symbol = 0;
+static arpra_uint symbol_count = 0;
 
-arpra_uint_t arpra_next_sym ()
+arpra_uint arpra_next_sym ()
 {
-    return arpra_symbol++;
+    return symbol_count++;
 }

@@ -23,9 +23,9 @@
 
 void arpra_affine_1 (arpra_ptr z, arpra_srcptr x, mpfr_srcptr alpha, mpfr_srcptr gamma, mpfr_srcptr delta)
 {
-    arpra_uint_t xTerm, zTerm;
+    arpra_uint xTerm, zTerm;
     mpfr_t temp, error;
-    arpra_prec_t prec, prec_internal;
+    arpra_precision prec, prec_internal;
     arpra_t zNew;
 
     // Domain violations:
@@ -43,8 +43,8 @@ void arpra_affine_1 (arpra_ptr z, arpra_srcptr x, mpfr_srcptr alpha, mpfr_srcptr
     }
 
     // Initialise vars.
-    prec = arpra_get_prec(z);
-    prec_internal = arpra_get_internal_prec();
+    prec = arpra_get_precision(z);
+    prec_internal = arpra_get_internal_precision();
     mpfr_init2(temp, prec_internal);
     mpfr_init2(error, prec_internal);
     mpfr_init2(&(zNew->centre), prec);
@@ -60,7 +60,7 @@ void arpra_affine_1 (arpra_ptr z, arpra_srcptr x, mpfr_srcptr alpha, mpfr_srcptr
 
     // Allocate memory for all possible deviation terms.
     zNew->nTerms = x->nTerms + 1;
-    zNew->symbols = malloc(zNew->nTerms * sizeof(arpra_uint_t));
+    zNew->symbols = malloc(zNew->nTerms * sizeof(arpra_uint));
     zNew->deviations = malloc(zNew->nTerms * sizeof(mpfr_t));
 
     for (xTerm = 0, zTerm = 0; xTerm < x->nTerms; xTerm++) {

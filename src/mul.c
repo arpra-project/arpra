@@ -23,10 +23,10 @@
 
 void arpra_mul (arpra_ptr z, arpra_srcptr x, arpra_srcptr y)
 {
-    arpra_uint_t xTerm, yTerm, zTerm;
-    arpra_int_t xHasNext, yHasNext;
+    arpra_uint xTerm, yTerm, zTerm;
+    arpra_int xHasNext, yHasNext;
     mpfr_t temp, error;
-    arpra_prec_t prec, prec_internal;
+    arpra_precision prec, prec_internal;
     arpra_t zNew;
 
     // Domain violations:
@@ -62,8 +62,8 @@ void arpra_mul (arpra_ptr z, arpra_srcptr x, arpra_srcptr y)
     }
 
     // Initialise vars.
-    prec = arpra_get_prec(z);
-    prec_internal = arpra_get_internal_prec();
+    prec = arpra_get_precision(z);
+    prec_internal = arpra_get_internal_precision();
     mpfr_init2(temp, prec_internal);
     mpfr_init2(error, prec_internal);
     mpfr_init2(&(zNew->centre), prec);
@@ -79,7 +79,7 @@ void arpra_mul (arpra_ptr z, arpra_srcptr x, arpra_srcptr y)
 
     // Allocate memory for all possible deviation terms.
     zNew->nTerms = x->nTerms + y->nTerms + 1;
-    zNew->symbols = malloc(zNew->nTerms * sizeof(arpra_uint_t));
+    zNew->symbols = malloc(zNew->nTerms * sizeof(arpra_uint));
     zNew->deviations = malloc(zNew->nTerms * sizeof(mpfr_t));
 
     xTerm = 0;
@@ -142,7 +142,7 @@ void arpra_mul (arpra_ptr z, arpra_srcptr x, arpra_srcptr y)
     // S. M. Rump and M. Kashiwagi, Implementation and improvements of affine arithmetic,
     // Nonlinear Theory an Its Applications, IEICE, vol. 6, no. 3, pp. 341-359, 2015.
 
-    arpra_uint_t xNext, yNext;
+    arpra_uint xNext, yNext;
     mpfr_t xiyiPos, xiyiNeg;
 
     // Init extra temp vars.

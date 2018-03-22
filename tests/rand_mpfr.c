@@ -23,7 +23,7 @@
 
 void test_rand_mpfr (mpfr_ptr z, enum test_rand_mode mode)
 {
-    arpra_uint_t r_ui;
+    arpra_uint r_ui;
     mpfr_t r_mpfr;
 
     if (test_rand_ready) {

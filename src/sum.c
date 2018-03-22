@@ -21,15 +21,15 @@
 
 #include "arpra-impl.h"
 
-void arpra_sum (arpra_ptr z, const arpra_ptr *x, arpra_uint_t n)
+void arpra_sum (arpra_ptr z, const arpra_ptr *x, arpra_uint n)
 {
-    arpra_uint_t i, j;
-    arpra_uint_t xSymbol, zTerm;
-    arpra_uint_t *xTerm;
-    arpra_int_t xHasNext;
+    arpra_uint i, j;
+    arpra_uint xSymbol, zTerm;
+    arpra_uint *xTerm;
+    arpra_int xHasNext;
     mpfr_ptr *summands;
     mpfr_t temp, error;
-    arpra_prec_t prec, prec_internal;
+    arpra_precision prec, prec_internal;
     arpra_t zNew;
 
     // Domain violations:
@@ -76,15 +76,15 @@ void arpra_sum (arpra_ptr z, const arpra_ptr *x, arpra_uint_t n)
     }
 
     // Initialise vars.
-    prec = arpra_get_prec(z);
-    prec_internal = arpra_get_internal_prec();
+    prec = arpra_get_precision(z);
+    prec_internal = arpra_get_internal_precision();
     mpfr_init2(temp, prec_internal);
     mpfr_init2(error, prec_internal);
     mpfr_init2(&(zNew->centre), prec);
     mpfr_init2(&(zNew->radius), prec_internal);
     mpfr_set_si(error, 0, MPFR_RNDU);
     mpfr_set_si(&(zNew->radius), 0, MPFR_RNDU);
-    xTerm = malloc(n * sizeof(arpra_uint_t));
+    xTerm = malloc(n * sizeof(arpra_uint));
     summands = malloc(n * sizeof(mpfr_ptr));
 
     // Zero term indexes, and fill summand array with centre values.
@@ -105,7 +105,7 @@ void arpra_sum (arpra_ptr z, const arpra_ptr *x, arpra_uint_t n)
     for (i = 0; i < n; i++) {
         zNew->nTerms += x[i]->nTerms;
     }
-    zNew->symbols = malloc(zNew->nTerms * sizeof(arpra_uint_t));
+    zNew->symbols = malloc(zNew->nTerms * sizeof(arpra_uint));
     zNew->deviations = malloc(zNew->nTerms * sizeof(mpfr_t));
 
     // For all unique symbols in x.

@@ -21,12 +21,12 @@
 
 #include "arpra-impl.h"
 
-void arpra_reduce_last_n (arpra_ptr z, arpra_uint_t n)
+void arpra_reduce_last_n (arpra_ptr z, arpra_uint n)
 {
-    arpra_uint_t zTerm, zNext;
+    arpra_uint zTerm, zNext;
     mpfr_ptr *summands;
     mpfr_t temp;
-    arpra_prec_t prec_internal;
+    arpra_precision prec_internal;
 
     // Handle trivial cases.
     if (n > z->nTerms) n = z->nTerms;
@@ -37,7 +37,7 @@ void arpra_reduce_last_n (arpra_ptr z, arpra_uint_t n)
     if (arpra_inf_p(z)) return;
 
     // Initialise vars.
-    prec_internal = arpra_get_internal_prec();
+    prec_internal = arpra_get_internal_precision();
     mpfr_init2(temp, prec_internal);
     mpfr_set_prec(&(z->radius), prec_internal);
     mpfr_set_ui(&(z->radius), 0, MPFR_RNDU);
@@ -83,7 +83,7 @@ void arpra_reduce_last_n (arpra_ptr z, arpra_uint_t n)
             free(z->deviations);
         }
         else {
-            z->symbols = realloc(z->symbols, z->nTerms * sizeof(arpra_uint_t));
+            z->symbols = realloc(z->symbols, z->nTerms * sizeof(arpra_uint));
             z->deviations = realloc(z->deviations, z->nTerms * sizeof(mpfr_t));
         }
     }

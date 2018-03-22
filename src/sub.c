@@ -24,10 +24,10 @@
 void arpra_sub (arpra_ptr z, arpra_srcptr x, arpra_srcptr y)
 {
     mpfr_t alpha, beta, gamma, delta;
-    arpra_prec_t prec;
+    arpra_precision prec;
 
     // Initialise vars.
-    prec = arpra_get_prec(z);
+    prec = arpra_get_precision(z);
     mpfr_init2(alpha, prec);
     mpfr_set_si(alpha, 1, MPFR_RNDN);
     mpfr_init2(beta, prec);

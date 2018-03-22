@@ -24,8 +24,8 @@
 void test_share_all_syms (arpra_ptr x, arpra_ptr y)
 {
 
-    arpra_uint_t symbol, term;
-    arpra_int_t x_has_next, y_has_next;
+    arpra_uint symbol, term;
+    arpra_int x_has_next, y_has_next;
 
     term = 0;
     x_has_next = x->nTerms > 0;
@@ -49,8 +49,8 @@ void test_share_all_syms (arpra_ptr x, arpra_ptr y)
 
 void test_share_rand_syms (arpra_ptr x, arpra_ptr y)
 {
-    arpra_uint_t symbol, term;
-    arpra_int_t x_has_next, y_has_next;
+    arpra_uint symbol, term;
+    arpra_int x_has_next, y_has_next;
 
     term = 0;
     x_has_next = x->nTerms > 0;

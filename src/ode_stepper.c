@@ -1,7 +1,7 @@
 /*
- * add.c -- Add one arpra_t to another.
+ * ode_stepper.c -- Initialise, clear and manipulate ODE steppers.
  *
- * Copyright 2016-2018 James Paul Turner.
+ * Copyright 2018 James Paul Turner.
  *
  * This file is part of the Arpra library.
  *
@@ -20,29 +20,3 @@
  */
 
 #include "arpra-impl.h"
-
-void arpra_add (arpra_ptr z, arpra_srcptr x, arpra_srcptr y)
-{
-    mpfr_t alpha, beta, gamma, delta;
-    arpra_precision prec;
-
-    // Initialise vars.
-    prec = arpra_get_precision(z);
-    mpfr_init2(alpha, prec);
-    mpfr_set_si(alpha, 1, MPFR_RNDN);
-    mpfr_init2(beta, prec);
-    mpfr_set_si(beta, 1, MPFR_RNDN);
-    mpfr_init2(gamma, prec);
-    mpfr_set_si(gamma, 0, MPFR_RNDN);
-    mpfr_init2(delta, prec);
-    mpfr_set_si(delta, 0, MPFR_RNDN);
-
-    // z = x + y
-    arpra_affine_2(z, x, y, alpha, beta, gamma, delta);
-
-    // Clear vars.
-    mpfr_clear(alpha);
-    mpfr_clear(beta);
-    mpfr_clear(gamma);
-    mpfr_clear(delta);
-}

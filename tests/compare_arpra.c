@@ -24,7 +24,7 @@
 int test_compare_arpra (arpra_srcptr x, arpra_srcptr y)
 {
     int fail = 0;
-    arpra_uint_t term;
+    arpra_uint term;
 
     // Return the number of differences in x and y.
     if (!mpfr_equal_p(&(x->centre), &(y->centre))) fail++;

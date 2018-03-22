@@ -28,10 +28,10 @@
 void arpra_div (arpra_ptr z, arpra_srcptr x, arpra_srcptr y)
 {
     arpra_t zNew;
-    arpra_prec_t prec;
+    arpra_precision prec;
 
     // Init temp z.
-    prec = arpra_get_prec(z);
+    prec = arpra_get_precision(z);
     arpra_init2(zNew, prec);
 
     // z = x * (1 / y)

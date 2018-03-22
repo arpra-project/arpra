@@ -23,10 +23,10 @@
 
 void arpra_reduce_small (arpra_ptr z, double fraction)
 {
-    arpra_uint_t zTerm, zNext;
+    arpra_uint zTerm, zNext;
     mpfr_ptr *summands;
     mpfr_t temp, threshold;
-    arpra_prec_t prec_internal;
+    arpra_precision prec_internal;
 
     // Handle trivial cases.
     if ((z->nTerms < 2) || (fraction >= 1)) return;
@@ -36,7 +36,7 @@ void arpra_reduce_small (arpra_ptr z, double fraction)
     if (arpra_inf_p(z)) return;
 
     // Initialise vars.
-    prec_internal = arpra_get_internal_prec();
+    prec_internal = arpra_get_internal_precision();
     mpfr_init2(temp, prec_internal);
     mpfr_init2(threshold, prec_internal);
     mpfr_mul_d(threshold, &(z->radius), fraction, MPFR_RNDN);
@@ -95,7 +95,7 @@ void arpra_reduce_small (arpra_ptr z, double fraction)
             free(z->deviations);
         }
         else {
-            z->symbols = realloc(z->symbols, z->nTerms * sizeof(arpra_uint_t));
+            z->symbols = realloc(z->symbols, z->nTerms * sizeof(arpra_uint));
             z->deviations = realloc(z->deviations, z->nTerms * sizeof(mpfr_t));
         }
     }

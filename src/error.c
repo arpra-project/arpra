@@ -30,8 +30,8 @@
 
 void arpra_error (mpfr_ptr error, mpfr_srcptr x)
 {
-    arpra_prec_t p;
-    arpra_exp_t e;
+    arpra_precision p;
+    mpfr_exp_t e;
 
     if (mpfr_zero_p(x)) {
         // error = nextabove(x)

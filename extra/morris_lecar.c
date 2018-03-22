@@ -21,19 +21,19 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <arpra.h>
+#include <arpra_ode.h>
 
 // General parameters
-const static arpra_uint_t sim_steps = 500;
+const static arpra_uint sim_steps = 500;
 const static double step_size = 1.0;
 
-const static arpra_uint_t n_grp1 = 10;
-const static arpra_uint_t n_grp2 = 10;
+const static arpra_uint n_grp1 = 10;
+const static arpra_uint n_grp2 = 10;
 
-const static arpra_uint_t reduce_step = 50;
+const static arpra_uint reduce_step = 50;
 const static double reduce_ratio = 0.3;
 
-const static arpra_prec_t prec = 53;
+const static arpra_precision prec = 53;
 
 // Neuron parameters
 static arpra_t gL;    // Maximum leak conductance (mmho/cm^2)
@@ -143,10 +143,10 @@ void d_N (arpra_ptr out, arpra_srcptr N, arpra_srcptr V)
 }
 
 
-void file_init (char *grp, char *var, arpra_uint_t num,
+void file_init (char *grp, char *var, arpra_uint num,
                 FILE **c, FILE **r, FILE **n, FILE **s, FILE **d)
 {
-    arpra_uint_t j;
+    arpra_uint j;
     char fname[20];
 
     for (j = 0; j < num; j++) {
@@ -164,9 +164,9 @@ void file_init (char *grp, char *var, arpra_uint_t num,
 }
 
 
-void file_clear (arpra_uint_t num, FILE **c, FILE **r, FILE **n, FILE **s, FILE **d)
+void file_clear (arpra_uint num, FILE **c, FILE **r, FILE **n, FILE **s, FILE **d)
 {
-    arpra_uint_t j;
+    arpra_uint j;
 
     for (j = 0; j < num; j++) {
         fclose(c[j]);
@@ -178,10 +178,10 @@ void file_clear (arpra_uint_t num, FILE **c, FILE **r, FILE **n, FILE **s, FILE 
 }
 
 
-void file_write (arpra_srcptr A, arpra_uint_t i,
+void file_write (arpra_srcptr A, arpra_uint i,
                  FILE **c, FILE **r, FILE **n, FILE **s, FILE **d)
 {
-    arpra_uint_t j;
+    arpra_uint j;
 
     mpfr_out_str(c[i], 10, 80, &(A[i].centre), MPFR_RNDN);
     fputc('\n', c[i]);
@@ -205,13 +205,13 @@ int main (int argc, char *argv[])
 
     // Init parameters
     arpra_inits2(prec,
-                dN, dV, dt, M,
-                gL, gCa, gK,
-                VL, VCa, VK,
-                V1, V2, V3, V4,
-                phi, C,
-                one, two, neg_two,
-                NULL);
+                 dN, dV, dt, M,
+                 gL, gCa, gK,
+                 VL, VCa, VK,
+                 V1, V2, V3, V4,
+                 phi, C,
+                 one, two, neg_two,
+                 NULL);
 
     arpra_set_d(dt, step_size);
 
@@ -430,12 +430,12 @@ int main (int argc, char *argv[])
 
     // Clear parameters
     arpra_clears(dN, dV, dt, M,
-                gL, gCa, gK,
-                VL, VCa, VK,
-                V1, V2, V3, V4,
-                phi, C,
-                one, two, neg_two,
-                NULL);
+                 gL, gCa, gK,
+                 VL, VCa, VK,
+                 V1, V2, V3, V4,
+                 phi, C,
+                 one, two, neg_two,
+                 NULL);
 
     mpfr_free_cache();
     return 0;
@@ -448,12 +448,12 @@ int main (int argc, char *argv[])
 
 // args: (function ptr, var array ptr, total step time)
 
-void rk3 (arpra_ptr y, arpra_scptr dy)
+void rk3 (arpra_ptr y, arpra_srcptr dy)
 {
-    
+
 }
 
 void rk4 (arpra_ptr y, arpra_srcptr dy)
 {
-    
+
 }
