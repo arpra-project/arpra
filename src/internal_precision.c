@@ -28,7 +28,7 @@ arpra_precision arpra_get_internal_precision ()
     return internal_precision;
 }
 
-void arpra_set_internal_precision (arpra_precision precision)
+void arpra_set_internal_precision (const arpra_precision precision)
 {
     internal_precision = precision;
 }

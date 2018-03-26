@@ -22,11 +22,11 @@
 #include "arpra-test.h"
 
 void test_univariate (
-    void (*f_arpra) (arpra_ptr z, arpra_srcptr x),
+    void (*f_arpra) (struct arpra_range *z, const struct arpra_range *x),
     int  (*f_mpfi) (mpfi_ptr z, mpfi_srcptr x))
 {
     // Convert arguments.
-    arpra_get_mpfi(x_I, x_A);
+    arpra_get_mpfi(x_I, &x_A);
     test_log_mpfi(x_I, "x  ");
 
     // Compute z with MPFI.
@@ -34,8 +34,8 @@ void test_univariate (
     test_log_mpfi(z_I, "z_I");
 
     // Compute z with Arpra.
-    f_arpra(z_A, x_A);
-    arpra_get_mpfi(z_AI, z_A);
+    f_arpra(&z_A, &x_A);
+    arpra_get_mpfi(z_AI, &z_A);
     test_log_mpfi(z_AI, "z_A");
 
     // Compute relative diameter difference.

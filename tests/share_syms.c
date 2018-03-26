@@ -21,7 +21,7 @@
 
 #include "arpra-test.h"
 
-void test_share_all_syms (arpra_ptr x, arpra_ptr y)
+void test_share_all_syms (struct arpra_range *x, struct arpra_range *y)
 {
 
     arpra_uint symbol, term;
@@ -31,7 +31,7 @@ void test_share_all_syms (arpra_ptr x, arpra_ptr y)
     x_has_next = x->nTerms > 0;
     y_has_next = y->nTerms > 0;
     while (x_has_next || y_has_next) {
-        symbol = arpra_next_sym();
+        symbol = arpra_next_symbol();
 
         // Set x and y symbol if they exist.
         if (x_has_next) {
@@ -47,7 +47,7 @@ void test_share_all_syms (arpra_ptr x, arpra_ptr y)
     }
 }
 
-void test_share_rand_syms (arpra_ptr x, arpra_ptr y)
+void test_share_rand_syms (struct arpra_range *x, struct arpra_range *y)
 {
     arpra_uint symbol, term;
     arpra_int x_has_next, y_has_next;
@@ -56,7 +56,7 @@ void test_share_rand_syms (arpra_ptr x, arpra_ptr y)
     x_has_next = x->nTerms > 0;
     y_has_next = y->nTerms > 0;
     while (x_has_next || y_has_next) {
-        symbol = arpra_next_sym();
+        symbol = arpra_next_symbol();
 
         // Set x symbol if y has no more terms.
         if (!y_has_next) {
@@ -78,7 +78,7 @@ void test_share_rand_syms (arpra_ptr x, arpra_ptr y)
             else {
                 // x and y have different symbols.
                 x->symbols[term] = symbol;
-                y->symbols[term] = arpra_next_sym();
+                y->symbols[term] = arpra_next_symbol();
             }
         }
 

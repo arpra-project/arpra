@@ -1,5 +1,5 @@
 /*
- * neg.c -- Negate an arpra_t.
+ * neg.c -- Negate an Arpra range.
  *
  * Copyright 2016-2018 James Paul Turner.
  *
@@ -21,7 +21,7 @@
 
 #include "arpra-impl.h"
 
-void arpra_neg (arpra_ptr z, arpra_srcptr x)
+void arpra_neg (struct arpra_range *z, const struct arpra_range *x)
 {
     mpfr_t alpha, gamma, delta;
     arpra_precision prec;

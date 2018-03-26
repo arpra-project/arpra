@@ -34,7 +34,7 @@
 #include <arpra.h>
 #include <arpra_ode.h>
 #ifdef WITH_MPFI
-#include <arpra2mpfi.h>
+#include <arpra_to_mpfi.h>
 #endif // WITH_MPFI
 
 // Internal precision default value.

@@ -1,5 +1,5 @@
 /*
- * precision.c -- Get and set the precision of an arpra_t.
+ * precision.c -- Get and set the precision of an Arpra range.
  *
  * Copyright 2016-2018 James Paul Turner.
  *
@@ -21,12 +21,12 @@
 
 #include "arpra-impl.h"
 
-arpra_precision arpra_get_precision (arpra_srcptr x)
+arpra_precision arpra_get_precision (const struct arpra_range *x)
 {
     return mpfr_get_prec(&(x->centre));
 }
 
-void arpra_set_precision (arpra_ptr z, arpra_precision precision)
+void arpra_set_precision (struct arpra_range *z, const arpra_precision precision)
 {
     arpra_precision precision_internal;
 

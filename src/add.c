@@ -1,5 +1,5 @@
 /*
- * add.c -- Add one arpra_t to another.
+ * add.c -- Add one Arpra range to another.
  *
  * Copyright 2016-2018 James Paul Turner.
  *
@@ -21,7 +21,7 @@
 
 #include "arpra-impl.h"
 
-void arpra_add (arpra_ptr z, arpra_srcptr x, arpra_srcptr y)
+void arpra_add (struct arpra_range *z, const struct arpra_range *x, const struct arpra_range *y)
 {
     mpfr_t alpha, beta, gamma, delta;
     arpra_precision prec;

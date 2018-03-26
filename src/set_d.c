@@ -21,7 +21,7 @@
 
 #include "arpra-impl.h"
 
-void arpra_set_d (arpra_ptr z, const double centre)
+void arpra_set_d (struct arpra_range *z, const double centre)
 {
     arpra_precision prec, prec_internal;
 
@@ -54,10 +54,10 @@ void arpra_set_d (arpra_ptr z, const double centre)
         // Allocate one deviation term.
         z->nTerms = 1;
         z->symbols = malloc(sizeof(arpra_uint));
-        z->deviations = malloc(sizeof(arpra_t));
+        z->deviations = malloc(sizeof(struct arpra_range));
 
         // Set deviation term.
-        z->symbols[0] = arpra_next_sym();
+        z->symbols[0] = arpra_next_symbol();
         mpfr_init2(&(z->deviations[0]), prec);
         mpfr_set(&(z->deviations[0]), &(z->radius), MPFR_RNDU);
         mpfr_set(&(z->radius), &(z->deviations[0]), MPFR_RNDU);

@@ -1,5 +1,5 @@
 /*
- * log.c -- Compute the natural logarithm of an arpra_t.
+ * log.c -- Compute the natural logarithm of an Arpra range.
  *
  * Copyright 2017-2018 James Paul Turner.
  *
@@ -25,7 +25,7 @@
  * This affine natural log function uses a Chebyshev linear approximation.
  */
 
-void arpra_log (arpra_ptr z, arpra_srcptr x)
+void arpra_log (struct arpra_range *z, const struct arpra_range *x)
 {
     mpfr_t temp, xa, xb, da, db, du, alpha, gamma, delta;
     arpra_precision prec_internal;

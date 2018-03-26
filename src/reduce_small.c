@@ -1,5 +1,5 @@
 /*
- * reduce_small.c -- Reduce terms less than some fraction of the radius.
+ * reduce_small.c -- Reduce terms less than a given fraction of the radius.
  *
  * Copyright 2017-2018 James Paul Turner.
  *
@@ -21,7 +21,7 @@
 
 #include "arpra-impl.h"
 
-void arpra_reduce_small (arpra_ptr z, double fraction)
+void arpra_reduce_small (struct arpra_range *z, double min_fraction)
 {
     arpra_uint zTerm, zNext;
     mpfr_ptr *summands;
@@ -29,7 +29,8 @@ void arpra_reduce_small (arpra_ptr z, double fraction)
     arpra_precision prec_internal;
 
     // Handle trivial cases.
-    if ((z->nTerms < 2) || (fraction >= 1)) return;
+    if (min_fraction < 0.0) min_fraction = 0.0;
+    if ((z->nTerms < 2) || (min_fraction >= 1)) return;
 
     // Handle domain violations.
     if (arpra_nan_p(z)) return;
@@ -39,7 +40,7 @@ void arpra_reduce_small (arpra_ptr z, double fraction)
     prec_internal = arpra_get_internal_precision();
     mpfr_init2(temp, prec_internal);
     mpfr_init2(threshold, prec_internal);
-    mpfr_mul_d(threshold, &(z->radius), fraction, MPFR_RNDN);
+    mpfr_mul_d(threshold, &(z->radius), min_fraction, MPFR_RNDN);
     mpfr_set_prec(&(z->radius), prec_internal);
     mpfr_set_ui(&(z->radius), 0, MPFR_RNDU);
     zTerm = 0;
@@ -71,7 +72,7 @@ void arpra_reduce_small (arpra_ptr z, double fraction)
 
     // Store nonzero merged deviation term.
     if (!mpfr_zero_p(&(z->deviations[zTerm]))) {
-        z->symbols[zTerm] = arpra_next_sym();
+        z->symbols[zTerm] = arpra_next_symbol();
         mpfr_add(&(z->radius), &(z->radius), &(z->deviations[zTerm]), MPFR_RNDU);
         zTerm++;
     }

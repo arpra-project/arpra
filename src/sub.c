@@ -1,5 +1,5 @@
 /*
- * sub.c -- Subtract one arpra_t from another.
+ * sub.c -- Subtract one Arpra range from another.
  *
  * Copyright 2016-2018 James Paul Turner.
  *
@@ -21,7 +21,7 @@
 
 #include "arpra-impl.h"
 
-void arpra_sub (arpra_ptr z, arpra_srcptr x, arpra_srcptr y)
+void arpra_sub (struct arpra_range *z, const struct arpra_range *x, const struct arpra_range *y)
 {
     mpfr_t alpha, beta, gamma, delta;
     arpra_precision prec;

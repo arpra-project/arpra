@@ -37,7 +37,7 @@ int main (int argc, char *argv[])
 
     // Run test.
     for (i = 0; i < test_n; i++) {
-        test_rand_arpra(x_A, TEST_RAND_MIXED, TEST_RAND_SMALL);
+        test_rand_arpra(&x_A, TEST_RAND_MIXED, TEST_RAND_SMALL);
 
         // Pass criteria:
         // 1) Arpra z contains MPFI z.

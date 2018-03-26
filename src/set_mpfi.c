@@ -1,5 +1,5 @@
 /*
- * set_mpfi.c -- Set an arpra_t with an MPFI interval.
+ * set_mpfi.c -- Set an Arpra range with an MPFI interval.
  *
  * Copyright 2017-2018 James Paul Turner.
  *
@@ -21,7 +21,7 @@
 
 #include "arpra-impl.h"
 
-void arpra_set_mpfi (arpra_ptr z, mpfi_srcptr x)
+void arpra_set_mpfi (struct arpra_range *z, mpfi_srcptr x)
 {
     arpra_precision prec, prec_internal;
     mpfr_t temp;
@@ -59,10 +59,10 @@ void arpra_set_mpfi (arpra_ptr z, mpfi_srcptr x)
         // Allocate one deviation term.
         z->nTerms = 1;
         z->symbols = malloc(sizeof(arpra_uint));
-        z->deviations = malloc(sizeof(arpra_t));
+        z->deviations = malloc(sizeof(struct arpra_range));
 
         // Set deviation term.
-        z->symbols[0] = arpra_next_sym();
+        z->symbols[0] = arpra_next_symbol();
         mpfr_init2(&(z->deviations[0]), prec);
         mpfr_set(&(z->deviations[0]), &(z->radius), MPFR_RNDU);
     }

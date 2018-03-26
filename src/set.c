@@ -1,5 +1,5 @@
 /*
- * set.c -- Set one arpra_t with the values of another.
+ * set.c -- Set one Arpra range with the values of another.
  *
  * Copyright 2016-2018 James Paul Turner.
  *
@@ -21,7 +21,7 @@
 
 #include "arpra-impl.h"
 
-void arpra_set (arpra_ptr z, arpra_srcptr x)
+void arpra_set (struct arpra_range *z, const struct arpra_range *x)
 {
     arpra_uint xTerm, zTerm;
     arpra_precision prec, prec_internal;
@@ -59,7 +59,7 @@ void arpra_set (arpra_ptr z, arpra_srcptr x)
     arpra_clear_terms(z);
     z->nTerms = x->nTerms + 1;
     z->symbols = malloc(z->nTerms * sizeof(arpra_uint));
-    z->deviations = malloc(z->nTerms * sizeof(arpra_t));
+    z->deviations = malloc(z->nTerms * sizeof(struct arpra_range));
 
     // Copy deviation terms over.
     for (xTerm = 0, zTerm = 0; xTerm < x->nTerms; xTerm++) {
@@ -85,7 +85,7 @@ void arpra_set (arpra_ptr z, arpra_srcptr x)
 
     // Store nonzero numerical error term.
     if (!mpfr_zero_p(error)) {
-        z->symbols[zTerm] = arpra_next_sym();
+        z->symbols[zTerm] = arpra_next_symbol();
         mpfr_init2(&(z->deviations[zTerm]), prec);
         mpfr_set(&(z->deviations[zTerm]), error, MPFR_RNDU);
         mpfr_add(&(z->radius), &(z->radius), &(z->deviations[zTerm]), MPFR_RNDU);

@@ -21,7 +21,7 @@
 
 #include "arpra-impl.h"
 
-void arpra_reduce_last_n (arpra_ptr z, arpra_uint n)
+void arpra_reduce_last_n (struct arpra_range *z, arpra_uint n)
 {
     arpra_uint zTerm, zNext;
     mpfr_ptr *summands;
@@ -59,7 +59,7 @@ void arpra_reduce_last_n (arpra_ptr z, arpra_uint n)
 
     // Store nonzero merged deviation term.
     if (!mpfr_zero_p(&(z->deviations[zTerm]))) {
-        z->symbols[zTerm] = arpra_next_sym();
+        z->symbols[zTerm] = arpra_next_symbol();
         mpfr_add(&(z->radius), &(z->radius), &(z->deviations[zTerm]), MPFR_RNDU);
         zTerm++;
     }

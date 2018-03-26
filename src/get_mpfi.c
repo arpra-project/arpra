@@ -1,5 +1,5 @@
 /*
- * get_mpfi.c -- Get an MPFI interval from an arpra_t.
+ * get_mpfi.c -- Get an MPFI interval from an Arpra range.
  *
  * Copyright 2017-2018 James Paul Turner.
  *
@@ -21,7 +21,7 @@
 
 #include "arpra-impl.h"
 
-void arpra_get_mpfi (mpfi_ptr z, arpra_srcptr x)
+void arpra_get_mpfi (mpfi_ptr z, const struct arpra_range *x)
 {
     // z_lo = x_0 - rad(x)
     mpfr_sub(&(z->left), &(x->centre), &(x->radius), MPFR_RNDD);

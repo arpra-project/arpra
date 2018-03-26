@@ -1,5 +1,5 @@
 /*
- * predicates.c -- Predicates on arpra_t.
+ * predicates.c -- Predicates on Arpra ranges.
  *
  * Copyright 2017-2018 James Paul Turner.
  *
@@ -21,39 +21,39 @@
 
 #include "arpra-impl.h"
 
-int arpra_nan_p (arpra_srcptr x)
+int arpra_nan_p (const struct arpra_range *x)
 {
     return mpfr_nan_p(&(x->centre)) || mpfr_nan_p(&(x->radius));
 }
 
-int arpra_inf_p (arpra_srcptr x)
+int arpra_inf_p (const struct arpra_range *x)
 {
     return !mpfr_nan_p(&(x->centre)) && mpfr_inf_p(&(x->radius));
 }
 
-int arpra_bounded_p (arpra_srcptr x)
+int arpra_bounded_p (const struct arpra_range *x)
 {
     return mpfr_number_p(&(x->centre)) && mpfr_number_p(&(x->radius));
 }
 
-int arpra_zero_p (arpra_srcptr x)
+int arpra_zero_p (const struct arpra_range *x)
 {
     return mpfr_zero_p(&(x->centre)) && mpfr_zero_p(&(x->radius));
 }
 
-int arpra_has_zero_p (arpra_srcptr x)
+int arpra_has_zero_p (const struct arpra_range *x)
 {
     return !arpra_nan_p(x)
            && mpfr_cmpabs(&(x->centre), &(x->radius)) <= 0;
 }
 
-int arpra_has_pos_p (arpra_srcptr x)
+int arpra_has_pos_p (const struct arpra_range *x)
 {
     return mpfr_sgn(&(x->centre)) > 0
            || mpfr_cmpabs(&(x->centre), &(x->radius)) < 0;
 }
 
-int arpra_has_neg_p (arpra_srcptr x)
+int arpra_has_neg_p (const struct arpra_range *x)
 {
     return mpfr_sgn(&(x->centre)) < 0
            || mpfr_cmpabs(&(x->centre), &(x->radius)) < 0;

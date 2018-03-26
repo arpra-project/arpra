@@ -38,8 +38,8 @@ int main (int argc, char *argv[])
     // Run test.
     for (i = 0; i < test_n; i++) {
         fail = 0;
-        test_rand_arpra(x_A, TEST_RAND_MIXED, TEST_RAND_SMALL);
-        test_rand_arpra(y_A, TEST_RAND_MIXED, TEST_RAND_SMALL);
+        test_rand_arpra(&x_A, TEST_RAND_MIXED, TEST_RAND_SMALL);
+        test_rand_arpra(&y_A, TEST_RAND_MIXED, TEST_RAND_SMALL);
 
         // Pass criteria (unshared symbols):
         // 1) Arpra z contains MPFI z.
@@ -49,7 +49,7 @@ int main (int argc, char *argv[])
                 && mpfr_lessequal_p(&(z_I->right), &(z_AI->right))) {
             test_log_printf("Result (unshared symbols): PASS\n\n");
         }
-        else if (!arpra_bounded_p(z_A) && !mpfi_bounded_p(z_I)) {
+        else if (!arpra_bounded_p(&z_A) && !mpfi_bounded_p(z_I)) {
             test_log_printf("Result (unshared symbols): PASS\n\n");
         }
         else {
@@ -59,9 +59,9 @@ int main (int argc, char *argv[])
 
         // Pass criteria (random shared symbols):
         // 1) bounded(Arpra z) = bounded(MPFI z).
-        test_share_rand_syms(x_A, y_A);
+        test_share_rand_syms(&x_A, &y_A);
         test_bivariate(arpra_add, mpfi_add);
-        if (arpra_bounded_p(z_A) == mpfi_bounded_p(z_I)) {
+        if (arpra_bounded_p(&z_A) == mpfi_bounded_p(z_I)) {
             test_log_printf("Result (random shared symbols): PASS\n\n");
         }
         else {
@@ -71,9 +71,9 @@ int main (int argc, char *argv[])
 
         // Pass criteria (all shared symbols):
         // 1) bounded(Arpra z) = bounded(MPFI z).
-        test_share_all_syms(x_A, y_A);
+        test_share_all_syms(&x_A, &y_A);
         test_bivariate(arpra_add, mpfi_add);
-        if (arpra_bounded_p(z_A) == mpfi_bounded_p(z_I)) {
+        if (arpra_bounded_p(&z_A) == mpfi_bounded_p(z_I)) {
             test_log_printf("Result (all shared symbols): PASS\n\n");
         }
         else {

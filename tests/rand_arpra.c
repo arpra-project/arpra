@@ -21,7 +21,7 @@
 
 #include "arpra-test.h"
 
-void test_rand_arpra (arpra_ptr z,
+void test_rand_arpra (struct arpra_range *z,
                       enum test_rand_mode mode_centre,
                       enum test_rand_mode mode_deviations)
 {
@@ -51,7 +51,7 @@ void test_rand_arpra (arpra_ptr z,
 
     // Randomly set deviation terms.
     for (zTerm = 0; zTerm < z->nTerms; zTerm++) {
-        z->symbols[zTerm] = arpra_next_sym();
+        z->symbols[zTerm] = arpra_next_symbol();
         mpfr_init2(&(z->deviations[zTerm]), prec);
         test_rand_mpfr(&(z->deviations[zTerm]), mode_deviations);
 

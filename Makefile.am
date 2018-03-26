@@ -22,7 +22,7 @@ AM_CPPFLAGS = -I$(top_srcdir)/include
 # Public headers
 include_HEADERS = include/arpra.h include/arpra_ode.h
 if WITH_MPFI
-include_HEADERS += include/arpra2mpfi.h
+include_HEADERS += include/arpra_to_mpfi.h
 endif WITH_MPFI
 
 # Arpra library
@@ -32,7 +32,7 @@ lib_libarpra_la_SOURCES = \
 	src/clear.c src/reduce_last_n.c src/reduce_small.c		\
 	src/default_precision.c src/div.c src/error.c src/exp.c		\
 	src/init.c src/init2.c src/internal_precision.c src/inv.c	\
-	src/log.c src/mul.c src/neg.c src/next_sym.c src/precision.c	\
+	src/log.c src/mul.c src/neg.c src/symbol.c src/precision.c	\
 	src/set_d.c src/set.c src/set_d_rad.c src/set_str.c		\
 	src/set_str_rad.c src/set_mpfr.c src/set_mpfr_rad.c		\
 	src/set_special.c src/sqrt.c src/sub.c src/sum.c src/term.c	\

@@ -1,5 +1,5 @@
 /*
- * next_symbol.c -- Get a new noise symbol.
+ * symbol.c -- Noise symbol functions.
  *
  * Copyright 2016-2018 James Paul Turner.
  *
@@ -23,7 +23,7 @@
 
 static arpra_uint symbol_count = 0;
 
-arpra_uint arpra_next_sym ()
+arpra_uint arpra_next_symbol ()
 {
     return symbol_count++;
 }

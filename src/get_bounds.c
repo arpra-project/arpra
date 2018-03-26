@@ -1,5 +1,5 @@
 /*
- * get_bounds.c -- Get the lower and upper bound of an arpra_t.
+ * get_bounds.c -- Get the lower and upper bound of an Arpra range.
  *
  * Copyright 2017-2018 James Paul Turner.
  *
@@ -21,7 +21,7 @@
 
 #include "arpra-impl.h"
 
-void arpra_get_bounds (mpfr_ptr lo, mpfr_ptr hi, arpra_srcptr x)
+void arpra_get_bounds (mpfr_ptr lo, mpfr_ptr hi, const struct arpra_range *x)
 {
     // lo = x_0 - rad(x)
     mpfr_sub(lo, &(x->centre), &(x->radius), MPFR_RNDD);

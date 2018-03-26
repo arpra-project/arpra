@@ -34,7 +34,7 @@
 
 #include <arpra.h>
 #ifdef WITH_MPFI
-#include <arpra2mpfi.h>
+#include <arpra_to_mpfi.h>
 #endif // WITH_MPFI
 
 // RNG output mode enumeration.
@@ -56,7 +56,7 @@ extern "C" {
 #endif
 
 // Global test variables.
-extern arpra_t x_A, y_A, z_A;
+extern struct arpra_range x_A, y_A, z_A;
 extern int test_fixture_ready;
 #ifdef WITH_MPFI
 extern mpfi_t x_I, y_I, z_I, z_AI;
@@ -79,7 +79,7 @@ void test_fixture_clear ();
 void test_rand_init ();
 void test_rand_clear ();
 void test_rand_mpfr (mpfr_ptr z, enum test_rand_mode mode);
-void test_rand_arpra (arpra_ptr z,
+void test_rand_arpra (struct arpra_range *z,
                       enum test_rand_mode mode_centre,
                       enum test_rand_mode mode_deviations);
 #ifdef WITH_MPFI
@@ -98,17 +98,17 @@ void test_log_mpfi (mpfi_srcptr x, const char *var_name);
 #endif // WITH_MPFI
 
 // Symbol adjustments.
-void test_share_all_syms (arpra_ptr x, arpra_ptr y);
-void test_share_rand_syms (arpra_ptr x, arpra_ptr y);
+void test_share_all_syms (struct arpra_range *x, struct arpra_range *y);
+void test_share_rand_syms (struct arpra_range *x, struct arpra_range *y);
 
 // Test functions.
-int test_compare_arpra (arpra_srcptr x, arpra_srcptr y);
+int test_compare_arpra (const struct arpra_range *x, const struct arpra_range *y);
 #ifdef WITH_MPFI
 void test_univariate (
-    void (*f_arpra) (arpra_ptr z, arpra_srcptr x),
+    void (*f_arpra) (struct arpra_range *z, const struct arpra_range *x),
     int  (*f_mpfi) (mpfi_ptr z, mpfi_srcptr x));
 void test_bivariate (
-    void (*f_arpra) (arpra_ptr z, arpra_srcptr x, arpra_srcptr y),
+    void (*f_arpra) (struct arpra_range *z, const struct arpra_range *x, const struct arpra_range *y),
     int  (*f_mpfi) (mpfi_ptr z, mpfi_srcptr x, mpfi_srcptr y));
 #endif // WITH_MPFI
 

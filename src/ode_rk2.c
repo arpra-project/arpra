@@ -21,79 +21,75 @@
 
 #include "arpra-impl.h"
 
-struct __rk2_state_struct
+struct rk2_state
 {
-    struct __arpra_struct k1;
-    struct __arpra_struct k2;
-    struct __arpra_struct k3;
-    struct __arpra_struct temp;
+    struct arpra_range k1;
+    struct arpra_range k2;
+    struct arpra_range k3;
+    struct arpra_range temp;
 };
 
-typedef struct __rk2_state_struct rk2_state_t;
-typedef struct __rk2_state_struct *rk2_state_ptr;
-typedef const struct __rk2_state_struct *rk2_state_srcptr;
 
-
-static void rk2_init (arpra_ode_stepper_ptr stepper, arpra_ode_system_srcptr system)
+static void rk2_init (struct arpra_ode_stepper *stepper, const struct arpra_ode_system *system)
 {
-    rk2_state_ptr state_rk2;
+    struct rk2_state *state;
 
     stepper->system = system;
-    state_rk2 = (rk2_state_ptr) stepper->state;
-    state_rk2 = malloc(sizeof(rk2_state_t));
-    arpra_init(&(state_rk2->k1));
-    arpra_init(&(state_rk2->k2));
-    arpra_init(&(state_rk2->k3));
-    arpra_init(&(state_rk2->temp));
+    state = (struct rk2_state *) stepper->state;
+    state = malloc(sizeof(struct rk2_state));
+    arpra_init(&(state->k1));
+    arpra_init(&(state->k2));
+    arpra_init(&(state->k3));
+    arpra_init(&(state->temp));
 }
 
 
-static void rk2_init2 (arpra_ode_stepper_ptr stepper, arpra_ode_system_srcptr system)
+static void rk2_init2 (struct arpra_ode_stepper *stepper, const struct arpra_ode_system *system)
 {
-    rk2_state_ptr state_rk2;
+    struct rk2_state state;
 
 }
 
 
-static void rk2_clear (arpra_ode_stepper_ptr stepper)
+static void rk2_clear (struct arpra_ode_stepper *stepper)
 {
-    rk2_state_ptr state_rk2;
+    struct rk2_state *state;
 
-    state_rk2 = (rk2_state_ptr) stepper->state;
-    arpra_clear(&(state_rk2->k1));
-    arpra_clear(&(state_rk2->k2));
-    arpra_clear(&(state_rk2->k3));
-    arpra_clear(&(state_rk2->temp));
-    free(state_rk2);
+    state = (struct rk2_state *) stepper->state;
+    arpra_clear(&(state->k1));
+    arpra_clear(&(state->k2));
+    arpra_clear(&(state->k3));
+    arpra_clear(&(state->temp));
+    free(state);
 }
 
 
-static void rk2_reset (arpra_ode_stepper_ptr stepper)
+static void rk2_reset (struct arpra_ode_stepper *stepper)
 {
-    rk2_state_ptr state_rk2;
+    struct rk2_state *state;
 
-    state_rk2 = (rk2_state_ptr) stepper->state;
-    arpra_set_zero(&(state_rk2->k1));
-    arpra_set_zero(&(state_rk2->k2));
-    arpra_set_zero(&(state_rk2->k3));
-    arpra_set_zero(&(state_rk2->temp));
+    state = (struct rk2_state *) stepper->state;
+    arpra_set_zero(&(state->k1));
+    arpra_set_zero(&(state->k2));
+    arpra_set_zero(&(state->k3));
+    arpra_set_zero(&(state->temp));
 }
 
 
-static void rk2_step (arpra_ode_stepper_srcptr stepper,
-                      arpra_ptr dxdt, arpra_ptr t, arpra_ptr error,
-                      arpra_srcptr x, arpra_srcptr h)
+static void rk2_step (const struct arpra_ode_stepper *stepper,
+                      struct arpra_range *dxdt, struct arpra_range *t, struct arpra_range *error,
+                      struct arpra_range *x, const struct arpra_range *h)
 {
-    rk2_state_ptr state_rk2;
+    struct rk2_state *state;
 
-    state_rk2 = (rk2_state_ptr) stepper->state;
+    state = (struct rk2_state *) stepper->state;
 
     // EVALUATE K1 = DYDT|T
-    stepper->system->function (t, x, &(state_rk2->k1), stepper->system->parameters);
+    stepper->system->function (t, x, &(state->k1), stepper->system->parameters);
 
 }
 
 
-static const arpra_ode_stepper_t rk2 = {};
+static const struct arpra_ode_stepper rk2 = {};
 
-arpra_ode_stepper_srcptr arpra_ode_rk2 = &rk2;
+const struct arpra_ode_stepper *arpra_ode_rk2 = &rk2;

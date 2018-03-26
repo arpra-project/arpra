@@ -1,5 +1,5 @@
 /*
- * mul.c -- Multiply one arpra_t by another.
+ * mul.c -- Multiply one Arpra range by another.
  *
  * Copyright 2016-2018 James Paul Turner.
  *
@@ -21,13 +21,13 @@
 
 #include "arpra-impl.h"
 
-void arpra_mul (arpra_ptr z, arpra_srcptr x, arpra_srcptr y)
+void arpra_mul (struct arpra_range *z, const struct arpra_range *x, const struct arpra_range *y)
 {
     arpra_uint xTerm, yTerm, zTerm;
     arpra_int xHasNext, yHasNext;
     mpfr_t temp, error;
     arpra_precision prec, prec_internal;
-    arpra_t zNew;
+    struct arpra_range zNew;
 
     // Domain violations:
     // NaN  *  NaN  =  NaN
@@ -66,21 +66,21 @@ void arpra_mul (arpra_ptr z, arpra_srcptr x, arpra_srcptr y)
     prec_internal = arpra_get_internal_precision();
     mpfr_init2(temp, prec_internal);
     mpfr_init2(error, prec_internal);
-    mpfr_init2(&(zNew->centre), prec);
-    mpfr_init2(&(zNew->radius), prec_internal);
+    mpfr_init2(&(zNew.centre), prec);
+    mpfr_init2(&(zNew.radius), prec_internal);
     mpfr_set_si(error, 0, MPFR_RNDU);
-    mpfr_set_si(&(zNew->radius), 0, MPFR_RNDU);
+    mpfr_set_si(&(zNew.radius), 0, MPFR_RNDU);
 
     // z_0 = x_0 * y_0
-    if (mpfr_mul(&(zNew->centre), &(x->centre), &(y->centre), MPFR_RNDN)) {
-        arpra_error(temp, &(zNew->centre));
+    if (mpfr_mul(&(zNew.centre), &(x->centre), &(y->centre), MPFR_RNDN)) {
+        arpra_error(temp, &(zNew.centre));
         mpfr_add(error, error, temp, MPFR_RNDU);
     }
 
     // Allocate memory for all possible deviation terms.
-    zNew->nTerms = x->nTerms + y->nTerms + 1;
-    zNew->symbols = malloc(zNew->nTerms * sizeof(arpra_uint));
-    zNew->deviations = malloc(zNew->nTerms * sizeof(mpfr_t));
+    zNew.nTerms = x->nTerms + y->nTerms + 1;
+    zNew.symbols = malloc(zNew.nTerms * sizeof(arpra_uint));
+    zNew.deviations = malloc(zNew.nTerms * sizeof(mpfr_t));
 
     xTerm = 0;
     yTerm = 0;
@@ -89,36 +89,36 @@ void arpra_mul (arpra_ptr z, arpra_srcptr x, arpra_srcptr y)
     yHasNext = y->nTerms > 0;
     while (xHasNext || yHasNext) {
         if ((!yHasNext) || (xHasNext && (x->symbols[xTerm] < y->symbols[yTerm]))) {
-            zNew->symbols[zTerm] = x->symbols[xTerm];
-            mpfr_init2(&(zNew->deviations[zTerm]), prec);
+            zNew.symbols[zTerm] = x->symbols[xTerm];
+            mpfr_init2(&(zNew.deviations[zTerm]), prec);
 
             // z_i = (y_0 * x_i)
-            if (mpfr_mul(&(zNew->deviations[zTerm]), &(y->centre), &(x->deviations[xTerm]), MPFR_RNDN)) {
-                arpra_error(temp, &(zNew->deviations[zTerm]));
+            if (mpfr_mul(&(zNew.deviations[zTerm]), &(y->centre), &(x->deviations[xTerm]), MPFR_RNDN)) {
+                arpra_error(temp, &(zNew.deviations[zTerm]));
                 mpfr_add(error, error, temp, MPFR_RNDU);
             }
 
             xHasNext = ++xTerm < x->nTerms;
         }
         else if ((!xHasNext) || (yHasNext && (y->symbols[yTerm] < x->symbols[xTerm]))) {
-            zNew->symbols[zTerm] = y->symbols[yTerm];
-            mpfr_init2(&(zNew->deviations[zTerm]), prec);
+            zNew.symbols[zTerm] = y->symbols[yTerm];
+            mpfr_init2(&(zNew.deviations[zTerm]), prec);
 
             // z_i = (x_0 * y_i)
-            if (mpfr_mul(&(zNew->deviations[zTerm]), &(x->centre), &(y->deviations[yTerm]), MPFR_RNDN)) {
-                arpra_error(temp, &(zNew->deviations[zTerm]));
+            if (mpfr_mul(&(zNew.deviations[zTerm]), &(x->centre), &(y->deviations[yTerm]), MPFR_RNDN)) {
+                arpra_error(temp, &(zNew.deviations[zTerm]));
                 mpfr_add(error, error, temp, MPFR_RNDU);
             }
 
             yHasNext = ++yTerm < y->nTerms;
         }
         else {
-            zNew->symbols[zTerm] = x->symbols[xTerm];
-            mpfr_init2(&(zNew->deviations[zTerm]), prec);
+            zNew.symbols[zTerm] = x->symbols[xTerm];
+            mpfr_init2(&(zNew.deviations[zTerm]), prec);
 
             // z_i = (y_0 * x_i) + (x_0 * y_i)
-            if (arpra_term(&(zNew->deviations[zTerm]), &(x->deviations[xTerm]), &(y->deviations[yTerm]), &(y->centre), &(x->centre), NULL)) {
-                arpra_error(temp, &(zNew->deviations[zTerm]));
+            if (arpra_term(&(zNew.deviations[zTerm]), &(x->deviations[xTerm]), &(y->deviations[yTerm]), &(y->centre), &(x->centre), NULL)) {
+                arpra_error(temp, &(zNew.deviations[zTerm]));
                 mpfr_add(error, error, temp, MPFR_RNDU);
             }
 
@@ -127,12 +127,12 @@ void arpra_mul (arpra_ptr z, arpra_srcptr x, arpra_srcptr y)
         }
 
         // Store nonzero deviation terms.
-        if (mpfr_zero_p(&(zNew->deviations[zTerm]))) {
-            mpfr_clear(&(zNew->deviations[zTerm]));
+        if (mpfr_zero_p(&(zNew.deviations[zTerm]))) {
+            mpfr_clear(&(zNew.deviations[zTerm]));
         }
         else {
-            mpfr_abs(temp, &(zNew->deviations[zTerm]), MPFR_RNDU);
-            mpfr_add(&(zNew->radius), &(zNew->radius), temp, MPFR_RNDU);
+            mpfr_abs(temp, &(zNew.deviations[zTerm]), MPFR_RNDU);
+            mpfr_add(&(zNew.radius), &(zNew.radius), temp, MPFR_RNDU);
             zTerm++;
         }
     }
@@ -239,31 +239,31 @@ void arpra_mul (arpra_ptr z, arpra_srcptr x, arpra_srcptr y)
 
     // Store nonzero numerical error term.
     if (!mpfr_zero_p(error)) {
-        zNew->symbols[zTerm] = arpra_next_sym();
-        mpfr_init2(&(zNew->deviations[zTerm]), prec);
-        mpfr_set(&(zNew->deviations[zTerm]), error, MPFR_RNDU);
-        mpfr_add(&(zNew->radius), &(zNew->radius), &(zNew->deviations[zTerm]), MPFR_RNDU);
+        zNew.symbols[zTerm] = arpra_next_symbol();
+        mpfr_init2(&(zNew.deviations[zTerm]), prec);
+        mpfr_set(&(zNew.deviations[zTerm]), error, MPFR_RNDU);
+        mpfr_add(&(zNew.radius), &(zNew.radius), &(zNew.deviations[zTerm]), MPFR_RNDU);
         zTerm++;
     }
 
     // Handle domain violations, and free unused memory.
-    zNew->nTerms = zTerm;
-    if (mpfr_nan_p(&(zNew->centre)) || mpfr_nan_p(&(zNew->radius))) {
-        arpra_set_nan(zNew);
+    zNew.nTerms = zTerm;
+    if (mpfr_nan_p(&(zNew.centre)) || mpfr_nan_p(&(zNew.radius))) {
+        arpra_set_nan(&zNew);
     }
-    else if (mpfr_inf_p(&(zNew->centre)) || mpfr_inf_p(&(zNew->radius))) {
-        arpra_set_inf(zNew);
+    else if (mpfr_inf_p(&(zNew.centre)) || mpfr_inf_p(&(zNew.radius))) {
+        arpra_set_inf(&zNew);
     }
     else {
-        if (zNew->nTerms == 0) {
-            free(zNew->symbols);
-            free(zNew->deviations);
+        if (zNew.nTerms == 0) {
+            free(zNew.symbols);
+            free(zNew.deviations);
         }
     }
 
     // Clear vars, and set z.
     mpfr_clear(temp);
     mpfr_clear(error);
-    arpra_set(z, zNew);
-    arpra_clear(zNew);
+    arpra_set(z, &zNew);
+    arpra_clear(&zNew);
 }

@@ -1,5 +1,5 @@
 /*
- * default_precision.c -- Get and set the default precision of arpra_t.
+ * default_precision.c -- Get and set the default precision of Arpra ranges.
  *
  * Copyright 2016-2018 James Paul Turner.
  *
@@ -26,7 +26,7 @@ arpra_precision arpra_get_default_precision ()
     return mpfr_get_default_prec();
 }
 
-void arpra_set_default_precision (arpra_precision precision)
+void arpra_set_default_precision (const arpra_precision precision)
 {
     // Internal precision must be >= working precision.
     if (arpra_get_internal_precision() < precision) {

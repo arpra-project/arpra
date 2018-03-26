@@ -37,17 +37,17 @@ int main (int argc, char *argv[])
 
     // Run test.
     for (i = 0; i < test_n; i++) {
-        test_rand_arpra(x_A, TEST_RAND_POS, TEST_RAND_SMALL);
+        test_rand_arpra(&x_A, TEST_RAND_POS, TEST_RAND_SMALL);
 
         // Pass criteria:
         // 1) Arpra x has negative and Arpra z = NaN.
         // 2) Arpra x contains 0 and Arpra z = Inf.
         // 3) Arpra z contains MPFI z.
         test_univariate(arpra_log, mpfi_log);
-        if (arpra_has_neg_p(x_A) && arpra_nan_p(z_A)) {
+        if (arpra_has_neg_p(&x_A) && arpra_nan_p(&z_A)) {
             test_log_printf("Result: PASS\n\n");
         }
-        else if (arpra_has_zero_p(x_A) && arpra_inf_p(z_A)) {
+        else if (arpra_has_zero_p(&x_A) && arpra_inf_p(&z_A)) {
             test_log_printf("Result: PASS\n\n");
         }
         else if (mpfr_greaterequal_p(&(z_I->left), &(z_AI->left))
