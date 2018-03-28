@@ -21,7 +21,7 @@
 
 #include "arpra-impl.h"
 
-void arpra_set_nan (struct arpra_range *z)
+void arpra_set_nan (arpra_range *z)
 {
     // Clear existing deviation terms.
     arpra_clear_terms(z);
@@ -31,7 +31,7 @@ void arpra_set_nan (struct arpra_range *z)
     mpfr_set_nan(&(z->radius));
 }
 
-void arpra_set_inf (struct arpra_range *z)
+void arpra_set_inf (arpra_range *z)
 {
     // Clear existing deviation terms.
     arpra_clear_terms(z);
@@ -41,7 +41,7 @@ void arpra_set_inf (struct arpra_range *z)
     mpfr_set_inf(&(z->radius), 1);
 }
 
-void arpra_set_zero (struct arpra_range *z)
+void arpra_set_zero (arpra_range *z)
 {
     // Clear existing deviation terms.
     arpra_clear_terms(z);

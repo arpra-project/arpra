@@ -21,7 +21,7 @@
 
 #include "arpra-test.h"
 
-void test_share_all_syms (struct arpra_range *x, struct arpra_range *y)
+void test_share_all_syms (arpra_range *x, arpra_range *y)
 {
 
     arpra_uint symbol, term;
@@ -47,7 +47,7 @@ void test_share_all_syms (struct arpra_range *x, struct arpra_range *y)
     }
 }
 
-void test_share_rand_syms (struct arpra_range *x, struct arpra_range *y)
+void test_share_rand_syms (arpra_range *x, arpra_range *y)
 {
     arpra_uint symbol, term;
     arpra_int x_has_next, y_has_next;

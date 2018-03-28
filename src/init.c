@@ -21,7 +21,7 @@
 
 #include "arpra-impl.h"
 
-void arpra_init (struct arpra_range *x)
+void arpra_init (arpra_range *x)
 {
     arpra_precision prec_internal;
 
@@ -32,7 +32,7 @@ void arpra_init (struct arpra_range *x)
     mpfr_init2(&(x->radius), prec_internal);
 }
 
-void arpra_inits (struct arpra_range *x, ...)
+void arpra_inits (arpra_range *x, ...)
 {
     va_list arg;
 
@@ -40,7 +40,7 @@ void arpra_inits (struct arpra_range *x, ...)
     va_start(arg, x);
     while (x != NULL) {
         arpra_init(x);
-        x = (struct arpra_range *) va_arg(arg, struct arpra_range *);
+        x = (arpra_range *) va_arg(arg, arpra_range *);
     }
     va_end(arg);
 }

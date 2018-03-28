@@ -22,7 +22,7 @@
 #include "arpra-test.h"
 
 void test_univariate (
-    void (*f_arpra) (struct arpra_range *z, const struct arpra_range *x),
+    void (*f_arpra) (arpra_range *z, const arpra_range *x),
     int  (*f_mpfi) (mpfi_ptr z, mpfi_srcptr x))
 {
     // Convert arguments.

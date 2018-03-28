@@ -21,7 +21,7 @@
 
 #include "arpra-test.h"
 
-int test_compare_arpra (const struct arpra_range *x, const struct arpra_range *y)
+int test_compare_arpra (const arpra_range *x, const arpra_range *y)
 {
     int fail = 0;
     arpra_uint term;

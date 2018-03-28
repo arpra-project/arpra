@@ -21,7 +21,7 @@
 
 #include "arpra-impl.h"
 
-void arpra_reduce_small (struct arpra_range *z, double min_fraction)
+void arpra_reduce_small (arpra_range *z, double min_fraction)
 {
     arpra_uint zTerm, zNext;
     mpfr_ptr *summands;

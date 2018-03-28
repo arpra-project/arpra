@@ -36,34 +36,34 @@ const static double reduce_ratio = 0.3;
 const static arpra_precision prec = 53;
 
 // Neuron parameters
-static struct arpra_range gL;    // Maximum leak conductance (mmho/cm^2)
-static struct arpra_range VL;    // Equilibrium potential of leak conductance (mV)
-static struct arpra_range gCa;   // Maximum Ca++ conductance (mmho/cm^2)
-static struct arpra_range VCa;   // Equilibrium potential of Ca++ conductance (mV)
-static struct arpra_range gK;    // Maximum K+ conductance (mmho/cm^2)
-static struct arpra_range VK;    // Equilibrium potential of K+ conductance (mV)
-static struct arpra_range V1;    // Potential at which M_ss(V) = 0.5 (mV)
-static struct arpra_range V2;    // Reciprocal of voltage dependence slope of M_ss(V) (mV)
-static struct arpra_range V3;    // Potential at which N_ss(V) = 0.5 (mV)
-static struct arpra_range V4;    // Reciprocal of voltage dependence slope of N_ss(V) (mV)
-static struct arpra_range phi;   // (s^-1)
-static struct arpra_range C;     // Membrane capacitance (uF/cm^2)
+static arpra_range gL;    // Maximum leak conductance (mmho/cm^2)
+static arpra_range VL;    // Equilibrium potential of leak conductance (mV)
+static arpra_range gCa;   // Maximum Ca++ conductance (mmho/cm^2)
+static arpra_range VCa;   // Equilibrium potential of Ca++ conductance (mV)
+static arpra_range gK;    // Maximum K+ conductance (mmho/cm^2)
+static arpra_range VK;    // Equilibrium potential of K+ conductance (mV)
+static arpra_range V1;    // Potential at which M_ss(V) = 0.5 (mV)
+static arpra_range V2;    // Reciprocal of voltage dependence slope of M_ss(V) (mV)
+static arpra_range V3;    // Potential at which N_ss(V) = 0.5 (mV)
+static arpra_range V4;    // Reciprocal of voltage dependence slope of N_ss(V) (mV)
+static arpra_range phi;   // (s^-1)
+static arpra_range C;     // Membrane capacitance (uF/cm^2)
 
 // Neuron group 1 state variables
-struct arpra_range *nrn1_N;      // Fraction of open K+ channels
-struct arpra_range *nrn1_V;      // Membrane potential (mV)
-struct arpra_range *nrn1_I;      // Applied current (uA/cm^2)
+arpra_range *nrn1_N;      // Fraction of open K+ channels
+arpra_range *nrn1_V;      // Membrane potential (mV)
+arpra_range *nrn1_I;      // Applied current (uA/cm^2)
 
 // Neuron group 2 state variables
-struct arpra_range *nrn2_N;      // Fraction of open K+ channels
-struct arpra_range *nrn2_V;      // Membrane potential (mV)
-struct arpra_range *nrn2_I;      // Applied current (uA/cm^2)
+arpra_range *nrn2_N;      // Fraction of open K+ channels
+arpra_range *nrn2_V;      // Membrane potential (mV)
+arpra_range *nrn2_I;      // Applied current (uA/cm^2)
 
 // Constants
-static struct arpra_range one, two, neg_two;
+static arpra_range one, two, neg_two;
 
 
-void M_ss (struct arpra_range *out, const struct arpra_range *V)
+void M_ss (arpra_range *out, const arpra_range *V)
 {
     // Compute Ca++ channel activation steady-state
     // M_ss = 1 / (1 + exp(-2 (V - V1) / V2))
@@ -76,9 +76,9 @@ void M_ss (struct arpra_range *out, const struct arpra_range *V)
 }
 
 
-void d_V (struct arpra_range *out, const struct arpra_range *V, const struct arpra_range *M, const struct arpra_range *N, const struct arpra_range *I)
+void d_V (arpra_range *out, const arpra_range *V, const arpra_range *M, const arpra_range *N, const arpra_range *I)
 {
-    struct arpra_range temp;
+    arpra_range temp;
     arpra_init2(&temp, prec);
 
     // Compute leak current
@@ -106,9 +106,9 @@ void d_V (struct arpra_range *out, const struct arpra_range *V, const struct arp
 }
 
 
-void d_N (struct arpra_range *out, const struct arpra_range *N, const struct arpra_range *V)
+void d_N (arpra_range *out, const arpra_range *N, const arpra_range *V)
 {
-    struct arpra_range temp1, temp2, temp3;
+    arpra_range temp1, temp2, temp3;
     arpra_inits2(prec, &temp1, &temp2, &temp3, NULL);
 
     // Compute K+ channel activation steady-state
@@ -178,7 +178,7 @@ void file_clear (arpra_uint num, FILE **c, FILE **r, FILE **n, FILE **s, FILE **
 }
 
 
-void file_write (const struct arpra_range *A, arpra_uint i,
+void file_write (const arpra_range *A, arpra_uint i,
                  FILE **c, FILE **r, FILE **n, FILE **s, FILE **d)
 {
     arpra_uint j;
@@ -201,7 +201,7 @@ void file_write (const struct arpra_range *A, arpra_uint i,
 int main (int argc, char *argv[])
 {
     unsigned int i, j, N_mark, V_mark;
-    struct arpra_range dN, dV, dt, M;
+    arpra_range dN, dV, dt, M;
 
     // Init parameters
     arpra_init2(&dN, prec);
@@ -246,9 +246,9 @@ int main (int argc, char *argv[])
     arpra_set_d(&neg_two, -2.0);
 
     // Init neuron group 1 state variables
-    nrn1_N = malloc(n_grp1 * sizeof(struct arpra_range));
-    nrn1_V = malloc(n_grp1 * sizeof(struct arpra_range));
-    nrn1_I = malloc(n_grp1 * sizeof(struct arpra_range));
+    nrn1_N = malloc(n_grp1 * sizeof(arpra_range));
+    nrn1_V = malloc(n_grp1 * sizeof(arpra_range));
+    nrn1_I = malloc(n_grp1 * sizeof(arpra_range));
     for (j = 0; j < n_grp1; j++) {
         arpra_init2(&(nrn1_N[j]), prec);
         arpra_init2(&(nrn1_V[j]), prec);
@@ -274,9 +274,9 @@ int main (int argc, char *argv[])
     file_init("nrn1", "V", n_grp1, f_nrn1_V_c, f_nrn1_V_r, f_nrn1_V_n, f_nrn1_V_s, f_nrn1_V_d);
 
     // Init neuron group 2 state variables
-    nrn2_N = malloc(n_grp2 * sizeof(struct arpra_range));
-    nrn2_V = malloc(n_grp2 * sizeof(struct arpra_range));
-    nrn2_I = malloc(n_grp2 * sizeof(struct arpra_range));
+    nrn2_N = malloc(n_grp2 * sizeof(arpra_range));
+    nrn2_V = malloc(n_grp2 * sizeof(arpra_range));
+    nrn2_I = malloc(n_grp2 * sizeof(arpra_range));
     for (j = 0; j < n_grp2; j++) {
         arpra_init2(&(nrn2_N[j]), prec);
         arpra_init2(&(nrn2_V[j]), prec);

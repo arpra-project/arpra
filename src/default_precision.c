@@ -26,12 +26,12 @@ arpra_precision arpra_get_default_precision ()
     return mpfr_get_default_prec();
 }
 
-void arpra_set_default_precision (const arpra_precision precision)
+void arpra_set_default_precision (const arpra_precision prec)
 {
     // Internal precision must be >= working precision.
-    if (arpra_get_internal_precision() < precision) {
-        arpra_set_internal_precision(precision);
+    if (arpra_get_internal_precision() < prec) {
+        arpra_set_internal_precision(prec);
     }
 
-    mpfr_set_default_prec(precision);
+    mpfr_set_default_prec(prec);
 }

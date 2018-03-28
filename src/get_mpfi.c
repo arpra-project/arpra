@@ -21,7 +21,7 @@
 
 #include "arpra-impl.h"
 
-void arpra_get_mpfi (mpfi_ptr z, const struct arpra_range *x)
+void arpra_get_mpfi (mpfi_ptr z, const arpra_range *x)
 {
     // z_lo = x_0 - rad(x)
     mpfr_sub(&(z->left), &(x->centre), &(x->radius), MPFR_RNDD);

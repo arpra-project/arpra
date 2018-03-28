@@ -21,7 +21,7 @@
 
 #include "arpra-test.h"
 
-void test_rand_arpra (struct arpra_range *z,
+void test_rand_arpra (arpra_range *z,
                       enum test_rand_mode mode_centre,
                       enum test_rand_mode mode_deviations)
 {

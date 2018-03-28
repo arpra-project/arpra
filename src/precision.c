@@ -21,26 +21,26 @@
 
 #include "arpra-impl.h"
 
-arpra_precision arpra_get_precision (const struct arpra_range *x)
+arpra_precision arpra_get_precision (const arpra_range *x)
 {
     return mpfr_get_prec(&(x->centre));
 }
 
-void arpra_set_precision (struct arpra_range *z, const arpra_precision precision)
+void arpra_set_precision (arpra_range *z, const arpra_precision prec)
 {
-    arpra_precision precision_internal;
+    arpra_precision internal_prec;
 
-    // Increase internal precision if < precision.
-    precision_internal = arpra_get_internal_precision();
-    if (precision_internal < precision) {
-        arpra_set_internal_precision(precision);
-        precision_internal = precision;
+    // Increase internal_prec if < prec.
+    internal_prec = arpra_get_internal_precision();
+    if (internal_prec < prec) {
+        arpra_set_internal_precision(prec);
+        internal_prec = prec;
     }
 
     // Clear existing deviation terms.
     arpra_clear_terms(z);
 
     // Reset centre and radius with new working precision.
-    mpfr_set_prec(&(z->centre), precision);
-    mpfr_set_prec(&(z->radius), precision_internal);
+    mpfr_set_prec(&(z->centre), prec);
+    mpfr_set_prec(&(z->radius), internal_prec);
 }

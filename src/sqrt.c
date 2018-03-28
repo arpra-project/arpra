@@ -25,7 +25,7 @@
  * This affine square root function uses a Chebyshev linear approximation.
  */
 
-void arpra_sqrt (struct arpra_range *z, const struct arpra_range *x)
+void arpra_sqrt (arpra_range *z, const arpra_range *x)
 {
     mpfr_t temp, xa, xb, da, db, du, alpha, gamma, delta;
     arpra_precision prec_internal;

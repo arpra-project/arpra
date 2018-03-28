@@ -21,7 +21,7 @@
 
 #include "arpra-impl.h"
 
-void arpra_set_str (struct arpra_range *z, const char *centre, const arpra_int base)
+void arpra_set_str (arpra_range *z, const char *centre, const arpra_int base)
 {
     arpra_precision prec, prec_internal;
 
@@ -44,7 +44,7 @@ void arpra_set_str (struct arpra_range *z, const char *centre, const arpra_int b
         // Allocate one deviation term.
         z->nTerms = 1;
         z->symbols = malloc(sizeof(arpra_uint));
-        z->deviations = malloc(sizeof(struct arpra_range));
+        z->deviations = malloc(sizeof(arpra_range));
 
         // Set deviation term.
         z->symbols[0] = arpra_next_symbol();

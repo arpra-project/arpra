@@ -21,75 +21,74 @@
 
 #include "arpra-impl.h"
 
-struct rk2_state
+typedef struct
 {
-    struct arpra_range k1;
-    struct arpra_range k2;
-    struct arpra_range k3;
-    struct arpra_range temp;
-};
+    arpra_range k1;
+    arpra_range k2;
+    arpra_range k3;
+    arpra_range temp;
+} rk2_workspace;
 
 
-static void rk2_init (struct arpra_ode_stepper *stepper, const struct arpra_ode_system *system)
+static void rk2_init (arpra_ode_stepper *stepper)
 {
-    struct rk2_state *state;
+    rk2_workspace *workspace;
 
-    stepper->system = system;
-    state = (struct rk2_state *) stepper->state;
-    state = malloc(sizeof(struct rk2_state));
-    arpra_init(&(state->k1));
-    arpra_init(&(state->k2));
-    arpra_init(&(state->k3));
-    arpra_init(&(state->temp));
+    workspace = (rk2_workspace *) stepper->workspace;
+    workspace = malloc(sizeof(rk2_workspace));
+    arpra_init(&(workspace->k1));
+    arpra_init(&(workspace->k2));
+    arpra_init(&(workspace->k3));
+    arpra_init(&(workspace->temp));
 }
 
 
-static void rk2_init2 (struct arpra_ode_stepper *stepper, const struct arpra_ode_system *system)
+static void rk2_init2 (arpra_ode_stepper *stepper, const arpra_precision prec)
 {
-    struct rk2_state state;
+    rk2_workspace *workspace;
 
 }
 
 
-static void rk2_clear (struct arpra_ode_stepper *stepper)
+static void rk2_clear (arpra_ode_stepper *stepper)
 {
-    struct rk2_state *state;
+    rk2_workspace *workspace;
 
-    state = (struct rk2_state *) stepper->state;
-    arpra_clear(&(state->k1));
-    arpra_clear(&(state->k2));
-    arpra_clear(&(state->k3));
-    arpra_clear(&(state->temp));
-    free(state);
+    workspace = (rk2_workspace *) stepper->workspace;
+    arpra_clear(&(workspace->k1));
+    arpra_clear(&(workspace->k2));
+    arpra_clear(&(workspace->k3));
+    arpra_clear(&(workspace->temp));
+    free(workspace);
 }
 
 
-static void rk2_reset (struct arpra_ode_stepper *stepper)
+static void rk2_reset (arpra_ode_stepper *stepper)
 {
-    struct rk2_state *state;
+    rk2_workspace *workspace;
 
-    state = (struct rk2_state *) stepper->state;
-    arpra_set_zero(&(state->k1));
-    arpra_set_zero(&(state->k2));
-    arpra_set_zero(&(state->k3));
-    arpra_set_zero(&(state->temp));
+    workspace = (rk2_workspace *) stepper->workspace;
+    arpra_set_zero(&(workspace->k1));
+    arpra_set_zero(&(workspace->k2));
+    arpra_set_zero(&(workspace->k3));
+    arpra_set_zero(&(workspace->temp));
 }
 
 
-static void rk2_step (const struct arpra_ode_stepper *stepper,
-                      struct arpra_range *dxdt, struct arpra_range *t, struct arpra_range *error,
-                      struct arpra_range *x, const struct arpra_range *h)
+static void rk2_step (arpra_ode_stepper *stepper, arpra_ode_system *system,
+                      const arpra_range *h)
 {
-    struct rk2_state *state;
+    rk2_workspace *workspace;
 
-    state = (struct rk2_state *) stepper->state;
+    workspace = (rk2_workspace *) stepper->workspace;
 
     // EVALUATE K1 = DYDT|T
-    stepper->system->function (t, x, &(state->k1), stepper->system->parameters);
+    system->function (t, x, &(workspace->k1), system->parameters);
 
 }
 
+// step doesnt need to save old state - this can be done by the step controller object
 
-static const struct arpra_ode_stepper rk2 = {};
+static const arpra_ode_method rk2 = {};
 
-const struct arpra_ode_stepper *arpra_ode_rk2 = &rk2;
+const arpra_ode_method *arpra_ode_rk2 = &rk2;

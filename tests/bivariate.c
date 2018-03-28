@@ -22,7 +22,7 @@
 #include "arpra-test.h"
 
 void test_bivariate (
-    void (*f_arpra) (struct arpra_range *z, const struct arpra_range *x, const struct arpra_range *y),
+    void (*f_arpra) (arpra_range *z, const arpra_range *x, const arpra_range *y),
     int  (*f_mpfi) (mpfi_ptr z, mpfi_srcptr x, mpfi_srcptr y))
 {
     // Convert arguments.

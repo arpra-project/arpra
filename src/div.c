@@ -25,10 +25,10 @@
  * For now we just multiply the numerator with the reciprocal of the denominator.
  */
 
-void arpra_div (struct arpra_range *z, const struct arpra_range *x, const struct arpra_range *y)
+void arpra_div (arpra_range *z, const arpra_range *x, const arpra_range *y)
 {
     arpra_precision prec;
-    struct arpra_range zNew;
+    arpra_range zNew;
 
     // Init temp z.
     prec = arpra_get_precision(z);

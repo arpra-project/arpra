@@ -21,7 +21,7 @@
 
 #include "arpra-impl.h"
 
-void arpra_neg (struct arpra_range *z, const struct arpra_range *x)
+void arpra_neg (arpra_range *z, const arpra_range *x)
 {
     mpfr_t alpha, gamma, delta;
     arpra_precision prec;

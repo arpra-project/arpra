@@ -21,7 +21,7 @@
 
 #include "arpra-test.h"
 
-struct arpra_range x_A, y_A, z_A;
+arpra_range x_A, y_A, z_A;
 int test_fixture_ready = 0;
 #ifdef WITH_MPFI
 mpfi_t x_I, y_I, z_I, z_AI;

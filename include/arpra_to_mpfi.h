@@ -29,8 +29,8 @@ extern "C" {
 #endif
 
 // Get and set MPFI intervals.
-void arpra_get_mpfi (mpfi_ptr z, const struct arpra_range *x);
-void arpra_set_mpfi (struct arpra_range *z, mpfi_srcptr x);
+void arpra_get_mpfi (mpfi_ptr z, const arpra_range *x);
+void arpra_set_mpfi (arpra_range *z, mpfi_srcptr x);
 
 #ifdef __cplusplus
 }

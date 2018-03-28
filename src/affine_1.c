@@ -21,13 +21,13 @@
 
 #include "arpra-impl.h"
 
-void arpra_affine_1 (struct arpra_range *z, const struct arpra_range *x,
+void arpra_affine_1 (arpra_range *z, const arpra_range *x,
                      mpfr_srcptr alpha, mpfr_srcptr gamma, mpfr_srcptr delta)
 {
     arpra_uint xTerm, zTerm;
     mpfr_t temp, error;
     arpra_precision prec, prec_internal;
-    struct arpra_range zNew;
+    arpra_range zNew;
 
     // Domain violations:
     // NaN  =  Nan

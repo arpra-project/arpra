@@ -21,7 +21,7 @@
 
 #include "arpra-impl.h"
 
-void arpra_reduce_last_n (struct arpra_range *z, arpra_uint n)
+void arpra_reduce_last_n (arpra_range *z, arpra_uint n)
 {
     arpra_uint zTerm, zNext;
     mpfr_ptr *summands;

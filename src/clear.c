@@ -21,7 +21,7 @@
 
 #include "arpra-impl.h"
 
-void arpra_clear (struct arpra_range *x)
+void arpra_clear (arpra_range *x)
 {
     // Clear centre, radius and deviation terms.
     mpfr_clear(&(x->centre));
@@ -29,7 +29,7 @@ void arpra_clear (struct arpra_range *x)
     arpra_clear_terms(x);
 }
 
-void arpra_clears (struct arpra_range *x, ...)
+void arpra_clears (arpra_range *x, ...)
 {
     va_list arg;
 
@@ -37,12 +37,12 @@ void arpra_clears (struct arpra_range *x, ...)
     va_start(arg, x);
     while (x != NULL) {
         arpra_clear(x);
-        x = (struct arpra_range *) va_arg(arg, struct arpra_range *);
+        x = (arpra_range *) va_arg(arg, arpra_range *);
     }
     va_end(arg);
 }
 
-void arpra_clear_terms (struct arpra_range *x)
+void arpra_clear_terms (arpra_range *x)
 {
     arpra_uint xTerm;
 

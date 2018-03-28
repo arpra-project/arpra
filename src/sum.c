@@ -21,7 +21,7 @@
 
 #include "arpra-impl.h"
 
-void arpra_sum (struct arpra_range *z, struct arpra_range **x, const arpra_uint n)
+void arpra_sum (arpra_range *z, arpra_range **x, const arpra_uint n)
 {
     arpra_uint i, j;
     arpra_uint xSymbol, zTerm;
@@ -30,7 +30,7 @@ void arpra_sum (struct arpra_range *z, struct arpra_range **x, const arpra_uint 
     mpfr_ptr *summands;
     mpfr_t temp, error;
     arpra_precision prec, prec_internal;
-    struct arpra_range zNew;
+    arpra_range zNew;
 
     // Domain violations:
     // NaN  +  NaN  +  ...  =  NaN
