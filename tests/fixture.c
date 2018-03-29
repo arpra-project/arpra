@@ -25,7 +25,7 @@ arpra_range x_A, y_A, z_A;
 int test_fixture_ready = 0;
 #ifdef WITH_MPFI
 mpfi_t x_I, y_I, z_I, z_AI;
-mpfr_t rdiam_I, rdiam_AI, rdiam_diff;
+arpra_mpfr rdiam_I, rdiam_AI, rdiam_diff;
 #endif // WITH_MPFI
 
 void test_fixture_init (arpra_precision prec, arpra_precision prec_internal)
@@ -50,9 +50,9 @@ void test_fixture_init (arpra_precision prec, arpra_precision prec_internal)
         mpfi_init2(z_AI, prec);
 
         // Initialise relative diameter variables.
-        mpfr_init2(rdiam_I, prec_internal);
-        mpfr_init2(rdiam_AI, prec_internal);
-        mpfr_init2(rdiam_diff, prec_internal);
+        mpfr_init2(&rdiam_I, prec_internal);
+        mpfr_init2(&rdiam_AI, prec_internal);
+        mpfr_init2(&rdiam_diff, prec_internal);
 #endif // WITH_MPFI
     }
     else {
@@ -80,9 +80,9 @@ void test_fixture_clear ()
         mpfi_clear(z_AI);
 
         // Clear relative diameter variables.
-        mpfr_clear(rdiam_I);
-        mpfr_clear(rdiam_AI);
-        mpfr_clear(rdiam_diff);
+        mpfr_clear(&rdiam_I);
+        mpfr_clear(&rdiam_AI);
+        mpfr_clear(&rdiam_diff);
 #endif // WITH_MPFI
 
         // All else.

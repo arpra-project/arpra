@@ -21,10 +21,10 @@
 
 #include "arpra-impl.h"
 
-void arpra_set_mpfr_rad (arpra_range *z, mpfr_srcptr centre, mpfr_srcptr radius)
+void arpra_set_mpfr_rad (arpra_range *z, const arpra_mpfr *centre, const arpra_mpfr *radius)
 {
     arpra_precision prec, prec_internal;
-    mpfr_t temp;
+    arpra_mpfr temp;
 
     // Handle domain violations.
     if (mpfr_nan_p(centre) || mpfr_nan_p(radius)) {
@@ -39,14 +39,14 @@ void arpra_set_mpfr_rad (arpra_range *z, mpfr_srcptr centre, mpfr_srcptr radius)
     // Initialise vars.
     prec = arpra_get_precision(z);
     prec_internal = arpra_get_internal_precision();
-    mpfr_init2(temp, prec_internal);
+    mpfr_init2(&temp, prec_internal);
     mpfr_set_prec(&(z->radius), prec_internal);
     mpfr_abs(&(z->radius), radius, MPFR_RNDU);
 
     // Add centre rounding error to deviation.
     if (mpfr_set(&(z->centre), centre, MPFR_RNDN)) {
-        arpra_error(temp, &(z->centre));
-        mpfr_add(&(z->radius), &(z->radius), temp, MPFR_RNDU);
+        arpra_error(&temp, &(z->centre));
+        mpfr_add(&(z->radius), &(z->radius), &temp, MPFR_RNDU);
     }
 
     // Clear existing deviation terms.
@@ -75,5 +75,5 @@ void arpra_set_mpfr_rad (arpra_range *z, mpfr_srcptr centre, mpfr_srcptr radius)
     }
 
     // Clear vars.
-    mpfr_clear(temp);
+    mpfr_clear(&temp);
 }

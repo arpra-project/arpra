@@ -41,8 +41,8 @@ void test_bivariate (
     test_log_mpfi(z_AI, "z_A");
 
     // Compute relative diameter difference.
-    mpfi_diam_rel(rdiam_I, z_I);
-    mpfi_diam_rel(rdiam_AI, z_AI);
-    mpfr_sub(rdiam_diff, rdiam_AI, rdiam_I, MPFR_RNDN);
-    test_log_mpfr(rdiam_diff, "z_D");
+    mpfi_diam_rel(&rdiam_I, z_I);
+    mpfi_diam_rel(&rdiam_AI, z_AI);
+    mpfr_sub(&rdiam_diff, &rdiam_AI, &rdiam_I, MPFR_RNDN);
+    test_log_mpfr(&rdiam_diff, "z_D");
 }

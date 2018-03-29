@@ -55,7 +55,7 @@ void arpra_clears (arpra_range *x, ...);
 void arpra_clear_terms (arpra_range *x);
 
 // Get from an Arpra range.
-void arpra_get_bounds (mpfr_ptr lo, mpfr_ptr hi, const arpra_range *x);
+void arpra_get_bounds (arpra_mpfr *lo, arpra_mpfr *hi, const arpra_range *x);
 
 // Set to an Arpra range.
 void arpra_set (arpra_range *z, const arpra_range *x);
@@ -63,8 +63,8 @@ void arpra_set_d (arpra_range *z, const double centre);
 void arpra_set_d_rad (arpra_range *z, const double centre, const double radius);
 void arpra_set_str (arpra_range *z, const char *centre, const arpra_int base);
 void arpra_set_str_rad (arpra_range *z, const char *centre, const char *radius, const arpra_int base);
-void arpra_set_mpfr (arpra_range *z, mpfr_srcptr centre);
-void arpra_set_mpfr_rad (arpra_range *z, mpfr_srcptr centre, mpfr_srcptr radius);
+void arpra_set_mpfr (arpra_range *z, const arpra_mpfr *centre);
+void arpra_set_mpfr_rad (arpra_range *z, const arpra_mpfr *centre, const arpra_mpfr *radius);
 
 // Set special values.
 void arpra_set_nan (arpra_range *z);
@@ -73,9 +73,11 @@ void arpra_set_zero (arpra_range *z);
 
 // Affine operations.
 void arpra_affine_1 (arpra_range *z, const arpra_range *x,
-                     mpfr_srcptr alpha, mpfr_srcptr gamma, mpfr_srcptr delta);
+                     const arpra_mpfr *alpha, const arpra_mpfr *gamma,
+                     const arpra_mpfr *delta);
 void arpra_affine_2 (arpra_range *z, const arpra_range *x, const arpra_range *y,
-                     mpfr_srcptr alpha, mpfr_srcptr beta, mpfr_srcptr gamma, mpfr_srcptr delta);
+                     const arpra_mpfr *alpha, const arpra_mpfr *beta,
+                     const arpra_mpfr *gamma, const arpra_mpfr *delta);
 void arpra_add (arpra_range *z, const arpra_range *x, const arpra_range *y);
 void arpra_sub (arpra_range *z, const arpra_range *x, const arpra_range *y);
 void arpra_neg (arpra_range *z, const arpra_range *x);

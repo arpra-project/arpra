@@ -24,7 +24,7 @@
 void arpra_set_d_rad (arpra_range *z, const double centre, const double radius)
 {
     arpra_precision prec, prec_internal;
-    mpfr_t temp;
+    arpra_mpfr temp;
 
     // Handle domain violations.
     if (isnan(centre) || isnan(radius)) {
@@ -39,15 +39,15 @@ void arpra_set_d_rad (arpra_range *z, const double centre, const double radius)
     // Initialise vars.
     prec = arpra_get_precision(z);
     prec_internal = arpra_get_internal_precision();
-    mpfr_init2(temp, prec_internal);
-    mpfr_set_d(temp, radius, MPFR_RNDU);
+    mpfr_init2(&temp, prec_internal);
+    mpfr_set_d(&temp, radius, MPFR_RNDU);
     mpfr_set_prec(&(z->radius), prec_internal);
-    mpfr_abs(&(z->radius), temp, MPFR_RNDU);
+    mpfr_abs(&(z->radius), &temp, MPFR_RNDU);
 
     // Add centre rounding error to deviation.
     if (mpfr_set_d(&(z->centre), centre, MPFR_RNDN)) {
-        arpra_error(temp, &(z->centre));
-        mpfr_add(&(z->radius), &(z->radius), temp, MPFR_RNDU);
+        arpra_error(&temp, &(z->centre));
+        mpfr_add(&(z->radius), &(z->radius), &temp, MPFR_RNDU);
     }
 
     // Clear existing deviation terms.
@@ -76,5 +76,5 @@ void arpra_set_d_rad (arpra_range *z, const double centre, const double radius)
     }
 
     // Clear vars.
-    mpfr_clear(temp);
+    mpfr_clear(&temp);
 }

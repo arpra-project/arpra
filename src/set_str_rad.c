@@ -24,20 +24,20 @@
 void arpra_set_str_rad (arpra_range *z, const char *centre, const char *radius, const arpra_int base)
 {
     arpra_precision prec, prec_internal;
-    mpfr_t temp;
+    arpra_mpfr temp;
 
     // Initialise vars.
     prec = arpra_get_precision(z);
     prec_internal = arpra_get_internal_precision();
-    mpfr_init2(temp, prec_internal);
-    mpfr_set_str(temp, radius, base, MPFR_RNDU);
+    mpfr_init2(&temp, prec_internal);
+    mpfr_set_str(&temp, radius, base, MPFR_RNDU);
     mpfr_set_prec(&(z->radius), prec_internal);
-    mpfr_abs(&(z->radius), temp, MPFR_RNDU);
+    mpfr_abs(&(z->radius), &temp, MPFR_RNDU);
 
     // Add centre rounding error to deviation.
     if (mpfr_set_str(&(z->centre), centre, base, MPFR_RNDN)) {
-        arpra_error(temp, &(z->centre));
-        mpfr_add(&(z->radius), &(z->radius), temp, MPFR_RNDU);
+        arpra_error(&temp, &(z->centre));
+        mpfr_add(&(z->radius), &(z->radius), &temp, MPFR_RNDU);
     }
 
     // Clear existing deviaion terms.
@@ -66,5 +66,5 @@ void arpra_set_str_rad (arpra_range *z, const char *centre, const char *radius, 
     }
 
     // Clear vars.
-    mpfr_clear(temp);
+    mpfr_clear(&temp);
 }

@@ -60,7 +60,7 @@ extern arpra_range x_A, y_A, z_A;
 extern int test_fixture_ready;
 #ifdef WITH_MPFI
 extern mpfi_t x_I, y_I, z_I, z_AI;
-extern mpfr_t rdiam_I, rdiam_AI, rdiam_diff;
+extern arpra_mpfr rdiam_I, rdiam_AI, rdiam_diff;
 #endif // WITH_MPFI
 
 // Global RNG variables.
@@ -78,7 +78,7 @@ void test_fixture_clear ();
 // RNG functions.
 void test_rand_init ();
 void test_rand_clear ();
-void test_rand_mpfr (mpfr_ptr z, enum test_rand_mode mode);
+void test_rand_mpfr (arpra_mpfr *z, enum test_rand_mode mode);
 void test_rand_arpra (arpra_range *z,
                       enum test_rand_mode mode_centre,
                       enum test_rand_mode mode_deviations);
@@ -92,7 +92,7 @@ void test_rand_mpfi (mpfi_ptr z,
 void test_log_init (const char *test_name);
 void test_log_clear ();
 void test_log_printf (const char *format, ...);
-void test_log_mpfr (mpfr_srcptr x, const char *var_name);
+void test_log_mpfr (const arpra_mpfr *x, const char *var_name);
 #ifdef WITH_MPFI
 void test_log_mpfi (mpfi_srcptr x, const char *var_name);
 #endif // WITH_MPFI

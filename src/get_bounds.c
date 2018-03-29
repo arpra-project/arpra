@@ -21,7 +21,7 @@
 
 #include "arpra-impl.h"
 
-void arpra_get_bounds (mpfr_ptr lo, mpfr_ptr hi, const arpra_range *x)
+void arpra_get_bounds (arpra_mpfr *lo, arpra_mpfr *hi, const arpra_range *x)
 {
     // lo = x_0 - rad(x)
     mpfr_sub(lo, &(x->centre), &(x->radius), MPFR_RNDD);

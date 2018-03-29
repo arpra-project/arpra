@@ -27,12 +27,12 @@ void test_rand_arpra (arpra_range *z,
 {
     arpra_uint zTerm;
     arpra_precision prec, prec_internal;
-    mpfr_t temp;
+    arpra_mpfr temp;
 
     // Initialise vars.
     prec = arpra_get_precision(z);
     prec_internal = arpra_get_internal_precision();
-    mpfr_init2(temp, prec_internal);
+    mpfr_init2(&temp, prec_internal);
     mpfr_set_prec(&(z->radius), prec_internal);
     mpfr_set_ui(&(z->radius), 0, MPFR_RNDN);
 
@@ -46,7 +46,7 @@ void test_rand_arpra (arpra_range *z,
     z->nTerms = gmp_urandomm_ui(test_randstate, 6);
     if (z->nTerms > 0) {
         z->symbols = malloc(z->nTerms * sizeof(arpra_uint));
-        z->deviations = malloc(z->nTerms * sizeof(mpfr_t));
+        z->deviations = malloc(z->nTerms * sizeof(arpra_mpfr));
     }
 
     // Randomly set deviation terms.
@@ -56,8 +56,8 @@ void test_rand_arpra (arpra_range *z,
         test_rand_mpfr(&(z->deviations[zTerm]), mode_deviations);
 
         // Add abs(term) to radius.
-        mpfr_abs(temp, &(z->deviations[zTerm]), MPFR_RNDU);
-        mpfr_add(&(z->radius), &(z->radius), temp, MPFR_RNDU);
+        mpfr_abs(&temp, &(z->deviations[zTerm]), MPFR_RNDU);
+        mpfr_add(&(z->radius), &(z->radius), &temp, MPFR_RNDU);
     }
 
     // Handle domain violations.
@@ -69,5 +69,5 @@ void test_rand_arpra (arpra_range *z,
     }
 
     // Clear vars.
-    mpfr_clear(temp);
+    mpfr_clear(&temp);
 }

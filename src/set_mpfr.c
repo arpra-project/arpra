@@ -21,7 +21,7 @@
 
 #include "arpra-impl.h"
 
-void arpra_set_mpfr (arpra_range *z, mpfr_srcptr centre)
+void arpra_set_mpfr (arpra_range *z, const arpra_mpfr *centre)
 {
     arpra_precision prec, prec_internal;
 

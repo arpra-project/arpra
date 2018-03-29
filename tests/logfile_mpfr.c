@@ -21,7 +21,7 @@
 
 #include "arpra-test.h"
 
-void test_log_mpfr (mpfr_srcptr x, const char *var_name)
+void test_log_mpfr (const arpra_mpfr *x, const char *var_name)
 {
     if (test_log_ready) {
         // Write variable name and value to logfile.

@@ -28,7 +28,7 @@
  * when x was flushed to zero.
  */
 
-void arpra_error (mpfr_ptr error, mpfr_srcptr x)
+void arpra_error (arpra_mpfr *error, const arpra_mpfr *x)
 {
     arpra_precision p;
     mpfr_exp_t e;

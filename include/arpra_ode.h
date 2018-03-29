@@ -25,25 +25,18 @@
 #include <arpra.h>
 
 // Arpra ODE typedefs.
-typedef struct arpra_ode_system_struct arpra_ode_system;
 typedef struct arpra_ode_stepper_struct arpra_ode_stepper;
 typedef struct arpra_ode_method_struct arpra_ode_method;
-
-// System definition.
-struct arpra_ode_system_struct
-{
-    void (*function) (arpra_range *dxdt,
-                      const arpra_range *x, const arpra_range *t,
-                      arpra_uint dimensions, void *parameters);
-    const void *parameters;
-    arpra_range *state;
-    arpra_uint dimensions;
-};
 
 // Stepper definition.
 struct arpra_ode_stepper_struct
 {
+    void (*function) (arpra_range *dxdt,
+                      const arpra_range *x, const arpra_range *t,
+                      arpra_uint dimensions, const arpra_range *parameters);
     const arpra_ode_method *method;
+    const arpra_range *parameters;
+    arpra_range *state;
     void *workspace;
     arpra_uint dimensions;
 };
@@ -51,10 +44,8 @@ struct arpra_ode_stepper_struct
 // Step method definition.
 struct arpra_ode_method_struct
 {
-    void (*init) (arpra_ode_stepper *stepper,
-                  const arpra_ode_system *system);
-    void (*init2) (arpra_ode_stepper *stepper,
-                   const arpra_ode_system *system);
+    void (*init) (arpra_ode_stepper *stepper);
+    void (*init2) (arpra_ode_stepper *stepper);
     void (*clear) (arpra_ode_stepper *stepper);
     void (*reset) (arpra_ode_stepper *stepper);
     void (*step) (arpra_ode_stepper *stepper,

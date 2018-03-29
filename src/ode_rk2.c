@@ -75,19 +75,17 @@ static void rk2_reset (arpra_ode_stepper *stepper)
 }
 
 
-static void rk2_step (arpra_ode_stepper *stepper, arpra_ode_system *system,
-                      const arpra_range *h)
+static void rk2_step (arpra_ode_stepper *stepper, const arpra_range *h)
 {
     rk2_workspace *workspace;
 
     workspace = (rk2_workspace *) stepper->workspace;
 
     // EVALUATE K1 = DYDT|T
-    system->function (t, x, &(workspace->k1), system->parameters);
-
+    //stepper->function (t, x, &(workspace->k1), stepper->parameters);
 }
 
-// step doesnt need to save old state - this can be done by the step controller object
+// stepper doesnt need to save old state - can be done by the step control object
 
 static const arpra_ode_method rk2 = {};
 

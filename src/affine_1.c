@@ -22,10 +22,11 @@
 #include "arpra-impl.h"
 
 void arpra_affine_1 (arpra_range *z, const arpra_range *x,
-                     mpfr_srcptr alpha, mpfr_srcptr gamma, mpfr_srcptr delta)
+                     const arpra_mpfr *alpha, const arpra_mpfr *gamma,
+                     const arpra_mpfr *delta)
 {
     arpra_uint xTerm, zTerm;
-    mpfr_t temp, error;
+    arpra_mpfr temp, error;
     arpra_precision prec, prec_internal;
     arpra_range zNew;
 
@@ -46,23 +47,23 @@ void arpra_affine_1 (arpra_range *z, const arpra_range *x,
     // Initialise vars.
     prec = arpra_get_precision(z);
     prec_internal = arpra_get_internal_precision();
-    mpfr_init2(temp, prec_internal);
-    mpfr_init2(error, prec_internal);
+    mpfr_init2(&temp, prec_internal);
+    mpfr_init2(&error, prec_internal);
     mpfr_init2(&(zNew.centre), prec);
     mpfr_init2(&(zNew.radius), prec_internal);
-    mpfr_set(error, delta, MPFR_RNDU);
+    mpfr_set(&error, delta, MPFR_RNDU);
     mpfr_set_si(&(zNew.radius), 0, MPFR_RNDU);
 
     // z_0 = (alpha * x_0) + gamma
     if (mpfr_fma(&(zNew.centre), alpha, &(x->centre), gamma, MPFR_RNDN)) {
-        arpra_error(temp, &(zNew.centre));
-        mpfr_add(error, error, temp, MPFR_RNDU);
+        arpra_error(&temp, &(zNew.centre));
+        mpfr_add(&error, &error, &temp, MPFR_RNDU);
     }
 
     // Allocate memory for all possible deviation terms.
     zNew.nTerms = x->nTerms + 1;
     zNew.symbols = malloc(zNew.nTerms * sizeof(arpra_uint));
-    zNew.deviations = malloc(zNew.nTerms * sizeof(mpfr_t));
+    zNew.deviations = malloc(zNew.nTerms * sizeof(arpra_mpfr));
 
     for (xTerm = 0, zTerm = 0; xTerm < x->nTerms; xTerm++) {
         zNew.symbols[zTerm] = x->symbols[xTerm];
@@ -70,8 +71,8 @@ void arpra_affine_1 (arpra_range *z, const arpra_range *x,
 
         // z_i = (alpha * x_i)
         if (mpfr_mul(&(zNew.deviations[zTerm]), alpha, &(x->deviations[xTerm]), MPFR_RNDN)) {
-            arpra_error(temp, &(zNew.deviations[zTerm]));
-            mpfr_add(error, error, temp, MPFR_RNDU);
+            arpra_error(&temp, &(zNew.deviations[zTerm]));
+            mpfr_add(&error, &error, &temp, MPFR_RNDU);
         }
 
         // Store nonzero deviation terms.
@@ -79,17 +80,17 @@ void arpra_affine_1 (arpra_range *z, const arpra_range *x,
             mpfr_clear(&(zNew.deviations[zTerm]));
         }
         else {
-            mpfr_abs(temp, &(zNew.deviations[zTerm]), MPFR_RNDU);
-            mpfr_add(&(zNew.radius), &(zNew.radius), temp, MPFR_RNDU);
+            mpfr_abs(&temp, &(zNew.deviations[zTerm]), MPFR_RNDU);
+            mpfr_add(&(zNew.radius), &(zNew.radius), &temp, MPFR_RNDU);
             zTerm++;
         }
     }
 
     // Store nonzero numerical error term.
-    if (!mpfr_zero_p(error)) {
+    if (!mpfr_zero_p(&error)) {
         zNew.symbols[zTerm] = arpra_next_symbol();
         mpfr_init2(&(zNew.deviations[zTerm]), prec);
-        mpfr_set(&(zNew.deviations[zTerm]), error, MPFR_RNDU);
+        mpfr_set(&(zNew.deviations[zTerm]), &error, MPFR_RNDU);
         mpfr_add(&(zNew.radius), &(zNew.radius), &(zNew.deviations[zTerm]), MPFR_RNDU);
         zTerm++;
     }
@@ -110,8 +111,8 @@ void arpra_affine_1 (arpra_range *z, const arpra_range *x,
     }
 
     // Clear vars, and set z.
-    mpfr_clear(temp);
-    mpfr_clear(error);
+    mpfr_clear(&temp);
+    mpfr_clear(&error);
     arpra_set(z, &zNew);
     arpra_clear(&zNew);
 }

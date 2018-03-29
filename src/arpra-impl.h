@@ -56,8 +56,8 @@
  */
 
 // Internal helper functions.
-arpra_int arpra_term (mpfr_ptr z, mpfr_srcptr x, mpfr_srcptr y,
-                        mpfr_srcptr alpha, mpfr_srcptr beta, mpfr_srcptr gamma);
-void arpra_error (mpfr_ptr error, mpfr_srcptr x);
+arpra_int arpra_term (arpra_mpfr *z, const arpra_mpfr *x, const arpra_mpfr *y,
+                        const arpra_mpfr *alpha, const arpra_mpfr *beta, const arpra_mpfr *gamma);
+void arpra_error (arpra_mpfr *error, const arpra_mpfr *x);
 
 #endif // ARPRA_IMPL_H

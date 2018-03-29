@@ -24,7 +24,7 @@
 void arpra_set_mpfi (arpra_range *z, mpfi_srcptr x)
 {
     arpra_precision prec, prec_internal;
-    mpfr_t temp;
+    arpra_mpfr temp;
 
     // Handle domain violations.
     if (mpfi_nan_p(x)) {
@@ -39,7 +39,7 @@ void arpra_set_mpfi (arpra_range *z, mpfi_srcptr x)
     // Initialise vars.
     prec = arpra_get_precision(z);
     prec_internal = arpra_get_internal_precision();
-    mpfr_init2(temp, prec_internal);
+    mpfr_init2(&temp, prec_internal);
     mpfr_set_prec(&(z->radius), prec_internal);
 
     // z_0 = (x_lo + x_hi) / 2
@@ -48,8 +48,8 @@ void arpra_set_mpfi (arpra_range *z, mpfi_srcptr x)
 
     // rad(z) = max{(z_0 - x_lo), (x_hi - z_0)}
     mpfr_sub(&(z->radius), &(z->centre), &(x->left), MPFR_RNDU);
-    mpfr_sub(temp, &(x->right), &(z->centre), MPFR_RNDU);
-    mpfr_max(&(z->radius), &(z->radius), temp, MPFR_RNDU);
+    mpfr_sub(&temp, &(x->right), &(z->centre), MPFR_RNDU);
+    mpfr_max(&(z->radius), &(z->radius), &temp, MPFR_RNDU);
 
     // Clear existing deviation terms.
     arpra_clear_terms(z);
@@ -76,5 +76,5 @@ void arpra_set_mpfi (arpra_range *z, mpfi_srcptr x)
     }
 
     // Clear vars.
-    mpfr_clear(temp);
+    mpfr_clear(&temp);
 }
