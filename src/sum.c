@@ -21,7 +21,7 @@
 
 #include "arpra-impl.h"
 
-void arpra_sum (arpra_range *z, arpra_range **x, const arpra_uint n)
+void arpra_sum (arpra_range *z, arpra_range *x, const arpra_uint n)
 {
     arpra_uint i, j;
     arpra_uint xSymbol, zTerm;
@@ -41,15 +41,15 @@ void arpra_sum (arpra_range *z, arpra_range **x, const arpra_uint n)
 
     // Handle domain violations.
     for (i = 0; i < n; i++) {
-        if (arpra_nan_p(x[i])) {
+        if (arpra_nan_p(&x[i])) {
             arpra_set_nan(z);
             return;
         }
     }
     for (i = 0; i < n; i++) {
-        if (arpra_inf_p(x[i])) {
+        if (arpra_inf_p(&x[i])) {
             for (++i; i < n; i++) {
-                if (arpra_inf_p(x[i])) {
+                if (arpra_inf_p(&x[i])) {
                     arpra_set_nan(z);
                     return;
                 }
@@ -62,11 +62,11 @@ void arpra_sum (arpra_range *z, arpra_range **x, const arpra_uint n)
     // Handle trivial cases.
     if (n <= 2) {
         if (n == 2) {
-            arpra_add(z, x[0], x[1]);
+            arpra_add(z, &x[0], &x[1]);
             return;
         }
         else if (n == 1) {
-            arpra_set(z, x[0]);
+            arpra_set(z, &x[0]);
             return;
         }
         else {
@@ -91,7 +91,7 @@ void arpra_sum (arpra_range *z, arpra_range **x, const arpra_uint n)
     zTerm = 0;
     for (i = 0; i < n; i++) {
         xTerm[i] = 0;
-        summands[i] = &(x[i]->centre);
+        summands[i] = &(x[i].centre);
     }
 
     // z_0 = x[1]_0 + ... + x[n]_0
@@ -103,7 +103,7 @@ void arpra_sum (arpra_range *z, arpra_range **x, const arpra_uint n)
     // Allocate memory for all possible deviation terms.
     zNew.nTerms = 1;
     for (i = 0; i < n; i++) {
-        zNew.nTerms += x[i]->nTerms;
+        zNew.nTerms += x[i].nTerms;
     }
     zNew.symbols = malloc(zNew.nTerms * sizeof(arpra_uint));
     zNew.deviations = malloc(zNew.nTerms * sizeof(arpra_mpfr));
@@ -116,9 +116,9 @@ void arpra_sum (arpra_range *z, arpra_range **x, const arpra_uint n)
 
         // Find and set the next symbol in z.
         for (i = 0; i < n; i++) {
-            if (xTerm[i] < x[i]->nTerms) {
-                if (x[i]->symbols[xTerm[i]] < xSymbol) {
-                    xSymbol = x[i]->symbols[xTerm[i]];
+            if (xTerm[i] < x[i].nTerms) {
+                if (x[i].symbols[xTerm[i]] < xSymbol) {
+                    xSymbol = x[i].symbols[xTerm[i]];
                 }
             }
         }
@@ -127,12 +127,12 @@ void arpra_sum (arpra_range *z, arpra_range **x, const arpra_uint n)
 
         // For all x with the next symbol:
         for (i = 0, j = 0; i < n; i++) {
-            if (x[i]->symbols[xTerm[i]] == xSymbol) {
+            if (x[i].symbols[xTerm[i]] == xSymbol) {
                 // Get next deviation pointer of x[i].
-                summands[j++] = &(x[i]->deviations[xTerm[i]]);
+                summands[j++] = &(x[i].deviations[xTerm[i]]);
 
                 // Check for more symbols in x[i].
-                if (++xTerm[i] < x[i]->nTerms) {
+                if (++xTerm[i] < x[i].nTerms) {
                     xHasNext = 1;
                 }
             }
