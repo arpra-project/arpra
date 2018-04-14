@@ -1,5 +1,5 @@
 /*
- * div.c -- Divide one arpra_t by another.
+ * div.c -- Divide one Arpra range by another.
  *
  * Copyright 2016-2018 James Paul Turner.
  *
@@ -25,19 +25,19 @@
  * For now we just multiply the numerator with the reciprocal of the denominator.
  */
 
-void arpra_div (arpra_ptr z, arpra_srcptr x, arpra_srcptr y)
+void arpra_div (arpra_range *z, const arpra_range *x, const arpra_range *y)
 {
-    arpra_t zNew;
-    arpra_prec_t prec;
+    arpra_precision prec;
+    arpra_range zNew;
 
     // Init temp z.
-    prec = arpra_get_prec(z);
-    arpra_init2(zNew, prec);
+    prec = arpra_get_precision(z);
+    arpra_init2(&zNew, prec);
 
     // z = x * (1 / y)
-    arpra_inv(zNew, y);
-    arpra_mul(z, x, zNew);
+    arpra_inv(&zNew, y);
+    arpra_mul(z, x, &zNew);
 
     // Clear temp z.
-    arpra_clear(zNew);
+    arpra_clear(&zNew);
 }

@@ -21,18 +21,18 @@
 
 #include "arpra-test.h"
 
-void test_rand_arpra (arpra_ptr z,
+void test_rand_arpra (arpra_range *z,
                       enum test_rand_mode mode_centre,
                       enum test_rand_mode mode_deviations)
 {
-    arpra_uint_t zTerm;
-    arpra_prec_t prec, prec_internal;
-    mpfr_t temp;
+    arpra_uint zTerm;
+    arpra_precision prec, prec_internal;
+    arpra_mpfr temp;
 
     // Initialise vars.
-    prec = arpra_get_prec(z);
-    prec_internal = arpra_get_internal_prec();
-    mpfr_init2(temp, prec_internal);
+    prec = arpra_get_precision(z);
+    prec_internal = arpra_get_internal_precision();
+    mpfr_init2(&temp, prec_internal);
     mpfr_set_prec(&(z->radius), prec_internal);
     mpfr_set_ui(&(z->radius), 0, MPFR_RNDN);
 
@@ -45,19 +45,19 @@ void test_rand_arpra (arpra_ptr z,
     // Randomly allocate 0 to 5 deviation terms.
     z->nTerms = gmp_urandomm_ui(test_randstate, 6);
     if (z->nTerms > 0) {
-        z->symbols = malloc(z->nTerms * sizeof(arpra_uint_t));
-        z->deviations = malloc(z->nTerms * sizeof(mpfr_t));
+        z->symbols = malloc(z->nTerms * sizeof(arpra_uint));
+        z->deviations = malloc(z->nTerms * sizeof(arpra_mpfr));
     }
 
     // Randomly set deviation terms.
     for (zTerm = 0; zTerm < z->nTerms; zTerm++) {
-        z->symbols[zTerm] = arpra_next_sym();
+        z->symbols[zTerm] = arpra_next_symbol();
         mpfr_init2(&(z->deviations[zTerm]), prec);
         test_rand_mpfr(&(z->deviations[zTerm]), mode_deviations);
 
         // Add abs(term) to radius.
-        mpfr_abs(temp, &(z->deviations[zTerm]), MPFR_RNDU);
-        mpfr_add(&(z->radius), &(z->radius), temp, MPFR_RNDU);
+        mpfr_abs(&temp, &(z->deviations[zTerm]), MPFR_RNDU);
+        mpfr_add(&(z->radius), &(z->radius), &temp, MPFR_RNDU);
     }
 
     // Handle domain violations.
@@ -69,5 +69,5 @@ void test_rand_arpra (arpra_ptr z,
     }
 
     // Clear vars.
-    mpfr_clear(temp);
+    mpfr_clear(&temp);
 }

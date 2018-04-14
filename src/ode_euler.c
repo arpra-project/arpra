@@ -1,7 +1,7 @@
 /*
- * next_symbol.c -- Get a new noise symbol.
+ * ode_euler.c -- Explicit Euler ODE stepper.
  *
- * Copyright 2016-2018 James Paul Turner.
+ * Copyright 2018 James Paul Turner.
  *
  * This file is part of the Arpra library.
  *
@@ -20,10 +20,3 @@
  */
 
 #include "arpra-impl.h"
-
-static arpra_uint_t arpra_symbol = 0;
-
-arpra_uint_t arpra_next_sym ()
-{
-    return arpra_symbol++;
-}

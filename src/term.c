@@ -21,34 +21,35 @@
 
 #include "arpra-impl.h"
 
-arpra_int_t arpra_term (mpfr_ptr z, mpfr_srcptr x, mpfr_srcptr y, mpfr_srcptr alpha, mpfr_srcptr beta, mpfr_srcptr gamma)
+arpra_int arpra_term (arpra_mpfr *z, const arpra_mpfr *x, const arpra_mpfr *y,
+                      const arpra_mpfr *alpha, const arpra_mpfr *beta, const arpra_mpfr *gamma)
 {
-    arpra_int_t inexact;
-    mpfr_t alpha_x, beta_y;
+    arpra_int inexact;
+    arpra_mpfr alpha_x, beta_y;
 
     // alpha * x needs precision prec(alpha) + prec(x) to be exact.
-    mpfr_init2(alpha_x, (mpfr_get_prec(alpha) + mpfr_get_prec(x)));
-    mpfr_mul(alpha_x, alpha, x, MPFR_RNDN);
+    mpfr_init2(&alpha_x, (mpfr_get_prec(alpha) + mpfr_get_prec(x)));
+    mpfr_mul(&alpha_x, alpha, x, MPFR_RNDN);
 
     // beta * y needs precision prec(beta) + prec(y) to be exact.
-    mpfr_init2(beta_y, (mpfr_get_prec(beta) + mpfr_get_prec(y)));
-    mpfr_mul(beta_y, beta, y, MPFR_RNDN);
+    mpfr_init2(&beta_y, (mpfr_get_prec(beta) + mpfr_get_prec(y)));
+    mpfr_mul(&beta_y, beta, y, MPFR_RNDN);
 
     if (gamma == NULL) {
         // z = (alpha * x) + (beta * y)
-        inexact = mpfr_add(z, alpha_x, beta_y, MPFR_RNDN);
+        inexact = mpfr_add(z, &alpha_x, &beta_y, MPFR_RNDN);
     }
     else {
         // z = (alpha * x) + (beta * y) + gamma
-        mpfr_ptr sumArray[3];
-        sumArray[0] = alpha_x;
-        sumArray[1] = beta_y;
-        sumArray[2] = (mpfr_ptr) gamma;
+        arpra_mpfr *sumArray[3];
+        sumArray[0] = &alpha_x;
+        sumArray[1] = &beta_y;
+        sumArray[2] = (arpra_mpfr *) gamma;
         inexact = mpfr_sum(z, sumArray, 3, MPFR_RNDN);
     }
 
     // Clear temp vars.
-    mpfr_clear(alpha_x);
-    mpfr_clear(beta_y);
+    mpfr_clear(&alpha_x);
+    mpfr_clear(&beta_y);
     return inexact;
 }

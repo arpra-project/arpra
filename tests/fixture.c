@@ -21,26 +21,26 @@
 
 #include "arpra-test.h"
 
-arpra_t x_A, y_A, z_A;
+arpra_range x_A, y_A, z_A;
 int test_fixture_ready = 0;
 #ifdef WITH_MPFI
 mpfi_t x_I, y_I, z_I, z_AI;
-mpfr_t rdiam_I, rdiam_AI, rdiam_diff;
+arpra_mpfr rdiam_I, rdiam_AI, rdiam_diff;
 #endif // WITH_MPFI
 
-void test_fixture_init (arpra_prec_t prec, arpra_prec_t prec_internal)
+void test_fixture_init (arpra_precision prec, arpra_precision prec_internal)
 {
     // Ensure that we do not double-initialise.
     if (!test_fixture_ready) {
         test_fixture_ready = 1;
 
         // Set internal precision.
-        arpra_set_internal_prec(prec_internal);
+        arpra_set_internal_precision(prec_internal);
 
         // Initialise Arpra variables.
-        arpra_init2(x_A, prec);
-        arpra_init2(y_A, prec);
-        arpra_init2(z_A, prec);
+        arpra_init2(&x_A, prec);
+        arpra_init2(&y_A, prec);
+        arpra_init2(&z_A, prec);
 
 #ifdef WITH_MPFI
         // Initialise MPFI variables.
@@ -50,9 +50,9 @@ void test_fixture_init (arpra_prec_t prec, arpra_prec_t prec_internal)
         mpfi_init2(z_AI, prec);
 
         // Initialise relative diameter variables.
-        mpfr_init2(rdiam_I, prec_internal);
-        mpfr_init2(rdiam_AI, prec_internal);
-        mpfr_init2(rdiam_diff, prec_internal);
+        mpfr_init2(&rdiam_I, prec_internal);
+        mpfr_init2(&rdiam_AI, prec_internal);
+        mpfr_init2(&rdiam_diff, prec_internal);
 #endif // WITH_MPFI
     }
     else {
@@ -68,9 +68,9 @@ void test_fixture_clear ()
         test_fixture_ready = 0;
 
         // Clear Arpra variables.
-        arpra_clear(x_A);
-        arpra_clear(y_A);
-        arpra_clear(z_A);
+        arpra_clear(&x_A);
+        arpra_clear(&y_A);
+        arpra_clear(&z_A);
 
 #ifdef WITH_MPFI
         // Clear MPFI variables.
@@ -80,9 +80,9 @@ void test_fixture_clear ()
         mpfi_clear(z_AI);
 
         // Clear relative diameter variables.
-        mpfr_clear(rdiam_I);
-        mpfr_clear(rdiam_AI);
-        mpfr_clear(rdiam_diff);
+        mpfr_clear(&rdiam_I);
+        mpfr_clear(&rdiam_AI);
+        mpfr_clear(&rdiam_diff);
 #endif // WITH_MPFI
 
         // All else.

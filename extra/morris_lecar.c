@@ -21,122 +21,132 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <arpra.h>
+#include <arpra_ode.h>
 
 // General parameters
-const static arpra_uint_t sim_steps = 500;
+const static arpra_uint sim_steps = 500;
 const static double step_size = 1.0;
 
-const static arpra_uint_t n_grp1 = 10;
-const static arpra_uint_t n_grp2 = 10;
+const static arpra_uint n_grp1 = 10;
+const static arpra_uint n_grp2 = 10;
 
-const static arpra_uint_t reduce_step = 50;
+const static arpra_uint reduce_step = 50;
 const static double reduce_ratio = 0.3;
 
-const static arpra_prec_t prec = 53;
+const static arpra_precision prec = 53;
 
 // Neuron parameters
-static arpra_t gL;    // Maximum leak conductance (mmho/cm^2)
-static arpra_t VL;    // Equilibrium potential of leak conductance (mV)
-static arpra_t gCa;   // Maximum Ca++ conductance (mmho/cm^2)
-static arpra_t VCa;   // Equilibrium potential of Ca++ conductance (mV)
-static arpra_t gK;    // Maximum K+ conductance (mmho/cm^2)
-static arpra_t VK;    // Equilibrium potential of K+ conductance (mV)
-static arpra_t V1;    // Potential at which M_ss(V) = 0.5 (mV)
-static arpra_t V2;    // Reciprocal of voltage dependence slope of M_ss(V) (mV)
-static arpra_t V3;    // Potential at which N_ss(V) = 0.5 (mV)
-static arpra_t V4;    // Reciprocal of voltage dependence slope of N_ss(V) (mV)
-static arpra_t phi;   // (s^-1)
-static arpra_t C;     // Membrane capacitance (uF/cm^2)
+static arpra_range gL;    // Maximum leak conductance (mmho/cm^2)
+static arpra_range VL;    // Equilibrium potential of leak conductance (mV)
+static arpra_range gCa;   // Maximum Ca++ conductance (mmho/cm^2)
+static arpra_range VCa;   // Equilibrium potential of Ca++ conductance (mV)
+static arpra_range gK;    // Maximum K+ conductance (mmho/cm^2)
+static arpra_range VK;    // Equilibrium potential of K+ conductance (mV)
+static arpra_range V1;    // Potential at which M_ss(V) = 0.5 (mV)
+static arpra_range V2;    // Reciprocal of voltage dependence slope of M_ss(V) (mV)
+static arpra_range V3;    // Potential at which N_ss(V) = 0.5 (mV)
+static arpra_range V4;    // Reciprocal of voltage dependence slope of N_ss(V) (mV)
+static arpra_range phi;   // (s^-1)
+static arpra_range C;     // Membrane capacitance (uF/cm^2)
+
+// Neuron group 1 state variables
+arpra_range *nrn1_N;      // Fraction of open K+ channels
+arpra_range *nrn1_V;      // Membrane potential (mV)
+arpra_range *nrn1_I;      // Applied current (uA/cm^2)
+
+// Neuron group 2 state variables
+arpra_range *nrn2_N;      // Fraction of open K+ channels
+arpra_range *nrn2_V;      // Membrane potential (mV)
+arpra_range *nrn2_I;      // Applied current (uA/cm^2)
 
 // Constants
-static arpra_t one, two, neg_two;
+static arpra_range one, two, neg_two;
 
 
-void M_ss (arpra_ptr out, arpra_srcptr V)
+void M_ss (arpra_range *out, const arpra_range *V)
 {
     // Compute Ca++ channel activation steady-state
     // M_ss = 1 / (1 + exp(-2 (V - V1) / V2))
-    arpra_sub(out, V, V1);
-    arpra_mul(out, neg_two, out);
-    arpra_div(out, out, V2);
+    arpra_sub(out, V, &V1);
+    arpra_mul(out, &neg_two, out);
+    arpra_div(out, out, &V2);
     arpra_exp(out, out);
-    arpra_add(out, one, out);
-    arpra_div(out, one, out);
+    arpra_add(out, &one, out);
+    arpra_div(out, &one, out);
 }
 
 
-void d_V (arpra_ptr out, arpra_srcptr V, arpra_srcptr M, arpra_srcptr N, arpra_srcptr I)
+void d_V (arpra_range *out, const arpra_range *V, const arpra_range *M, const arpra_range *N, const arpra_range *I)
 {
-    arpra_t temp;
-    arpra_init2(temp, prec);
+    arpra_range temp;
+    arpra_init2(&temp, prec);
 
     // Compute leak current
-    arpra_sub(temp, V, VL);
-    arpra_mul(temp, temp, gL);
-    arpra_sub(out, I, temp);
+    arpra_sub(&temp, V, &VL);
+    arpra_mul(&temp, &temp, &gL);
+    arpra_sub(out, I, &temp);
 
     // Compute Ca++ current
-    arpra_sub(temp, V, VCa);
-    arpra_mul(temp, temp, gCa);
-    arpra_mul(temp, temp, M);
-    arpra_sub(out, out, temp);
+    arpra_sub(&temp, V, &VCa);
+    arpra_mul(&temp, &temp, &gCa);
+    arpra_mul(&temp, &temp, M);
+    arpra_sub(out, out, &temp);
 
     // Compute K+ current
-    arpra_sub(temp, V, VK);
-    arpra_mul(temp, temp, gK);
-    arpra_mul(temp, temp, N);
-    arpra_sub(out, out, temp);
+    arpra_sub(&temp, V, &VK);
+    arpra_mul(&temp, &temp, &gK);
+    arpra_mul(&temp, &temp, N);
+    arpra_sub(out, out, &temp);
 
     // Compute delta of membrane potential
     // dV / dt = (I - gL (V - VL) - gCa M (V - VCa) - gK N (V - VK)) / C
-    arpra_div(out, out, C);
+    arpra_div(out, out, &C);
 
-    arpra_clear(temp);
+    arpra_clear(&temp);
 }
 
 
-void d_N (arpra_ptr out, arpra_srcptr N, arpra_srcptr V)
+void d_N (arpra_range *out, const arpra_range *N, const arpra_range *V)
 {
-    arpra_t temp1, temp2, temp3;
-    arpra_inits2(prec, temp1, temp2, temp3, NULL);
+    arpra_range temp1, temp2, temp3;
+    arpra_inits2(prec, &temp1, &temp2, &temp3, NULL);
 
     // Compute K+ channel activation steady-state
     // N_ss = 1 / (1 + exp(-2 (V - V3) / V4))
-    arpra_sub(temp2, V, V3);
-    arpra_mul(temp1, neg_two, temp2);
-    arpra_div(temp1, temp1, V4);
-    arpra_exp(temp1, temp1);
-    arpra_add(temp1, one, temp1);
-    arpra_div(temp1, one, temp1);
+    arpra_sub(&temp2, V, &V3);
+    arpra_mul(&temp1, &neg_two, &temp2);
+    arpra_div(&temp1, &temp1, &V4);
+    arpra_exp(&temp1, &temp1);
+    arpra_add(&temp1, &one, &temp1);
+    arpra_div(&temp1, &one, &temp1);
 
     // Compute tau of K+ channel activation
     // tau = 1 / (phi ((p + q) / 2))
     // p = exp(-(V - V3) / (2 V4))
     // q = exp( (V - V3) / (2 V4))
-    arpra_mul(temp3, two, V4);
-    arpra_div(temp3, temp2, temp3);
-    arpra_neg(temp2, temp3);
-    arpra_exp(temp2, temp2);
-    arpra_exp(temp3, temp3);
-    arpra_add(temp2, temp2, temp3);
-    arpra_div(temp2, temp2, two);
-    arpra_mul(temp2, phi, temp2);
-    arpra_div(temp2, one, temp2);
+    arpra_mul(&temp3, &two, &V4);
+    arpra_div(&temp3, &temp2, &temp3);
+    arpra_neg(&temp2, &temp3);
+    arpra_exp(&temp2, &temp2);
+    arpra_exp(&temp3, &temp3);
+    arpra_add(&temp2, &temp2, &temp3);
+    arpra_div(&temp2, &temp2, &two);
+    arpra_mul(&temp2, &phi, &temp2);
+    arpra_div(&temp2, &one, &temp2);
 
     // Compute delta of K+ channel activation
     // dN / dt = (N_ss - N) / tau
-    arpra_sub(out, temp1, N);
-    arpra_div(out, out, temp2);
+    arpra_sub(out, &temp1, N);
+    arpra_div(out, out, &temp2);
 
-    arpra_clears(temp1, temp2, temp3, NULL);
+    arpra_clears(&temp1, &temp2, &temp3, NULL);
 }
 
 
-void file_init (char *grp, char *var, arpra_uint_t num,
+void file_init (char *grp, char *var, arpra_uint num,
                 FILE **c, FILE **r, FILE **n, FILE **s, FILE **d)
 {
-    arpra_uint_t j;
+    arpra_uint j;
     char fname[20];
 
     for (j = 0; j < num; j++) {
@@ -154,9 +164,9 @@ void file_init (char *grp, char *var, arpra_uint_t num,
 }
 
 
-void file_clear (arpra_uint_t num, FILE **c, FILE **r, FILE **n, FILE **s, FILE **d)
+void file_clear (arpra_uint num, FILE **c, FILE **r, FILE **n, FILE **s, FILE **d)
 {
-    arpra_uint_t j;
+    arpra_uint j;
 
     for (j = 0; j < num; j++) {
         fclose(c[j]);
@@ -168,10 +178,10 @@ void file_clear (arpra_uint_t num, FILE **c, FILE **r, FILE **n, FILE **s, FILE 
 }
 
 
-void file_write (arpra_srcptr A, arpra_uint_t i,
+void file_write (const arpra_range *A, arpra_uint i,
                  FILE **c, FILE **r, FILE **n, FILE **s, FILE **d)
 {
-    arpra_uint_t j;
+    arpra_uint j;
 
     mpfr_out_str(c[i], 10, 80, &(A[i].centre), MPFR_RNDN);
     fputc('\n', c[i]);
@@ -191,46 +201,54 @@ void file_write (arpra_srcptr A, arpra_uint_t i,
 int main (int argc, char *argv[])
 {
     unsigned int i, j, N_mark, V_mark;
-    arpra_t dN, dV, dt, M;
+    arpra_range dN, dV, dt, M;
 
     // Init parameters
-    arpra_inits2(prec,
-                dN, dV, dt, M,
-                gL, gCa, gK,
-                VL, VCa, VK,
-                V1, V2, V3, V4,
-                phi, C,
-                one, two, neg_two,
-                NULL);
+    arpra_init2(&dN, prec);
+    arpra_init2(&dV, prec);
+    arpra_init2(&dt, prec);
+    arpra_init2(&M, prec);
+    arpra_init2(&gL, prec);
+    arpra_init2(&gCa, prec);
+    arpra_init2(&gK, prec);
+    arpra_init2(&VL, prec);
+    arpra_init2(&VCa, prec);
+    arpra_init2(&VK, prec);
+    arpra_init2(&V1, prec);
+    arpra_init2(&V2, prec);
+    arpra_init2(&V3, prec);
+    arpra_init2(&V4, prec);
+    arpra_init2(&phi, prec);
+    arpra_init2(&C, prec);
+    arpra_init2(&one, prec);
+    arpra_init2(&two, prec);
+    arpra_init2(&neg_two, prec);
 
-    arpra_set_d(dt, step_size);
-
-    arpra_set_d(gL, 2.0);
-    arpra_set_d(gCa, 4.0); // Class 1 excitability
-    //arpra_set_d(gCa, 4.4); // Class 2 excitability
-    arpra_set_d(gK, 8.0);
-    arpra_set_d(VL, -60.0);
-    arpra_set_d(VCa, 120.0);
-    arpra_set_d(VK, -80.0);
-    arpra_set_d(V1, -1.2);
-    arpra_set_d(V2, 18.0);
-    arpra_set_d(V3, 12.0); // Class 1 excitability
-    //arpra_set_d(V3, 2.0); // Class 2 excitability
-    arpra_set_d(V4, 17.4); // Class 1 excitability
-    //arpra_set_d(V4, 30.0); // Class 2 excitability
-    arpra_set_d(phi, 1.0 / 15.0); // Class 1 excitability
-    //arpra_set_d(phi, 1.0 / 25.0); // Class 2 excitability
-    arpra_set_d(C, 20.0);
-
-    arpra_set_d(one, 1.0);
-    arpra_set_d(two, 2.0);
-    arpra_set_d(neg_two, -2.0);
+    arpra_set_d(&dt, step_size);
+    arpra_set_d(&gL, 2.0);
+    arpra_set_d(&gCa, 4.0); // Class 1 excitability
+    //arpra_set_d(&gCa, 4.4); // Class 2 excitability
+    arpra_set_d(&gK, 8.0);
+    arpra_set_d(&VL, -60.0);
+    arpra_set_d(&VCa, 120.0);
+    arpra_set_d(&VK, -80.0);
+    arpra_set_d(&V1, -1.2);
+    arpra_set_d(&V2, 18.0);
+    arpra_set_d(&V3, 12.0); // Class 1 excitability
+    //arpra_set_d(&V3, 2.0); // Class 2 excitability
+    arpra_set_d(&V4, 17.4); // Class 1 excitability
+    //arpra_set_d(&V4, 30.0); // Class 2 excitability
+    arpra_set_d(&phi, 1.0 / 15.0); // Class 1 excitability
+    //arpra_set_d(&phi, 1.0 / 25.0); // Class 2 excitability
+    arpra_set_d(&C, 20.0);
+    arpra_set_d(&one, 1.0);
+    arpra_set_d(&two, 2.0);
+    arpra_set_d(&neg_two, -2.0);
 
     // Init neuron group 1 state variables
-    arpra_ptr nrn1_N = malloc(n_grp1 * sizeof(arpra_t));  // Fraction of open K+ channels
-    arpra_ptr nrn1_V = malloc(n_grp1 * sizeof(arpra_t));  // Membrane potential (mV)
-    arpra_ptr nrn1_I = malloc(n_grp1 * sizeof(arpra_t));  // Applied current (uA/cm^2)
-
+    nrn1_N = malloc(n_grp1 * sizeof(arpra_range));
+    nrn1_V = malloc(n_grp1 * sizeof(arpra_range));
+    nrn1_I = malloc(n_grp1 * sizeof(arpra_range));
     for (j = 0; j < n_grp1; j++) {
         arpra_init2(&(nrn1_N[j]), prec);
         arpra_init2(&(nrn1_V[j]), prec);
@@ -256,10 +274,9 @@ int main (int argc, char *argv[])
     file_init("nrn1", "V", n_grp1, f_nrn1_V_c, f_nrn1_V_r, f_nrn1_V_n, f_nrn1_V_s, f_nrn1_V_d);
 
     // Init neuron group 2 state variables
-    arpra_ptr nrn2_N = malloc(n_grp2 * sizeof(arpra_t));  // Fraction of open K+ channels
-    arpra_ptr nrn2_V = malloc(n_grp2 * sizeof(arpra_t));  // Membrane potential (mV)
-    arpra_ptr nrn2_I = malloc(n_grp2 * sizeof(arpra_t));  // Applied current (uA/cm^2)
-
+    nrn2_N = malloc(n_grp2 * sizeof(arpra_range));
+    nrn2_V = malloc(n_grp2 * sizeof(arpra_range));
+    nrn2_I = malloc(n_grp2 * sizeof(arpra_range));
     for (j = 0; j < n_grp2; j++) {
         arpra_init2(&(nrn2_N[j]), prec);
         arpra_init2(&(nrn2_V[j]), prec);
@@ -303,18 +320,18 @@ int main (int argc, char *argv[])
                mpfr_div(error, temp, error, MPFR_RNDU);
             */
 
-            M_ss(M, &(nrn1_V[j]));
+            M_ss(&M, &(nrn1_V[j]));
 
             N_mark = nrn1_N[j].nTerms;
             V_mark = nrn1_V[j].nTerms;
 
-            d_N(dN, &(nrn1_N[j]), &(nrn1_V[j]));
-            d_V(dV, &(nrn1_V[j]), M, &(nrn1_N[j]), &(nrn1_I[j]));
+            d_N(&dN, &(nrn1_N[j]), &(nrn1_V[j]));
+            d_V(&dV, &(nrn1_V[j]), &M, &(nrn1_N[j]), &(nrn1_I[j]));
 
-            arpra_mul(dN, dN, dt);
-            arpra_add(&(nrn1_N[j]), &(nrn1_N[j]), dN);
-            arpra_mul(dV, dV, dt);
-            arpra_add(&(nrn1_V[j]), &(nrn1_V[j]), dV);
+            arpra_mul(&dN, &dN, &dt);
+            arpra_add(&(nrn1_N[j]), &(nrn1_N[j]), &dN);
+            arpra_mul(&dV, &dV, &dt);
+            arpra_add(&(nrn1_V[j]), &(nrn1_V[j]), &dV);
 
             arpra_reduce_last_n(&(nrn1_N[j]), (nrn1_N[j].nTerms - N_mark));
             arpra_reduce_last_n(&(nrn1_V[j]), (nrn1_V[j].nTerms - V_mark));
@@ -340,18 +357,18 @@ int main (int argc, char *argv[])
                mpfr_div(error, temp, error, MPFR_RNDU);
             */
 
-            M_ss(M, &(nrn2_V[j]));
+            M_ss(&M, &(nrn2_V[j]));
 
             N_mark = nrn2_N[j].nTerms;
             V_mark = nrn2_V[j].nTerms;
 
-            d_N(dN, &(nrn2_N[j]), &(nrn2_V[j]));
-            d_V(dV, &(nrn2_V[j]), M, &(nrn2_N[j]), &(nrn2_I[j]));
+            d_N(&dN, &(nrn2_N[j]), &(nrn2_V[j]));
+            d_V(&dV, &(nrn2_V[j]), &M, &(nrn2_N[j]), &(nrn2_I[j]));
 
-            arpra_mul(dN, dN, dt);
-            arpra_add(&(nrn2_N[j]), &(nrn2_N[j]), dN);
-            arpra_mul(dV, dV, dt);
-            arpra_add(&(nrn2_V[j]), &(nrn2_V[j]), dV);
+            arpra_mul(&dN, &dN, &dt);
+            arpra_add(&(nrn2_N[j]), &(nrn2_N[j]), &dN);
+            arpra_mul(&dV, &dV, &dt);
+            arpra_add(&(nrn2_V[j]), &(nrn2_V[j]), &dV);
 
             arpra_reduce_last_n(&(nrn2_N[j]), (nrn2_N[j].nTerms - N_mark));
             arpra_reduce_last_n(&(nrn2_V[j]), (nrn2_V[j].nTerms - V_mark));
@@ -421,13 +438,25 @@ int main (int argc, char *argv[])
     free(f_nrn2_V_d);
 
     // Clear parameters
-    arpra_clears(dN, dV, dt, M,
-                gL, gCa, gK,
-                VL, VCa, VK,
-                V1, V2, V3, V4,
-                phi, C,
-                one, two, neg_two,
-                NULL);
+    arpra_clear(&dN);
+    arpra_clear(&dV);
+    arpra_clear(&dt);
+    arpra_clear(&M);
+    arpra_clear(&gL);
+    arpra_clear(&gCa);
+    arpra_clear(&gK);
+    arpra_clear(&VL);
+    arpra_clear(&VCa);
+    arpra_clear(&VK);
+    arpra_clear(&V1);
+    arpra_clear(&V2);
+    arpra_clear(&V3);
+    arpra_clear(&V4);
+    arpra_clear(&phi);
+    arpra_clear(&C);
+    arpra_clear(&one);
+    arpra_clear(&two);
+    arpra_clear(&neg_two);
 
     mpfr_free_cache();
     return 0;

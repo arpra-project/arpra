@@ -1,5 +1,5 @@
 /*
- * sum.c -- Sum an array of arpra_t.
+ * sum.c -- Sum an array of Arpra ranges.
  *
  * Copyright 2016-2018 James Paul Turner.
  *
@@ -21,16 +21,16 @@
 
 #include "arpra-impl.h"
 
-void arpra_sum (arpra_ptr z, const arpra_ptr *x, arpra_uint_t n)
+void arpra_sum (arpra_range *z, arpra_range *x, const arpra_uint n)
 {
-    arpra_uint_t i, j;
-    arpra_uint_t xSymbol, zTerm;
-    arpra_uint_t *xTerm;
-    arpra_int_t xHasNext;
-    mpfr_ptr *summands;
-    mpfr_t temp, error;
-    arpra_prec_t prec, prec_internal;
-    arpra_t zNew;
+    arpra_uint i, j;
+    arpra_uint xSymbol, zTerm;
+    arpra_uint *xTerm;
+    arpra_int xHasNext;
+    arpra_mpfr **summands;
+    arpra_mpfr temp, error;
+    arpra_precision prec, prec_internal;
+    arpra_range zNew;
 
     // Domain violations:
     // NaN  +  NaN  +  ...  =  NaN
@@ -41,15 +41,15 @@ void arpra_sum (arpra_ptr z, const arpra_ptr *x, arpra_uint_t n)
 
     // Handle domain violations.
     for (i = 0; i < n; i++) {
-        if (arpra_nan_p(x[i])) {
+        if (arpra_nan_p(&x[i])) {
             arpra_set_nan(z);
             return;
         }
     }
     for (i = 0; i < n; i++) {
-        if (arpra_inf_p(x[i])) {
+        if (arpra_inf_p(&x[i])) {
             for (++i; i < n; i++) {
-                if (arpra_inf_p(x[i])) {
+                if (arpra_inf_p(&x[i])) {
                     arpra_set_nan(z);
                     return;
                 }
@@ -62,11 +62,11 @@ void arpra_sum (arpra_ptr z, const arpra_ptr *x, arpra_uint_t n)
     // Handle trivial cases.
     if (n <= 2) {
         if (n == 2) {
-            arpra_add(z, x[0], x[1]);
+            arpra_add(z, &x[0], &x[1]);
             return;
         }
         else if (n == 1) {
-            arpra_set(z, x[0]);
+            arpra_set(z, &x[0]);
             return;
         }
         else {
@@ -76,114 +76,114 @@ void arpra_sum (arpra_ptr z, const arpra_ptr *x, arpra_uint_t n)
     }
 
     // Initialise vars.
-    prec = arpra_get_prec(z);
-    prec_internal = arpra_get_internal_prec();
-    mpfr_init2(temp, prec_internal);
-    mpfr_init2(error, prec_internal);
-    mpfr_init2(&(zNew->centre), prec);
-    mpfr_init2(&(zNew->radius), prec_internal);
-    mpfr_set_si(error, 0, MPFR_RNDU);
-    mpfr_set_si(&(zNew->radius), 0, MPFR_RNDU);
-    xTerm = malloc(n * sizeof(arpra_uint_t));
-    summands = malloc(n * sizeof(mpfr_ptr));
+    prec = arpra_get_precision(z);
+    prec_internal = arpra_get_internal_precision();
+    mpfr_init2(&temp, prec_internal);
+    mpfr_init2(&error, prec_internal);
+    mpfr_init2(&(zNew.centre), prec);
+    mpfr_init2(&(zNew.radius), prec_internal);
+    mpfr_set_si(&error, 0, MPFR_RNDU);
+    mpfr_set_si(&(zNew.radius), 0, MPFR_RNDU);
+    xTerm = malloc(n * sizeof(arpra_uint));
+    summands = malloc(n * sizeof(arpra_mpfr *));
 
     // Zero term indexes, and fill summand array with centre values.
     zTerm = 0;
     for (i = 0; i < n; i++) {
         xTerm[i] = 0;
-        summands[i] = &(x[i]->centre);
+        summands[i] = &(x[i].centre);
     }
 
     // z_0 = x[1]_0 + ... + x[n]_0
-    if (mpfr_sum(&(zNew->centre), summands, n, MPFR_RNDN)) {
-        arpra_error(temp, &(zNew->centre));
-        mpfr_add(error, error, temp, MPFR_RNDU);
+    if (mpfr_sum(&(zNew.centre), summands, n, MPFR_RNDN)) {
+        arpra_error(&temp, &(zNew.centre));
+        mpfr_add(&error, &error, &temp, MPFR_RNDU);
     }
 
     // Allocate memory for all possible deviation terms.
-    zNew->nTerms = 1;
+    zNew.nTerms = 1;
     for (i = 0; i < n; i++) {
-        zNew->nTerms += x[i]->nTerms;
+        zNew.nTerms += x[i].nTerms;
     }
-    zNew->symbols = malloc(zNew->nTerms * sizeof(arpra_uint_t));
-    zNew->deviations = malloc(zNew->nTerms * sizeof(mpfr_t));
+    zNew.symbols = malloc(zNew.nTerms * sizeof(arpra_uint));
+    zNew.deviations = malloc(zNew.nTerms * sizeof(arpra_mpfr));
 
     // For all unique symbols in x.
-    xHasNext = zNew->nTerms > 1;
+    xHasNext = zNew.nTerms > 1;
     while (xHasNext) {
         xHasNext = 0;
         xSymbol = -1;
 
         // Find and set the next symbol in z.
         for (i = 0; i < n; i++) {
-            if (xTerm[i] < x[i]->nTerms) {
-                if (x[i]->symbols[xTerm[i]] < xSymbol) {
-                    xSymbol = x[i]->symbols[xTerm[i]];
+            if (xTerm[i] < x[i].nTerms) {
+                if (x[i].symbols[xTerm[i]] < xSymbol) {
+                    xSymbol = x[i].symbols[xTerm[i]];
                 }
             }
         }
-        zNew->symbols[zTerm] = xSymbol;
-        mpfr_init2(&(zNew->deviations[zTerm]), prec);
+        zNew.symbols[zTerm] = xSymbol;
+        mpfr_init2(&(zNew.deviations[zTerm]), prec);
 
         // For all x with the next symbol:
         for (i = 0, j = 0; i < n; i++) {
-            if (x[i]->symbols[xTerm[i]] == xSymbol) {
+            if (x[i].symbols[xTerm[i]] == xSymbol) {
                 // Get next deviation pointer of x[i].
-                summands[j++] = &(x[i]->deviations[xTerm[i]]);
+                summands[j++] = &(x[i].deviations[xTerm[i]]);
 
                 // Check for more symbols in x[i].
-                if (++xTerm[i] < x[i]->nTerms) {
+                if (++xTerm[i] < x[i].nTerms) {
                     xHasNext = 1;
                 }
             }
         }
 
         // z_i = x[1]_i + ... + x[n]_i
-        if (mpfr_sum(&(zNew->deviations[zTerm]), summands, j, MPFR_RNDN)) {
-            arpra_error(temp, &(zNew->deviations[zTerm]));
-            mpfr_add(error, error, temp, MPFR_RNDU);
+        if (mpfr_sum(&(zNew.deviations[zTerm]), summands, j, MPFR_RNDN)) {
+            arpra_error(&temp, &(zNew.deviations[zTerm]));
+            mpfr_add(&error, &error, &temp, MPFR_RNDU);
         }
 
         // Store nonzero deviation terms.
-        if (mpfr_zero_p(&(zNew->deviations[zTerm]))) {
-            mpfr_clear(&(zNew->deviations[zTerm]));
+        if (mpfr_zero_p(&(zNew.deviations[zTerm]))) {
+            mpfr_clear(&(zNew.deviations[zTerm]));
         }
         else {
-            mpfr_abs(temp, &(zNew->deviations[zTerm]), MPFR_RNDU);
-            mpfr_add(&(zNew->radius), &(zNew->radius), temp, MPFR_RNDU);
+            mpfr_abs(&temp, &(zNew.deviations[zTerm]), MPFR_RNDU);
+            mpfr_add(&(zNew.radius), &(zNew.radius), &temp, MPFR_RNDU);
             zTerm++;
         }
     }
 
     // Store nonzero numerical error term.
-    if (!mpfr_zero_p(error)) {
-        zNew->symbols[zTerm] = arpra_next_sym();
-        mpfr_init2(&(zNew->deviations[zTerm]), prec);
-        mpfr_set(&(zNew->deviations[zTerm]), error, MPFR_RNDU);
-        mpfr_add(&(zNew->radius), &(zNew->radius), &(zNew->deviations[zTerm]), MPFR_RNDU);
+    if (!mpfr_zero_p(&error)) {
+        zNew.symbols[zTerm] = arpra_next_symbol();
+        mpfr_init2(&(zNew.deviations[zTerm]), prec);
+        mpfr_set(&(zNew.deviations[zTerm]), &error, MPFR_RNDU);
+        mpfr_add(&(zNew.radius), &(zNew.radius), &(zNew.deviations[zTerm]), MPFR_RNDU);
         zTerm++;
     }
 
     // Handle domain violations, and free unused memory.
-    zNew->nTerms = zTerm;
-    if (mpfr_nan_p(&(zNew->centre)) || mpfr_nan_p(&(zNew->radius))) {
-        arpra_set_nan(zNew);
+    zNew.nTerms = zTerm;
+    if (mpfr_nan_p(&(zNew.centre)) || mpfr_nan_p(&(zNew.radius))) {
+        arpra_set_nan(&zNew);
     }
-    else if (mpfr_inf_p(&(zNew->centre)) || mpfr_inf_p(&(zNew->radius))) {
-        arpra_set_inf(zNew);
+    else if (mpfr_inf_p(&(zNew.centre)) || mpfr_inf_p(&(zNew.radius))) {
+        arpra_set_inf(&zNew);
     }
     else {
-        if (zNew->nTerms == 0) {
-            free(zNew->symbols);
-            free(zNew->deviations);
+        if (zNew.nTerms == 0) {
+            free(zNew.symbols);
+            free(zNew.deviations);
         }
     }
 
     // Clear vars, and set z.
-    mpfr_clear(temp);
-    mpfr_clear(error);
-    arpra_set(z, zNew);
-    arpra_clear(zNew);
+    mpfr_clear(&temp);
+    mpfr_clear(&error);
+    arpra_set(z, &zNew);
+    arpra_clear(&zNew);
     free(xTerm);
     free(summands);
 }

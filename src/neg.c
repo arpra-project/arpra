@@ -1,5 +1,5 @@
 /*
- * neg.c -- Negate an arpra_t.
+ * neg.c -- Negate an Arpra range.
  *
  * Copyright 2016-2018 James Paul Turner.
  *
@@ -21,25 +21,25 @@
 
 #include "arpra-impl.h"
 
-void arpra_neg (arpra_ptr z, arpra_srcptr x)
+void arpra_neg (arpra_range *z, const arpra_range *x)
 {
-    mpfr_t alpha, gamma, delta;
-    arpra_prec_t prec;
+    arpra_mpfr alpha, gamma, delta;
+    arpra_precision prec;
 
     // Initialise vars.
-    prec = arpra_get_prec(z);
-    mpfr_init2(alpha, prec);
-    mpfr_set_si(alpha, -1, MPFR_RNDN);
-    mpfr_init2(gamma, prec);
-    mpfr_set_si(gamma, 0, MPFR_RNDN);
-    mpfr_init2(delta, prec);
-    mpfr_set_si(delta, 0, MPFR_RNDN);
+    prec = arpra_get_precision(z);
+    mpfr_init2(&alpha, prec);
+    mpfr_set_si(&alpha, -1, MPFR_RNDN);
+    mpfr_init2(&gamma, prec);
+    mpfr_set_si(&gamma, 0, MPFR_RNDN);
+    mpfr_init2(&delta, prec);
+    mpfr_set_si(&delta, 0, MPFR_RNDN);
 
     // z = - x
-    arpra_affine_1(z, x, alpha, gamma, delta);
+    arpra_affine_1(z, x, &alpha, &gamma, &delta);
 
     // Clear vars.
-    mpfr_clear(alpha);
-    mpfr_clear(gamma);
-    mpfr_clear(delta);
+    mpfr_clear(&alpha);
+    mpfr_clear(&gamma);
+    mpfr_clear(&delta);
 }

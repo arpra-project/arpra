@@ -1,5 +1,5 @@
 /*
- * set_mpfi.c -- Set an arpra_t with an MPFI interval.
+ * set_mpfi.c -- Set an Arpra range with an MPFI interval.
  *
  * Copyright 2017-2018 James Paul Turner.
  *
@@ -21,10 +21,10 @@
 
 #include "arpra-impl.h"
 
-void arpra_set_mpfi (arpra_ptr z, mpfi_srcptr x)
+void arpra_set_mpfi (arpra_range *z, mpfi_srcptr x)
 {
-    arpra_prec_t prec, prec_internal;
-    mpfr_t temp;
+    arpra_precision prec, prec_internal;
+    arpra_mpfr temp;
 
     // Handle domain violations.
     if (mpfi_nan_p(x)) {
@@ -37,9 +37,9 @@ void arpra_set_mpfi (arpra_ptr z, mpfi_srcptr x)
     }
 
     // Initialise vars.
-    prec = arpra_get_prec(z);
-    prec_internal = arpra_get_internal_prec();
-    mpfr_init2(temp, prec_internal);
+    prec = arpra_get_precision(z);
+    prec_internal = arpra_get_internal_precision();
+    mpfr_init2(&temp, prec_internal);
     mpfr_set_prec(&(z->radius), prec_internal);
 
     // z_0 = (x_lo + x_hi) / 2
@@ -48,8 +48,8 @@ void arpra_set_mpfi (arpra_ptr z, mpfi_srcptr x)
 
     // rad(z) = max{(z_0 - x_lo), (x_hi - z_0)}
     mpfr_sub(&(z->radius), &(z->centre), &(x->left), MPFR_RNDU);
-    mpfr_sub(temp, &(x->right), &(z->centre), MPFR_RNDU);
-    mpfr_max(&(z->radius), &(z->radius), temp, MPFR_RNDU);
+    mpfr_sub(&temp, &(x->right), &(z->centre), MPFR_RNDU);
+    mpfr_max(&(z->radius), &(z->radius), &temp, MPFR_RNDU);
 
     // Clear existing deviation terms.
     arpra_clear_terms(z);
@@ -58,11 +58,11 @@ void arpra_set_mpfi (arpra_ptr z, mpfi_srcptr x)
     if (!mpfr_zero_p(&(z->radius))) {
         // Allocate one deviation term.
         z->nTerms = 1;
-        z->symbols = malloc(sizeof(arpra_uint_t));
-        z->deviations = malloc(sizeof(arpra_t));
+        z->symbols = malloc(sizeof(arpra_uint));
+        z->deviations = malloc(sizeof(arpra_range));
 
         // Set deviation term.
-        z->symbols[0] = arpra_next_sym();
+        z->symbols[0] = arpra_next_symbol();
         mpfr_init2(&(z->deviations[0]), prec);
         mpfr_set(&(z->deviations[0]), &(z->radius), MPFR_RNDU);
     }
@@ -76,5 +76,5 @@ void arpra_set_mpfi (arpra_ptr z, mpfi_srcptr x)
     }
 
     // Clear vars.
-    mpfr_clear(temp);
+    mpfr_clear(&temp);
 }

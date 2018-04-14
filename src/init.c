@@ -1,5 +1,5 @@
 /*
- * init.c -- Initialise one or more arpra_t.
+ * init.c -- Initialise one or more Arpra ranges.
  *
  * Copyright 2016-2018 James Paul Turner.
  *
@@ -21,18 +21,18 @@
 
 #include "arpra-impl.h"
 
-void arpra_init (arpra_ptr x)
+void arpra_init (arpra_range *x)
 {
-    arpra_prec_t prec_internal;
+    arpra_precision prec_internal;
 
     // Init centre and radius with working precision.
-    prec_internal = arpra_get_internal_prec();
+    prec_internal = arpra_get_internal_precision();
     x->nTerms = 0;
     mpfr_init(&(x->centre));
     mpfr_init2(&(x->radius), prec_internal);
 }
 
-void arpra_inits (arpra_ptr x, ...)
+void arpra_inits (arpra_range *x, ...)
 {
     va_list arg;
 
@@ -40,7 +40,7 @@ void arpra_inits (arpra_ptr x, ...)
     va_start(arg, x);
     while (x != NULL) {
         arpra_init(x);
-        x = (arpra_ptr) va_arg(arg, arpra_ptr);
+        x = (arpra_range *) va_arg(arg, arpra_range *);
     }
     va_end(arg);
 }

@@ -1,5 +1,5 @@
 /*
- * add.c -- Add one arpra_t to another.
+ * add.c -- Add one Arpra range to another.
  *
  * Copyright 2016-2018 James Paul Turner.
  *
@@ -21,28 +21,28 @@
 
 #include "arpra-impl.h"
 
-void arpra_add (arpra_ptr z, arpra_srcptr x, arpra_srcptr y)
+void arpra_add (arpra_range *z, const arpra_range *x, const arpra_range *y)
 {
-    mpfr_t alpha, beta, gamma, delta;
-    arpra_prec_t prec;
+    arpra_mpfr alpha, beta, gamma, delta;
+    arpra_precision prec;
 
     // Initialise vars.
-    prec = arpra_get_prec(z);
-    mpfr_init2(alpha, prec);
-    mpfr_set_si(alpha, 1, MPFR_RNDN);
-    mpfr_init2(beta, prec);
-    mpfr_set_si(beta, 1, MPFR_RNDN);
-    mpfr_init2(gamma, prec);
-    mpfr_set_si(gamma, 0, MPFR_RNDN);
-    mpfr_init2(delta, prec);
-    mpfr_set_si(delta, 0, MPFR_RNDN);
+    prec = arpra_get_precision(z);
+    mpfr_init2(&alpha, prec);
+    mpfr_set_si(&alpha, 1, MPFR_RNDN);
+    mpfr_init2(&beta, prec);
+    mpfr_set_si(&beta, 1, MPFR_RNDN);
+    mpfr_init2(&gamma, prec);
+    mpfr_set_si(&gamma, 0, MPFR_RNDN);
+    mpfr_init2(&delta, prec);
+    mpfr_set_si(&delta, 0, MPFR_RNDN);
 
     // z = x + y
-    arpra_affine_2(z, x, y, alpha, beta, gamma, delta);
+    arpra_affine_2(z, x, y, &alpha, &beta, &gamma, &delta);
 
     // Clear vars.
-    mpfr_clear(alpha);
-    mpfr_clear(beta);
-    mpfr_clear(gamma);
-    mpfr_clear(delta);
+    mpfr_clear(&alpha);
+    mpfr_clear(&beta);
+    mpfr_clear(&gamma);
+    mpfr_clear(&delta);
 }

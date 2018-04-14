@@ -24,10 +24,10 @@
 int main (int argc, char *argv[])
 {
 #ifdef WITH_MPFI
-    const arpra_prec_t prec = 53;
-    const arpra_prec_t prec_internal = 128;
-    const arpra_uint_t test_n = 100000;
-    arpra_uint_t i, fail, fail_n;
+    const arpra_precision prec = 53;
+    const arpra_precision prec_internal = 128;
+    const arpra_uint test_n = 100000;
+    arpra_uint i, fail, fail_n;
 
     // Init test.
     test_fixture_init(prec, prec_internal);
@@ -38,18 +38,18 @@ int main (int argc, char *argv[])
     // Run test.
     for (i = 0; i < test_n; i++) {
         fail = 0;
-        test_rand_arpra(x_A, TEST_RAND_MIXED, TEST_RAND_SMALL);
-        test_rand_arpra(y_A, TEST_RAND_MIXED, TEST_RAND_SMALL);
+        test_rand_arpra(&x_A, TEST_RAND_MIXED, TEST_RAND_SMALL);
+        test_rand_arpra(&y_A, TEST_RAND_MIXED, TEST_RAND_SMALL);
 
         // Pass criteria (unshared symbols):
         // 1) Arpra x contains 0, Arpra y = Inf and Arpra z = NaN.
         // 2) Arpra x = Inf, Arpra y contains 0 and Arpra z = NaN.
         // 3) Arpra z contains MPFI z.
         test_bivariate(arpra_mul, mpfi_mul);
-        if (arpra_has_zero_p(x_A) && arpra_inf_p(y_A) && arpra_nan_p(z_A)) {
+        if (arpra_has_zero_p(&x_A) && arpra_inf_p(&y_A) && arpra_nan_p(&z_A)) {
             test_log_printf("Result (unshared symbols): PASS\n\n");
         }
-        else if (arpra_inf_p(x_A) && arpra_has_zero_p(y_A) && arpra_nan_p(z_A)) {
+        else if (arpra_inf_p(&x_A) && arpra_has_zero_p(&y_A) && arpra_nan_p(&z_A)) {
             test_log_printf("Result (unshared symbols): PASS\n\n");
         }
         else if (mpfr_greaterequal_p(&(z_I->left), &(z_AI->left))
@@ -65,15 +65,15 @@ int main (int argc, char *argv[])
         // 1) Arpra x contains 0, Arpra y = Inf and Arpra z = NaN.
         // 2) Arpra x = Inf, Arpra y contains 0 and Arpra z = NaN.
         // 1) bounded(Arpra z) = bounded(MPFI z).
-        test_share_rand_syms(x_A, y_A);
+        test_share_rand_syms(&x_A, &y_A);
         test_bivariate(arpra_mul, mpfi_mul);
-        if (arpra_has_zero_p(x_A) && arpra_inf_p(y_A) && arpra_nan_p(z_A)) {
+        if (arpra_has_zero_p(&x_A) && arpra_inf_p(&y_A) && arpra_nan_p(&z_A)) {
             test_log_printf("Result (random shared symbols): PASS\n\n");
         }
-        else if (arpra_inf_p(x_A) && arpra_has_zero_p(y_A) && arpra_nan_p(z_A)) {
+        else if (arpra_inf_p(&x_A) && arpra_has_zero_p(&y_A) && arpra_nan_p(&z_A)) {
             test_log_printf("Result (random shared symbols): PASS\n\n");
         }
-        else if (arpra_bounded_p(z_A) == mpfi_bounded_p(z_I)) {
+        else if (arpra_bounded_p(&z_A) == mpfi_bounded_p(z_I)) {
             test_log_printf("Result (random shared symbols): PASS\n\n");
         }
         else {
@@ -85,15 +85,15 @@ int main (int argc, char *argv[])
         // 1) Arpra x contains 0, Arpra y = Inf and Arpra z = NaN.
         // 2) Arpra x = Inf, Arpra y contains 0 and Arpra z = NaN.
         // 1) bounded(Arpra z) = bounded(MPFI z).
-        test_share_all_syms(x_A, y_A);
+        test_share_all_syms(&x_A, &y_A);
         test_bivariate(arpra_mul, mpfi_mul);
-        if (arpra_has_zero_p(x_A) && arpra_inf_p(y_A) && arpra_nan_p(z_A)) {
+        if (arpra_has_zero_p(&x_A) && arpra_inf_p(&y_A) && arpra_nan_p(&z_A)) {
             test_log_printf("Result (all shared symbols): PASS\n\n");
         }
-        else if (arpra_inf_p(x_A) && arpra_has_zero_p(y_A) && arpra_nan_p(z_A)) {
+        else if (arpra_inf_p(&x_A) && arpra_has_zero_p(&y_A) && arpra_nan_p(&z_A)) {
             test_log_printf("Result (all shared symbols): PASS\n\n");
         }
-        else if (arpra_bounded_p(z_A) == mpfi_bounded_p(z_I)) {
+        else if (arpra_bounded_p(&z_A) == mpfi_bounded_p(z_I)) {
             test_log_printf("Result (all shared symbols): PASS\n\n");
         }
         else {

@@ -21,10 +21,10 @@
 
 #include "arpra-impl.h"
 
-void arpra_set_d_rad (arpra_ptr z, const double centre, const double radius)
+void arpra_set_d_rad (arpra_range *z, const double centre, const double radius)
 {
-    arpra_prec_t prec, prec_internal;
-    mpfr_t temp;
+    arpra_precision prec, prec_internal;
+    arpra_mpfr temp;
 
     // Handle domain violations.
     if (isnan(centre) || isnan(radius)) {
@@ -37,17 +37,17 @@ void arpra_set_d_rad (arpra_ptr z, const double centre, const double radius)
     }
 
     // Initialise vars.
-    prec = arpra_get_prec(z);
-    prec_internal = arpra_get_internal_prec();
-    mpfr_init2(temp, prec_internal);
-    mpfr_set_d(temp, radius, MPFR_RNDU);
+    prec = arpra_get_precision(z);
+    prec_internal = arpra_get_internal_precision();
+    mpfr_init2(&temp, prec_internal);
+    mpfr_set_d(&temp, radius, MPFR_RNDU);
     mpfr_set_prec(&(z->radius), prec_internal);
-    mpfr_abs(&(z->radius), temp, MPFR_RNDU);
+    mpfr_abs(&(z->radius), &temp, MPFR_RNDU);
 
     // Add centre rounding error to deviation.
     if (mpfr_set_d(&(z->centre), centre, MPFR_RNDN)) {
-        arpra_error(temp, &(z->centre));
-        mpfr_add(&(z->radius), &(z->radius), temp, MPFR_RNDU);
+        arpra_error(&temp, &(z->centre));
+        mpfr_add(&(z->radius), &(z->radius), &temp, MPFR_RNDU);
     }
 
     // Clear existing deviation terms.
@@ -57,11 +57,11 @@ void arpra_set_d_rad (arpra_ptr z, const double centre, const double radius)
     if (!mpfr_zero_p(&(z->radius))) {
         // Allocate one deviation term.
         z->nTerms = 1;
-        z->symbols = malloc(sizeof(arpra_uint_t));
-        z->deviations = malloc(sizeof(arpra_t));
+        z->symbols = malloc(sizeof(arpra_uint));
+        z->deviations = malloc(sizeof(arpra_range));
 
         // Set deviation term.
-        z->symbols[0] = arpra_next_sym();
+        z->symbols[0] = arpra_next_symbol();
         mpfr_init2(&(z->deviations[0]), prec);
         mpfr_set(&(z->deviations[0]), &(z->radius), MPFR_RNDU);
         mpfr_set(&(z->radius), &(z->deviations[0]), MPFR_RNDU);
@@ -76,5 +76,5 @@ void arpra_set_d_rad (arpra_ptr z, const double centre, const double radius)
     }
 
     // Clear vars.
-    mpfr_clear(temp);
+    mpfr_clear(&temp);
 }

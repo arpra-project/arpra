@@ -1,5 +1,5 @@
 /*
- * internal_prec.c -- Get and set the precision used internally by Arpra.
+ * default_precision.c -- Get and set the default precision of Arpra ranges.
  *
  * Copyright 2016-2018 James Paul Turner.
  *
@@ -21,14 +21,17 @@
 
 #include "arpra-impl.h"
 
-static arpra_prec_t arpra_internal_prec = ARPRA_DEFAULT_INTERNAL_PREC;
-
-arpra_prec_t arpra_get_internal_prec ()
+arpra_precision arpra_get_default_precision ()
 {
-    return arpra_internal_prec;
+    return mpfr_get_default_prec();
 }
 
-void arpra_set_internal_prec (arpra_prec_t prec)
+void arpra_set_default_precision (const arpra_precision prec)
 {
-    arpra_internal_prec = prec;
+    // Internal precision must be >= working precision.
+    if (arpra_get_internal_precision() < prec) {
+        arpra_set_internal_precision(prec);
+    }
+
+    mpfr_set_default_prec(prec);
 }

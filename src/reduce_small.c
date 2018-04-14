@@ -1,5 +1,5 @@
 /*
- * reduce_small.c -- Reduce terms less than some fraction of the radius.
+ * reduce_small.c -- Reduce terms less than a given fraction of the radius.
  *
  * Copyright 2017-2018 James Paul Turner.
  *
@@ -21,32 +21,33 @@
 
 #include "arpra-impl.h"
 
-void arpra_reduce_small (arpra_ptr z, double fraction)
+void arpra_reduce_small (arpra_range *z, double min_fraction)
 {
-    arpra_uint_t zTerm, zNext;
-    mpfr_ptr *summands;
-    mpfr_t temp, threshold;
-    arpra_prec_t prec_internal;
+    arpra_uint zTerm, zNext;
+    arpra_mpfr **summands;
+    arpra_mpfr temp, threshold;
+    arpra_precision prec_internal;
 
     // Handle trivial cases.
-    if ((z->nTerms < 2) || (fraction >= 1)) return;
+    if (min_fraction < 0.0) min_fraction = 0.0;
+    if ((z->nTerms < 2) || (min_fraction >= 1)) return;
 
     // Handle domain violations.
     if (arpra_nan_p(z)) return;
     if (arpra_inf_p(z)) return;
 
     // Initialise vars.
-    prec_internal = arpra_get_internal_prec();
-    mpfr_init2(temp, prec_internal);
-    mpfr_init2(threshold, prec_internal);
-    mpfr_mul_d(threshold, &(z->radius), fraction, MPFR_RNDN);
+    prec_internal = arpra_get_internal_precision();
+    mpfr_init2(&temp, prec_internal);
+    mpfr_init2(&threshold, prec_internal);
+    mpfr_mul_d(&threshold, &(z->radius), min_fraction, MPFR_RNDN);
     mpfr_set_prec(&(z->radius), prec_internal);
     mpfr_set_ui(&(z->radius), 0, MPFR_RNDU);
     zTerm = 0;
 
     // Shift small deviation terms to back.
     for (zNext = 0; zNext < z->nTerms; zNext++) {
-        if (mpfr_cmpabs(&(z->deviations[zNext]), threshold) > 0) {
+        if (mpfr_cmpabs(&(z->deviations[zNext]), &threshold) > 0) {
             if (zTerm < zNext) {
                 z->symbols[zTerm] = z->symbols[zNext];
                 mpfr_swap(&(z->deviations[zTerm]), &(z->deviations[zNext]));
@@ -54,7 +55,7 @@ void arpra_reduce_small (arpra_ptr z, double fraction)
             zTerm++;
         }
     }
-    summands = malloc((zNext - zTerm) * sizeof(mpfr_ptr));
+    summands = malloc((zNext - zTerm) * sizeof(arpra_mpfr *));
 
     // Merge the small deviation terms.
     for (zNext = zTerm; zNext < z->nTerms; zNext++) {
@@ -65,13 +66,13 @@ void arpra_reduce_small (arpra_ptr z, double fraction)
 
     // Add the remaining deviation terms to radius.
     for (zNext = 0; zNext < zTerm; zNext++) {
-        mpfr_abs(temp, &(z->deviations[zTerm]), MPFR_RNDU);
-        mpfr_add(&(z->radius), &(z->radius), temp, MPFR_RNDU);
+        mpfr_abs(&temp, &(z->deviations[zTerm]), MPFR_RNDU);
+        mpfr_add(&(z->radius), &(z->radius), &temp, MPFR_RNDU);
     }
 
     // Store nonzero merged deviation term.
     if (!mpfr_zero_p(&(z->deviations[zTerm]))) {
-        z->symbols[zTerm] = arpra_next_sym();
+        z->symbols[zTerm] = arpra_next_symbol();
         mpfr_add(&(z->radius), &(z->radius), &(z->deviations[zTerm]), MPFR_RNDU);
         zTerm++;
     }
@@ -95,13 +96,13 @@ void arpra_reduce_small (arpra_ptr z, double fraction)
             free(z->deviations);
         }
         else {
-            z->symbols = realloc(z->symbols, z->nTerms * sizeof(arpra_uint_t));
-            z->deviations = realloc(z->deviations, z->nTerms * sizeof(mpfr_t));
+            z->symbols = realloc(z->symbols, z->nTerms * sizeof(arpra_uint));
+            z->deviations = realloc(z->deviations, z->nTerms * sizeof(arpra_mpfr));
         }
     }
 
     // Clear vars.
-    mpfr_clear(temp);
-    mpfr_clear(threshold);
+    mpfr_clear(&temp);
+    mpfr_clear(&threshold);
     free(summands);
 }

@@ -1,7 +1,7 @@
 /*
- * get_mpfi.c -- Get an MPFI interval from an Arpra range.
+ * symbol.c -- Noise symbol functions.
  *
- * Copyright 2017-2018 James Paul Turner.
+ * Copyright 2016-2018 James Paul Turner.
  *
  * This file is part of the Arpra library.
  *
@@ -21,11 +21,9 @@
 
 #include "arpra-impl.h"
 
-void arpra_get_mpfi (mpfi_ptr z, const arpra_range *x)
-{
-    // z_lo = x_0 - rad(x)
-    mpfr_sub(&(z->left), &(x->centre), &(x->radius), MPFR_RNDD);
+static arpra_uint symbol_count = 0;
 
-    // z_hi = x_0 + rad(x)
-    mpfr_add(&(z->right), &(x->centre), &(x->radius), MPFR_RNDU);
+arpra_uint arpra_next_symbol ()
+{
+    return symbol_count++;
 }

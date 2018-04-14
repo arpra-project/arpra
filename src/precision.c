@@ -1,7 +1,7 @@
 /*
- * get_mpfi.c -- Get an MPFI interval from an Arpra range.
+ * precision.c -- Get and set the precision of an Arpra range.
  *
- * Copyright 2017-2018 James Paul Turner.
+ * Copyright 2016-2018 James Paul Turner.
  *
  * This file is part of the Arpra library.
  *
@@ -21,11 +21,26 @@
 
 #include "arpra-impl.h"
 
-void arpra_get_mpfi (mpfi_ptr z, const arpra_range *x)
+arpra_precision arpra_get_precision (const arpra_range *x)
 {
-    // z_lo = x_0 - rad(x)
-    mpfr_sub(&(z->left), &(x->centre), &(x->radius), MPFR_RNDD);
+    return mpfr_get_prec(&(x->centre));
+}
 
-    // z_hi = x_0 + rad(x)
-    mpfr_add(&(z->right), &(x->centre), &(x->radius), MPFR_RNDU);
+void arpra_set_precision (arpra_range *z, const arpra_precision prec)
+{
+    arpra_precision internal_prec;
+
+    // Increase internal_prec if < prec.
+    internal_prec = arpra_get_internal_precision();
+    if (internal_prec < prec) {
+        arpra_set_internal_precision(prec);
+        internal_prec = prec;
+    }
+
+    // Clear existing deviation terms.
+    arpra_clear_terms(z);
+
+    // Reset centre and radius with new working precision.
+    mpfr_set_prec(&(z->centre), prec);
+    mpfr_set_prec(&(z->radius), internal_prec);
 }

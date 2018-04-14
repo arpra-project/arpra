@@ -24,10 +24,10 @@
 int main (int argc, char *argv[])
 {
 #ifdef WITH_MPFI
-    const arpra_prec_t prec = 53;
-    const arpra_prec_t prec_internal = 128;
-    const arpra_uint_t test_n = 100000;
-    arpra_uint_t i, fail_n;
+    const arpra_precision prec = 53;
+    const arpra_precision prec_internal = 128;
+    const arpra_uint test_n = 100000;
+    arpra_uint i, fail_n;
 
     // Init test.
     test_fixture_init(prec, prec_internal);
@@ -37,7 +37,7 @@ int main (int argc, char *argv[])
 
     // Run test.
     for (i = 0; i < test_n; i++) {
-        test_rand_arpra(x_A, TEST_RAND_MIXED, TEST_RAND_SMALL);
+        test_rand_arpra(&x_A, TEST_RAND_MIXED, TEST_RAND_SMALL);
 
         // Pass criteria:
         // 1) Arpra z contains MPFI z.

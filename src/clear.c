@@ -1,5 +1,5 @@
 /*
- * clear.c -- Free the memory of one or more arpra_t.
+ * clear.c -- Free the memory of one or more Arpra ranges.
  *
  * Copyright 2016-2018 James Paul Turner.
  *
@@ -21,7 +21,7 @@
 
 #include "arpra-impl.h"
 
-void arpra_clear (arpra_ptr x)
+void arpra_clear (arpra_range *x)
 {
     // Clear centre, radius and deviation terms.
     mpfr_clear(&(x->centre));
@@ -29,7 +29,7 @@ void arpra_clear (arpra_ptr x)
     arpra_clear_terms(x);
 }
 
-void arpra_clears (arpra_ptr x, ...)
+void arpra_clears (arpra_range *x, ...)
 {
     va_list arg;
 
@@ -37,14 +37,14 @@ void arpra_clears (arpra_ptr x, ...)
     va_start(arg, x);
     while (x != NULL) {
         arpra_clear(x);
-        x = (arpra_ptr) va_arg(arg, arpra_ptr);
+        x = (arpra_range *) va_arg(arg, arpra_range *);
     }
     va_end(arg);
 }
 
-void arpra_clear_terms (arpra_ptr x)
+void arpra_clear_terms (arpra_range *x)
 {
-    arpra_uint_t xTerm;
+    arpra_uint xTerm;
 
     // Clear existing deviation terms.
     if (x->nTerms > 0) {

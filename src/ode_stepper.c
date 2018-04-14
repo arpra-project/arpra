@@ -1,7 +1,7 @@
 /*
- * prec.c -- Get and set the precision of an arpra_t.
+ * ode_stepper.c -- Initialise, clear and manipulate ODE steppers.
  *
- * Copyright 2016-2018 James Paul Turner.
+ * Copyright 2018 James Paul Turner.
  *
  * This file is part of the Arpra library.
  *
@@ -21,26 +21,23 @@
 
 #include "arpra-impl.h"
 
-arpra_prec_t arpra_get_prec (arpra_srcptr x)
+void arpra_ode_stepper_init (arpra_ode_stepper *stepper, const arpra_ode_method *method,
+                             arpra_ode_system *system)
 {
-    return mpfr_get_prec(&(x->centre));
+    method->init(stepper, system);
 }
 
-void arpra_set_prec (arpra_ptr z, arpra_prec_t prec)
+void arpra_ode_stepper_clear (arpra_ode_stepper *stepper)
 {
-    arpra_prec_t prec_internal;
+    stepper->method->clear(stepper);
+}
 
-    // Increase internal precision if < 'prec'.
-    prec_internal = arpra_get_internal_prec();
-    if (prec_internal < prec) {
-        arpra_set_internal_prec(prec);
-        prec_internal = prec;
-    }
+void arpra_ode_stepper_reset (arpra_ode_stepper *stepper)
+{
+    stepper->method->reset(stepper);
+}
 
-    // Clear existing deviation terms.
-    arpra_clear_terms(z);
-
-    // Reset centre and radius with new working precision.
-    mpfr_set_prec(&(z->centre), prec);
-    mpfr_set_prec(&(z->radius), prec_internal);
+void arpra_ode_stepper_step (arpra_ode_stepper *stepper, const arpra_range *h)
+{
+    stepper->method->step(stepper, h);
 }

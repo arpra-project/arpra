@@ -21,10 +21,10 @@
 
 #include "arpra-test.h"
 
-void test_rand_mpfr (mpfr_ptr z, enum test_rand_mode mode)
+void test_rand_mpfr (arpra_mpfr *z, enum test_rand_mode mode)
 {
-    arpra_uint_t r_ui;
-    mpfr_t r_mpfr;
+    arpra_uint r_ui;
+    arpra_mpfr r_mpfr;
 
     if (test_rand_ready) {
         // Check RNG mode.
@@ -71,19 +71,19 @@ void test_rand_mpfr (mpfr_ptr z, enum test_rand_mode mode)
         }
 
         // Generate random number with 5-bit precision.
-        mpfr_init2(r_mpfr, 5);
-        mpfr_urandomb (r_mpfr, test_randstate);
+        mpfr_init2(&r_mpfr, 5);
+        mpfr_urandomb (&r_mpfr, test_randstate);
         if (r_ui == 1) {
-            mpfr_neg (r_mpfr, r_mpfr, MPFR_RNDD);
+            mpfr_neg (&r_mpfr, &r_mpfr, MPFR_RNDD);
         }
         else if (r_ui >= 2) {
-            mpfr_ui_div (r_mpfr, 1, r_mpfr, MPFR_RNDD);
+            mpfr_ui_div (&r_mpfr, 1, &r_mpfr, MPFR_RNDD);
             if (r_ui == 3) {
-                mpfr_neg (r_mpfr, r_mpfr, MPFR_RNDD);
+                mpfr_neg (&r_mpfr, &r_mpfr, MPFR_RNDD);
             }
         }
-        mpfr_set(z, r_mpfr, MPFR_RNDN);
-        mpfr_clear(r_mpfr);
+        mpfr_set(z, &r_mpfr, MPFR_RNDN);
+        mpfr_clear(&r_mpfr);
     }
     else {
         fprintf(stderr, "Error: RNG is not initialised.\n");

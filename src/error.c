@@ -28,10 +28,10 @@
  * when x was flushed to zero.
  */
 
-void arpra_error (mpfr_ptr error, mpfr_srcptr x)
+void arpra_error (arpra_mpfr *error, const arpra_mpfr *x)
 {
-    arpra_prec_t p;
-    arpra_exp_t e;
+    arpra_precision p;
+    mpfr_exp_t e;
 
     if (mpfr_zero_p(x)) {
         // error = nextabove(x)
