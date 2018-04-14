@@ -20,3 +20,24 @@
  */
 
 #include "arpra-impl.h"
+
+void arpra_ode_stepper_init (arpra_ode_stepper *stepper, const arpra_ode_method *method,
+                             arpra_ode_system *system)
+{
+    method->init(stepper, system);
+}
+
+void arpra_ode_stepper_clear (arpra_ode_stepper *stepper)
+{
+    stepper->method->clear(stepper);
+}
+
+void arpra_ode_stepper_reset (arpra_ode_stepper *stepper)
+{
+    stepper->method->reset(stepper);
+}
+
+void arpra_ode_stepper_step (arpra_ode_stepper *stepper, const arpra_range *h)
+{
+    stepper->method->step(stepper, h);
+}

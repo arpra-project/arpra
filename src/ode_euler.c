@@ -1,11 +1,22 @@
+/*
+ * ode_euler.c -- Explicit Euler ODE stepper.
+ *
+ * Copyright 2018 James Paul Turner.
+ *
+ * This file is part of the Arpra library.
+ *
+ * The Arpra library is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Arpra library is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+ * License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with the Arpra library. If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "arpra-impl.h"
-
-struct __arpra_ode_euler_state_struct
-{
-
-};
-
-typedef struct __arpra_ode_euler_state_struct arpra_ode_euler_state_t;
-typedef struct __arpra_ode_euler_state_struct *arpra_ode_euler_state_ptr;
-typedef const struct __arpra_ode_euler_state_struct *arpra_ode_euler_state_srcptr;

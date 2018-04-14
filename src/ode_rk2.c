@@ -21,72 +21,77 @@
 
 #include "arpra-impl.h"
 
-typedef struct
+typedef struct rk2_scratch_struct
 {
     arpra_range k1;
     arpra_range k2;
     arpra_range k3;
     arpra_range temp;
-} rk2_workspace;
+} rk2_scratch;
 
-
-static void rk2_init (arpra_ode_stepper *stepper)
+static void rk2_init (arpra_ode_stepper *stepper, arpra_ode_system *system)
 {
-    rk2_workspace *workspace;
+    arpra_uint i;
+    arpra_precision prec;
+    rk2_scratch *scratch;
 
-    workspace = (rk2_workspace *) stepper->workspace;
-    workspace = malloc(sizeof(rk2_workspace));
-    arpra_init(&(workspace->k1));
-    arpra_init(&(workspace->k2));
-    arpra_init(&(workspace->k3));
-    arpra_init(&(workspace->temp));
+    stepper->method = arpra_ode_rk2;
+    stepper->system = system;
+    stepper->scratch = malloc(system->dims * sizeof(rk2_scratch));
+    scratch = (rk2_scratch *) stepper->scratch;
+    for (i = 0; i < system->dims; i++) {
+        prec = arpra_get_precision(&(system->x[i]));
+        arpra_init2(&(scratch[i].k1), prec);
+        arpra_init2(&(scratch[i].k2), prec);
+        arpra_init2(&(scratch[i].k3), prec);
+        arpra_init2(&(scratch[i].temp), prec);
+    }
 }
-
-
-static void rk2_init2 (arpra_ode_stepper *stepper, const arpra_precision prec)
-{
-    rk2_workspace *workspace;
-
-}
-
 
 static void rk2_clear (arpra_ode_stepper *stepper)
 {
-    rk2_workspace *workspace;
+    arpra_uint i;
+    rk2_scratch *scratch;
 
-    workspace = (rk2_workspace *) stepper->workspace;
-    arpra_clear(&(workspace->k1));
-    arpra_clear(&(workspace->k2));
-    arpra_clear(&(workspace->k3));
-    arpra_clear(&(workspace->temp));
-    free(workspace);
+    scratch = (rk2_scratch *) stepper->scratch;
+    for (i = 0; i < stepper->system->dims; i++) {
+        arpra_clear(&(scratch[i].k1));
+        arpra_clear(&(scratch[i].k2));
+        arpra_clear(&(scratch[i].k3));
+        arpra_clear(&(scratch[i].temp));
+    }
+    free(scratch);
 }
-
 
 static void rk2_reset (arpra_ode_stepper *stepper)
 {
-    rk2_workspace *workspace;
+    arpra_uint i;
+    rk2_scratch *scratch;
 
-    workspace = (rk2_workspace *) stepper->workspace;
-    arpra_set_zero(&(workspace->k1));
-    arpra_set_zero(&(workspace->k2));
-    arpra_set_zero(&(workspace->k3));
-    arpra_set_zero(&(workspace->temp));
+    scratch = (rk2_scratch *) stepper->scratch;
+    for (i = 0; i < stepper->system->dims; i++) {
+        arpra_set_zero(&(scratch[i].k1));
+        arpra_set_zero(&(scratch[i].k2));
+        arpra_set_zero(&(scratch[i].k3));
+        arpra_set_zero(&(scratch[i].temp));
+    }
 }
-
 
 static void rk2_step (arpra_ode_stepper *stepper, const arpra_range *h)
 {
-    rk2_workspace *workspace;
-
-    workspace = (rk2_workspace *) stepper->workspace;
+    arpra_uint i;
+    rk2_scratch *scratch;
 
     // EVALUATE K1 = DYDT|T
-    //stepper->function (t, x, &(workspace->k1), stepper->parameters);
+    //stepper->system->f(t, x, &(scratch->k1), stepper->params);
 }
 
-// stepper doesnt need to save old state - can be done by the step control object
-
-static const arpra_ode_method rk2 = {};
+static const arpra_ode_method rk2 =
+{
+    .init = &rk2_init,
+    .clear = &rk2_clear,
+    .reset = &rk2_reset,
+    .step = &rk2_step
+};
 
 const arpra_ode_method *arpra_ode_rk2 = &rk2;
