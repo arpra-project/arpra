@@ -21,8 +21,8 @@
 
 #include "arpra-impl.h"
 
-void arpra_ode_stepper_init (arpra_ode_stepper *stepper, const arpra_ode_method *method,
-                             arpra_ode_system *system)
+void arpra_ode_stepper_init (arpra_ode_stepper *stepper, arpra_ode_system *system,
+                             const arpra_ode_method *method)
 {
     method->init(stepper, system);
 }

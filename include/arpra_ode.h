@@ -63,8 +63,8 @@ extern "C" {
 #endif
 
 // Stepper functions.
-void arpra_ode_stepper_init (arpra_ode_stepper *stepper, const arpra_ode_method *method,
-                             arpra_ode_system *system);
+void arpra_ode_stepper_init (arpra_ode_stepper *stepper, arpra_ode_system *system,
+                             const arpra_ode_method *method);
 void arpra_ode_stepper_clear (arpra_ode_stepper *stepper);
 void arpra_ode_stepper_reset (arpra_ode_stepper *stepper);
 void arpra_ode_stepper_step (arpra_ode_stepper *stepper, const arpra_range *h);
