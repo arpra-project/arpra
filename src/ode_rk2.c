@@ -23,10 +23,9 @@
 
 typedef struct rk2_scratch_struct
 {
-    arpra_range k1;
-    arpra_range k2;
-    arpra_range k3;
-    arpra_range temp;
+    arpra_range *k1;
+    arpra_range *k2;
+    arpra_range *k3;
 } rk2_scratch;
 
 static void rk2_init (arpra_ode_stepper *stepper, arpra_ode_system *system)
@@ -35,17 +34,19 @@ static void rk2_init (arpra_ode_stepper *stepper, arpra_ode_system *system)
     arpra_precision prec;
     rk2_scratch *scratch;
 
-    stepper->method = arpra_ode_rk2;
-    stepper->system = system;
-    stepper->scratch = malloc(system->dims * sizeof(rk2_scratch));
-    scratch = (rk2_scratch *) stepper->scratch;
+    scratch = malloc(sizeof(rk2_scratch));
+    scratch->k1 = malloc(system->dims * sizeof(arpra_range));
+    scratch->k2 = malloc(system->dims * sizeof(arpra_range));
+    scratch->k3 = malloc(system->dims * sizeof(arpra_range));
     for (i = 0; i < system->dims; i++) {
         prec = arpra_get_precision(&(system->x[i]));
-        arpra_init2(&(scratch[i].k1), prec);
-        arpra_init2(&(scratch[i].k2), prec);
-        arpra_init2(&(scratch[i].k3), prec);
-        arpra_init2(&(scratch[i].temp), prec);
+        arpra_init2(&(scratch->k1[i]), prec);
+        arpra_init2(&(scratch->k2[i]), prec);
+        arpra_init2(&(scratch->k3[i]), prec);
     }
+    stepper->method = arpra_ode_rk2;
+    stepper->system = system;
+    stepper->scratch = scratch;
 }
 
 static void rk2_clear (arpra_ode_stepper *stepper)
@@ -55,11 +56,13 @@ static void rk2_clear (arpra_ode_stepper *stepper)
 
     scratch = (rk2_scratch *) stepper->scratch;
     for (i = 0; i < stepper->system->dims; i++) {
-        arpra_clear(&(scratch[i].k1));
-        arpra_clear(&(scratch[i].k2));
-        arpra_clear(&(scratch[i].k3));
-        arpra_clear(&(scratch[i].temp));
+        arpra_clear(&(scratch->k1[i]));
+        arpra_clear(&(scratch->k2[i]));
+        arpra_clear(&(scratch->k3[i]));
     }
+    free(scratch->k1);
+    free(scratch->k2);
+    free(scratch->k3);
     free(scratch);
 }
 
@@ -70,10 +73,9 @@ static void rk2_reset (arpra_ode_stepper *stepper)
 
     scratch = (rk2_scratch *) stepper->scratch;
     for (i = 0; i < stepper->system->dims; i++) {
-        arpra_set_zero(&(scratch[i].k1));
-        arpra_set_zero(&(scratch[i].k2));
-        arpra_set_zero(&(scratch[i].k3));
-        arpra_set_zero(&(scratch[i].temp));
+        arpra_set_zero(&(scratch->k1[i]));
+        arpra_set_zero(&(scratch->k2[i]));
+        arpra_set_zero(&(scratch->k3[i]));
     }
 }
 
@@ -82,8 +84,14 @@ static void rk2_step (arpra_ode_stepper *stepper, const arpra_range *h)
     arpra_uint i;
     rk2_scratch *scratch;
 
-    // EVALUATE K1 = DYDT|T
-    //stepper->system->f(t, x, &(scratch->k1), stepper->params);
+    scratch = (rk2_scratch *) stepper->scratch;
+
+    // Compute k1.
+    stepper->system->f(scratch->k1,
+                       stepper->system->x, stepper->system->t,
+                       stepper->system->dims, stepper->system->params);
+
+    // Step x by h.
 }
 
 static const arpra_ode_method rk2 =
