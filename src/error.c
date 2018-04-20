@@ -42,7 +42,6 @@ void arpra_error (arpra_mpfr *error, const arpra_mpfr *x)
         // error = 1/2 ULP(x) = 2^(e-p-1)
         p = mpfr_get_prec(x);
         e = mpfr_get_exp(x);
-        mpfr_set_si(error, (e - p - 1), MPFR_RNDU);
-        mpfr_exp2(error, error, MPFR_RNDU);
+        mpfr_set_si_2exp(error, 1, (e - p - 1), MPFR_RNDU);
     }
 }
