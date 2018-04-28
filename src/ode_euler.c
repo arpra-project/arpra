@@ -21,16 +21,22 @@
 
 #include "arpra-impl.h"
 
+typedef struct euler_scratch_struct
+{
+    arpra_range *k1;
+} euler_scratch;
+
 static void euler_init (arpra_ode_stepper *stepper, arpra_ode_system *system)
 {
     arpra_uint i;
     arpra_precision prec;
-    arpra_range *scratch;
+    euler_scratch *scratch;
 
-    scratch = malloc(system->dims * sizeof(arpra_range));
+    scratch = malloc(sizeof(euler_scratch));
+    scratch->k1 = malloc(system->dims * sizeof(arpra_range));
     for (i = 0; i < system->dims; i++) {
         prec = arpra_get_precision(&(system->x[i]));
-        arpra_init2(&(scratch[i]), prec);
+        arpra_init2(&(scratch->k1[i]), prec);
     }
     stepper->method = arpra_ode_euler;
     stepper->system = system;
@@ -40,11 +46,11 @@ static void euler_init (arpra_ode_stepper *stepper, arpra_ode_system *system)
 static void euler_clear (arpra_ode_stepper *stepper)
 {
     arpra_uint i;
-    arpra_range *scratch;
+    euler_scratch *scratch;
 
-    scratch = (arpra_range *) stepper->scratch;
+    scratch = (euler_scratch *) stepper->scratch;
     for (i = 0; i < stepper->system->dims; i++) {
-        arpra_clear(&(scratch[i]));
+        arpra_clear(&(scratch->k1[i]));
     }
     free(scratch);
 }
@@ -52,29 +58,29 @@ static void euler_clear (arpra_ode_stepper *stepper)
 static void euler_reset (arpra_ode_stepper *stepper)
 {
     arpra_uint i;
-    arpra_range *scratch;
+    euler_scratch *scratch;
 
-    scratch = (arpra_range *) stepper->scratch;
+    scratch = (euler_scratch *) stepper->scratch;
     for (i = 0; i < stepper->system->dims; i++) {
-        arpra_set_zero(&(scratch[i]));
+        arpra_set_zero(&(scratch->k1[i]));
     }
 }
 
 static void euler_step (arpra_ode_stepper *stepper, const arpra_range *h)
 {
     arpra_uint i;
-    arpra_range *scratch;
+    euler_scratch *scratch;
 
-    scratch = (arpra_range *) stepper->scratch;
+    scratch = (euler_scratch *) stepper->scratch;
 
     // Compute k1.
-    stepper->system->f(scratch,
+    stepper->system->f(scratch->k1,
                        stepper->system->x, stepper->system->t,
                        stepper->system->dims, stepper->system->params);
 
     // Step x by h.
     for (i = 0; i < stepper->system->dims; i++) {
-        arpra_mul(&(stepper->system->x[i]), &(scratch[i]), h);
+        arpra_mul(&(stepper->system->x[i]), &(scratch->k1[i]), h);
     }
 }
 

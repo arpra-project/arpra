@@ -86,10 +86,17 @@ static void rk2_step (arpra_ode_stepper *stepper, const arpra_range *h)
 
     scratch = (rk2_scratch *) stepper->scratch;
 
+    // ======================== SCRATCH SPACE SHOULD HOLD ERROR, IF NEEDED
+
     // Compute k1.
     stepper->system->f(scratch->k1,
                        stepper->system->x, stepper->system->t,
                        stepper->system->dims, stepper->system->params);
+
+    // Compute k2.
+
+
+    // Compute k3.
 
     // Step x by h.
 }
