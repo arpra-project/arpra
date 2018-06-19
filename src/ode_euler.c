@@ -43,6 +43,7 @@ static void euler_init (arpra_ode_stepper *stepper, arpra_ode_system *system)
     }
     stepper->method = arpra_ode_euler;
     stepper->system = system;
+    stepper->error = NULL;
     stepper->scratch = scratch;
 }
 

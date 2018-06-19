@@ -46,6 +46,7 @@ struct arpra_ode_stepper_struct
 {
     const arpra_ode_method *method;
     arpra_ode_system *system;
+    arpra_range *error;
     void *scratch;
 };
 
