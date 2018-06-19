@@ -24,6 +24,7 @@
 typedef struct euler_scratch_struct
 {
     arpra_range *k1;
+    arpra_range *temp;
 } euler_scratch;
 
 static void euler_init (arpra_ode_stepper *stepper, arpra_ode_system *system)
@@ -34,9 +35,11 @@ static void euler_init (arpra_ode_stepper *stepper, arpra_ode_system *system)
 
     scratch = malloc(sizeof(euler_scratch));
     scratch->k1 = malloc(system->dims * sizeof(arpra_range));
+    scratch->temp = malloc(system->dims * sizeof(arpra_range));
     for (i = 0; i < system->dims; i++) {
         prec = arpra_get_precision(&(system->x[i]));
         arpra_init2(&(scratch->k1[i]), prec);
+        arpra_init2(&(scratch->temp[i]), prec);
     }
     stepper->method = arpra_ode_euler;
     stepper->system = system;
@@ -51,6 +54,7 @@ static void euler_clear (arpra_ode_stepper *stepper)
     scratch = (euler_scratch *) stepper->scratch;
     for (i = 0; i < stepper->system->dims; i++) {
         arpra_clear(&(scratch->k1[i]));
+        arpra_clear(&(scratch->temp[i]));
     }
     free(scratch);
 }
@@ -63,6 +67,7 @@ static void euler_reset (arpra_ode_stepper *stepper)
     scratch = (euler_scratch *) stepper->scratch;
     for (i = 0; i < stepper->system->dims; i++) {
         arpra_set_zero(&(scratch->k1[i]));
+        arpra_set_zero(&(scratch->temp[i]));
     }
 }
 
@@ -80,8 +85,12 @@ static void euler_step (arpra_ode_stepper *stepper, const arpra_range *h)
 
     // Step x by h.
     for (i = 0; i < stepper->system->dims; i++) {
-        arpra_mul(&(stepper->system->x[i]), &(scratch->k1[i]), h);
+        arpra_mul(&(scratch->temp[i]), &(scratch->k1[i]), h);
+        arpra_add(&(stepper->system->x[i]), &(stepper->system->x[i]), &(scratch->temp[i]));
     }
+
+    // Increment t.
+    arpra_add(stepper->system->t, stepper->system->t, h);
 }
 
 static const arpra_ode_method euler =
