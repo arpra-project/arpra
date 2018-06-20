@@ -72,7 +72,7 @@ void arpra_ode_stepper_step (arpra_ode_stepper *stepper, const arpra_range *h);
 
 // Arpra built-in step methods.
 extern const arpra_ode_method *arpra_ode_euler;
-extern const arpra_ode_method *arpra_ode_rk2;
+extern const arpra_ode_method *arpra_ode_trapezoidal;
 
 #ifdef __cplusplus
 }

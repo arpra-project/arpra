@@ -116,7 +116,7 @@ static void trapezoidal_step (arpra_ode_stepper *stepper, const arpra_range *h)
 
         // 1/2 k1 + 1/2 k2
         arpra_set_d(&scratch->temp, 0.5);
-        arpra_mul(&(scratch->temp_X[i]), &(scratch->k1[i]), &scratch->temp);
+        arpra_mul(&(scratch->temp_x[i]), &(scratch->k1[i]), &scratch->temp);
         arpra_mul(&scratch->temp, &(scratch->k2[i]), &scratch->temp);
         arpra_add(&(scratch->temp_x[i]), &(scratch->temp_x[i]), &scratch->temp);
 
