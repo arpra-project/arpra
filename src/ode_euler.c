@@ -23,7 +23,7 @@
 
 typedef struct euler_scratch_struct
 {
-    arpra_range *k1;
+    arpra_range *k_1;
     arpra_range *temp;
 } euler_scratch;
 
@@ -34,11 +34,11 @@ static void euler_init (arpra_ode_stepper *stepper, arpra_ode_system *system)
     euler_scratch *scratch;
 
     scratch = malloc(sizeof(euler_scratch));
-    scratch->k1 = malloc(system->dims * sizeof(arpra_range));
+    scratch->k_1 = malloc(system->dims * sizeof(arpra_range));
     scratch->temp = malloc(sizeof(arpra_range));
     for (i = 0; i < system->dims; i++) {
         prec = arpra_get_precision(&(system->x[i]));
-        arpra_init2(&(scratch->k1[i]), prec);
+        arpra_init2(&(scratch->k_1[i]), prec);
     }
     prec = arpra_get_default_precision();
     arpra_init2(scratch->temp, prec);
@@ -57,10 +57,10 @@ static void euler_clear (arpra_ode_stepper *stepper)
     system = stepper->system;
     scratch = (euler_scratch *) stepper->scratch;
     for (i = 0; i < system->dims; i++) {
-        arpra_clear(&(scratch->k1[i]));
+        arpra_clear(&(scratch->k_1[i]));
     }
     arpra_clear(scratch->temp);
-    free(scratch->k1);
+    free(scratch->k_1);
     free(scratch->temp);
     free(scratch);
 }
@@ -78,22 +78,20 @@ static void euler_step (arpra_ode_stepper *stepper, const arpra_range *h)
     // Synchronise scratch memory precision.
     for (i = 0; i < system->dims; i++) {
         prec = arpra_get_precision(&(system->x[i]));
-        arpra_set_precision(&(scratch->k1[i]), prec);
+        arpra_set_precision(&(scratch->k_1[i]), prec);
     }
 
-    // Compute k1.
-    system->f(scratch->k1,
+    // k_1 = f(t, x(t))
+    system->f(scratch->k_1,
               system->t, system->x,
               system->dims, system->params);
 
-    // Step x by h.
+    // x(t + 1) = x(t) + h k_1
     arpra_add(system->t, system->t, h);
     for (i = 0; i < system->dims; i++) {
         prec = arpra_get_precision(&(system->x[i]));
         arpra_set_precision(scratch->temp, prec);
-
-        // Scale by h and step.
-        arpra_mul(scratch->temp, h, &(scratch->k1[i]));
+        arpra_mul(scratch->temp, h, &(scratch->k_1[i]));
         arpra_add(&(system->x[i]), &(system->x[i]), scratch->temp);
     }
 }
