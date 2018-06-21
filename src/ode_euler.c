@@ -83,7 +83,7 @@ static void euler_step (arpra_ode_stepper *stepper, const arpra_range *h)
 
     // Compute k1.
     system->f(scratch->k1,
-              system->x, system->t,
+              system->t, system->x,
               system->dims, system->params);
 
     // Step x by h.

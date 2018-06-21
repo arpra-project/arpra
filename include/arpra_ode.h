@@ -33,10 +33,10 @@ typedef struct arpra_ode_method_struct arpra_ode_method;
 struct arpra_ode_system_struct
 {
     void (*f) (arpra_range *dxdt,
-               const arpra_range *x, const arpra_range *t,
+               const arpra_range *t, const arpra_range *x,
                const arpra_uint dims, const void *params);
-    arpra_range *x;
     arpra_range *t;
+    arpra_range *x;
     arpra_uint dims;
     const void *params;
 };
