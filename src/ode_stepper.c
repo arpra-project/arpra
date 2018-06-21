@@ -32,11 +32,6 @@ void arpra_ode_stepper_clear (arpra_ode_stepper *stepper)
     stepper->method->clear(stepper);
 }
 
-void arpra_ode_stepper_reset (arpra_ode_stepper *stepper)
-{
-    stepper->method->reset(stepper);
-}
-
 void arpra_ode_stepper_step (arpra_ode_stepper *stepper, const arpra_range *h)
 {
     stepper->method->step(stepper, h);

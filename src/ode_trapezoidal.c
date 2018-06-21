@@ -70,22 +70,6 @@ static void trapezoidal_clear (arpra_ode_stepper *stepper)
     free(scratch);
 }
 
-static void trapezoidal_reset (arpra_ode_stepper *stepper)
-{
-    arpra_uint i;
-    arpra_ode_system *system;
-    trapezoidal_scratch *scratch;
-
-    system = stepper->system;
-    scratch = (trapezoidal_scratch *) stepper->scratch;
-    for (i = 0; i < system->dims; i++) {
-        arpra_set_zero(&(scratch->k1[i]));
-        arpra_set_zero(&(scratch->k2[i]));
-        arpra_set_zero(&(scratch->temp_x[i]));
-    }
-    arpra_set_zero(&scratch->temp);
-}
-
 static void trapezoidal_step (arpra_ode_stepper *stepper, const arpra_range *h)
 {
     arpra_uint i;
@@ -138,7 +122,6 @@ static const arpra_ode_method trapezoidal =
 {
     .init = &trapezoidal_init,
     .clear = &trapezoidal_clear,
-    .reset = &trapezoidal_reset,
     .step = &trapezoidal_step
 };
 

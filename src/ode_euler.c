@@ -62,20 +62,6 @@ static void euler_clear (arpra_ode_stepper *stepper)
     free(scratch);
 }
 
-static void euler_reset (arpra_ode_stepper *stepper)
-{
-    arpra_uint i;
-    arpra_ode_system *system;
-    euler_scratch *scratch;
-
-    system = stepper->system;
-    scratch = (euler_scratch *) stepper->scratch;
-    for (i = 0; i < system->dims; i++) {
-        arpra_set_zero(&(scratch->k1[i]));
-    }
-    arpra_set_zero(&scratch->temp);
-}
-
 static void euler_step (arpra_ode_stepper *stepper, const arpra_range *h)
 {
     arpra_uint i;
@@ -113,7 +99,6 @@ static const arpra_ode_method euler =
 {
     .init = &euler_init,
     .clear = &euler_clear,
-    .reset = &euler_reset,
     .step = &euler_step
 };
 

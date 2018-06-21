@@ -55,7 +55,6 @@ struct arpra_ode_method_struct
 {
     void (*init) (arpra_ode_stepper *stepper, arpra_ode_system *system);
     void (*clear) (arpra_ode_stepper *stepper);
-    void (*reset) (arpra_ode_stepper *stepper);
     void (*step) (arpra_ode_stepper *stepper, const arpra_range *h);
 };
 
@@ -67,7 +66,6 @@ extern "C" {
 void arpra_ode_stepper_init (arpra_ode_stepper *stepper, arpra_ode_system *system,
                              const arpra_ode_method *method);
 void arpra_ode_stepper_clear (arpra_ode_stepper *stepper);
-void arpra_ode_stepper_reset (arpra_ode_stepper *stepper);
 void arpra_ode_stepper_step (arpra_ode_stepper *stepper, const arpra_range *h);
 
 // Arpra built-in step methods.
