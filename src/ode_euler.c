@@ -81,12 +81,12 @@ static void euler_step (arpra_ode_stepper *stepper, const arpra_range *h)
         arpra_set_precision(&(scratch->k_1[i]), prec);
     }
 
-    // k_1 = f(t, x(t))
+    // k_1 = f([t], [x(t)])
     system->f(scratch->k_1,
               system->t, system->x,
               system->dims, system->params);
 
-    // x(t + 1) = x(t) + h k_1
+    // x(t + h) = x(t) + h k_1
     arpra_add(system->t, system->t, h);
     for (i = 0; i < system->dims; i++) {
         prec = arpra_get_precision(&(system->x[i]));
