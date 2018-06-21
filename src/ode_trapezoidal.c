@@ -96,6 +96,14 @@ static void trapezoidal_step (arpra_ode_stepper *stepper, const arpra_range *h)
     system = stepper->system;
     scratch = (trapezoidal_scratch *) stepper->scratch;
 
+    // Synchronise scratch memory precision.
+    for (i = 0; i < system->dims; i++) {
+        prec = arpra_get_precision(&(system->x[i]));
+        arpra_set_precision(&(scratch->k1[i]), prec);
+        arpra_set_precision(&(scratch->k2[i]), prec);
+        arpra_set_precision(&(scratch->temp_x[i]), prec);
+    }
+
     // Compute k1.
     system->f(scratch->k1,
               system->x, system->t,

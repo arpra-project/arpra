@@ -86,6 +86,12 @@ static void euler_step (arpra_ode_stepper *stepper, const arpra_range *h)
     system = stepper->system;
     scratch = (euler_scratch *) stepper->scratch;
 
+    // Synchronise scratch memory precision.
+    for (i = 0; i < system->dims; i++) {
+        prec = arpra_get_precision(&(system->x[i]));
+        arpra_set_precision(&(scratch->k1[i]), prec);
+    }
+
     // Compute k1.
     system->f(scratch->k1,
               system->x, system->t,
