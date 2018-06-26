@@ -25,9 +25,13 @@ typedef struct bogsham32_scratch_struct
 {
     arpra_range *k_1;
     arpra_range *k_2;
+    arpra_range *k_3;
+    arpra_range *k_4;
+    arpra_range *k_weights;
+    arpra_range *k_weights_approx;
+    arpra_range *temp;
     arpra_range *temp_t;
     arpra_range *temp_x;
-    arpra_range *temp;
 } bogsham32_scratch;
 
 static void bogsham32_init (arpra_ode_stepper *stepper, arpra_ode_system *system)
@@ -39,18 +43,28 @@ static void bogsham32_init (arpra_ode_stepper *stepper, arpra_ode_system *system
     scratch = malloc(sizeof(bogsham32_scratch));
     scratch->k_1 = malloc(system->dims * sizeof(arpra_range));
     scratch->k_2 = malloc(system->dims * sizeof(arpra_range));
+    scratch->k_3 = malloc(system->dims * sizeof(arpra_range));
+    scratch->k_4 = malloc(system->dims * sizeof(arpra_range));
+    scratch->k_weights = malloc(4 * sizeof(arpra_range));
+    scratch->k_weights_approx = malloc(4 * sizeof(arpra_range));
+    scratch->temp = malloc(sizeof(arpra_range));
     scratch->temp_t = malloc(sizeof(arpra_range));
     scratch->temp_x = malloc(system->dims * sizeof(arpra_range));
-    scratch->temp = malloc(sizeof(arpra_range));
     for (i = 0; i < system->dims; i++) {
         prec = arpra_get_precision(&(system->x[i]));
         arpra_init2(&(scratch->k_1[i]), prec);
         arpra_init2(&(scratch->k_2[i]), prec);
+        arpra_init2(&(scratch->k_3[i]), prec);
+        arpra_init2(&(scratch->k_4[i]), prec);
         arpra_init2(&(scratch->temp_x[i]), prec);
     }
     prec = arpra_get_default_precision();
-    arpra_init2(scratch->temp_t, prec);
+    for (i = 0; i < 4; i++) {
+        arpra_init2(&(scratch->k_weights[i]), prec);
+        arpra_init2(&(scratch->k_weights_approx[i]), prec);
+    }
     arpra_init2(scratch->temp, prec);
+    arpra_init2(scratch->temp_t, prec);
     stepper->method = arpra_ode_bogsham32;
     stepper->system = system;
     stepper->error = NULL;
@@ -68,15 +82,25 @@ static void bogsham32_clear (arpra_ode_stepper *stepper)
     for (i = 0; i < system->dims; i++) {
         arpra_clear(&(scratch->k_1[i]));
         arpra_clear(&(scratch->k_2[i]));
+        arpra_clear(&(scratch->k_3[i]));
+        arpra_clear(&(scratch->k_4[i]));
         arpra_clear(&(scratch->temp_x[i]));
     }
-    arpra_clear(scratch->temp_t);
+    for (i = 0; i < 4; i++) {
+        arpra_clear(&(scratch->k_weights[i]));
+        arpra_clear(&(scratch->k_weights_approx[i]));
+    }
     arpra_clear(scratch->temp);
+    arpra_clear(scratch->temp_t);
     free(scratch->k_1);
     free(scratch->k_2);
+    free(scratch->k_3);
+    free(scratch->k_4);
+    free(scratch->k_weights);
+    free(scratch->k_weights_approx);
+    free(scratch->temp);
     free(scratch->temp_t);
     free(scratch->temp_x);
-    free(scratch->temp);
     free(scratch);
 }
 
@@ -95,9 +119,16 @@ static void bogsham32_step (arpra_ode_stepper *stepper, const arpra_range *h)
         prec = arpra_get_precision(&(system->x[i]));
         arpra_set_precision(&(scratch->k_1[i]), prec);
         arpra_set_precision(&(scratch->k_2[i]), prec);
+        arpra_set_precision(&(scratch->k_3[i]), prec);
+        arpra_set_precision(&(scratch->k_4[i]), prec);
         arpra_set_precision(&(scratch->temp_x[i]), prec);
     }
     prec = arpra_get_precision(system->t);
+    for (i = 0; i < 4; i++) {
+        arpra_set_precision(&(scratch->k_weights[i]), prec);
+        arpra_set_precision(&(scratch->k_weights_approx[i]), prec);
+    }
+    arpra_set_precision(scratch->temp, prec);
     arpra_set_precision(scratch->temp_t, prec);
 
     // k_1 = f([t], [x(t)])
@@ -106,29 +137,62 @@ static void bogsham32_step (arpra_ode_stepper *stepper, const arpra_range *h)
               system->dims, system->params);
 
     // k_2 = f([t + h/2], [x(t) + h/2 k_1])
-    prec = arpra_get_precision(system->t);
-    arpra_set_precision(scratch->temp, prec);
     arpra_set_d(scratch->temp, 2.0);
-    arpra_div(scratch->temp, h, scratch->temp);
-    arpra_add(scratch->temp_t, system->t, scratch->temp);
-    arpra_mul(&(scratch->temp_x[i]), scratch->temp, &(scratch->k_1[i]));
-    arpra_add(&(scratch->temp_x[i]), &(system->x[i]), &(scratch->temp_x[i]));
+    arpra_div(&(scratch->k_weights[0]), h, scratch->temp);
+    arpra_add(scratch->temp_t, system->t, &(scratch->k_weights[0]));
+    for (i = 0; i < system->dims; i++) {
+        arpra_mul(&(scratch->temp_x[i]), &(scratch->k_weights[0]), &(scratch->k_1[i]));
+        arpra_add(&(scratch->temp_x[i]), &(system->x[i]), &(scratch->temp_x[i]));
+    }
     system->f(scratch->k_2,
               scratch->temp_t, scratch->temp_x,
               system->dims, system->params);
 
     // k_3 = f([t + 3h/4], [x(t) + 3h/4 k_2])
+    arpra_set_d(scratch->temp, 4.0);
+    arpra_div(&(scratch->k_weights[0]), h, scratch->temp);
+    arpra_set_d(scratch->temp, 3.0);
+    arpra_mul(&(scratch->k_weights[0]), scratch->temp, &(scratch->k_weights[0]));
+    arpra_add(scratch->temp_t, system->t, &(scratch->k_weights[0]));
+    for (i = 0; i < system->dims; i++) {
+        arpra_mul(&(scratch->temp_x[i]), &(scratch->k_weights[0]), &(scratch->k_2[i]));
+        arpra_add(&(scratch->temp_x[i]), &(system->x[i]), &(scratch->temp_x[i]));
+    }
+    system->f(scratch->k_3,
+              scratch->temp_t, scratch->temp_x,
+              system->dims, system->params);
 
-
-    // k_4 = f([t + h], [x(t) + 2h/9 k_1 + h/3 k_2 + 4h/9 k_3])
-
-
-    // x(t + h) =
-    arpra_add(system->t, system->t, h);
+    // k_4 = f([t + h], [x(t) + 2h/9 k_1 + 3h/9 k_2 + 4h/9 k_3])
+    arpra_add(scratch->temp_t, system->t, h);
+    arpra_set_d(scratch->temp, 9.0);
+    arpra_div(&(scratch->k_weights[2]), h, scratch->temp);
+    arpra_set_d(scratch->temp, 2.0);
+    arpra_mul(&(scratch->k_weights[0]), scratch->temp, &(scratch->k_weights[2]));
+    arpra_set_d(scratch->temp, 3.0);
+    arpra_mul(&(scratch->k_weights[1]), scratch->temp, &(scratch->k_weights[2]));
+    arpra_set_d(scratch->temp, 4.0);
+    arpra_mul(&(scratch->k_weights[2]), scratch->temp, &(scratch->k_weights[2]));
     for (i = 0; i < system->dims; i++) {
         prec = arpra_get_precision(&(system->x[i]));
         arpra_set_precision(scratch->temp, prec);
+        arpra_mul(scratch->temp, &(scratch->k_weights[0]), &(scratch->k_1[i]));
+        arpra_add(&(scratch->temp_x[i]), &(system->x[i]), scratch->temp);
+        arpra_mul(scratch->temp, &(scratch->k_weights[1]), &(scratch->k_2[i]));
+        arpra_add(&(scratch->temp_x[i]), &(scratch->temp_x[i]), scratch->temp);
+        arpra_mul(scratch->temp, &(scratch->k_weights[2]), &(scratch->k_3[i]));
+        arpra_add(&(scratch->temp_x[i]), &(scratch->temp_x[i]), scratch->temp);
+    }
+    system->f(scratch->k_4,
+              scratch->temp_t, scratch->temp_x,
+              system->dims, system->params);
 
+    // x(t + h)  = x(t) +
+    // x'(t + h) = x(t) +
+    arpra_add(system->t, system->t, h);
+
+    for (i = 0; i < system->dims; i++) {
+        prec = arpra_get_precision(&(system->x[i]));
+        arpra_set_precision(scratch->temp, prec);
 
 
 
@@ -141,7 +205,8 @@ static const arpra_ode_method bogsham32 =
 {
     .init = &bogsham32_init,
     .clear = &bogsham32_clear,
-    .step = &bogsham32_step
+    .step = &bogsham32_step,
+    .stages = 4,
 };
 
 const arpra_ode_method *arpra_ode_bogsham32 = &bogsham32;

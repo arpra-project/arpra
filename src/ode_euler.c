@@ -100,7 +100,8 @@ static const arpra_ode_method euler =
 {
     .init = &euler_init,
     .clear = &euler_clear,
-    .step = &euler_step
+    .step = &euler_step,
+    .stages = 1,
 };
 
 const arpra_ode_method *arpra_ode_euler = &euler;

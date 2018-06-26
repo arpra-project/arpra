@@ -53,9 +53,10 @@ struct arpra_ode_stepper_struct
 // Step method definition.
 struct arpra_ode_method_struct
 {
-    void (*init) (arpra_ode_stepper *stepper, arpra_ode_system *system);
-    void (*clear) (arpra_ode_stepper *stepper);
-    void (*step) (arpra_ode_stepper *stepper, const arpra_range *h);
+    void (* const init) (arpra_ode_stepper *stepper, arpra_ode_system *system);
+    void (* const clear) (arpra_ode_stepper *stepper);
+    void (* const step) (arpra_ode_stepper *stepper, const arpra_range *h);
+    const unsigned char stages;
 };
 
 #ifdef __cplusplus
