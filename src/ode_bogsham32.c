@@ -28,7 +28,7 @@ typedef struct bogsham32_scratch_struct
     arpra_range *k_3;
     arpra_range *k_4;
     arpra_range *k_weights;
-    arpra_range *k_weights_approx;
+    arpra_range *k_weights_embedded;
     arpra_range *temp;
     arpra_range *temp_t;
     arpra_range *temp_x;
@@ -46,7 +46,7 @@ static void bogsham32_init (arpra_ode_stepper *stepper, arpra_ode_system *system
     scratch->k_3 = malloc(system->dims * sizeof(arpra_range));
     scratch->k_4 = malloc(system->dims * sizeof(arpra_range));
     scratch->k_weights = malloc(4 * sizeof(arpra_range));
-    scratch->k_weights_approx = malloc(4 * sizeof(arpra_range));
+    scratch->k_weights_embedded = malloc(4 * sizeof(arpra_range));
     scratch->temp = malloc(sizeof(arpra_range));
     scratch->temp_t = malloc(sizeof(arpra_range));
     scratch->temp_x = malloc(system->dims * sizeof(arpra_range));
@@ -61,7 +61,7 @@ static void bogsham32_init (arpra_ode_stepper *stepper, arpra_ode_system *system
     prec = arpra_get_default_precision();
     for (i = 0; i < 4; i++) {
         arpra_init2(&(scratch->k_weights[i]), prec);
-        arpra_init2(&(scratch->k_weights_approx[i]), prec);
+        arpra_init2(&(scratch->k_weights_embedded[i]), prec);
     }
     arpra_init2(scratch->temp, prec);
     arpra_init2(scratch->temp_t, prec);
@@ -88,7 +88,7 @@ static void bogsham32_clear (arpra_ode_stepper *stepper)
     }
     for (i = 0; i < 4; i++) {
         arpra_clear(&(scratch->k_weights[i]));
-        arpra_clear(&(scratch->k_weights_approx[i]));
+        arpra_clear(&(scratch->k_weights_embedded[i]));
     }
     arpra_clear(scratch->temp);
     arpra_clear(scratch->temp_t);
@@ -97,7 +97,7 @@ static void bogsham32_clear (arpra_ode_stepper *stepper)
     free(scratch->k_3);
     free(scratch->k_4);
     free(scratch->k_weights);
-    free(scratch->k_weights_approx);
+    free(scratch->k_weights_embedded);
     free(scratch->temp);
     free(scratch->temp_t);
     free(scratch->temp_x);
@@ -126,7 +126,7 @@ static void bogsham32_step (arpra_ode_stepper *stepper, const arpra_range *h)
     prec = arpra_get_precision(system->t);
     for (i = 0; i < 4; i++) {
         arpra_set_precision(&(scratch->k_weights[i]), prec);
-        arpra_set_precision(&(scratch->k_weights_approx[i]), prec);
+        arpra_set_precision(&(scratch->k_weights_embedded[i]), prec);
     }
     arpra_set_precision(scratch->temp, prec);
     arpra_set_precision(scratch->temp_t, prec);
@@ -186,8 +186,8 @@ static void bogsham32_step (arpra_ode_stepper *stepper, const arpra_range *h)
               scratch->temp_t, scratch->temp_x,
               system->dims, system->params);
 
-    // x(t + h)  = x(t) +
-    // x'(t + h) = x(t) +
+    // x(t + h) = x(t) +
+    // a(t + h) = x(t) +
     arpra_add(system->t, system->t, h);
 
     for (i = 0; i < system->dims; i++) {
