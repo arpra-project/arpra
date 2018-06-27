@@ -31,6 +31,8 @@ typedef struct trapezoidal_scratch_struct
     arpra_range *temp;
 } trapezoidal_scratch;
 
+static const unsigned char trapezoidal_stages = 2;
+
 static void trapezoidal_init (arpra_ode_stepper *stepper, arpra_ode_system *system)
 {
     arpra_uint i;
@@ -40,7 +42,7 @@ static void trapezoidal_init (arpra_ode_stepper *stepper, arpra_ode_system *syst
     scratch = malloc(sizeof(trapezoidal_scratch));
     scratch->k_1 = malloc(system->dims * sizeof(arpra_range));
     scratch->k_2 = malloc(system->dims * sizeof(arpra_range));
-    scratch->k_weights = malloc(2 * sizeof(arpra_range));
+    scratch->k_weights = malloc(trapezoidal_stages * sizeof(arpra_range));
     scratch->next_t = malloc(sizeof(arpra_range));
     scratch->next_x = malloc(system->dims * sizeof(arpra_range));
     scratch->temp = malloc(sizeof(arpra_range));
@@ -51,7 +53,7 @@ static void trapezoidal_init (arpra_ode_stepper *stepper, arpra_ode_system *syst
         arpra_init2(&(scratch->next_x[i]), prec);
     }
     prec = arpra_get_default_precision();
-    for (i = 0; i < 2; i++) {
+    for (i = 0; i < trapezoidal_stages; i++) {
         arpra_init2(&(scratch->k_weights[i]), prec);
     }
     arpra_init2(scratch->next_t, prec);
@@ -75,7 +77,7 @@ static void trapezoidal_clear (arpra_ode_stepper *stepper)
         arpra_clear(&(scratch->k_2[i]));
         arpra_clear(&(scratch->next_x[i]));
     }
-    for (i = 0; i < 2; i++) {
+    for (i = 0; i < trapezoidal_stages; i++) {
         arpra_clear(&(scratch->k_weights[i]));
     }
     arpra_clear(scratch->next_t);
@@ -107,7 +109,7 @@ static void trapezoidal_step (arpra_ode_stepper *stepper, const arpra_range *h)
         arpra_set_precision(&(scratch->next_x[i]), prec);
     }
     prec = arpra_get_precision(system->t);
-    for (i = 0; i < 2; i++) {
+    for (i = 0; i < trapezoidal_stages; i++) {
         arpra_set_precision(&(scratch->k_weights[i]), prec);
     }
     arpra_set_precision(scratch->next_t, prec);
@@ -153,7 +155,7 @@ static const arpra_ode_method trapezoidal =
     .init = &trapezoidal_init,
     .clear = &trapezoidal_clear,
     .step = &trapezoidal_step,
-    .stages = 2,
+    .stages = trapezoidal_stages,
 };
 
 const arpra_ode_method *arpra_ode_trapezoidal = &trapezoidal;

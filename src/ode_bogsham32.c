@@ -35,6 +35,8 @@ typedef struct bogsham32_scratch_struct
     arpra_range *temp;
 } bogsham32_scratch;
 
+static const unsigned char bogsham32_stages = 4;
+
 static void bogsham32_init (arpra_ode_stepper *stepper, arpra_ode_system *system)
 {
     arpra_uint i;
@@ -46,8 +48,8 @@ static void bogsham32_init (arpra_ode_stepper *stepper, arpra_ode_system *system
     scratch->k_2 = malloc(system->dims * sizeof(arpra_range));
     scratch->k_3 = malloc(system->dims * sizeof(arpra_range));
     scratch->k_4 = malloc(system->dims * sizeof(arpra_range));
-    scratch->k_weights_3 = malloc(4 * sizeof(arpra_range));
-    scratch->k_weights_2 = malloc(4 * sizeof(arpra_range));
+    scratch->k_weights_3 = malloc(bogsham32_stages * sizeof(arpra_range));
+    scratch->k_weights_2 = malloc(bogsham32_stages * sizeof(arpra_range));
     scratch->next_t = malloc(sizeof(arpra_range));
     scratch->next_x_3 = malloc(system->dims * sizeof(arpra_range));
     scratch->next_x_2 = malloc(system->dims * sizeof(arpra_range));
@@ -62,7 +64,7 @@ static void bogsham32_init (arpra_ode_stepper *stepper, arpra_ode_system *system
         arpra_init2(&(scratch->next_x_2[i]), prec);
     }
     prec = arpra_get_default_precision();
-    for (i = 0; i < 4; i++) {
+    for (i = 0; i < bogsham32_stages; i++) {
         arpra_init2(&(scratch->k_weights_3[i]), prec);
         arpra_init2(&(scratch->k_weights_2[i]), prec);
     }
@@ -90,7 +92,7 @@ static void bogsham32_clear (arpra_ode_stepper *stepper)
         arpra_clear(&(scratch->next_x_3[i]));
         arpra_clear(&(scratch->next_x_2[i]));
     }
-    for (i = 0; i < 4; i++) {
+    for (i = 0; i < bogsham32_stages; i++) {
         arpra_clear(&(scratch->k_weights_3[i]));
         arpra_clear(&(scratch->k_weights_2[i]));
     }
@@ -130,7 +132,7 @@ static void bogsham32_step (arpra_ode_stepper *stepper, const arpra_range *h)
         arpra_set_precision(&(scratch->next_x_2[i]), prec);
     }
     prec = arpra_get_precision(system->t);
-    for (i = 0; i < 4; i++) {
+    for (i = 0; i < bogsham32_stages; i++) {
         arpra_set_precision(&(scratch->k_weights_3[i]), prec);
         arpra_set_precision(&(scratch->k_weights_2[i]), prec);
     }
@@ -232,7 +234,7 @@ static const arpra_ode_method bogsham32 =
     .init = &bogsham32_init,
     .clear = &bogsham32_clear,
     .step = &bogsham32_step,
-    .stages = 4,
+    .stages = bogsham32_stages,
 };
 
 const arpra_ode_method *arpra_ode_bogsham32 = &bogsham32;

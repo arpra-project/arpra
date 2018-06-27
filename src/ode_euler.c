@@ -27,6 +27,8 @@ typedef struct euler_scratch_struct
     arpra_range *temp;
 } euler_scratch;
 
+static const unsigned char euler_stages = 1;
+
 static void euler_init (arpra_ode_stepper *stepper, arpra_ode_system *system)
 {
     arpra_uint i;
@@ -103,7 +105,7 @@ static const arpra_ode_method euler =
     .init = &euler_init,
     .clear = &euler_clear,
     .step = &euler_step,
-    .stages = 1,
+    .stages = euler_stages,
 };
 
 const arpra_ode_method *arpra_ode_euler = &euler;

@@ -38,6 +38,8 @@ typedef struct dopri54_scratch_struct
     arpra_range *temp;
 } dopri54_scratch;
 
+static const unsigned char dopri54_stages = 7;
+
 static void dopri54_init (arpra_ode_stepper *stepper, arpra_ode_system *system)
 {
     arpra_uint i;
@@ -52,8 +54,8 @@ static void dopri54_init (arpra_ode_stepper *stepper, arpra_ode_system *system)
     scratch->k_5 = malloc(system->dims * sizeof(arpra_range));
     scratch->k_6 = malloc(system->dims * sizeof(arpra_range));
     scratch->k_7 = malloc(system->dims * sizeof(arpra_range));
-    scratch->k_weights_5 = malloc(4 * sizeof(arpra_range));
-    scratch->k_weights_4 = malloc(4 * sizeof(arpra_range));
+    scratch->k_weights_5 = malloc(dopri54_stages * sizeof(arpra_range));
+    scratch->k_weights_4 = malloc(dopri54_stages * sizeof(arpra_range));
     scratch->next_t = malloc(sizeof(arpra_range));
     scratch->next_x_5 = malloc(system->dims * sizeof(arpra_range));
     scratch->next_x_4 = malloc(system->dims * sizeof(arpra_range));
@@ -71,7 +73,7 @@ static void dopri54_init (arpra_ode_stepper *stepper, arpra_ode_system *system)
         arpra_init2(&(scratch->next_x_4[i]), prec);
     }
     prec = arpra_get_default_precision();
-    for (i = 0; i < 4; i++) {
+    for (i = 0; i < dopri54_stages; i++) {
         arpra_init2(&(scratch->k_weights_5[i]), prec);
         arpra_init2(&(scratch->k_weights_4[i]), prec);
     }
@@ -102,7 +104,7 @@ static void dopri54_clear (arpra_ode_stepper *stepper)
         arpra_clear(&(scratch->next_x_5[i]));
         arpra_clear(&(scratch->next_x_4[i]));
     }
-    for (i = 0; i < 4; i++) {
+    for (i = 0; i < dopri54_stages; i++) {
         arpra_clear(&(scratch->k_weights_5[i]));
         arpra_clear(&(scratch->k_weights_4[i]));
     }
@@ -148,7 +150,7 @@ static void dopri54_step (arpra_ode_stepper *stepper, const arpra_range *h)
         arpra_set_precision(&(scratch->next_x_4[i]), prec);
     }
     prec = arpra_get_precision(system->t);
-    for (i = 0; i < 4; i++) {
+    for (i = 0; i < dopri54_stages; i++) {
         arpra_set_precision(&(scratch->k_weights_5[i]), prec);
         arpra_set_precision(&(scratch->k_weights_4[i]), prec);
     }
@@ -160,7 +162,7 @@ static void dopri54_step (arpra_ode_stepper *stepper, const arpra_range *h)
               system->t, system->x,
               system->dims, system->params);
 
-    // k_2 = f([t + h/2], [x(t) + h/2 k_1])
+    // k_2 = f([t
     arpra_set_d(scratch->temp, 2.0);
     arpra_div(&(scratch->k_weights_5[0]), h, scratch->temp);
     for (i = 0; i < system->dims; i++) {
@@ -172,7 +174,7 @@ static void dopri54_step (arpra_ode_stepper *stepper, const arpra_range *h)
               scratch->next_t, scratch->next_x_5,
               system->dims, system->params);
 
-    // k_3 = f([t + 3h/4], [x(t) + 3h/4 k_2])
+    // k_3 = f([t
     arpra_set_d(scratch->temp, 4.0);
     arpra_div(&(scratch->k_weights_5[0]), h, scratch->temp);
     arpra_set_d(scratch->temp, 3.0);
@@ -186,7 +188,7 @@ static void dopri54_step (arpra_ode_stepper *stepper, const arpra_range *h)
               scratch->next_t, scratch->next_x_5,
               system->dims, system->params);
 
-    // k_4 = f([t + h], [x(t) + 2h/9 k_1 + 3h/9 k_2 + 4h/9 k_3])
+    // k_4 = f([t
     arpra_set_d(scratch->temp, 9.0);
     arpra_div(&(scratch->k_weights_5[3]), h, scratch->temp);
     arpra_set_d(scratch->temp, 2.0);
@@ -211,10 +213,10 @@ static void dopri54_step (arpra_ode_stepper *stepper, const arpra_range *h)
               scratch->next_t, scratch->next_x_5,
               system->dims, system->params);
 
-    // x_5(t + h) = x(t) + 2h/9 k_1 + 3h/9 k_2 + 4h/9 k_3
+    // x_5(t + h) = x(t) +
     // This has already been computed above.
 
-    // x_4(t + h) = x(t) + 7h/24 k_1 + 6h/24 k_2 + 8h/24 k_3 + 3h/24 k_4
+    // x_4(t + h) = x(t) +
     arpra_set_d(scratch->temp, 24.0);
     arpra_div(&(scratch->k_weights_4[3]), h, scratch->temp);
     arpra_set_d(scratch->temp, 7.0);
@@ -250,7 +252,7 @@ static const arpra_ode_method dopri54 =
     .init = &dopri54_init,
     .clear = &dopri54_clear,
     .step = &dopri54_step,
-    .stages = 7,
+    .stages = dopri54_stages,
 };
 
 const arpra_ode_method *arpra_ode_dopri54 = &dopri54;
