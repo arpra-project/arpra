@@ -135,10 +135,10 @@ static void trapezoidal_step (arpra_ode_stepper *stepper, const arpra_range *h)
     for (i = 0; i < system->dims; i++) {
         prec = arpra_get_precision(&(system->x[i]));
         arpra_set_precision(scratch->temp, prec);
-        arpra_mul(&(scratch->next_x[i]), &(scratch->k_weights[0]), &(scratch->k_1[i]));
-        arpra_mul(scratch->temp, &(scratch->k_weights[0]), &(scratch->k_2[i]));
+        arpra_mul(scratch->temp, &(scratch->k_weights[0]), &(scratch->k_1[i]));
+        arpra_add(&(scratch->next_x[i]), &(system->x[i]), scratch->temp);
+        arpra_mul(scratch->temp, &(scratch->k_weights[1]), &(scratch->k_2[i]));
         arpra_add(&(scratch->next_x[i]), &(scratch->next_x[i]), scratch->temp);
-        arpra_add(&(system->x[i]), &(system->x[i]), &(scratch->next_x[i]));
     }
 
     // Advance t.
