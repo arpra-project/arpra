@@ -94,7 +94,7 @@ static void euler_step (arpra_ode_stepper *stepper, const arpra_range *h)
         arpra_add(&(system->x[i]), &(system->x[i]), scratch->temp);
     }
 
-    // Advance t.
+    // Advance system.
     arpra_add(system->t, system->t, h);
 }
 

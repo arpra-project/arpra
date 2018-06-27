@@ -196,11 +196,9 @@ static void bogsham32_step (arpra_ode_stepper *stepper, const arpra_range *h)
     // x_3(t + h) = x(t) + 2h/9 k_1 + 3h/9 k_2 + 4h/9 k_3
     // This has already been computed above.
 
-
-
-
     // x_2(t + h) = x(t) + 7h/24 k_1 + 6h/24 k_2 + 8h/24 k_3 + 3h/24 k_4
-    arpra_set_d(scratch->temp, );
+    arpra_set_d(scratch->temp, 24.0);
+
 
 
     for (i = 0; i < system->dims; i++) {
@@ -208,14 +206,13 @@ static void bogsham32_step (arpra_ode_stepper *stepper, const arpra_range *h)
         arpra_set_precision(scratch->temp, prec);
 
 
-        //arpra_add(&(system->x[i]), &(system->x[i]), &(scratch->temp_x[i]));
     }
 
-
-
-
-    // Advance t.
+    // Advance system.
     arpra_add(system->t, system->t, h);
+    arpra_range *temp_x = system->x;
+    system->x = scratch->next_x_3;
+    scratch->next_x_3 = temp_x;
 }
 
 static const arpra_ode_method bogsham32 =

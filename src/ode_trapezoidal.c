@@ -141,8 +141,11 @@ static void trapezoidal_step (arpra_ode_stepper *stepper, const arpra_range *h)
         arpra_add(&(scratch->next_x[i]), &(scratch->next_x[i]), scratch->temp);
     }
 
-    // Advance t.
+    // Advance system.
     arpra_add(system->t, system->t, h);
+    arpra_range *temp_x = system->x;
+    system->x = scratch->next_x;
+    scratch->next_x = temp_x;
 }
 
 static const arpra_ode_method trapezoidal =
