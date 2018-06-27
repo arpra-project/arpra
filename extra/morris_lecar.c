@@ -24,7 +24,8 @@
 #include <arpra_ode.h>
 
 // General parameters
-const static arpra_uint sim_steps = 500;
+const static arpra_uint sim_steps = 100;
+const static arpra_uint report_steps = 10;
 const static double step_size = 1.0;
 
 const static arpra_uint n_grp1 = 10;
@@ -200,7 +201,7 @@ void file_write (const arpra_range *A, arpra_uint i,
 
 int main (int argc, char *argv[])
 {
-    unsigned int i, j, N_mark, V_mark;
+    arpra_uint i, j, N_mark, V_mark;
     arpra_range dN, dV, dt, M;
 
     // Init parameters
@@ -306,7 +307,7 @@ int main (int argc, char *argv[])
     // =====================
 
     for (i = 0; i < sim_steps; i++) {
-        printf("%u\n", i);
+        if (i % report_steps == 0) printf("%u\n", i);
 
 
         // Neuron group 1
