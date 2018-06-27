@@ -170,13 +170,13 @@ static void bogsham32_step (arpra_ode_stepper *stepper, const arpra_range *h)
 
     // k_4 = f([t + h], [x(t) + 2h/9 k_1 + 3h/9 k_2 + 4h/9 k_3])
     arpra_set_d(scratch->temp, 9.0);
-    arpra_div(&(scratch->k_weights_3[2]), h, scratch->temp);
+    arpra_div(&(scratch->k_weights_3[3]), h, scratch->temp);
     arpra_set_d(scratch->temp, 2.0);
-    arpra_mul(&(scratch->k_weights_3[0]), scratch->temp, &(scratch->k_weights_3[2]));
+    arpra_mul(&(scratch->k_weights_3[0]), scratch->temp, &(scratch->k_weights_3[3]));
     arpra_set_d(scratch->temp, 3.0);
-    arpra_mul(&(scratch->k_weights_3[1]), scratch->temp, &(scratch->k_weights_3[2]));
+    arpra_mul(&(scratch->k_weights_3[1]), scratch->temp, &(scratch->k_weights_3[3]));
     arpra_set_d(scratch->temp, 4.0);
-    arpra_mul(&(scratch->k_weights_3[2]), scratch->temp, &(scratch->k_weights_3[2]));
+    arpra_mul(&(scratch->k_weights_3[2]), scratch->temp, &(scratch->k_weights_3[3]));
     arpra_set_zero(&(scratch->k_weights_3[3]));
     for (i = 0; i < system->dims; i++) {
         prec = arpra_get_precision(&(system->x[i]));
@@ -198,14 +198,26 @@ static void bogsham32_step (arpra_ode_stepper *stepper, const arpra_range *h)
 
     // x_2(t + h) = x(t) + 7h/24 k_1 + 6h/24 k_2 + 8h/24 k_3 + 3h/24 k_4
     arpra_set_d(scratch->temp, 24.0);
-
-
-
+    arpra_div(&(scratch->k_weights_2[3]), h, scratch->temp);
+    arpra_set_d(scratch->temp, 7.0);
+    arpra_mul(&(scratch->k_weights_2[0]), scratch->temp, &(scratch->k_weights_2[3]));
+    arpra_set_d(scratch->temp, 6.0);
+    arpra_mul(&(scratch->k_weights_2[1]), scratch->temp, &(scratch->k_weights_2[3]));
+    arpra_set_d(scratch->temp, 8.0);
+    arpra_mul(&(scratch->k_weights_2[2]), scratch->temp, &(scratch->k_weights_2[3]));
+    arpra_set_d(scratch->temp, 3.0);
+    arpra_mul(&(scratch->k_weights_2[3]), scratch->temp, &(scratch->k_weights_2[3]));
     for (i = 0; i < system->dims; i++) {
         prec = arpra_get_precision(&(system->x[i]));
         arpra_set_precision(scratch->temp, prec);
-
-
+        arpra_mul(scratch->temp, &(scratch->k_weights_2[0]), &(scratch->k_1[i]));
+        arpra_add(&(scratch->next_x_2[i]), &(system->x[i]), scratch->temp);
+        arpra_mul(scratch->temp, &(scratch->k_weights_2[1]), &(scratch->k_2[i]));
+        arpra_add(&(scratch->next_x_2[i]), &(scratch->next_x_2[i]), scratch->temp);
+        arpra_mul(scratch->temp, &(scratch->k_weights_2[2]), &(scratch->k_3[i]));
+        arpra_add(&(scratch->next_x_2[i]), &(scratch->next_x_2[i]), scratch->temp);
+        arpra_mul(scratch->temp, &(scratch->k_weights_2[3]), &(scratch->k_4[i]));
+        arpra_add(&(scratch->next_x_2[i]), &(scratch->next_x_2[i]), scratch->temp);
     }
 
     // Advance system.
