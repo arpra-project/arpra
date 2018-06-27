@@ -87,13 +87,15 @@ static void euler_step (arpra_ode_stepper *stepper, const arpra_range *h)
               system->dims, system->params);
 
     // x(t + h) = x(t) + h k_1
-    arpra_add(system->t, system->t, h);
     for (i = 0; i < system->dims; i++) {
         prec = arpra_get_precision(&(system->x[i]));
         arpra_set_precision(scratch->temp, prec);
         arpra_mul(scratch->temp, h, &(scratch->k_1[i]));
         arpra_add(&(system->x[i]), &(system->x[i]), scratch->temp);
     }
+
+    // Advance t.
+    arpra_add(system->t, system->t, h);
 }
 
 static const arpra_ode_method euler =

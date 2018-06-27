@@ -119,17 +119,16 @@ static void trapezoidal_step (arpra_ode_stepper *stepper, const arpra_range *h)
               system->dims, system->params);
 
     // k_2 = f([t + h], [x(t) + h k_1])
-    arpra_add(scratch->temp_t, system->t, h);
     for (i = 0; i < system->dims; i++) {
         arpra_mul(&(scratch->temp_x[i]), h, &(scratch->k_1[i]));
         arpra_add(&(scratch->temp_x[i]), &(system->x[i]), &(scratch->temp_x[i]));
     }
+    arpra_add(scratch->temp_t, system->t, h);
     system->f(scratch->k_2,
               scratch->temp_t, scratch->temp_x,
               system->dims, system->params);
 
     // x(t + h) = x(t) + h/2 k_1 + h/2 k_2
-    arpra_add(system->t, system->t, h);
     arpra_set_d(scratch->temp, 2.0);
     arpra_div(&(scratch->k_weights[0]), h, scratch->temp);
     arpra_set(&(scratch->k_weights[1]), &(scratch->k_weights[0]));
@@ -141,6 +140,9 @@ static void trapezoidal_step (arpra_ode_stepper *stepper, const arpra_range *h)
         arpra_add(&(scratch->temp_x[i]), &(scratch->temp_x[i]), scratch->temp);
         arpra_add(&(system->x[i]), &(system->x[i]), &(scratch->temp_x[i]));
     }
+
+    // Advance t.
+    arpra_add(system->t, system->t, h);
 }
 
 static const arpra_ode_method trapezoidal =
