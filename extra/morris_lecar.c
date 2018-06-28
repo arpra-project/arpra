@@ -21,11 +21,12 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <time.h>
 #include <arpra_ode.h>
 
 // General parameters
 const static arpra_uint sim_steps = 100;
-const static arpra_uint report_steps = 10;
+const static arpra_uint report_step = 20;
 const static double step_size = 1.0;
 
 const static arpra_uint n_grp1 = 10;
@@ -203,6 +204,10 @@ int main (int argc, char *argv[])
 {
     arpra_uint i, j, N_mark, V_mark;
     arpra_range dN, dV, dt, M;
+    clock_t run_time;
+
+    // Start timer.
+    run_time = clock();
 
     // Init parameters
     arpra_init2(&dN, prec);
@@ -307,7 +312,7 @@ int main (int argc, char *argv[])
     // =====================
 
     for (i = 0; i < sim_steps; i++) {
-        if (i % report_steps == 0) printf("%u\n", i);
+        if (i % report_step == 0) printf("%u\n", i);
 
 
         // Neuron group 1
@@ -458,6 +463,10 @@ int main (int argc, char *argv[])
     arpra_clear(&one);
     arpra_clear(&two);
     arpra_clear(&neg_two);
+
+    // Stop timer and report.
+    run_time = clock() - run_time;
+    printf("Finished in %f seconds.\n", ((float) run_time) / CLOCKS_PER_SEC);
 
     mpfr_free_cache();
     return 0;
