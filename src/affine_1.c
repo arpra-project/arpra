@@ -113,6 +113,6 @@ void arpra_affine_1 (arpra_range *z, const arpra_range *x,
     // Clear vars, and set z.
     mpfr_clear(&temp);
     mpfr_clear(&error);
-    arpra_set(z, &zNew);
-    arpra_clear(&zNew);
+    arpra_clear(z);
+    *z = zNew;
 }

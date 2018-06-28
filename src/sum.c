@@ -182,8 +182,8 @@ void arpra_sum (arpra_range *z, arpra_range *x, const arpra_uint n)
     // Clear vars, and set z.
     mpfr_clear(&temp);
     mpfr_clear(&error);
-    arpra_set(z, &zNew);
-    arpra_clear(&zNew);
+    arpra_clear(z);
+    *z = zNew;
     free(xTerm);
     free(summands);
 }
