@@ -25,9 +25,6 @@
 
 typedef struct trapezoidal_scratch_struct
 {
-    arpra_range *k[trapezoidal_stages];
-
-
     arpra_range a[trapezoidal_stages][trapezoidal_stages];
     arpra_range b[trapezoidal_stages];
     arpra_range c[trapezoidal_stages];
@@ -36,8 +33,8 @@ typedef struct trapezoidal_scratch_struct
     arpra_range *k_weights;
 
 
-    arpra_range *next_t;
-    arpra_range *next_x;
+    arpra_range *k[trapezoidal_stages];
+    arpra_range *x_new;
     arpra_range temp;
 } trapezoidal_scratch;
 
@@ -51,19 +48,17 @@ static void trapezoidal_init (arpra_ode_stepper *stepper, arpra_ode_system *syst
     scratch->k[0] = malloc(system->dims * sizeof(arpra_range));
     scratch->k[1] = malloc(system->dims * sizeof(arpra_range));
     scratch->k_weights = malloc(trapezoidal_stages * sizeof(arpra_range));
-    scratch->next_t = malloc(sizeof(arpra_range));
-    scratch->next_x = malloc(system->dims * sizeof(arpra_range));
+    scratch->x_new = malloc(system->dims * sizeof(arpra_range));
     for (i = 0; i < system->dims; i++) {
         prec = arpra_get_precision(&(system->x[i]));
         arpra_init2(&(scratch->k[0][i]), prec);
         arpra_init2(&(scratch->k[1][i]), prec);
-        arpra_init2(&(scratch->next_x[i]), prec);
+        arpra_init2(&(scratch->x_new[i]), prec);
     }
     prec = arpra_get_default_precision();
     for (i = 0; i < trapezoidal_stages; i++) {
         arpra_init2(&(scratch->k_weights[i]), prec);
     }
-    arpra_init2(scratch->next_t, prec);
     arpra_init2(&(scratch->temp), prec);
     stepper->method = arpra_ode_trapezoidal;
     stepper->system = system;
@@ -82,18 +77,16 @@ static void trapezoidal_clear (arpra_ode_stepper *stepper)
     for (i = 0; i < system->dims; i++) {
         arpra_clear(&(scratch->k[0][i]));
         arpra_clear(&(scratch->k[1][i]));
-        arpra_clear(&(scratch->next_x[i]));
+        arpra_clear(&(scratch->x_new[i]));
     }
     for (i = 0; i < trapezoidal_stages; i++) {
         arpra_clear(&(scratch->k_weights[i]));
     }
-    arpra_clear(scratch->next_t);
     arpra_clear(&(scratch->temp));
     free(scratch->k[0]);
     free(scratch->k[1]);
     free(scratch->k_weights);
-    free(scratch->next_t);
-    free(scratch->next_x);
+    free(scratch->x_new);
     free(scratch);
 }
 
@@ -112,13 +105,12 @@ static void trapezoidal_step (arpra_ode_stepper *stepper, const arpra_range *h)
         prec = arpra_get_precision(&(system->x[i]));
         arpra_set_precision(&(scratch->k[0][i]), prec);
         arpra_set_precision(&(scratch->k[1][i]), prec);
-        arpra_set_precision(&(scratch->next_x[i]), prec);
+        arpra_set_precision(&(scratch->x_new[i]), prec);
     }
     prec = arpra_get_precision(system->t);
     for (i = 0; i < trapezoidal_stages; i++) {
         arpra_set_precision(&(scratch->k_weights[i]), prec);
     }
-    arpra_set_precision(scratch->next_t, prec);
     arpra_set_precision(&(scratch->temp), prec);
 
     // k[0] = f([t], [x(t)])
@@ -128,12 +120,12 @@ static void trapezoidal_step (arpra_ode_stepper *stepper, const arpra_range *h)
 
     // k[1] = f([t + h], [x(t) + h k[0]])
     for (i = 0; i < system->dims; i++) {
-        arpra_mul(&(scratch->next_x[i]), h, &(scratch->k[0][i]));
-        arpra_add(&(scratch->next_x[i]), &(system->x[i]), &(scratch->next_x[i]));
+        arpra_mul(&(scratch->x_new[i]), h, &(scratch->k[0][i]));
+        arpra_add(&(scratch->x_new[i]), &(system->x[i]), &(scratch->x_new[i]));
     }
-    arpra_add(scratch->next_t, system->t, h);
+    arpra_add(&(scratch->temp), system->t, h);
     system->f(scratch->k[1],
-              scratch->next_t, scratch->next_x,
+              &(scratch->temp), scratch->x_new,
               system->dims, system->params);
 
     // x(t + h) = x(t) + h/2 k[0] + h/2 k[1]
@@ -144,16 +136,16 @@ static void trapezoidal_step (arpra_ode_stepper *stepper, const arpra_range *h)
         prec = arpra_get_precision(&(system->x[i]));
         arpra_set_precision(&(scratch->temp), prec);
         arpra_mul(&(scratch->temp), &(scratch->k_weights[0]), &(scratch->k[0][i]));
-        arpra_add(&(scratch->next_x[i]), &(system->x[i]), &(scratch->temp));
+        arpra_add(&(scratch->x_new[i]), &(system->x[i]), &(scratch->temp));
         arpra_mul(&(scratch->temp), &(scratch->k_weights[1]), &(scratch->k[1][i]));
-        arpra_add(&(scratch->next_x[i]), &(scratch->next_x[i]), &(scratch->temp));
+        arpra_add(&(scratch->x_new[i]), &(scratch->x_new[i]), &(scratch->temp));
     }
 
     // Advance system.
     arpra_add(system->t, system->t, h);
-    arpra_range *temp_x = system->x;
-    system->x = scratch->next_x;
-    scratch->next_x = temp_x;
+    arpra_range *x_temp = system->x;
+    system->x = scratch->x_new;
+    scratch->x_new = x_temp;
 }
 
 static const arpra_ode_method trapezoidal =
