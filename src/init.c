@@ -25,7 +25,7 @@ void arpra_init (arpra_range *x)
 {
     arpra_precision prec_internal;
 
-    // Init centre and radius with working precision.
+    // Init centre and radius.
     prec_internal = arpra_get_internal_precision();
     x->nTerms = 0;
     mpfr_init(&(x->centre));
@@ -36,7 +36,7 @@ void arpra_inits (arpra_range *x, ...)
 {
     va_list arg;
 
-    // Init each argument with working precision.
+    // Init each argument's centre and radius.
     va_start(arg, x);
     while (x != NULL) {
         arpra_init(x);

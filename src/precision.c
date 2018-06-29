@@ -40,7 +40,7 @@ void arpra_set_precision (arpra_range *z, const arpra_precision prec)
     // Clear existing deviation terms.
     arpra_clear_terms(z);
 
-    // Reset centre and radius with new working precision.
+    // Reset centre and radius precision.
     mpfr_set_prec(&(z->centre), prec);
     mpfr_set_prec(&(z->radius), internal_prec);
 }

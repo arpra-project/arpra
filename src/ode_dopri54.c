@@ -162,7 +162,7 @@ static void dopri54_step (arpra_ode_stepper *stepper, const arpra_range *h)
               system->t, system->x,
               system->dims, system->params);
 
-    // k_2 = f([t
+    // k_2 = f([t + h/5], [x(t) + h/5 k_1])
     arpra_set_d(scratch->temp, 2.0);
     arpra_div(&(scratch->k_weights_5[0]), h, scratch->temp);
     for (i = 0; i < system->dims; i++) {
@@ -174,7 +174,7 @@ static void dopri54_step (arpra_ode_stepper *stepper, const arpra_range *h)
               scratch->next_t, scratch->next_x_5,
               system->dims, system->params);
 
-    // k_3 = f([t
+    // k_3 = f([t + 12h/40], [x(t) + 3h/40 K_1 + 9h/40 k_2])
     arpra_set_d(scratch->temp, 4.0);
     arpra_div(&(scratch->k_weights_5[0]), h, scratch->temp);
     arpra_set_d(scratch->temp, 3.0);
@@ -188,7 +188,7 @@ static void dopri54_step (arpra_ode_stepper *stepper, const arpra_range *h)
               scratch->next_t, scratch->next_x_5,
               system->dims, system->params);
 
-    // k_4 = f([t
+    // k_4 = f([t + 36h/45], [x(t) + 44h/45 k_1 - 168h/45 k_2 + 160h/45])
     arpra_set_d(scratch->temp, 9.0);
     arpra_div(&(scratch->k_weights_5[3]), h, scratch->temp);
     arpra_set_d(scratch->temp, 2.0);
@@ -212,6 +212,19 @@ static void dopri54_step (arpra_ode_stepper *stepper, const arpra_range *h)
     system->f(scratch->k_4,
               scratch->next_t, scratch->next_x_5,
               system->dims, system->params);
+
+    // k_5 = f([t + 5832h/6561],
+    //         [x(t) + 19372h/6561 k_1 - 76080h/6561 k_2
+    //               + 64448h/6561 k_3 - 1908h/6561 k_4])
+
+
+    // k_6 = f([t + h],
+    //         [x(t) + ])
+
+
+    // k_7 = f([t + h],
+    //         [x(t) + ])
+
 
     // x_5(t + h) = x(t) +
     // This has already been computed above.
