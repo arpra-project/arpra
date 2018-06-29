@@ -25,9 +25,19 @@
 
 typedef struct dopri54_scratch_struct
 {
-    arpra_range **k;
+    arpra_range *k[dopri54_stages];
+
+
+    arpra_range a[dopri54_stages][dopri54_stages];
+    arpra_range b_5[dopri54_stages];
+    arpra_range b_4[dopri54_stages];
+    arpra_range c[dopri54_stages];
+
+
     arpra_range *k_weights_5;
     arpra_range *k_weights_4;
+
+
     arpra_range *next_t;
     arpra_range *next_x_5;
     arpra_range *next_x_4;
@@ -41,7 +51,6 @@ static void dopri54_init (arpra_ode_stepper *stepper, arpra_ode_system *system)
     dopri54_scratch *scratch;
 
     scratch = malloc(sizeof(dopri54_scratch));
-    scratch->k = malloc(dopri54_stages * sizeof(arpra_range *));
     scratch->k[0] = malloc(system->dims * sizeof(arpra_range));
     scratch->k[1] = malloc(system->dims * sizeof(arpra_range));
     scratch->k[2] = malloc(system->dims * sizeof(arpra_range));

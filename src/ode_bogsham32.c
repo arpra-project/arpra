@@ -25,9 +25,19 @@
 
 typedef struct bogsham32_scratch_struct
 {
-    arpra_range **k;
+    arpra_range *k[bogsham32_stages];
+
+
+    arpra_range a[bogsham32_stages][bogsham32_stages];
+    arpra_range b_3[bogsham32_stages];
+    arpra_range b_2[bogsham32_stages];
+    arpra_range c[bogsham32_stages];
+
+
     arpra_range *k_weights_3;
     arpra_range *k_weights_2;
+
+
     arpra_range *next_t;
     arpra_range *next_x_3;
     arpra_range *next_x_2;
@@ -41,7 +51,6 @@ static void bogsham32_init (arpra_ode_stepper *stepper, arpra_ode_system *system
     bogsham32_scratch *scratch;
 
     scratch = malloc(sizeof(bogsham32_scratch));
-    scratch->k = malloc(bogsham32_stages * sizeof(arpra_range *));
     scratch->k[0] = malloc(system->dims * sizeof(arpra_range));
     scratch->k[1] = malloc(system->dims * sizeof(arpra_range));
     scratch->k[2] = malloc(system->dims * sizeof(arpra_range));

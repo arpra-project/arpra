@@ -25,7 +25,7 @@
 
 typedef struct euler_scratch_struct
 {
-    arpra_range **k;
+    arpra_range *k[euler_stages];
     arpra_range *temp;
 } euler_scratch;
 
@@ -36,7 +36,6 @@ static void euler_init (arpra_ode_stepper *stepper, arpra_ode_system *system)
     euler_scratch *scratch;
 
     scratch = malloc(sizeof(euler_scratch));
-    scratch->k = malloc(euler_stages * sizeof(arpra_range *));
     scratch->k[0] = malloc(system->dims * sizeof(arpra_range));
     scratch->temp = malloc(sizeof(arpra_range));
     for (i = 0; i < system->dims; i++) {

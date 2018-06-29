@@ -25,8 +25,17 @@
 
 typedef struct trapezoidal_scratch_struct
 {
-    arpra_range **k;
+    arpra_range *k[trapezoidal_stages];
+
+
+    arpra_range a[trapezoidal_stages][trapezoidal_stages];
+    arpra_range b[trapezoidal_stages];
+    arpra_range c[trapezoidal_stages];
+
+
     arpra_range *k_weights;
+
+
     arpra_range *next_t;
     arpra_range *next_x;
     arpra_range *temp;
@@ -39,7 +48,6 @@ static void trapezoidal_init (arpra_ode_stepper *stepper, arpra_ode_system *syst
     trapezoidal_scratch *scratch;
 
     scratch = malloc(sizeof(trapezoidal_scratch));
-    scratch->k = malloc(trapezoidal_stages * sizeof(arpra_range *));
     scratch->k[0] = malloc(system->dims * sizeof(arpra_range));
     scratch->k[1] = malloc(system->dims * sizeof(arpra_range));
     scratch->k_weights = malloc(trapezoidal_stages * sizeof(arpra_range));
