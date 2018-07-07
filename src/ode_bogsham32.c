@@ -223,28 +223,30 @@ static void bogsham32_step (arpra_ode_stepper *stepper, const arpra_range *h)
               system->dims, system->params);
 
     // k[1] = f(t + h/2, x(t) + h/2 k[0])
-    arpra_mul(&(scratch->weighted_h), &(scratch->c[1]), h);
     for (i = 0; i < system->dims; i++) {
         prec_x = arpra_get_precision(&(system->x[i]));
         arpra_set_precision(&(scratch->temp), prec_x);
+        arpra_mul(&(scratch->weighted_h), &(scratch->a[1][0]), h);
         arpra_mul(&(scratch->temp), &(scratch->weighted_h), &(scratch->k[0][i]));
         arpra_add(&(scratch->x_new_3[i]), &(system->x[i]), &(scratch->temp));
     }
     arpra_set_precision(&(scratch->temp), prec_t);
+    arpra_mul(&(scratch->weighted_h), &(scratch->c[1]), h);
     arpra_add(&(scratch->temp), system->t, &(scratch->weighted_h));
     system->f(scratch->k[1],
               &(scratch->temp), scratch->x_new_3,
               system->dims, system->params);
 
     // k[2] = f(t + 3h/4, x(t) + 3h/4 k[1])
-    arpra_mul(&(scratch->weighted_h), &(scratch->c[2]), h);
     for (i = 0; i < system->dims; i++) {
         prec_x = arpra_get_precision(&(system->x[i]));
         arpra_set_precision(&(scratch->temp), prec_x);
+        arpra_mul(&(scratch->weighted_h), &(scratch->a[2][1]), h);
         arpra_mul(&(scratch->temp), &(scratch->weighted_h), &(scratch->k[1][i]));
         arpra_add(&(scratch->x_new_3[i]), &(system->x[i]), &(scratch->temp));
     }
     arpra_set_precision(&(scratch->temp), prec_t);
+    arpra_mul(&(scratch->weighted_h), &(scratch->c[2]), h);
     arpra_add(&(scratch->temp), system->t, &(scratch->weighted_h));
     system->f(scratch->k[2],
               &(scratch->temp), scratch->x_new_3,
