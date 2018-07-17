@@ -28,36 +28,41 @@ typedef struct dopri54_scratch_struct
     arpra_range *k[dopri54_stages];
     arpra_range *x_new_5;
     arpra_range *x_new_4;
-    arpra_range temp;
-    arpra_range weighted_h;
     arpra_range a[dopri54_stages][dopri54_stages];
     arpra_range b_5[dopri54_stages];
     arpra_range b_4[dopri54_stages];
     arpra_range c[dopri54_stages];
+    arpra_range ah[dopri54_stages][dopri54_stages];
+    arpra_range bh_5[dopri54_stages];
+    arpra_range bh_4[dopri54_stages];
+    arpra_range ch[dopri54_stages];
+    arpra_range temp_t[dopri54_stages];
+    arpra_range temp_x;
 } dopri54_scratch;
 
-static void dopri54_compute_constants (arpra_ode_stepper *stepper)
+static void dopri54_compute_constants (arpra_ode_stepper *stepper, const arpra_precision prec)
 {
-    arpra_uint i, j;
-    arpra_precision prec_internal;
+    arpra_uint k_i, k_j;
     arpra_range numerator, denominator;
     dopri54_scratch *scratch;
 
     scratch = (dopri54_scratch *) stepper->scratch;
 
+    // Init temp vars.
+    arpra_init2(&numerator, prec);
+    arpra_init2(&denominator, prec);
+
     // Update constant memory to internal precision.
-    prec_internal = arpra_get_internal_precision();
-    arpra_init2(&numerator, prec_internal);
-    arpra_init2(&denominator, prec_internal);
-    for (i = 0; i < dopri54_stages; i++) {
-        for (j = 0; j < dopri54_stages; j++) {
-            arpra_set_precision(&(scratch->a[i][j]), prec_internal);
+    for (k_i = 0; k_i < dopri54_stages; k_i++) {
+        for (k_j = 0; k_j < dopri54_stages; k_j++) {
+            arpra_set_precision(&(scratch->a[k_i][k_j]), prec);
         }
-        arpra_set_precision(&(scratch->b_5[i]), prec_internal);
-        arpra_set_precision(&(scratch->b_4[i]), prec_internal);
-        arpra_set_precision(&(scratch->c[i]), prec_internal);
+        arpra_set_precision(&(scratch->b_5[k_i]), prec);
+        arpra_set_precision(&(scratch->b_4[k_i]), prec);
+        arpra_set_precision(&(scratch->c[k_i]), prec);
     }
 
+    // k[0] = f(t, x(t))
     arpra_set_zero(&(scratch->c[0]));
     arpra_set_zero(&(scratch->a[0][0]));
     arpra_set_zero(&(scratch->a[0][1]));
@@ -67,6 +72,8 @@ static void dopri54_compute_constants (arpra_ode_stepper *stepper)
     arpra_set_zero(&(scratch->a[0][5]));
     arpra_set_zero(&(scratch->a[0][6]));
 
+    // k[1] = f(t + 1/5 h,
+    //          x(t) + 1/5 h k[0])
     arpra_set_d(&numerator, 1.);
     arpra_set_d(&denominator, 5.);
     arpra_div(&(scratch->c[1]), &numerator, &denominator);
@@ -78,6 +85,9 @@ static void dopri54_compute_constants (arpra_ode_stepper *stepper)
     arpra_set_zero(&(scratch->a[1][5]));
     arpra_set_zero(&(scratch->a[1][6]));
 
+    // k[2] = f(t + 3/10 h,
+    //          x(t) + 3/40 h k[0]
+    //               + 9/40 h k[1])
     arpra_set_d(&numerator, 3.);
     arpra_set_d(&denominator, 10.);
     arpra_div(&(scratch->c[2]), &numerator, &denominator);
@@ -93,6 +103,10 @@ static void dopri54_compute_constants (arpra_ode_stepper *stepper)
     arpra_set_zero(&(scratch->a[2][5]));
     arpra_set_zero(&(scratch->a[2][6]));
 
+    // k[3] = f(t + 4/5 h,
+    //          x(t) + 44/45 h k[0]
+    //               - 56/15 h k[1]
+    //               + 32/9  h k[2])
     arpra_set_d(&numerator, 4.);
     arpra_set_d(&denominator, 5.);
     arpra_div(&(scratch->c[3]), &numerator, &denominator);
@@ -110,6 +124,11 @@ static void dopri54_compute_constants (arpra_ode_stepper *stepper)
     arpra_set_zero(&(scratch->a[3][5]));
     arpra_set_zero(&(scratch->a[3][6]));
 
+    // k[4] = f(t + 8/9 h,
+    //          x(t) + 19372/6561 h k[0]
+    //               - 25360/2187 h k[1]
+    //               + 64448/6561 h k[2]
+    //               - 212/729    h k[3])
     arpra_set_d(&numerator, 8.);
     arpra_set_d(&denominator, 9.);
     arpra_div(&(scratch->c[4]), &numerator, &denominator);
@@ -129,6 +148,12 @@ static void dopri54_compute_constants (arpra_ode_stepper *stepper)
     arpra_set_zero(&(scratch->a[4][5]));
     arpra_set_zero(&(scratch->a[4][6]));
 
+    // k[5] = f(t + h,
+    //          x(t) + 9017/3168  h k[0]
+    //               - 355/33     h k[1]
+    //               + 46732/5247 h k[2]
+    //               + 49/176     h k[3]
+    //               - 5103/18656 h k[4])
     arpra_set_d(&(scratch->c[5]), 1.);
     arpra_set_d(&numerator, 9017.);
     arpra_set_d(&denominator, 3168.);
@@ -148,32 +173,51 @@ static void dopri54_compute_constants (arpra_ode_stepper *stepper)
     arpra_set_zero(&(scratch->a[5][5]));
     arpra_set_zero(&(scratch->a[5][6]));
 
+    // k[6] = f(t + h,
+    //          x(t) + 35/384    h k[0]
+    //               + 500/1113  h k[2]
+    //               + 125/192   h k[3]
+    //               − 2187/6784 h k[4]
+    //               + 11/84     h k[5])
     arpra_set_d(&(scratch->c[6]), 1.);
     arpra_set_d(&numerator, 35.);
     arpra_set_d(&denominator, 384.);
     arpra_div(&(scratch->a[6][0]), &numerator, &denominator);
-    arpra_set(&(scratch->b_5[0]), &(scratch->a[6][0]));
     arpra_set_zero(&(scratch->a[6][1]));
-    arpra_set_zero(&(scratch->b_5[1]));
     arpra_set_d(&numerator, 500.);
     arpra_set_d(&denominator, 1113.);
     arpra_div(&(scratch->a[6][2]), &numerator, &denominator);
-    arpra_set(&(scratch->b_5[2]), &(scratch->a[6][2]));
     arpra_set_d(&numerator, 125.);
     arpra_set_d(&denominator, 192.);
     arpra_div(&(scratch->a[6][3]), &numerator, &denominator);
-    arpra_set(&(scratch->b_5[3]), &(scratch->a[6][3]));
     arpra_set_d(&numerator, -2187.);
     arpra_set_d(&denominator, 6784.);
     arpra_div(&(scratch->a[6][4]), &numerator, &denominator);
-    arpra_set(&(scratch->b_5[4]), &(scratch->a[6][4]));
     arpra_set_d(&numerator, 11.);
     arpra_set_d(&denominator, 84.);
     arpra_div(&(scratch->a[6][5]), &numerator, &denominator);
-    arpra_set(&(scratch->b_5[5]), &(scratch->a[6][5]));
     arpra_set_zero(&(scratch->a[6][6]));
+
+    // Already been computed in x_new_5.
+    // x_5(t + h) = x(t) + 35/384    h k[0]
+    //                   + 500/1113  h k[2]
+    //                   + 125/192   h k[3]
+    //                   − 2187/6784 h k[4]
+    //                   + 11/84     h k[5]
+    arpra_set(&(scratch->b_5[0]), &(scratch->a[6][0]));
+    arpra_set_zero(&(scratch->b_5[1]));
+    arpra_set(&(scratch->b_5[2]), &(scratch->a[6][2]));
+    arpra_set(&(scratch->b_5[3]), &(scratch->a[6][3]));
+    arpra_set(&(scratch->b_5[4]), &(scratch->a[6][4]));
+    arpra_set(&(scratch->b_5[5]), &(scratch->a[6][5]));
     arpra_set_zero(&(scratch->b_5[6]));
 
+    // x_4(t + h) = x(t) + 5179/57600   h k[0]
+    //                   + 7571/16695   h k[2]
+    //                   + 393/640      h k[3]
+    //                   - 92097/339200 h k[4]
+    //                   + 187/2100     h k[5]
+    //                   + 1/40         h k[6]
     arpra_set_d(&numerator, 5179.);
     arpra_set_d(&denominator, 57600.);
     arpra_div(&(scratch->b_4[0]), &numerator, &denominator);
@@ -194,47 +238,52 @@ static void dopri54_compute_constants (arpra_ode_stepper *stepper)
     arpra_set_d(&denominator, 40.);
     arpra_div(&(scratch->b_4[6]), &numerator, &denominator);
 
+    // Clear temp vars.
     arpra_clear(&numerator);
     arpra_clear(&denominator);
 }
 
 static void dopri54_init (arpra_ode_stepper *stepper, arpra_ode_system *system)
 {
-    arpra_uint i, j;
+    arpra_uint x_i, k_i, k_j;
     arpra_precision prec_x, prec_internal;
     dopri54_scratch *scratch;
 
     // Allocate scratch memory.
     scratch = malloc(sizeof(dopri54_scratch));
-    for (j = 0; j < dopri54_stages; j++) {
-        scratch->k[j] = malloc(system->dims * sizeof(arpra_range));
+    for (k_i = 0; k_i < dopri54_stages; k_i++) {
+        scratch->k[k_i] = malloc(system->dims * sizeof(arpra_range));
     }
     scratch->x_new_5 = malloc(system->dims * sizeof(arpra_range));
     scratch->x_new_4 = malloc(system->dims * sizeof(arpra_range));
 
     // Initialise scratch memory.
-    for (i = 0; i < system->dims; i++) {
-        prec_x = arpra_get_precision(&(system->x[i]));
-        for (j = 0; j < dopri54_stages; j++) {
-            arpra_init2(&(scratch->k[j][i]), prec_x);
-        }
-        arpra_init2(&(scratch->x_new_5[i]), prec_x);
-        arpra_init2(&(scratch->x_new_4[i]), prec_x);
-    }
     prec_internal = arpra_get_internal_precision();
-    arpra_init2(&(scratch->temp), prec_internal);
-    arpra_init2(&(scratch->weighted_h), prec_internal);
-    for (i = 0; i < dopri54_stages; i++) {
-        for (j = 0; j < dopri54_stages; j++) {
-            arpra_init2(&(scratch->a[i][j]), prec_internal);
+    for (x_i = 0; x_i < system->dims; x_i++) {
+        prec_x = arpra_get_precision(&(system->x[x_i]));
+        for (k_i = 0; k_i < dopri54_stages; k_i++) {
+            arpra_init2(&(scratch->k[k_i][x_i]), prec_x);
         }
-        arpra_init2(&(scratch->b_5[i]), prec_internal);
-        arpra_init2(&(scratch->b_4[i]), prec_internal);
-        arpra_init2(&(scratch->c[i]), prec_internal);
+        arpra_init2(&(scratch->x_new_5[x_i]), prec_x);
+        arpra_init2(&(scratch->x_new_4[x_i]), prec_x);
     }
+    for (k_i = 0; k_i < dopri54_stages; k_i++) {
+        for (k_j = 0; k_j < dopri54_stages; k_j++) {
+            arpra_init2(&(scratch->a[k_i][k_j]), prec_internal);
+            arpra_init2(&(scratch->ah[k_i][k_j]), prec_internal);
+        }
+        arpra_init2(&(scratch->b_5[k_i]), prec_internal);
+        arpra_init2(&(scratch->bh_5[k_i]), prec_internal);
+        arpra_init2(&(scratch->b_4[k_i]), prec_internal);
+        arpra_init2(&(scratch->bh_4[k_i]), prec_internal);
+        arpra_init2(&(scratch->c[k_i]), prec_internal);
+        arpra_init2(&(scratch->ch[k_i]), prec_internal);
+        arpra_init2(&(scratch->temp_t[k_i]), prec_internal);
+    }
+    arpra_init2(&(scratch->temp_x), prec_internal);
 
     // Precompute constants.
-    dopri54_compute_constants(stepper);
+    dopri54_compute_constants(stepper, prec_internal);
 
     // Set stepper parameters.
     stepper->method = arpra_ode_dopri54;
@@ -245,7 +294,7 @@ static void dopri54_init (arpra_ode_stepper *stepper, arpra_ode_system *system)
 
 static void dopri54_clear (arpra_ode_stepper *stepper)
 {
-    arpra_uint i, j;
+    arpra_uint x_i, k_i, k_j;
     arpra_ode_system *system;
     dopri54_scratch *scratch;
 
@@ -253,27 +302,31 @@ static void dopri54_clear (arpra_ode_stepper *stepper)
     scratch = (dopri54_scratch *) stepper->scratch;
 
     // Clear scratch memory.
-    for (i = 0; i < system->dims; i++) {
-        for (j = 0; j < dopri54_stages; j++) {
-            arpra_clear(&(scratch->k[j][i]));
+    for (x_i = 0; x_i < system->dims; x_i++) {
+        for (k_i = 0; k_i < dopri54_stages; k_i++) {
+            arpra_clear(&(scratch->k[k_i][x_i]));
         }
-        arpra_clear(&(scratch->x_new_5[i]));
-        arpra_clear(&(scratch->x_new_4[i]));
+        arpra_clear(&(scratch->x_new_5[x_i]));
+        arpra_clear(&(scratch->x_new_4[x_i]));
     }
-    arpra_clear(&(scratch->temp));
-    arpra_clear(&(scratch->weighted_h));
-    for (i = 0; i < dopri54_stages; i++) {
-        for (j = 0; j < dopri54_stages; j++) {
-            arpra_clear(&(scratch->a[i][j]));
+    for (k_i = 0; k_i < dopri54_stages; k_i++) {
+        for (k_j = 0; k_j < dopri54_stages; k_j++) {
+            arpra_clear(&(scratch->a[k_i][k_j]));
+            arpra_clear(&(scratch->ah[k_i][k_j]));
         }
-        arpra_clear(&(scratch->b_5[i]));
-        arpra_clear(&(scratch->b_4[i]));
-        arpra_clear(&(scratch->c[i]));
+        arpra_clear(&(scratch->b_5[k_i]));
+        arpra_clear(&(scratch->bh_5[k_i]));
+        arpra_clear(&(scratch->b_4[k_i]));
+        arpra_clear(&(scratch->bh_4[k_i]));
+        arpra_clear(&(scratch->c[k_i]));
+        arpra_clear(&(scratch->ch[k_i]));
+        arpra_clear(&(scratch->temp_t[k_i]));
     }
+    arpra_clear(&(scratch->temp_x));
 
     // Free scratch memory.
-    for (j = 0; j < dopri54_stages; j++) {
-        free(scratch->k[j]);
+    for (k_i = 0; k_i < dopri54_stages; k_i++) {
+        free(scratch->k[k_i]);
     }
     free(scratch->x_new_5);
     free(scratch->x_new_4);
@@ -282,176 +335,70 @@ static void dopri54_clear (arpra_ode_stepper *stepper)
 
 static void dopri54_step (arpra_ode_stepper *stepper, const arpra_range *h)
 {
-    arpra_uint i, j;
+    arpra_uint x_i, k_i, k_j;
     arpra_precision prec_t, prec_x;
+    arpra_range *x_new;
     arpra_ode_system *system;
     dopri54_scratch *scratch;
 
     system = stepper->system;
     scratch = (dopri54_scratch *) stepper->scratch;
 
-    // Synchronise scratch memory precision.
-    for (i = 0; i < system->dims; i++) {
-        prec_x = arpra_get_precision(&(system->x[i]));
-        for (j = 0; j < dopri54_stages; j++) {
-            arpra_set_precision(&(scratch->k[j][i]), prec_x);
-        }
-        arpra_set_precision(&(scratch->x_new_5[i]), prec_x);
-        arpra_set_precision(&(scratch->x_new_4[i]), prec_x);
-    }
+    // Synchronise scratch precision and prepare step parameters.
     prec_t = arpra_get_precision(system->t);
-    arpra_set_precision(&(scratch->weighted_h), prec_t);
-
-    // k[0] = f(t, x(t))
-    system->f(scratch->k[0],
-              system->t, system->x,
-              system->dims, system->params);
-
-    // k[1] = f(t + h/5, x(t) + h/5 k[0])
-    for (i = 0; i < system->dims; i++) {
-        prec_x = arpra_get_precision(&(system->x[i]));
-        arpra_set_precision(&(scratch->temp), prec_x);
-        arpra_mul(&(scratch->weighted_h), &(scratch->a[1][0]), h);
-        arpra_mul(&(scratch->temp), &(scratch->weighted_h), &(scratch->k[0][i]));
-        arpra_add(&(scratch->x_new_5[i]), &(system->x[i]), &(scratch->temp));
+    for (x_i = 0; x_i < system->dims; x_i++) {
+        prec_x = arpra_get_precision(&(system->x[x_i]));
+        for (k_i = 0; k_i < dopri54_stages; k_i++) {
+            arpra_set_precision(&(scratch->k[k_i][x_i]), prec_x);
+        }
+        arpra_set_precision(&(scratch->x_new_5[x_i]), prec_x);
+        arpra_set_precision(&(scratch->x_new_4[x_i]), prec_x);
     }
-    arpra_set_precision(&(scratch->temp), prec_t);
-    arpra_mul(&(scratch->weighted_h), &(scratch->c[1]), h);
-    arpra_add(&(scratch->temp), system->t, &(scratch->weighted_h));
-    system->f(scratch->k[1],
-              &(scratch->temp), scratch->x_new_5,
-              system->dims, system->params);
-
-    // k[2] = f(t + 3h/10, x(t) + 3h/40 k[0] + 9h/40 k[1])
-    for (i = 0; i < system->dims; i++) {
-        prec_x = arpra_get_precision(&(system->x[i]));
-        arpra_set_precision(&(scratch->temp), prec_x);
-        arpra_mul(&(scratch->weighted_h), &(scratch->a[2][0]), h);
-        arpra_mul(&(scratch->temp), &(scratch->weighted_h), &(scratch->k[0][i]));
-        arpra_add(&(scratch->x_new_5[i]), &(system->x[i]), &(scratch->temp));
-        arpra_mul(&(scratch->weighted_h), &(scratch->a[2][1]), h);
-        arpra_mul(&(scratch->temp), &(scratch->weighted_h), &(scratch->k[1][i]));
-        arpra_add(&(scratch->x_new_5[i]), &(scratch->x_new_5[i]), &(scratch->temp));
-    }
-    arpra_set_precision(&(scratch->temp), prec_t);
-    arpra_mul(&(scratch->weighted_h), &(scratch->c[2]), h);
-    arpra_add(&(scratch->temp), system->t, &(scratch->weighted_h));
-    system->f(scratch->k[2],
-              &(scratch->temp), scratch->x_new_5,
-              system->dims, system->params);
-
-    // k[3] = f(t + 4h/5, x(t) + 44h/45 k[0] - 56h/15 k[1] + 32h/9 k[2])
-    for (i = 0; i < system->dims; i++) {
-        prec_x = arpra_get_precision(&(system->x[i]));
-        arpra_set_precision(&(scratch->temp), prec_x);
-        arpra_mul(&(scratch->weighted_h), &(scratch->a[3][0]), h);
-        arpra_mul(&(scratch->temp), &(scratch->weighted_h), &(scratch->k[0][i]));
-        arpra_add(&(scratch->x_new_5[i]), &(system->x[i]), &(scratch->temp));
-        arpra_mul(&(scratch->weighted_h), &(scratch->a[3][1]), h);
-        arpra_mul(&(scratch->temp), &(scratch->weighted_h), &(scratch->k[1][i]));
-        arpra_add(&(scratch->x_new_5[i]), &(scratch->x_new_5[i]), &(scratch->temp));
-        arpra_mul(&(scratch->weighted_h), &(scratch->a[3][2]), h);
-        arpra_mul(&(scratch->temp), &(scratch->weighted_h), &(scratch->k[2][i]));
-        arpra_add(&(scratch->x_new_5[i]), &(scratch->x_new_5[i]), &(scratch->temp));
-    }
-    arpra_set_precision(&(scratch->temp), prec_t);
-    arpra_mul(&(scratch->weighted_h), &(scratch->c[3]), h);
-    arpra_add(&(scratch->temp), system->t, &(scratch->weighted_h));
-    system->f(scratch->k[3],
-              &(scratch->temp), scratch->x_new_5,
-              system->dims, system->params);
-
-    // k[4] = f(t + 8h/9,
-    //          x(t) + 19372h/6561 k[0]
-    //               - 25360h/2187 k[1]
-    //               + 64448h/6561 k[2]
-    //               - 212h/729 k[3])
-    for (i = 0; i < system->dims; i++) {
-        prec_x = arpra_get_precision(&(system->x[i]));
-        arpra_set_precision(&(scratch->temp), prec_x);
-        arpra_mul(&(scratch->weighted_h), &(scratch->a[4][0]), h);
-        arpra_mul(&(scratch->temp), &(scratch->weighted_h), &(scratch->k[0][i]));
-        arpra_add(&(scratch->x_new_5[i]), &(system->x[i]), &(scratch->temp));
-        arpra_mul(&(scratch->weighted_h), &(scratch->a[4][1]), h);
-        arpra_mul(&(scratch->temp), &(scratch->weighted_h), &(scratch->k[1][i]));
-        arpra_add(&(scratch->x_new_5[i]), &(scratch->x_new_5[i]), &(scratch->temp));
-        arpra_mul(&(scratch->weighted_h), &(scratch->a[4][2]), h);
-        arpra_mul(&(scratch->temp), &(scratch->weighted_h), &(scratch->k[2][i]));
-        arpra_add(&(scratch->x_new_5[i]), &(scratch->x_new_5[i]), &(scratch->temp));
-        arpra_mul(&(scratch->weighted_h), &(scratch->a[4][3]), h);
-        arpra_mul(&(scratch->temp), &(scratch->weighted_h), &(scratch->k[3][i]));
-        arpra_add(&(scratch->x_new_5[i]), &(scratch->x_new_5[i]), &(scratch->temp));
-    }
-    arpra_set_precision(&(scratch->temp), prec_t);
-    arpra_mul(&(scratch->weighted_h), &(scratch->c[4]), h);
-    arpra_add(&(scratch->temp), system->t, &(scratch->weighted_h));
-    system->f(scratch->k[4],
-              &(scratch->temp), scratch->x_new_5,
-              system->dims, system->params);
-
-    // k[5] = f(t + h,
-    //          x(t) + 9017h/3168 k[0]
-    //               - 355h/33 k[1]
-    //               + 46732h/5247 k[2]
-    //               + 49h/176 k[3]
-    //               - 5103h/18656 k[4])
-    for (i = 0; i < system->dims; i++) {
-        prec_x = arpra_get_precision(&(system->x[i]));
-        arpra_set_precision(&(scratch->temp), prec_x);
-
-
+    for (k_i = 0; k_i < dopri54_stages; k_i++) {
+        for (k_j = 0; k_j < dopri54_stages; k_j++) {
+            arpra_set_precision(&(scratch->ah[k_i][k_j]), prec_t);
+            arpra_mul(&(scratch->ah[k_i][k_j]), &(scratch->a[k_i][k_j]), h);
+        }
+        arpra_set_precision(&(scratch->bh_5[k_i]), prec_t);
+        arpra_mul(&(scratch->bh_5[k_i]), &(scratch->b_5[k_i]), h);
+        arpra_set_precision(&(scratch->bh_4[k_i]), prec_t);
+        arpra_mul(&(scratch->bh_4[k_i]), &(scratch->b_4[k_i]), h);
+        arpra_set_precision(&(scratch->ch[k_i]), prec_t);
+        arpra_mul(&(scratch->ch[k_i]), &(scratch->c[k_i]), h);
+        arpra_set_precision(&(scratch->temp_t[k_i]), prec_t);
+        arpra_add(&(scratch->temp_t[k_i]), system->t, &(scratch->ch[k_i]));
     }
 
+    // Begin step.
+    for (x_i = 0; x_i < system->dims; x_i++) {
+        prec_x = arpra_get_precision(&(system->x[x_i]));
+        arpra_set_precision(&(scratch->temp_x), prec_x);
 
-    // k[6] = f(t + h,
-    //          x(t) + 35h/384 k[0]
-    //               + 500h/1113 k[2]
-    //               + 125h/192 k[3]
-    //               − 2187h/6784 k[4]
-    //               + 11h/84 k[5])
-    for (i = 0; i < system->dims; i++) {
-        prec_x = arpra_get_precision(&(system->x[i]));
-        arpra_set_precision(&(scratch->temp), prec_x);
+        // Compute k stages.
+        for (k_i = 0; k_i < dopri54_stages; k_i++) {
+            for (k_j = 0; k_j < k_i; k_j++) {
+                x_new = (k_j == 0) ? system->x : scratch->x_new_5;
+                arpra_mul(&(scratch->temp_x), &(scratch->ah[k_i][k_j]), &(scratch->k[k_j][x_i]));
+                arpra_add(&(scratch->x_new_5[x_i]), &(x_new[x_i]), &(scratch->temp_x));
+            }
+            system->f(scratch->k[k_i],
+                      &(scratch->temp_t[k_i]), scratch->x_new_5,
+                      x_i, system->params);
+        }
 
-
-    }
-
-
-    // Already been computed in x_new_5.
-    // x_5(t + h) = x(t) + 35h/384 k[0]
-    //                   + 500h/1113 k[2]
-    //                   + 125h/192 k[3]
-    //                   − 2187h/6784 k[4]
-    //                   + 11h/84 k[5])
-
-    // x_4(t + h) = x(t) + 5179h/57600 k[0]
-    //                   + 7571h/16695 k[2]
-    //                   + 393h/640 k[3]
-    //                   - 92097h/339200 k[4]
-    //                   + 187h/2100 k[5]
-    //                   + 1h/40 k[6])
-    for (i = 0; i < system->dims; i++) {
-        prec_x = arpra_get_precision(&(system->x[i]));
-        arpra_set_precision(&(scratch->temp), prec_x);
-
-        arpra_mul(&(scratch->temp), &(scratch->weighted_h), &(scratch->k[0][i]));
-        arpra_add(&(scratch->x_new_4[i]), &(system->x[i]), &(scratch->temp));
-
-        arpra_mul(&(scratch->temp), &(scratch->weighted_h), &(scratch->k[1][i]));
-        arpra_add(&(scratch->x_new_4[i]), &(scratch->x_new_4[i]), &(scratch->temp));
-
-        arpra_mul(&(scratch->temp), &(scratch->weighted_h), &(scratch->k[2][i]));
-        arpra_add(&(scratch->x_new_4[i]), &(scratch->x_new_4[i]), &(scratch->temp));
-
-        arpra_mul(&(scratch->temp), &(scratch->weighted_h), &(scratch->k[3][i]));
-        arpra_add(&(scratch->x_new_4[i]), &(scratch->x_new_4[i]), &(scratch->temp));
+        // Compute fourth-order approximation.
+        for (k_j = 0; k_j < dopri54_stages; k_j++) {
+            x_new = (k_j == 0) ? system->x : scratch->x_new_4;
+            arpra_mul(&(scratch->temp_x), &(scratch->bh_4[k_j]), &(scratch->k[k_j][x_i]));
+            arpra_add(&(scratch->x_new_4[x_i]), &(x_new[x_i]), &(scratch->temp_x));
+        } 
     }
 
     // Advance system.
     arpra_add(system->t, system->t, h);
-    arpra_range *x_temp = system->x;
-    system->x = scratch->x_new_5;
-    scratch->x_new_5 = x_temp;
+    x_new = scratch->x_new_5;
+    scratch->x_new_5 = system->x;
+    system->x = x_new;
 }
 
 static const arpra_ode_method dopri54 =
