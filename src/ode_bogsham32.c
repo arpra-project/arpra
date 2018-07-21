@@ -28,11 +28,13 @@ typedef struct bogsham32_scratch_struct
     arpra_range *k[bogsham32_stages];
     arpra_range *x_new_3;
     arpra_range *x_new_2;
-    arpra_range a[bogsham32_stages][bogsham32_stages];
+    arpra_range a_[(bogsham32_stages * (bogsham32_stages - 1)) / 2];
+    arpra_range *a[bogsham32_stages];
     arpra_range b_3[bogsham32_stages];
     arpra_range b_2[bogsham32_stages];
     arpra_range c[bogsham32_stages];
-    arpra_range ah[bogsham32_stages][bogsham32_stages];
+    arpra_range ah_[(bogsham32_stages * (bogsham32_stages - 1)) / 2];
+    arpra_range *ah[bogsham32_stages];
     arpra_range bh_3[bogsham32_stages];
     arpra_range bh_2[bogsham32_stages];
     arpra_range ch[bogsham32_stages];
@@ -54,7 +56,7 @@ static void bogsham32_compute_constants (arpra_ode_stepper *stepper, const arpra
 
     // Update constant memory to internal precision.
     for (k_i = 0; k_i < bogsham32_stages; k_i++) {
-        for (k_j = 0; k_j < bogsham32_stages; k_j++) {
+        for (k_j = 0; k_j < k_i; k_j++) {
             arpra_set_precision(&(scratch->a[k_i][k_j]), prec);
         }
         arpra_set_precision(&(scratch->b_3[k_i]), prec);
@@ -64,10 +66,6 @@ static void bogsham32_compute_constants (arpra_ode_stepper *stepper, const arpra
 
     // k[0] = f(t, x(t))
     arpra_set_zero(&(scratch->c[0]));
-    arpra_set_zero(&(scratch->a[0][0]));
-    arpra_set_zero(&(scratch->a[0][1]));
-    arpra_set_zero(&(scratch->a[0][2]));
-    arpra_set_zero(&(scratch->a[0][3]));
 
     // k[1] = f(t + 1/2 h,
     //          x(t) + 1/2 h k[0])
@@ -75,9 +73,6 @@ static void bogsham32_compute_constants (arpra_ode_stepper *stepper, const arpra
     arpra_set_d(&denominator, 2.);
     arpra_div(&(scratch->c[1]), &numerator, &denominator);
     arpra_set(&(scratch->a[1][0]), &(scratch->c[1]));
-    arpra_set_zero(&(scratch->a[1][1]));
-    arpra_set_zero(&(scratch->a[1][2]));
-    arpra_set_zero(&(scratch->a[1][3]));
 
     // k[2] = f(t + 3/4 h,
     //          x(t) + 3/4 h k[1])
@@ -86,8 +81,6 @@ static void bogsham32_compute_constants (arpra_ode_stepper *stepper, const arpra
     arpra_div(&(scratch->c[2]), &numerator, &denominator);
     arpra_set_zero(&(scratch->a[2][0]));
     arpra_set(&(scratch->a[2][1]), &(scratch->c[2]));
-    arpra_set_zero(&(scratch->a[2][2]));
-    arpra_set_zero(&(scratch->a[2][3]));
 
     // k[3] = f(t + h,
     //          x(t) + 2/9 h k[0]
@@ -103,7 +96,6 @@ static void bogsham32_compute_constants (arpra_ode_stepper *stepper, const arpra
     arpra_set_d(&numerator, 4.);
     arpra_set_d(&denominator, 9.);
     arpra_div(&(scratch->a[3][2]), &numerator, &denominator);
-    arpra_set_zero(&(scratch->a[3][3]));
 
     // Already been computed in x_new_3.
     // x_3(t + h) = x(t) + 2/9 h k[0]
@@ -161,7 +153,9 @@ static void bogsham32_init (arpra_ode_stepper *stepper, arpra_ode_system *system
         arpra_init2(&(scratch->x_new_2[x_i]), prec_x);
     }
     for (k_i = 0; k_i < bogsham32_stages; k_i++) {
-        for (k_j = 0; k_j < bogsham32_stages; k_j++) {
+        scratch->a[k_i] = &(scratch->a_[(k_i * (k_i - 1)) / 2]);
+        scratch->ah[k_i] = &(scratch->ah_[(k_i * (k_i - 1)) / 2]);
+        for (k_j = 0; k_j < k_i; k_j++) {
             arpra_init2(&(scratch->a[k_i][k_j]), prec_internal);
             arpra_init2(&(scratch->ah[k_i][k_j]), prec_internal);
         }
@@ -203,7 +197,7 @@ static void bogsham32_clear (arpra_ode_stepper *stepper)
         arpra_clear(&(scratch->x_new_2[x_i]));
     }
     for (k_i = 0; k_i < bogsham32_stages; k_i++) {
-        for (k_j = 0; k_j < bogsham32_stages; k_j++) {
+        for (k_j = 0; k_j < k_i; k_j++) {
             arpra_clear(&(scratch->a[k_i][k_j]));
             arpra_clear(&(scratch->ah[k_i][k_j]));
         }
@@ -248,7 +242,7 @@ static void bogsham32_step (arpra_ode_stepper *stepper, const arpra_range *h)
         arpra_set_precision(&(scratch->x_new_2[x_i]), prec_x);
     }
     for (k_i = 0; k_i < bogsham32_stages; k_i++) {
-        for (k_j = 0; k_j < bogsham32_stages; k_j++) {
+        for (k_j = 0; k_j < k_i; k_j++) {
             arpra_set_precision(&(scratch->ah[k_i][k_j]), prec_t);
             arpra_mul(&(scratch->ah[k_i][k_j]), &(scratch->a[k_i][k_j]), h);
         }
