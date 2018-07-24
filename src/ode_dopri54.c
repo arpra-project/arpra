@@ -150,9 +150,10 @@ static void dopri54_compute_constants (arpra_ode_stepper *stepper, const arpra_p
 
     // k[6] = f(t + h,
     //          x(t) + 35/384    h k[0]
+    //               + 0         h k[1]
     //               + 500/1113  h k[2]
     //               + 125/192   h k[3]
-    //               − 2187/6784 h k[4]
+    //               - 2187/6784 h k[4]
     //               + 11/84     h k[5])
     arpra_set_d(&(scratch->c[6]), 1.);
     arpra_set_d(&numerator, 35.);
@@ -174,12 +175,14 @@ static void dopri54_compute_constants (arpra_ode_stepper *stepper, const arpra_p
 
     // Already been computed in x_new_5.
     // x_5(t + h) = x(t) + 35/384    h k[0]
+    //                   + 0         h k[1]
     //                   + 500/1113  h k[2]
     //                   + 125/192   h k[3]
-    //                   − 2187/6784 h k[4]
+    //                   - 2187/6784 h k[4]
     //                   + 11/84     h k[5]
+    //                   + 0         h k[6]
     arpra_set(&(scratch->b_5[0]), &(scratch->a[6][0]));
-    arpra_set_zero(&(scratch->b_5[1]));
+    arpra_set(&(scratch->b_5[1]), &(scratch->a[6][1]));
     arpra_set(&(scratch->b_5[2]), &(scratch->a[6][2]));
     arpra_set(&(scratch->b_5[3]), &(scratch->a[6][3]));
     arpra_set(&(scratch->b_5[4]), &(scratch->a[6][4]));
@@ -187,6 +190,7 @@ static void dopri54_compute_constants (arpra_ode_stepper *stepper, const arpra_p
     arpra_set_zero(&(scratch->b_5[6]));
 
     // x_4(t + h) = x(t) + 5179/57600   h k[0]
+    //                   + 0            h k[1]
     //                   + 7571/16695   h k[2]
     //                   + 393/640      h k[3]
     //                   - 92097/339200 h k[4]

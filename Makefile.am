@@ -38,7 +38,7 @@ lib_libarpra_la_SOURCES = \
 	src/set_special.c src/sqrt.c src/sub.c src/sum.c src/term.c	\
 	src/get_bounds.c src/predicates.c src/ode_stepper.c		\
 	src/ode_euler.c src/ode_trapezoidal.c src/ode_bogsham32.c	\
-	src/ode_dopri54.c
+	src/ode_dopri54.c src/ode_dopri87.c
 if WITH_MPFI
 lib_libarpra_la_SOURCES += \
 	src/get_mpfi.c src/set_mpfi.c

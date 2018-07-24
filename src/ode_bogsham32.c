@@ -75,7 +75,8 @@ static void bogsham32_compute_constants (arpra_ode_stepper *stepper, const arpra
     arpra_set(&(scratch->a[1][0]), &(scratch->c[1]));
 
     // k[2] = f(t + 3/4 h,
-    //          x(t) + 3/4 h k[1])
+    //          x(t) + 0   h k[0]
+    //               + 3/4 h k[1])
     arpra_set_d(&numerator, 3.);
     arpra_set_d(&denominator, 4.);
     arpra_div(&(scratch->c[2]), &numerator, &denominator);
@@ -101,6 +102,7 @@ static void bogsham32_compute_constants (arpra_ode_stepper *stepper, const arpra
     // x_3(t + h) = x(t) + 2/9 h k[0]
     //                   + 1/3 h k[1]
     //                   + 4/9 h k[2]
+    //                   + 0   h k[3]
     arpra_set(&(scratch->b_3[0]), &(scratch->a[3][0]));
     arpra_set(&(scratch->b_3[1]), &(scratch->a[3][1]));
     arpra_set(&(scratch->b_3[2]), &(scratch->a[3][2]));
