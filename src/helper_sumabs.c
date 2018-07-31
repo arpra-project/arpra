@@ -1,7 +1,7 @@
 /*
- * default_precision.c -- Get and set the default precision of Arpra ranges.
+ * helper_sumabs.c -- Compute the absolute value sum of n MPFR numbers.
  *
- * Copyright 2016-2018 James Paul Turner.
+ * Copyright 2018 James Paul Turner.
  *
  * This file is part of the Arpra library.
  *
@@ -21,19 +21,17 @@
 
 #include "arpra-impl.h"
 
-static arpra_precision precision = ARPRA_DEFAULT_PRECISION;
+static arpra_uint buffer_size = 0;
+static arpra_sign *sign_buffer = NULL;
+static arpra_mpfr **term_buffer = NULL;
 
-arpra_precision arpra_get_default_precision ()
+void arpra_helper_sumabs (arpra_range *sumabs, const arpra_mpfr *x, const arpra_uint n)
 {
-    return precision;
-}
-
-void arpra_set_default_precision (const arpra_precision prec)
-{
-    precision = prec;
-
-    // Internal precision must be >= working precision.
-    if (arpra_get_internal_precision() < precision) {
-        arpra_set_internal_precision(precision);
+    // Allocate or double temp buffers, as required.
+    if (buffer_size < n) {
+        buffer_size = buffer_size ? buffer_size * 2 : ARPRA_DEFAULT_BUFFER_SIZE;
+        sign_buffer = realloc(sign_buffer, buffer_size * sizeof(arpra_sign));
+        term_buffer = realloc(term_buffer, buffer_size * sizeof(arpra_mpfr *));
     }
+
 }

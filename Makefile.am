@@ -30,15 +30,16 @@ lib_LTLIBRARIES = lib/libarpra.la
 lib_libarpra_la_SOURCES = \
 	src/arpra-impl.h src/add.c src/affine_1.c src/affine_2.c	\
 	src/clear.c src/reduce_last_n.c src/reduce_small.c		\
-	src/default_precision.c src/div.c src/error.c src/exp.c		\
+	src/default_precision.c src/div.c src/exp.c src/predicates.c	\
 	src/init.c src/init2.c src/internal_precision.c src/inv.c	\
 	src/log.c src/mul.c src/neg.c src/symbol.c src/precision.c	\
 	src/set_d.c src/set.c src/set_d_rad.c src/set_str.c		\
 	src/set_str_rad.c src/set_mpfr.c src/set_mpfr_rad.c		\
-	src/set_special.c src/sqrt.c src/sub.c src/sum.c src/term.c	\
-	src/get_bounds.c src/predicates.c src/ode_stepper.c		\
-	src/ode_euler.c src/ode_trapezoidal.c src/ode_bogsham32.c	\
-	src/ode_dopri54.c src/ode_dopri87.c
+	src/set_special.c src/sqrt.c src/sub.c src/sum.c		\
+	src/get_bounds.c src/ode_stepper.c src/ode_euler.c		\
+	src/ode_trapezoidal.c src/ode_bogsham32.c src/ode_dopri54.c	\
+	src/ode_dopri87.c src/helper_term.c src/helper_error.c		\
+	src/helper_sumabs.c
 if WITH_MPFI
 lib_libarpra_la_SOURCES += \
 	src/get_mpfi.c src/set_mpfi.c

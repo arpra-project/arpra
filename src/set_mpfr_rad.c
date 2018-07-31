@@ -45,7 +45,7 @@ void arpra_set_mpfr_rad (arpra_range *z, const arpra_mpfr *centre, const arpra_m
 
     // Add centre rounding error to deviation.
     if (mpfr_set(&(z->centre), centre, MPFR_RNDN)) {
-        arpra_error(&temp, &(z->centre));
+        arpra_helper_error(&temp, &(z->centre));
         mpfr_add(&(z->radius), &(z->radius), &temp, MPFR_RNDU);
     }
 

@@ -45,7 +45,7 @@ void arpra_log (arpra_range *z, const arpra_range *x)
     // Handle x with zero radius.
     if (mpfr_zero_p(&(x->radius))) {
         if (mpfr_log(&temp, &(x->centre), MPFR_RNDN)) {
-            arpra_error(&delta, &temp);
+            arpra_helper_error(&delta, &temp);
             arpra_set_mpfr_rad(z, &temp, &delta);
         }
         else {

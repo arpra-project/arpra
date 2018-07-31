@@ -1,5 +1,5 @@
 /*
- * term.c -- Compute a single deviation term.
+ * helper_term.c -- Compute a single deviation term.
  *
  * Copyright 2017-2018 James Paul Turner.
  *
@@ -21,8 +21,9 @@
 
 #include "arpra-impl.h"
 
-arpra_int arpra_term (arpra_mpfr *z, const arpra_mpfr *x, const arpra_mpfr *y,
-                      const arpra_mpfr *alpha, const arpra_mpfr *beta, const arpra_mpfr *gamma)
+int arpra_helper_term (arpra_mpfr *z, const arpra_mpfr *x, const arpra_mpfr *y,
+                       const arpra_mpfr *alpha, const arpra_mpfr *beta,
+                       const arpra_mpfr *gamma)
 {
     arpra_int inexact;
     arpra_mpfr alpha_x, beta_y;

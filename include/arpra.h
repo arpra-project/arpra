@@ -28,8 +28,10 @@
 typedef struct arpra_range_struct arpra_range;
 typedef __mpfr_struct arpra_mpfr;
 typedef mpfr_prec_t arpra_precision;
-typedef long int arpra_int;
+typedef mpfr_exp_t arpra_exponent;
+typedef mpfr_sign_t arpra_sign;
 typedef unsigned long int arpra_uint;
+typedef long int arpra_int;
 
 // The Arpra range type.
 struct arpra_range_struct
@@ -46,13 +48,13 @@ extern "C" {
 #endif
 
 // Initialise and clear.
-void arpra_init (arpra_range *x);
-void arpra_inits (arpra_range *x, ...);
-void arpra_init2 (arpra_range *x, const arpra_precision prec);
-void arpra_inits2 (const arpra_precision prec, arpra_range *x, ...);
-void arpra_clear (arpra_range *x);
-void arpra_clears (arpra_range *x, ...);
-void arpra_clear_terms (arpra_range *x);
+void arpra_init (arpra_range *z);
+void arpra_inits (arpra_range *z, ...);
+void arpra_init2 (arpra_range *z, const arpra_precision prec);
+void arpra_inits2 (const arpra_precision prec, arpra_range *z, ...);
+void arpra_clear (arpra_range *z);
+void arpra_clears (arpra_range *z, ...);
+void arpra_clear_terms (arpra_range *z);
 
 // Get from an Arpra range.
 void arpra_get_bounds (arpra_mpfr *lo, arpra_mpfr *hi, const arpra_range *x);

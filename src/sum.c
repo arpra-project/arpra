@@ -96,7 +96,7 @@ void arpra_sum (arpra_range *z, arpra_range *x, const arpra_uint n)
 
     // z_0 = x[1]_0 + ... + x[n]_0
     if (mpfr_sum(&(zNew.centre), summands, n, MPFR_RNDN)) {
-        arpra_error(&temp, &(zNew.centre));
+        arpra_helper_error(&temp, &(zNew.centre));
         mpfr_add(&error, &error, &temp, MPFR_RNDU);
     }
 
@@ -140,7 +140,7 @@ void arpra_sum (arpra_range *z, arpra_range *x, const arpra_uint n)
 
         // z_i = x[1]_i + ... + x[n]_i
         if (mpfr_sum(&(zNew.deviations[zTerm]), summands, j, MPFR_RNDN)) {
-            arpra_error(&temp, &(zNew.deviations[zTerm]));
+            arpra_helper_error(&temp, &(zNew.deviations[zTerm]));
             mpfr_add(&error, &error, &temp, MPFR_RNDU);
         }
 

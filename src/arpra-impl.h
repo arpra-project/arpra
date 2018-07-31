@@ -37,8 +37,12 @@
 #include <arpra_to_mpfi.h>
 #endif // WITH_MPFI
 
-// Internal precision default value.
+// Default precisions.
+#define ARPRA_DEFAULT_PRECISION 53
 #define ARPRA_DEFAULT_INTERNAL_PRECISION 128
+
+// Default temp buffers.
+#define ARPRA_DEFAULT_BUFFER_SIZE 256
 
 // Use tighter arpra_mul approximation.
 #define ARPRA_TIGHT_MUL
@@ -56,8 +60,10 @@
  */
 
 // Internal helper functions.
-arpra_int arpra_term (arpra_mpfr *z, const arpra_mpfr *x, const arpra_mpfr *y,
-                      const arpra_mpfr *alpha, const arpra_mpfr *beta, const arpra_mpfr *gamma);
-void arpra_error (arpra_mpfr *error, const arpra_mpfr *x);
+int arpra_helper_term (arpra_mpfr *z, const arpra_mpfr *x, const arpra_mpfr *y,
+                       const arpra_mpfr *alpha, const arpra_mpfr *beta,
+                       const arpra_mpfr *gamma);
+void arpra_helper_error (arpra_mpfr *error, const arpra_mpfr *x);
+void arpra_helper_sumabs (arpra_range *sumabs, const arpra_mpfr *x, const arpra_uint n);
 
 #endif // ARPRA_IMPL_H

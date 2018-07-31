@@ -21,38 +21,38 @@
 
 #include "arpra-impl.h"
 
-void arpra_clear (arpra_range *x)
+void arpra_clear (arpra_range *z)
 {
     // Clear centre, radius and deviation terms.
-    mpfr_clear(&(x->centre));
-    mpfr_clear(&(x->radius));
-    arpra_clear_terms(x);
+    mpfr_clear(&(z->centre));
+    mpfr_clear(&(z->radius));
+    arpra_clear_terms(z);
 }
 
-void arpra_clears (arpra_range *x, ...)
+void arpra_clears (arpra_range *z, ...)
 {
     va_list arg;
 
     // Clear each arguemnt.
-    va_start(arg, x);
-    while (x != NULL) {
-        arpra_clear(x);
-        x = (arpra_range *) va_arg(arg, arpra_range *);
+    va_start(arg, z);
+    while (z != NULL) {
+        arpra_clear(z);
+        z = (arpra_range *) va_arg(arg, arpra_range *);
     }
     va_end(arg);
 }
 
-void arpra_clear_terms (arpra_range *x)
+void arpra_clear_terms (arpra_range *z)
 {
-    arpra_uint xTerm;
+    arpra_uint zTerm;
 
-    // Clear existing deviation terms.
-    if (x->nTerms > 0) {
-        for (xTerm = 0; xTerm < x->nTerms; xTerm++) {
-            mpfr_clear(&(x->deviations[xTerm]));
+    // Clear ezisting deviation terms.
+    if (z->nTerms > 0) {
+        for (zTerm = 0; zTerm < z->nTerms; zTerm++) {
+            mpfr_clear(&(z->deviations[zTerm]));
         }
-        free(x->symbols);
-        free(x->deviations);
-        x->nTerms = 0;
+        free(z->symbols);
+        free(z->deviations);
+        z->nTerms = 0;
     }
 }

@@ -73,7 +73,7 @@ void arpra_mul (arpra_range *z, const arpra_range *x, const arpra_range *y)
 
     // z_0 = x_0 * y_0
     if (mpfr_mul(&(zNew.centre), &(x->centre), &(y->centre), MPFR_RNDN)) {
-        arpra_error(&temp, &(zNew.centre));
+        arpra_helper_error(&temp, &(zNew.centre));
         mpfr_add(&error, &error, &temp, MPFR_RNDU);
     }
 
@@ -94,7 +94,7 @@ void arpra_mul (arpra_range *z, const arpra_range *x, const arpra_range *y)
 
             // z_i = (y_0 * x_i)
             if (mpfr_mul(&(zNew.deviations[zTerm]), &(y->centre), &(x->deviations[xTerm]), MPFR_RNDN)) {
-                arpra_error(&temp, &(zNew.deviations[zTerm]));
+                arpra_helper_error(&temp, &(zNew.deviations[zTerm]));
                 mpfr_add(&error, &error, &temp, MPFR_RNDU);
             }
 
@@ -106,7 +106,7 @@ void arpra_mul (arpra_range *z, const arpra_range *x, const arpra_range *y)
 
             // z_i = (x_0 * y_i)
             if (mpfr_mul(&(zNew.deviations[zTerm]), &(x->centre), &(y->deviations[yTerm]), MPFR_RNDN)) {
-                arpra_error(&temp, &(zNew.deviations[zTerm]));
+                arpra_helper_error(&temp, &(zNew.deviations[zTerm]));
                 mpfr_add(&error, &error, &temp, MPFR_RNDU);
             }
 
@@ -117,8 +117,8 @@ void arpra_mul (arpra_range *z, const arpra_range *x, const arpra_range *y)
             mpfr_init2(&(zNew.deviations[zTerm]), prec);
 
             // z_i = (y_0 * x_i) + (x_0 * y_i)
-            if (arpra_term(&(zNew.deviations[zTerm]), &(x->deviations[xTerm]), &(y->deviations[yTerm]), &(y->centre), &(x->centre), NULL)) {
-                arpra_error(&temp, &(zNew.deviations[zTerm]));
+            if (arpra_helper_term(&(zNew.deviations[zTerm]), &(x->deviations[xTerm]), &(y->deviations[yTerm]), &(y->centre), &(x->centre), NULL)) {
+                arpra_helper_error(&temp, &(zNew.deviations[zTerm]));
                 mpfr_add(&error, &error, &temp, MPFR_RNDU);
             }
 

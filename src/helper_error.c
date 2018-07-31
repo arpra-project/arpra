@@ -1,5 +1,5 @@
 /*
- * error.c -- Compute the max ULP error of an inexact MPFR operation.
+ * helper_error.c -- Compute the error of an inexact MPFR operation.
  *
  * Copyright 2017-2018 James Paul Turner.
  *
@@ -23,15 +23,15 @@
 
 /*
  * This function assumes that rounding error has occured - i.e. an MPFR call
- * has returned nonzero. Therefore, if x == 0, then nextabove(x) is used
- * instead of 1/2 ULP(x). This ensures that error is always recorded, even
- * when x was flushed to zero.
+ * has returned nonzero. If x == 0, then nextabove(x) is used instead of
+ * 1/2 ULP(x). This ensures that error is always recorded, even when x was
+ * flushed to zero.
  */
 
-void arpra_error (arpra_mpfr *error, const arpra_mpfr *x)
+void arpra_helper_error (arpra_mpfr *error, const arpra_mpfr *x)
 {
     arpra_precision p;
-    mpfr_exp_t e;
+    arpra_exponent e;
 
     if (mpfr_zero_p(x)) {
         // error = nextabove(x)

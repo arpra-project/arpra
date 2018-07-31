@@ -21,7 +21,7 @@
 
 #include "arpra-impl.h"
 
-void arpra_init2 (arpra_range *x, const arpra_precision prec)
+void arpra_init2 (arpra_range *z, const arpra_precision prec)
 {
     arpra_precision prec_internal;
 
@@ -33,20 +33,20 @@ void arpra_init2 (arpra_range *x, const arpra_precision prec)
     }
 
     // Init centre and radius with 'prec' precision.
-    x->nTerms = 0;
-    mpfr_init2(&(x->centre), prec);
-    mpfr_init2(&(x->radius), prec_internal);
+    z->nTerms = 0;
+    mpfr_init2(&(z->centre), prec);
+    mpfr_init2(&(z->radius), prec_internal);
 }
 
-void arpra_inits2 (const arpra_precision prec, arpra_range *x, ...)
+void arpra_inits2 (const arpra_precision prec, arpra_range *z, ...)
 {
     va_list arg;
 
     // Init each argument with precision 'prec'.
-    va_start(arg, x);
-    while (x != NULL) {
-        arpra_init2(x, prec);
-        x = (arpra_range *) va_arg(arg, arpra_range *);
+    va_start(arg, z);
+    while (z != NULL) {
+        arpra_init2(z, prec);
+        z = (arpra_range *) va_arg(arg, arpra_range *);
     }
     va_end(arg);
 }

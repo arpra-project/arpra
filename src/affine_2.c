@@ -73,8 +73,8 @@ void arpra_affine_2 (arpra_range *z, const arpra_range *x, const arpra_range *y,
     mpfr_set_si(&(zNew.radius), 0, MPFR_RNDU);
 
     // z_0 = (alpha * x_0) + (beta * y_0) + gamma
-    if (arpra_term(&(zNew.centre), &(x->centre), &(y->centre), alpha, beta, gamma)) {
-        arpra_error(&temp, &(zNew.centre));
+    if (arpra_helper_term(&(zNew.centre), &(x->centre), &(y->centre), alpha, beta, gamma)) {
+        arpra_helper_error(&temp, &(zNew.centre));
         mpfr_add(&error, &error, &temp, MPFR_RNDU);
     }
 
@@ -95,7 +95,7 @@ void arpra_affine_2 (arpra_range *z, const arpra_range *x, const arpra_range *y,
 
             // z_i = (alpha * x_i)
             if (mpfr_mul(&(zNew.deviations[zTerm]), alpha, &(x->deviations[xTerm]), MPFR_RNDN)) {
-                arpra_error(&temp, &(zNew.deviations[zTerm]));
+                arpra_helper_error(&temp, &(zNew.deviations[zTerm]));
                 mpfr_add(&error, &error, &temp, MPFR_RNDU);
             }
 
@@ -107,7 +107,7 @@ void arpra_affine_2 (arpra_range *z, const arpra_range *x, const arpra_range *y,
 
             // z_i = (beta * y_i)
             if (mpfr_mul(&(zNew.deviations[zTerm]), beta, &(y->deviations[yTerm]), MPFR_RNDN)) {
-                arpra_error(&temp, &(zNew.deviations[zTerm]));
+                arpra_helper_error(&temp, &(zNew.deviations[zTerm]));
                 mpfr_add(&error, &error, &temp, MPFR_RNDU);
             }
 
@@ -118,8 +118,8 @@ void arpra_affine_2 (arpra_range *z, const arpra_range *x, const arpra_range *y,
             mpfr_init2(&(zNew.deviations[zTerm]), prec);
 
             // z_i = (alpha * x_i) + (beta * y_i)
-            if (arpra_term(&(zNew.deviations[zTerm]), &(x->deviations[xTerm]), &(y->deviations[yTerm]), alpha, beta, NULL)) {
-                arpra_error(&temp, &(zNew.deviations[zTerm]));
+            if (arpra_helper_term(&(zNew.deviations[zTerm]), &(x->deviations[xTerm]), &(y->deviations[yTerm]), alpha, beta, NULL)) {
+                arpra_helper_error(&temp, &(zNew.deviations[zTerm]));
                 mpfr_add(&error, &error, &temp, MPFR_RNDU);
             }
 

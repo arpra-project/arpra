@@ -51,7 +51,7 @@ void arpra_set (arpra_range *z, const arpra_range *x)
 
     // z_0 = x_0
     if (mpfr_set(&(z->centre), &(x->centre), MPFR_RNDN)) {
-        arpra_error(&temp, &(z->centre));
+        arpra_helper_error(&temp, &(z->centre));
         mpfr_add(&error, &error, &temp, MPFR_RNDU);
     }
 
@@ -68,7 +68,7 @@ void arpra_set (arpra_range *z, const arpra_range *x)
 
         // z_i = x_i
         if (mpfr_set(&(z->deviations[zTerm]), &(x->deviations[xTerm]), MPFR_RNDN)) {
-            arpra_error(&temp, &(z->deviations[zTerm]));
+            arpra_helper_error(&temp, &(z->deviations[zTerm]));
             mpfr_add(&error, &error, &temp, MPFR_RNDU);
         }
 
