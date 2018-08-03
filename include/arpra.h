@@ -24,14 +24,16 @@
 
 #include <mpfr.h>
 
-// Arpra typedefs.
+// Arpra range typedefs.
 typedef struct arpra_range_struct arpra_range;
-typedef __mpfr_struct arpra_mpfr;
-typedef mpfr_prec_t arpra_precision;
-typedef mpfr_exp_t arpra_exponent;
-typedef mpfr_sign_t arpra_sign;
 typedef unsigned long int arpra_uint;
 typedef long int arpra_int;
+
+// MPFR number typedefs.
+typedef __mpfr_struct arpra_mpfr;
+typedef mpfr_prec_t arpra_precision;
+typedef mpfr_sign_t arpra_sign;
+typedef mpfr_exp_t arpra_exponent;
 
 // The Arpra range type.
 struct arpra_range_struct
