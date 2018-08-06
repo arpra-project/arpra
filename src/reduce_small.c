@@ -66,7 +66,7 @@ void arpra_reduce_small (arpra_range *z, double min_fraction)
 
     // Add the remaining deviation terms to radius.
     for (zNext = 0; zNext < zTerm; zNext++) {
-        mpfr_abs(&temp, &(z->deviations[zTerm]), MPFR_RNDU);
+        mpfr_abs(&temp, &(z->deviations[zNext]), MPFR_RNDU);
         mpfr_add(&(z->radius), &(z->radius), &temp, MPFR_RNDU);
     }
 
