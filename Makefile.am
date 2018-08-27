@@ -39,7 +39,7 @@ lib_libarpra_la_SOURCES = \
 	src/get_bounds.c src/ode_stepper.c src/ode_euler.c		\
 	src/ode_trapezoidal.c src/ode_bogsham32.c src/ode_dopri54.c	\
 	src/ode_dopri87.c src/helper_term.c src/helper_error.c		\
-	src/helper_radius.c
+	src/helper_radius.c src/helper_buffer.c
 if WITH_MPFI
 lib_libarpra_la_SOURCES += \
 	src/get_mpfi.c src/set_mpfi.c

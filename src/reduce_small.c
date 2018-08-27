@@ -1,5 +1,5 @@
 /*
- * reduce_small.c -- Reduce terms less than a given fraction of the radius.
+ * reduce_small.c -- Reduce deviation terms less than a given threshold.
  *
  * Copyright 2017-2018 James Paul Turner.
  *
@@ -50,7 +50,7 @@ void arpra_reduce_small (arpra_range *z, double min_fraction)
         }
     }
 
-    // Merge the small terms.
+    // Merge the small deviation terms.
     arpra_reduce_last_n(z, (z->nTerms - zTerm));
 
     // Clear vars.
@@ -68,7 +68,7 @@ void arpra_reduce_small_abs (arpra_range *z, const arpra_mpfr *abs_threshold)
     // Handle domain violations.
     if (!arpra_bounded_p(z)) return;
 
-    // Move small terms to the back.
+    // Move small deviation terms to the back.
     for (zNext = 0, zTerm = 0; zNext < z->nTerms; zNext++) {
         if (mpfr_cmpabs(&(z->deviations[zNext]), abs_threshold) >= 0) {
             if (zTerm < zNext) {
@@ -79,7 +79,7 @@ void arpra_reduce_small_abs (arpra_range *z, const arpra_mpfr *abs_threshold)
         }
     }
 
-    // Reduce small terms.
+    // Reduce small deviation terms.
     arpra_reduce_last_n(z, (z->nTerms - zTerm));
 }
 

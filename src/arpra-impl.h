@@ -61,10 +61,10 @@
 // Internal helper functions.
 void arpra_helper_radius (arpra_range *z);
 void arpra_helper_error (arpra_mpfr *error, const arpra_mpfr *x);
-int arpra_helper_mpfr_sumabs (arpra_mpfr *sumabs, arpra_mpfr *x,
-                              const arpra_uint n, const mpfr_rnd_t round_mode);
 int arpra_helper_term (arpra_mpfr *z, const arpra_mpfr *x, const arpra_mpfr *y,
                        const arpra_mpfr *alpha, const arpra_mpfr *beta,
                        const arpra_mpfr *gamma);
+arpra_mpfr **arpra_helper_buffer_mpfr_ptr (arpra_uint n);
+arpra_mpfr *arpra_helper_buffer_mpfr (arpra_uint n);
 
 #endif // ARPRA_IMPL_H
