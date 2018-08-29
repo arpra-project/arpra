@@ -46,7 +46,7 @@ void arpra_clear_terms (arpra_range *z)
 {
     arpra_uint zTerm;
 
-    // Clear ezisting deviation terms.
+    // Clear existing deviation terms.
     if (z->nTerms > 0) {
         for (zTerm = 0; zTerm < z->nTerms; zTerm++) {
             mpfr_clear(&(z->deviations[zTerm]));
