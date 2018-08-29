@@ -262,14 +262,14 @@ static void dopri54_init (arpra_ode_stepper *stepper, arpra_ode_system *system)
     }
     arpra_init2(&(scratch->temp_x), prec_internal);
 
-    // Precompute constants.
-    dopri54_compute_constants(stepper, prec_internal);
-
     // Set stepper parameters.
     stepper->method = arpra_ode_dopri54;
     stepper->system = system;
     stepper->error = NULL;
     stepper->scratch = scratch;
+
+    // Precompute constants.
+    dopri54_compute_constants(stepper, prec_internal);
 }
 
 static void dopri54_clear (arpra_ode_stepper *stepper)
@@ -317,7 +317,7 @@ static void dopri54_step (arpra_ode_stepper *stepper, const arpra_range *h)
 {
     arpra_uint x_i, k_i, k_j;
     arpra_precision prec_t, prec_x;
-    arpra_range *x_new;
+    arpra_range *x_old, *x_new, *x_sum;
     arpra_ode_system *system;
     dopri54_scratch *scratch;
 
@@ -349,28 +349,37 @@ static void dopri54_step (arpra_ode_stepper *stepper, const arpra_range *h)
         arpra_add(&(scratch->temp_t[k_i]), system->t, &(scratch->ch[k_i]));
     }
 
-    // Begin step.
+    // Compute k stages and fifth-order approximation.
+    for (k_i = 0; k_i < dopri54_stages; k_i++) {
+        x_old = (k_i == 0) ? system->x : scratch->x_new_5;
+
+        // x(t + c_i h) = x(t) + a_i0 h k[0] + ... + a_is h k[s]
+        for (x_i = 0; x_i < system->dims; x_i++) {
+            prec_x = arpra_get_precision(&(system->x[x_i]));
+            arpra_set_precision(&(scratch->temp_x), prec_x);
+            for (k_j = 0; k_j < k_i; k_j++) {
+                x_sum = (k_j == 0) ? system->x : scratch->x_new_5;
+                arpra_mul(&(scratch->temp_x), &(scratch->ah[k_i][k_j]), &(scratch->k[k_j][x_i]));
+                arpra_add(&(scratch->x_new_5[x_i]), &(x_sum[x_i]), &(scratch->temp_x));
+            }
+        }
+
+        // k[i] = f(t + c_i h, x(t) + a_i0 h k[0] + ... + a_is h k[s])
+        for (x_i = 0; x_i < system->dims; x_i++) {
+            system->f(scratch->k[k_i],
+                      &(scratch->temp_t[k_i]), x_old,
+                      x_i, system->params);
+        }
+    }
+
+    // Compute fourth-order approximation.
     for (x_i = 0; x_i < system->dims; x_i++) {
         prec_x = arpra_get_precision(&(system->x[x_i]));
         arpra_set_precision(&(scratch->temp_x), prec_x);
-
-        // Compute k stages.
-        for (k_i = 0; k_i < dopri54_stages; k_i++) {
-            for (k_j = 0; k_j < k_i; k_j++) {
-                x_new = (k_j == 0) ? system->x : scratch->x_new_5;
-                arpra_mul(&(scratch->temp_x), &(scratch->ah[k_i][k_j]), &(scratch->k[k_j][x_i]));
-                arpra_add(&(scratch->x_new_5[x_i]), &(x_new[x_i]), &(scratch->temp_x));
-            }
-            system->f(scratch->k[k_i],
-                      &(scratch->temp_t[k_i]), scratch->x_new_5,
-                      x_i, system->params);
-        }
-
-        // Compute fourth-order approximation.
         for (k_j = 0; k_j < dopri54_stages; k_j++) {
-            x_new = (k_j == 0) ? system->x : scratch->x_new_4;
+            x_sum = (k_j == 0) ? system->x : scratch->x_new_4;
             arpra_mul(&(scratch->temp_x), &(scratch->bh_4[k_j]), &(scratch->k[k_j][x_i]));
-            arpra_add(&(scratch->x_new_4[x_i]), &(x_new[x_i]), &(scratch->temp_x));
+            arpra_add(&(scratch->x_new_4[x_i]), &(x_sum[x_i]), &(scratch->temp_x));
         } 
     }
 
