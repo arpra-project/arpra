@@ -24,7 +24,7 @@
 #define trapezoidal_stages 2
 
 typedef struct trapezoidal_scratch_struct
-{ 
+{
     arpra_range *k_0;
     arpra_range *k_1;
     arpra_range *x_new;

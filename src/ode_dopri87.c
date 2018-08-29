@@ -637,7 +637,7 @@ static void dopri87_step (arpra_ode_stepper *stepper, const arpra_range *h)
             x_sum = (k_j == 0) ? system->x : scratch->x_new_8;
             arpra_mul(&(scratch->temp_x), &(scratch->bh_8[k_j]), &(scratch->k[k_j][x_i]));
             arpra_add(&(scratch->x_new_8[x_i]), &(x_sum[x_i]), &(scratch->temp_x));
-        } 
+        }
     }
 
     // Compute seventh-order approximation.
@@ -648,7 +648,7 @@ static void dopri87_step (arpra_ode_stepper *stepper, const arpra_range *h)
             x_sum = (k_j == 0) ? system->x : scratch->x_new_7;
             arpra_mul(&(scratch->temp_x), &(scratch->bh_7[k_j]), &(scratch->k[k_j][x_i]));
             arpra_add(&(scratch->x_new_7[x_i]), &(x_sum[x_i]), &(scratch->temp_x));
-        } 
+        }
     }
 
     // Advance system.

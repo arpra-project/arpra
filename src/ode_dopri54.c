@@ -380,7 +380,7 @@ static void dopri54_step (arpra_ode_stepper *stepper, const arpra_range *h)
             x_sum = (k_j == 0) ? system->x : scratch->x_new_4;
             arpra_mul(&(scratch->temp_x), &(scratch->bh_4[k_j]), &(scratch->k[k_j][x_i]));
             arpra_add(&(scratch->x_new_4[x_i]), &(x_sum[x_i]), &(scratch->temp_x));
-        } 
+        }
     }
 
     // Advance system.

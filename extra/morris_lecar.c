@@ -25,7 +25,8 @@
 #include <arpra_ode.h>
 
 void debug (const arpra_mpfr x) {
-    mpfr_out_str(stderr, 10, 80, &x, MPFR_RNDN); fputs("\n", stderr);
+    mpfr_out_str(stderr, 10, 80, &x, MPFR_RNDN);
+    fputs("\n", stderr);
 }
 
 // General parameters
