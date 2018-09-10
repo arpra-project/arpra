@@ -223,7 +223,7 @@ static void dopri54_compute_constants (arpra_ode_stepper *stepper, const arpra_p
 
 static void dopri54_init (arpra_ode_stepper *stepper, arpra_ode_system *system)
 {
-    arpra_uint x_i, k_i, k_j;
+    arpra_uint x_idx, k_i, k_j;
     arpra_precision prec_x, prec_internal;
     dopri54_scratch *scratch;
 
@@ -237,13 +237,13 @@ static void dopri54_init (arpra_ode_stepper *stepper, arpra_ode_system *system)
 
     // Initialise scratch memory.
     prec_internal = arpra_get_internal_precision();
-    for (x_i = 0; x_i < system->dims; x_i++) {
-        prec_x = arpra_get_precision(&(system->x[x_i]));
+    for (x_idx = 0; x_idx < system->dims; x_idx++) {
+        prec_x = arpra_get_precision(&(system->x[x_idx]));
         for (k_i = 0; k_i < dopri54_stages; k_i++) {
-            arpra_init2(&(scratch->k[k_i][x_i]), prec_x);
+            arpra_init2(&(scratch->k[k_i][x_idx]), prec_x);
         }
-        arpra_init2(&(scratch->x_new_5[x_i]), prec_x);
-        arpra_init2(&(scratch->x_new_4[x_i]), prec_x);
+        arpra_init2(&(scratch->x_new_5[x_idx]), prec_x);
+        arpra_init2(&(scratch->x_new_4[x_idx]), prec_x);
     }
     for (k_i = 0; k_i < dopri54_stages; k_i++) {
         scratch->a[k_i] = &(scratch->a_[(k_i * (k_i - 1)) / 2]);
@@ -274,7 +274,7 @@ static void dopri54_init (arpra_ode_stepper *stepper, arpra_ode_system *system)
 
 static void dopri54_clear (arpra_ode_stepper *stepper)
 {
-    arpra_uint x_i, k_i, k_j;
+    arpra_uint x_idx, k_i, k_j;
     arpra_ode_system *system;
     dopri54_scratch *scratch;
 
@@ -282,12 +282,12 @@ static void dopri54_clear (arpra_ode_stepper *stepper)
     scratch = (dopri54_scratch *) stepper->scratch;
 
     // Clear scratch memory.
-    for (x_i = 0; x_i < system->dims; x_i++) {
+    for (x_idx = 0; x_idx < system->dims; x_idx++) {
         for (k_i = 0; k_i < dopri54_stages; k_i++) {
-            arpra_clear(&(scratch->k[k_i][x_i]));
+            arpra_clear(&(scratch->k[k_i][x_idx]));
         }
-        arpra_clear(&(scratch->x_new_5[x_i]));
-        arpra_clear(&(scratch->x_new_4[x_i]));
+        arpra_clear(&(scratch->x_new_5[x_idx]));
+        arpra_clear(&(scratch->x_new_4[x_idx]));
     }
     for (k_i = 0; k_i < dopri54_stages; k_i++) {
         for (k_j = 0; k_j < k_i; k_j++) {
@@ -315,9 +315,9 @@ static void dopri54_clear (arpra_ode_stepper *stepper)
 
 static void dopri54_step (arpra_ode_stepper *stepper, const arpra_range *h)
 {
-    arpra_uint x_i, k_i, k_j;
+    arpra_uint x_idx, k_i, k_j;
     arpra_precision prec_t, prec_x;
-    arpra_range *x_old, *x_new, *x_sum;
+    arpra_range *x_old, *x_sum;
     arpra_ode_system *system;
     dopri54_scratch *scratch;
 
@@ -326,13 +326,13 @@ static void dopri54_step (arpra_ode_stepper *stepper, const arpra_range *h)
 
     // Synchronise scratch precision and prepare step parameters.
     prec_t = arpra_get_precision(system->t);
-    for (x_i = 0; x_i < system->dims; x_i++) {
-        prec_x = arpra_get_precision(&(system->x[x_i]));
+    for (x_idx = 0; x_idx < system->dims; x_idx++) {
+        prec_x = arpra_get_precision(&(system->x[x_idx]));
         for (k_i = 0; k_i < dopri54_stages; k_i++) {
-            arpra_set_precision(&(scratch->k[k_i][x_i]), prec_x);
+            arpra_set_precision(&(scratch->k[k_i][x_idx]), prec_x);
         }
-        arpra_set_precision(&(scratch->x_new_5[x_i]), prec_x);
-        arpra_set_precision(&(scratch->x_new_4[x_i]), prec_x);
+        arpra_set_precision(&(scratch->x_new_5[x_idx]), prec_x);
+        arpra_set_precision(&(scratch->x_new_4[x_idx]), prec_x);
     }
     for (k_i = 0; k_i < dopri54_stages; k_i++) {
         for (k_j = 0; k_j < k_i; k_j++) {
@@ -354,40 +354,40 @@ static void dopri54_step (arpra_ode_stepper *stepper, const arpra_range *h)
         x_old = (k_i == 0) ? system->x : scratch->x_new_5;
 
         // x(t + c_i h) = x(t) + a_i0 h k[0] + ... + a_is h k[s]
-        for (x_i = 0; x_i < system->dims; x_i++) {
-            prec_x = arpra_get_precision(&(system->x[x_i]));
+        for (x_idx = 0; x_idx < system->dims; x_idx++) {
+            prec_x = arpra_get_precision(&(system->x[x_idx]));
             arpra_set_precision(&(scratch->temp_x), prec_x);
             for (k_j = 0; k_j < k_i; k_j++) {
                 x_sum = (k_j == 0) ? system->x : scratch->x_new_5;
-                arpra_mul(&(scratch->temp_x), &(scratch->ah[k_i][k_j]), &(scratch->k[k_j][x_i]));
-                arpra_add(&(scratch->x_new_5[x_i]), &(x_sum[x_i]), &(scratch->temp_x));
+                arpra_mul(&(scratch->temp_x), &(scratch->ah[k_i][k_j]), &(scratch->k[k_j][x_idx]));
+                arpra_add(&(scratch->x_new_5[x_idx]), &(x_sum[x_idx]), &(scratch->temp_x));
             }
         }
 
         // k[i] = f(t + c_i h, x(t) + a_i0 h k[0] + ... + a_is h k[s])
-        for (x_i = 0; x_i < system->dims; x_i++) {
+        for (x_idx = 0; x_idx < system->dims; x_idx++) {
             system->f(scratch->k[k_i],
                       &(scratch->temp_t[k_i]), x_old,
-                      x_i, system->params);
+                      x_idx, system->params);
         }
     }
 
     // Compute fourth-order approximation.
-    for (x_i = 0; x_i < system->dims; x_i++) {
-        prec_x = arpra_get_precision(&(system->x[x_i]));
+    for (x_idx = 0; x_idx < system->dims; x_idx++) {
+        prec_x = arpra_get_precision(&(system->x[x_idx]));
         arpra_set_precision(&(scratch->temp_x), prec_x);
         for (k_j = 0; k_j < dopri54_stages; k_j++) {
             x_sum = (k_j == 0) ? system->x : scratch->x_new_4;
-            arpra_mul(&(scratch->temp_x), &(scratch->bh_4[k_j]), &(scratch->k[k_j][x_i]));
-            arpra_add(&(scratch->x_new_4[x_i]), &(x_sum[x_i]), &(scratch->temp_x));
+            arpra_mul(&(scratch->temp_x), &(scratch->bh_4[k_j]), &(scratch->k[k_j][x_idx]));
+            arpra_add(&(scratch->x_new_4[x_idx]), &(x_sum[x_idx]), &(scratch->temp_x));
         }
     }
 
     // Advance system.
     arpra_add(system->t, system->t, h);
-    x_new = scratch->x_new_5;
-    scratch->x_new_5 = system->x;
-    system->x = x_new;
+    for (x_idx = 0; x_idx < system->dims; x_idx++) {
+        arpra_set(&(system->x[x_idx]), &(scratch->x_new_5[x_idx]));
+    }
 }
 
 static const arpra_ode_method dopri54 =

@@ -32,7 +32,7 @@ typedef struct euler_scratch_struct
 
 static void euler_init (arpra_ode_stepper *stepper, arpra_ode_system *system)
 {
-    arpra_uint x_i;
+    arpra_uint x_idx;
     arpra_precision prec_x, prec_internal;
     euler_scratch *scratch;
 
@@ -43,10 +43,10 @@ static void euler_init (arpra_ode_stepper *stepper, arpra_ode_system *system)
 
     // Initialise scratch memory.
     prec_internal = arpra_get_internal_precision();
-    for (x_i = 0; x_i < system->dims; x_i++) {
-        prec_x = arpra_get_precision(&(system->x[x_i]));
-        arpra_init2(&(scratch->k_0[x_i]), prec_x);
-        arpra_init2(&(scratch->x_new[x_i]), prec_x);
+    for (x_idx = 0; x_idx < system->dims; x_idx++) {
+        prec_x = arpra_get_precision(&(system->x[x_idx]));
+        arpra_init2(&(scratch->k_0[x_idx]), prec_x);
+        arpra_init2(&(scratch->x_new[x_idx]), prec_x);
     }
     arpra_init2(&(scratch->temp_x), prec_internal);
 
@@ -59,7 +59,7 @@ static void euler_init (arpra_ode_stepper *stepper, arpra_ode_system *system)
 
 static void euler_clear (arpra_ode_stepper *stepper)
 {
-    arpra_uint x_i;
+    arpra_uint x_idx;
     arpra_ode_system *system;
     euler_scratch *scratch;
 
@@ -67,9 +67,9 @@ static void euler_clear (arpra_ode_stepper *stepper)
     scratch = (euler_scratch *) stepper->scratch;
 
     // Clear scratch memory.
-    for (x_i = 0; x_i < system->dims; x_i++) {
-        arpra_clear(&(scratch->k_0[x_i]));
-        arpra_clear(&(scratch->x_new[x_i]));
+    for (x_idx = 0; x_idx < system->dims; x_idx++) {
+        arpra_clear(&(scratch->k_0[x_idx]));
+        arpra_clear(&(scratch->x_new[x_idx]));
     }
     arpra_clear(&(scratch->temp_x));
 
@@ -81,9 +81,8 @@ static void euler_clear (arpra_ode_stepper *stepper)
 
 static void euler_step (arpra_ode_stepper *stepper, const arpra_range *h)
 {
-    arpra_uint x_i;
+    arpra_uint x_idx;
     arpra_precision prec_x;
-    arpra_range *x_new;
     arpra_ode_system *system;
     euler_scratch *scratch;
 
@@ -91,32 +90,32 @@ static void euler_step (arpra_ode_stepper *stepper, const arpra_range *h)
     scratch = (euler_scratch *) stepper->scratch;
 
     // Synchronise scratch precision and prepare step parameters.
-    for (x_i = 0; x_i < system->dims; x_i++) {
-        prec_x = arpra_get_precision(&(system->x[x_i]));
-        arpra_set_precision(&(scratch->k_0[x_i]), prec_x);
-        arpra_set_precision(&(scratch->x_new[x_i]), prec_x);
+    for (x_idx = 0; x_idx < system->dims; x_idx++) {
+        prec_x = arpra_get_precision(&(system->x[x_idx]));
+        arpra_set_precision(&(scratch->k_0[x_idx]), prec_x);
+        arpra_set_precision(&(scratch->x_new[x_idx]), prec_x);
     }
 
     // k[0] = f(t, x(t))
-    for (x_i = 0; x_i < system->dims; x_i++) {
+    for (x_idx = 0; x_idx < system->dims; x_idx++) {
         system->f(scratch->k_0,
                   system->t, system->x,
-                  x_i, system->params);
+                  x_idx, system->params);
     }
 
     // x(t + h) = x(t) + h k[0]
-    for (x_i = 0; x_i < system->dims; x_i++) {
-        prec_x = arpra_get_precision(&(system->x[x_i]));
+    for (x_idx = 0; x_idx < system->dims; x_idx++) {
+        prec_x = arpra_get_precision(&(system->x[x_idx]));
         arpra_set_precision(&(scratch->temp_x), prec_x);
-        arpra_mul(&(scratch->temp_x), h, &(scratch->k_0[x_i]));
-        arpra_add(&(scratch->x_new[x_i]), &(system->x[x_i]), &(scratch->temp_x));
+        arpra_mul(&(scratch->temp_x), h, &(scratch->k_0[x_idx]));
+        arpra_add(&(scratch->x_new[x_idx]), &(system->x[x_idx]), &(scratch->temp_x));
     }
 
     // Advance system.
     arpra_add(system->t, system->t, h);
-    x_new = scratch->x_new;
-    scratch->x_new = system->x;
-    system->x = x_new;
+    for (x_idx = 0; x_idx < system->dims; x_idx++) {
+        arpra_set(&(system->x[x_idx]), &(scratch->x_new[x_idx]));
+    }
 }
 
 static const arpra_ode_method euler =

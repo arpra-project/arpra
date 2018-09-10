@@ -34,7 +34,7 @@ struct arpra_ode_system_struct
 {
     void (*f) (arpra_range *dxdt,
                const arpra_range *t, const arpra_range *x,
-               const arpra_uint x_i, const void *params);
+               const arpra_uint x_idx, const void *params);
     arpra_range *t;
     arpra_range *x;
     arpra_uint dims;
