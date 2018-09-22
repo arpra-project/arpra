@@ -366,7 +366,7 @@ static void dopri54_step (arpra_ode_stepper *stepper, const arpra_range *h)
 
         // k[i] = f(t + c_i h, x(t) + a_i0 h k[0] + ... + a_is h k[s])
         for (x_idx = 0; x_idx < system->dims; x_idx++) {
-            system->f(scratch->k[k_i],
+            system->f(&(scratch->k[k_i][x_idx]),
                       &(scratch->temp_t[k_i]), x_old,
                       x_idx, system->params);
         }
