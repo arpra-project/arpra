@@ -25,6 +25,11 @@
 #include <arpra_ode.h>
 
 /*
+ * Neuron variables
+ * ----------------
+ * N      Fraction of open K+ channels
+ * V      Membrane potential (mV)
+ *
  * Neuron parameters
  * -----------------
  * GL     Maximum leak conductance (mS/cm^2)
@@ -40,6 +45,11 @@
  * phi    (s^-1)
  * C      Membrane capacitance (uF/cm^2)
  *
+ * Synapse variables
+ * -----------------
+ * R      Neurotransmitter release
+ * S      Neurotransmitter binding
+ *
  * Synapse parameters
  * ------------------
  * GSyn   Maximum synapse conductance (mS/cm^2)
@@ -50,32 +60,20 @@
  * k      Negated steepness of activation function
  */
 
-
-
-
-// =========== DOCUMENT MODE VARIABLES ALSO
-
-// N: Fraction of open K+ channels
-// V: Membrane potential
-// R: Transmitter release
-// S: Transmitter binding
-
-
-
-
-
 // General parameters
 const double p_h0 = 0.5;
 const double p_t0 = 0.0;
 const double p_reduce_ratio = 0.3;
 const arpra_precision p_prec = 53;
-const arpra_uint p_sim_steps = 10;
+const arpra_uint p_sim_steps = 100;
 const arpra_uint p_report_step = 20;
 const arpra_uint p_reduce_step = 50;
 
 // Poisson input parameters
 const arpra_uint p_in1_size = 5;
+const double p_in1_rate = 0.0;
 const arpra_uint p_in2_size = 0;
+const double p_in2_rate = 0.0;
 const double p_in_V_lo = -60.0;
 const double p_in_V_hi = 20.0;
 
@@ -135,11 +133,11 @@ const double p_syn_inh_k = -1.0E6;
 
 
 int *in1, *in2;
+arpra_mpfr in1_p0, in2_p0, temp_r;
 arpra_range in_V_lo, in_V_hi, GL, VL, GCa, VCa, GK, VK, V1, V2, V3, V4,
-    phi, C, *syn_exc_GSyn, syn_exc_VSyn, syn_exc_thr, syn_exc_a,
-    syn_exc_b, syn_exc_k, *syn_inh_GSyn, syn_inh_VSyn, syn_inh_thr,
-    syn_inh_a, syn_inh_b, syn_inh_k, one, two, neg_two, temp1, temp2,
-    M_ss, N_ss, *I1, *I2;
+    phi, C, *syn_exc_GSyn, syn_exc_VSyn, syn_exc_thr, syn_exc_a, syn_exc_b,
+    syn_exc_k, *syn_inh_GSyn, syn_inh_VSyn, syn_inh_thr, syn_inh_a, syn_inh_b,
+    syn_inh_k, one, two, neg_two, temp1, temp2, M_ss, N_ss, *I1, *I2;
 
 // State memory offsets
 const arpra_uint nrn1_N_offset = 0;
@@ -435,6 +433,8 @@ int main (int argc, char *argv[])
 {
     arpra_range h, t, *x;
     arpra_uint *reduce_epoch;
+    gmp_randstate_t rng;
+    struct timespec sys_t;
     clock_t run_time;
     arpra_uint i, j;
 
@@ -469,6 +469,8 @@ int main (int argc, char *argv[])
     }
 
     // Initialise Poisson input parameters
+    mpfr_init2(&in1_p0, p_prec);
+    mpfr_init2(&in2_p0, p_prec);
     arpra_init2(&in_V_lo, p_prec);
     arpra_init2(&in_V_hi, p_prec);
 
@@ -512,6 +514,7 @@ int main (int argc, char *argv[])
     arpra_init2(&neg_two, p_prec);
 
     // Initialise scratch space
+    mpfr_init2(&temp_r, p_prec);
     arpra_init2(&temp1, p_prec);
     arpra_init2(&temp2, p_prec);
     arpra_init2(&M_ss, p_prec);
@@ -544,6 +547,10 @@ int main (int argc, char *argv[])
     }
 
     // Set Poisson input parameters
+    mpfr_set_d(&in1_p0, -p_in1_rate, MPFR_RNDN);
+    mpfr_exp(&in1_p0, &in1_p0, MPFR_RNDN);
+    mpfr_set_d(&in2_p0, -p_in2_rate, MPFR_RNDN);
+    mpfr_exp(&in2_p0, &in2_p0, MPFR_RNDN);
     arpra_set_d(&in_V_lo, p_in_V_lo);
     arpra_set_d(&in_V_hi, p_in_V_hi);
 
@@ -639,6 +646,11 @@ int main (int argc, char *argv[])
     //FILE **f_syn_inh_S_d = malloc(p_syn_inh_size * sizeof(FILE *));
     //file_init("syn_inh", "S", p_syn_inh_size, f_syn_inh_S_c, f_syn_inh_S_r, f_syn_inh_S_n, f_syn_inh_S_s, f_syn_inh_S_d);
 
+    // Initialise RNG
+    gmp_randinit_default(rng);
+    clock_gettime(CLOCK_REALTIME, &sys_t);
+    gmp_randseed_ui(rng, sys_t.tv_sec + sys_t.tv_nsec);
+
     // ODE system
     arpra_ode_system ode_system;
     ode_system.f = dxdt;
@@ -668,20 +680,15 @@ int main (int argc, char *argv[])
             reduce_epoch[j] = ode_system.x[j].nTerms;
         }
 
-
-
-
-        // ===== COMPUTE POISSON IN1 AND IN2
+        // Event(s) occur if urandom >= e^-rate
         for (j = 0; j < p_in1_size; j++) {
-            in1[j] = 1;
+            mpfr_urandom(&temp_r, rng, MPFR_RNDN);
+            in1[j] = mpfr_greaterequal_p(&temp_r, &in1_p0);
         }
         for (j = 0; j < p_in2_size; j++) {
-            in2[j] = 0;
+            mpfr_urandom(&temp_r, rng, MPFR_RNDN);
+            in2[j] = mpfr_greaterequal_p(&temp_r, &in2_p0);
         }
-
-
-
-
 
         arpra_ode_stepper_step(&ode_stepper, &h);
 
@@ -733,6 +740,8 @@ int main (int argc, char *argv[])
     }
 
     // Clear Poisson input parameters
+    mpfr_clear(&in1_p0);
+    mpfr_clear(&in2_p0);
     arpra_clear(&in_V_lo);
     arpra_clear(&in_V_hi);
 
@@ -776,6 +785,7 @@ int main (int argc, char *argv[])
     arpra_clear(&neg_two);
 
     // Clear scratch space
+    mpfr_clear(&temp_r);
     arpra_clear(&temp1);
     arpra_clear(&temp2);
     arpra_clear(&M_ss);
@@ -851,7 +861,8 @@ int main (int argc, char *argv[])
     //free(f_syn_inh_S_d);
 
     arpra_ode_stepper_clear(&ode_stepper);
-
+    gmp_randclear(rng);
     mpfr_free_cache();
+
     return 0;
 }
