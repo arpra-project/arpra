@@ -25,6 +25,11 @@
 #include <arpra_ode.h>
 
 /*
+ * Global variables
+ * ----------------
+ * h      Step size (msec)
+ * t      Current time (msec)
+ *
  * Neuron variables
  * ----------------
  * N      Fraction of open K+ channels
@@ -61,19 +66,19 @@
  */
 
 // General parameters
-const double p_h0 = 0.5;
+const double p_h = 0.5;
 const double p_t0 = 0.0;
 const double p_reduce_ratio = 0.3;
 const arpra_precision p_prec = 53;
-const arpra_uint p_sim_steps = 100;
+const arpra_uint p_sim_steps = 5000;
 const arpra_uint p_report_step = 20;
 const arpra_uint p_reduce_step = 50;
 
 // Poisson input parameters
 const arpra_uint p_in1_size = 5;
-const double p_in1_rate = 0.0;
+const double p_in1_rate = 1.0 / 200.0;
 const arpra_uint p_in2_size = 0;
-const double p_in2_rate = 0.0;
+const double p_in2_rate = 1.0 / 200.0;
 const double p_in_V_lo = -60.0;
 const double p_in_V_hi = 20.0;
 
@@ -111,7 +116,7 @@ const double p_C = 20.0;
 const arpra_uint p_syn_exc_size = p_nrn1_size * p_nrn1_size;
 const double p_syn_exc_R0 = 0.0;
 const double p_syn_exc_S0 = 0.0;
-const double p_syn_exc_GSyn = 0.1;
+const double p_syn_exc_GSyn = 40.0;
 const double p_syn_exc_VSyn = 0.0;
 const double p_syn_exc_thr = -50.0;
 const double p_syn_exc_a = 0.25; // in [1/10, 1/2]
@@ -122,7 +127,7 @@ const double p_syn_exc_k = -1.0E6;
 const arpra_uint p_syn_inh_size = 0;
 const double p_syn_inh_R0 = 0.0;
 const double p_syn_inh_S0 = 0.0;
-const double p_syn_inh_GSyn = 0.1;
+const double p_syn_inh_GSyn = 50.0;
 const double p_syn_inh_VSyn = -80.0;
 const double p_syn_inh_thr = -50.0;
 const double p_syn_inh_a = 0.075; // in [1/20, 1/10]
@@ -320,33 +325,31 @@ void dxdt (arpra_range *out,
 
 
         // ======== TEMP DEBUG ==========
-        // NOTE: bifurcation at sum(I) = 80.0
-        //arpra_set_d(out, 80.0);
-        if (idx == 0) {            
-            //fprintf(stderr, "VSyn: "); debug(VSyn->centre);
-            //fprintf(stderr, "V - VSyn: "); debug(temp1.centre);
+        //arpra_set_d(out, 80.0); // bifurcation at sum(I) = 80.0
+        if (idx == 0) {
+            //fprintf(stderr, "VSyn - V: "); debug(temp1.centre);
             //fprintf(stderr, "I[0]: "); debug(I[0].centre);
-            //fprintf(stderr, "sum(I): "); debug(out->centre);
+            //fprintf(stderr, "sum(I[]): "); debug(out->centre);
         }
 
 
 
         // Leak current
-        arpra_sub(&temp1, &VL, V);
+        arpra_sub(&temp1, V, &VL);
         arpra_mul(&temp1, &temp1, &GL);
-        arpra_add(out, out, &temp1);
+        arpra_sub(out, out, &temp1);
 
         // Ca++ current
-        arpra_sub(&temp1, &VCa, V);
+        arpra_sub(&temp1, V, &VCa);
         arpra_mul(&temp1, &temp1, &GCa);
         arpra_mul(&temp1, &temp1, &M_ss);
-        arpra_add(out, out, &temp1);
+        arpra_sub(out, out, &temp1);
 
         // K+ current
-        arpra_sub(&temp1, &VK, V);
+        arpra_sub(&temp1, V, &VK);
         arpra_mul(&temp1, &temp1, &GK);
         arpra_mul(&temp1, &temp1, N);
-        arpra_add(out, out, &temp1);
+        arpra_sub(out, out, &temp1);
 
         // delta of membrane potential
         // dV/dt = (I + GL (VL - V) + GCa M (VCa - V) + GK N (VK - V)) / C
@@ -527,7 +530,7 @@ int main (int argc, char *argv[])
     }
 
     // Set system state
-    arpra_set_d(&h, p_h0);
+    arpra_set_d(&h, p_h);
     arpra_set_d(&t, p_t0);
     for (i = 0; i < p_nrn1_size; i++) {
         arpra_set_d(&(nrn1_N[i]), p_nrn1_N0);
@@ -547,9 +550,9 @@ int main (int argc, char *argv[])
     }
 
     // Set Poisson input parameters
-    mpfr_set_d(&in1_p0, -p_in1_rate, MPFR_RNDN);
+    mpfr_set_d(&in1_p0, -p_in1_rate * p_h, MPFR_RNDN);
     mpfr_exp(&in1_p0, &in1_p0, MPFR_RNDN);
-    mpfr_set_d(&in2_p0, -p_in2_rate, MPFR_RNDN);
+    mpfr_set_d(&in2_p0, -p_in2_rate * p_h, MPFR_RNDN);
     mpfr_exp(&in2_p0, &in2_p0, MPFR_RNDN);
     arpra_set_d(&in_V_lo, p_in_V_lo);
     arpra_set_d(&in_V_hi, p_in_V_hi);
@@ -681,10 +684,22 @@ int main (int argc, char *argv[])
         }
 
         // Event(s) occur if urandom >= e^-rate
+
+
+        fprintf(stderr, "    ");
+
         for (j = 0; j < p_in1_size; j++) {
             mpfr_urandom(&temp_r, rng, MPFR_RNDN);
             in1[j] = mpfr_greaterequal_p(&temp_r, &in1_p0);
+
+            fprintf(stderr, "%s ", (in1[j] ? "[1]" : " 0 "));
+
         }
+
+        fprintf(stderr, "\n");
+
+
+
         for (j = 0; j < p_in2_size; j++) {
             mpfr_urandom(&temp_r, rng, MPFR_RNDN);
             in2[j] = mpfr_greaterequal_p(&temp_r, &in2_p0);
