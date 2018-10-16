@@ -27,7 +27,9 @@ def arpra_joint_range (x, y, i_start, i_stop):
          open(y + '_c.dat', 'r') as yc_file, \
          open(y + '_r.dat', 'r') as yr_file, \
          open(y + '_s.dat', 'r') as ys_file, \
-         open(y + '_d.dat', 'r') as yd_file:
+         open(y + '_d.dat', 'r') as yd_file, \
+         open('time_000_c.dat', 'r') as tc_file, \
+         open('time_000_r.dat', 'r') as tr_file:
 
         for i in range(i_start):
             xc_file.readline();
@@ -38,6 +40,8 @@ def arpra_joint_range (x, y, i_start, i_stop):
             yr_file.readline();
             ys_file.readline();
             yd_file.readline();
+            tc_file.readline();
+            tr_file.readline();
 
         xc = np.array([float(xc_file.readline()) for i in range(i_start, i_stop)])
         xr = np.array([float(xr_file.readline()) for i in range(i_start, i_stop)])
@@ -46,6 +50,9 @@ def arpra_joint_range (x, y, i_start, i_stop):
         yc = np.array([float(yc_file.readline()) for i in range(i_start, i_stop)])
         yr = np.array([float(yr_file.readline()) for i in range(i_start, i_stop)])
         ylo = yc - yr; yhi = yc + yr;
+
+        tc = np.array([float(tc_file.readline()) for i in range(i_start, i_stop)])
+        tr = np.array([float(tr_file.readline()) for i in range(i_start, i_stop)])
 
         if debug:
             # Plot trajectory
@@ -56,15 +63,15 @@ def arpra_joint_range (x, y, i_start, i_stop):
 
             # Plot through time
             ax2 = fig.add_subplot(222)
-            ax2.plot(range(i_start, i_stop), xlo, color='b')
-            ax2.plot(range(i_start, i_stop), xhi, color='b')
-            ax2.plot(range(i_start, i_stop), xc, color='r', label=x)
+            ax2.plot(tc, xlo, color='b')
+            ax2.plot(tc, xhi, color='b')
+            ax2.plot(tc, xc, color='r', label=x)
             ax2.set_xlabel('time (msec)')
             ax2.set_ylabel(x)
             ax3 = fig.add_subplot(224, sharex=ax2)
-            ax3.plot(range(i_start, i_stop), ylo, color='b')
-            ax3.plot(range(i_start, i_stop), yhi, color='b')
-            ax3.plot(range(i_start, i_stop), yc, color='r', label=y)
+            ax3.plot(tc, ylo, color='b')
+            ax3.plot(tc, yhi, color='b')
+            ax3.plot(tc, yc, color='r', label=y)
             ax3.set_xlabel('time (msec)')
             ax3.set_ylabel(y)
 
