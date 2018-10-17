@@ -27,9 +27,9 @@ static arpra_uint buffer_mpfr_ptr_size = 0;
 
 arpra_mpfr **arpra_helper_buffer_mpfr_ptr (arpra_uint n)
 {
-    // Allocate or resize buffer, as required.
+    // Allocate or resize, as required.
     if (buffer_mpfr_ptr_size < n) {
-        buffer_mpfr_ptr_size = ceil(n / ARPRA_BUFFER_RESIZE_FACTOR);
+        buffer_mpfr_ptr_size = ceil((double) n / (double) ARPRA_BUFFER_RESIZE_FACTOR);
         buffer_mpfr_ptr_size *= ARPRA_BUFFER_RESIZE_FACTOR;
         buffer_mpfr_ptr = realloc(buffer_mpfr_ptr, buffer_mpfr_ptr_size * sizeof(arpra_mpfr *));
     }
@@ -43,9 +43,9 @@ static arpra_uint buffer_mpfr_size = 0;
 
 arpra_mpfr *arpra_helper_buffer_mpfr (arpra_uint n)
 {
-    // Allocate or resize buffer, as required.
+    // Allocate or resize, as required.
     if (buffer_mpfr_size < n) {
-        buffer_mpfr_size = ceil(n / ARPRA_BUFFER_RESIZE_FACTOR);
+        buffer_mpfr_size = ceil((double) n / (double) ARPRA_BUFFER_RESIZE_FACTOR);
         buffer_mpfr_size *= ARPRA_BUFFER_RESIZE_FACTOR;
         buffer_mpfr = realloc(buffer_mpfr, buffer_mpfr_size * sizeof(arpra_mpfr));
     }
