@@ -23,9 +23,8 @@
 
 /*
  * This function assumes that rounding error has occured - i.e. an MPFR call
- * has returned nonzero. If x == 0, then nextabove(x) is used instead of
- * 1/2 ULP(x). This ensures that error is always recorded, even when x was
- * flushed to zero.
+ * has returned nonzero. If x = 0, then nextabove(0) is returned. Otherwise
+ * 1/2 ULP(x) is returned.
  */
 
 void arpra_helper_error (arpra_mpfr *error, const arpra_mpfr *x)
@@ -42,6 +41,7 @@ void arpra_helper_error (arpra_mpfr *error, const arpra_mpfr *x)
         // error = 1/2 ULP(x) = 2^(e-p-1)
         p = mpfr_get_prec(x);
         e = mpfr_get_exp(x);
+        // Power - 1, since MPFR significands are in [0.5, 1).
         mpfr_set_si_2exp(error, 1, (e - p - 1), MPFR_RNDU);
     }
 }
