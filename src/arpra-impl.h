@@ -42,7 +42,7 @@
 #define ARPRA_DEFAULT_INTERNAL_PRECISION 128
 
 // Temp buffers.
-#define ARPRA_BUFFER_SIZE_FACTOR 256
+#define ARPRA_BUFFER_RESIZE_FACTOR 256
 
 /*
  * If ARPRA_TIGHT_MUL is defined, then the linear approximation of the quadratic term of
@@ -59,11 +59,12 @@
 #define ARPRA_TIGHT_MUL
 
 // Internal helper functions.
-void arpra_helper_radius (arpra_range *z);
 void arpra_helper_error (arpra_mpfr *error, const arpra_mpfr *x);
 int arpra_helper_term (arpra_mpfr *z, const arpra_mpfr *x, const arpra_mpfr *y,
                        const arpra_mpfr *alpha, const arpra_mpfr *beta,
                        const arpra_mpfr *gamma);
+int arpra_helper_mpfr_sumabs (arpra_mpfr *z, const arpra_mpfr *x,
+                              const arpra_uint n, const mpfr_rnd_t rnd);
 arpra_mpfr **arpra_helper_buffer_mpfr_ptr (arpra_uint n);
 arpra_mpfr *arpra_helper_buffer_mpfr (arpra_uint n);
 

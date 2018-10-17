@@ -713,7 +713,7 @@ int main (int argc, char *argv[])
             mpfr_urandom(&temp_r, rng, MPFR_RNDN);
             in1[j] = mpfr_greaterequal_p(&temp_r, &in1_p0);
 
-            fprintf(stderr, "%s", (in1[j] ? "\x1B[31mo\x1B[0m" : "o"));
+            fprintf(stderr, "%s", (in1[j] ? "\x1B[31m\xE2\x96\xA3\x1B[0m" : "\xE2\x96\xA3"));
         }
 
         fprintf(stderr, "\n");
@@ -722,7 +722,7 @@ int main (int argc, char *argv[])
             mpfr_urandom(&temp_r, rng, MPFR_RNDN);
             in2[j] = mpfr_greaterequal_p(&temp_r, &in2_p0);
 
-            fprintf(stderr, "%s", (in2[j] ? "\x1B[31mo\x1B[0m" : "o"));
+            fprintf(stderr, "%s", (in2[j] ? "\x1B[31m\xE2\x96\xA3\x1B[0m" : "\xE2\x96\xA3"));
         }
 
 
