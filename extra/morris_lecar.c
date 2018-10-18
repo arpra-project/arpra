@@ -22,7 +22,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
-#include <arpra_ode.h>
+//#include <arpra_ode.h>
+#include <src/arpra-impl.h>
 
 /*
  * Global variables
@@ -145,9 +146,9 @@ const double p_syn_inh_k = 1.0E6;
 int *in1, *in2;
 arpra_mpfr in1_p0, in2_p0, temp_r;
 arpra_range GL, VL, GCa, VCa, GK, VK, V1, V2, V3, V4, phi, C, *syn_exc_GSyn,
-    syn_exc_VSyn, syn_exc_thr, syn_exc_a, syn_exc_b, syn_exc_k, *syn_inh_GSyn,
-    syn_inh_VSyn, syn_inh_thr, syn_inh_a, syn_inh_b, syn_inh_k, one, two, neg_two,
-    temp1, temp2, M_ss, N_ss, *I1, *I2, in1_V_lo, in1_V_hi, in2_V_lo, in2_V_hi;
+            syn_exc_VSyn, syn_exc_thr, syn_exc_a, syn_exc_b, syn_exc_k, *syn_inh_GSyn,
+            syn_inh_VSyn, syn_inh_thr, syn_inh_a, syn_inh_b, syn_inh_k, one, two, neg_two,
+            temp1, temp2, M_ss, N_ss, *I1, *I2, in1_V_lo, in1_V_hi, in2_V_lo, in2_V_hi;
 
 // State memory offsets
 const arpra_uint nrn1_N_offset = 0;
@@ -327,13 +328,16 @@ void dxdt (arpra_range *out,
         arpra_sum(out, I, pre_size);
 
 
+        //arpra_helper_mpfr_sumabs(&temp1, I, pre_size, MPFR_RNDU);
+
 
 
         // ======== TEMP DEBUG ==========
         //arpra_set_d(out, 80.0); // bifurcation at sum(I) = 80.0
         if (idx == 0) {
             //fprintf(stderr, "I[%u]: ", idx); debug(I[idx].centre);
-            fprintf(stderr, "sum(I): "); debug(out->centre);
+            fprintf(stderr, "sum(I): ");
+            debug(out->centre);
         }
 
 

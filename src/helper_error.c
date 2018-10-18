@@ -22,9 +22,9 @@
 #include "arpra-impl.h"
 
 /*
- * This function assumes that rounding error has occured - i.e. an MPFR call
- * has returned nonzero. If x = 0, then nextabove(0) is returned. Otherwise
- * 1/2 ULP(x) is returned.
+ * This function assumes that x is inexact - i.e. the last MPFR function
+ * of x returned nonzero. If x DID NOT underflow, then error is set to
+ * 1/2 ULP(x). If x DID underflow, then error is set to nextabove(0).
  */
 
 void arpra_helper_error (arpra_mpfr *error, const arpra_mpfr *x)
