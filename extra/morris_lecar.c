@@ -22,8 +22,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
-//#include <arpra_ode.h>
-#include <src/arpra-impl.h>
+#include <arpra_ode.h>
 
 /*
  * Global variables
@@ -326,9 +325,8 @@ void dxdt (arpra_range *out,
             arpra_mul(&(I[i]), &(I[i]), &(S[i]));
         }
         arpra_sum(out, I, pre_size);
+        //arpra_sum_recursive(out, I, pre_size);
 
-
-        //arpra_helper_mpfr_sumabs(&temp1, I, pre_size, MPFR_RNDU);
 
 
 

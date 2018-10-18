@@ -21,7 +21,7 @@
 
 #include "arpra-impl.h"
 
-int arpra_helper_mpfr_sum (arpra_mpfr *z, const arpra_mpfr *x,
+int arpra_helper_mpfr_sum (arpra_mpfr *z, arpra_mpfr *x,
                            const arpra_uint n, const mpfr_rnd_t rnd)
 {
     arpra_mpfr **buffer_mpfr_ptr;
@@ -37,7 +37,7 @@ int arpra_helper_mpfr_sum (arpra_mpfr *z, const arpra_mpfr *x,
     return mpfr_sum(z, buffer_mpfr_ptr, n, rnd);
 }
 
-int arpra_helper_mpfr_sumabs (arpra_mpfr *z, const arpra_mpfr *x,
+int arpra_helper_mpfr_sumabs (arpra_mpfr *z, arpra_mpfr *x,
                               const arpra_uint n, const mpfr_rnd_t rnd)
 {
     arpra_mpfr *buffer_mpfr;
