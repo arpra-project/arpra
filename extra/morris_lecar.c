@@ -333,9 +333,11 @@ void dxdt (arpra_range *out,
         // ======== TEMP DEBUG ==========
         //arpra_set_d(out, 80.0); // bifurcation at sum(I) = 80.0
         if (idx == 0) {
-            //fprintf(stderr, "I[%u]: ", idx); debug(I[idx].centre);
-            fprintf(stderr, "sum(I): ");
-            debug(out->centre);
+            //fprintf(stderr, "sum(I): "); debug(out->centre);
+            //fprintf(stderr, "I[0]: "); debug(I[0].centre);
+            for (i = 0; i < pre_size; i++) {
+                //fprintf(stderr, "I[%u]: ", i); debug(I[i].centre);
+            }
         }
 
 
