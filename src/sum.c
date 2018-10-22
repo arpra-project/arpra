@@ -21,7 +21,7 @@
 
 #include "arpra-impl.h"
 
-void arpra_sum (arpra_range *z, arpra_range *x, const arpra_uint n)
+void arpra_sum_exact (arpra_range *z, arpra_range *x, const arpra_uint n)
 {
     arpra_uint i, j;
     arpra_uint xSymbol, zTerm;
@@ -188,10 +188,6 @@ void arpra_sum (arpra_range *z, arpra_range *x, const arpra_uint n)
     free(summands);
 }
 
-
-
-
-
 void arpra_sum_recursive (arpra_range *z, arpra_range *x, const arpra_uint n)
 {
     arpra_uint i, j;
@@ -333,30 +329,30 @@ void arpra_sum_recursive (arpra_range *z, arpra_range *x, const arpra_uint n)
      * BIT Numer Math (2012) 52:201-220.
      */
 
-    // sumabs(x)
-    arpra_mpfr *buffer_mpfr;
-    buffer_mpfr = arpra_helper_buffer_mpfr(n);
+    // Compute |x|.
+    arpra_mpfr *sum_error;
+    sum_error = arpra_helper_buffer_mpfr(n);
     for (i = 0; i < n; i++) {
-        mpfr_init2(&(buffer_mpfr[i]), prec_internal);
+        mpfr_init2(&(sum_error[i]), prec_internal);
 
         if (mpfr_sgn(&(x->centre)) >= 0) {
-            mpfr_add(&(buffer_mpfr[i]), &(x->centre), &(x->radius), MPFR_RNDU);
+            mpfr_add(&(sum_error[i]), &(x->centre), &(x->radius), MPFR_RNDU);
         }
         else {
-            mpfr_sub(&(buffer_mpfr[i]), &(x->centre), &(x->radius), MPFR_RNDD);
-            mpfr_abs(&(buffer_mpfr[i]), &(buffer_mpfr[i]), MPFR_RNDU);
+            mpfr_sub(&(sum_error[i]), &(x->centre), &(x->radius), MPFR_RNDD);
+            mpfr_abs(&(sum_error[i]), &(sum_error[i]), MPFR_RNDU);
         }
     }
-    arpra_helper_mpfr_sum(&(buffer_mpfr[0]), buffer_mpfr, n, MPFR_RNDU);
 
-    // (n - 1) u sumabs(x)
+    // Compute error(sum(x)) = (n - 1) u sum(|x|).
     mpfr_set_si_2exp(&temp, 1, -prec, MPFR_RNDU);
     mpfr_mul_ui(&temp, &temp, (n - 1), MPFR_RNDU);
-    mpfr_mul(&temp, &temp, &(buffer_mpfr[0]), MPFR_RNDU);
-    mpfr_add(&error, &error, &temp, MPFR_RNDU);
+    arpra_helper_mpfr_sum(&(sum_error[0]), sum_error, n, MPFR_RNDU);
+    mpfr_mul(&(sum_error[0]), &(sum_error[0]), &temp, MPFR_RNDU);
+    mpfr_add(&error, &error, &(sum_error[0]), MPFR_RNDU);
 
     for (i = 0; i < n; i++) {
-        mpfr_clear(&(buffer_mpfr[i]));
+        mpfr_clear(&(sum_error[i]));
     }
 
     /*

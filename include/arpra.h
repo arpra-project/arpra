@@ -85,7 +85,8 @@ void arpra_affine_2 (arpra_range *z, const arpra_range *x, const arpra_range *y,
 void arpra_add (arpra_range *z, const arpra_range *x, const arpra_range *y);
 void arpra_sub (arpra_range *z, const arpra_range *x, const arpra_range *y);
 void arpra_neg (arpra_range *z, const arpra_range *x);
-void arpra_sum (arpra_range *z, arpra_range *x, const arpra_uint n);
+void arpra_sum_exact (arpra_range *z, arpra_range *x, const arpra_uint n);
+void arpra_sum_recursive (arpra_range *z, arpra_range *x, const arpra_uint n);
 
 // Non-affine operations.
 void arpra_mul (arpra_range *z, const arpra_range *x, const arpra_range *y);
