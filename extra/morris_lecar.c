@@ -80,7 +80,7 @@ const double p_in1_freq = 5.0;
 const double p_in1_V_lo = -60.0;
 const double p_in1_V_hi = 20.0;
 
-// Poisson input parameters (group 1)
+// Poisson input parameters (group 2)
 const arpra_uint p_in2_size = 0;
 const double p_in2_freq = 5.0;
 const double p_in2_V_lo = -60.0;
@@ -175,7 +175,6 @@ void debug (const arpra_mpfr x) {
     mpfr_out_str(stderr, 10, 80, &x, MPFR_RNDN);
     fputs("\n", stderr);
 }
-
 
 void file_init (char *grp, arpra_uint grp_size,
                 FILE **c, FILE **r, FILE **n, FILE **s, FILE **d)
@@ -324,8 +323,8 @@ void dxdt (arpra_range *out,
             arpra_mul(&(I[i]), &temp1, &(GSyn[i]));
             arpra_mul(&(I[i]), &(I[i]), &(S[i]));
         }
-        arpra_sum(out, I, pre_size);
-        //arpra_sum_recursive(out, I, pre_size);
+        arpra_sum_recursive(out, I, pre_size);
+        //arpra_sum_exact(out, I, pre_size);
 
 
 
@@ -786,7 +785,7 @@ int main (int argc, char *argv[])
     arpra_clear(&in1_V_lo);
     arpra_clear(&in1_V_hi);
 
-    // Clear Poisson input parameters (group 1)
+    // Clear Poisson input parameters (group 2)
     mpfr_clear(&in2_p0);
     arpra_clear(&in2_V_lo);
     arpra_clear(&in2_V_hi);

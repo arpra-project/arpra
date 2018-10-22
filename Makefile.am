@@ -84,10 +84,11 @@ tests_t_log_SOURCES = tests/t_log.c
 TESTS = $(check_PROGRAMS)
 
 # Extra programs
-EXTRA_PROGRAMS = extra/morris_lecar extra/morris_lecar_mpfr
+EXTRA_PROGRAMS = extra/morris_lecar extra/morris_lecar_mpfr extra/morris_lecar_mpfi
 extra_morris_lecar_LDADD = lib/libarpra.la
 extra_morris_lecar_SOURCES = extra/morris_lecar.c
 extra_morris_lecar_mpfr_SOURCES = extra/morris_lecar_mpfr.c
+extra_morris_lecar_mpfi_SOURCES = extra/morris_lecar_mpfi.c
 
 # Documentation
 info_TEXINFOS = doc/arpra.texi
