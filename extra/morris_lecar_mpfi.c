@@ -142,13 +142,15 @@ const double p_syn_inh_k = 1.0E6;
 
 
 int *in1, *in2;
-mpfr_t temp_r, temp_error, in1_p0, in2_p0;
+mpfr_t rand_f, temp_error, in1_p0, in2_p0;
 mpfr_ptr temp_sum_error1, *temp_sum_error1_ptr, temp_sum_error2, *temp_sum_error2_ptr;
 mpfi_t GL, VL, GCa, VCa, GK, VK, V1, V2, V3, V4, phi, C, syn_exc_VSyn, syn_exc_thr,
        syn_exc_a, syn_exc_b, syn_exc_k, syn_inh_VSyn, syn_inh_thr, syn_inh_a,
        syn_inh_b, syn_inh_k, one, two, neg_two, temp_sum, temp1, temp2, M_ss, N_ss,
        in1_V_lo, in1_V_hi, in2_V_lo, in2_V_hi;
 mpfi_ptr syn_exc_GSyn, syn_inh_GSyn, I1, I2;
+gmp_randstate_t rng_f;
+unsigned long rng_f_seed;
 
 // System state variables
 mpfi_ptr nrn1_N, nrn2_N, nrn1_V, nrn2_V, syn_exc_R, syn_inh_R, syn_exc_S, syn_inh_S;
@@ -429,8 +431,6 @@ void dSdt (const unsigned long idx, int grp)
 int main (int argc, char *argv[])
 {
     mpfi_t h, t;
-    gmp_randstate_t rng;
-    unsigned long rng_seed;
     struct timespec sys_t;
     clock_t run_time;
     unsigned long i, j;
@@ -541,7 +541,7 @@ int main (int argc, char *argv[])
     mpfi_init2(neg_two, p_prec);
 
     // Initialise scratch space
-    mpfr_init2(temp_r, p_prec);
+    mpfr_init2(rand_f, p_prec);
     mpfr_init2(temp_error, p_error_prec);
     mpfi_init2(temp_sum, p_error_prec);
     mpfi_init2(temp1, p_prec);
@@ -657,12 +657,12 @@ int main (int argc, char *argv[])
     //file_init("syn_inh_S", p_syn_inh_size, f_syn_inh_S);
 
     // Initialise RNG
-    gmp_randinit_default(rng);
+    gmp_randinit_default(rng_f);
     clock_gettime(CLOCK_REALTIME, &sys_t);
-    //rng_seed = 707135875931353ul;
-    rng_seed = sys_t.tv_sec + sys_t.tv_nsec;
-    gmp_randseed_ui(rng, rng_seed);
-    printf("GMP rand seed: %lu\n", rng_seed);
+    //rng_f_seed = 707135875931353ul;
+    rng_f_seed = sys_t.tv_sec + sys_t.tv_nsec;
+    gmp_randseed_ui(rng_f, rng_f_seed);
+    printf("GMP rand seed: %lu\n", rng_f_seed);
 
 
     // Begin simulation loop
@@ -675,20 +675,17 @@ int main (int argc, char *argv[])
 
         // Event(s) occur if urandom >= e^-rate
         for (j = 0; j < p_in1_size; j++) {
-            mpfr_urandom(temp_r, rng, MPFR_RNDN);
-            in1[j] = mpfr_greaterequal_p(temp_r, in1_p0);
-
+            mpfr_urandom(rand_f, rng_f, MPFR_RNDN);
+            in1[j] = mpfr_greaterequal_p(rand_f, in1_p0);
             fprintf(stderr, "%s", (in1[j] ? "\x1B[31m\xE2\x96\xA3\x1B[0m" : "\xE2\x96\xA3"));
         }
-
-        fprintf(stderr, "\n");
-
+        fprintf(stderr, "  ");
         for (j = 0; j < p_in2_size; j++) {
-            mpfr_urandom(temp_r, rng, MPFR_RNDN);
-            in2[j] = mpfr_greaterequal_p(temp_r, in2_p0);
-
+            mpfr_urandom(rand_f, rng_f, MPFR_RNDN);
+            in2[j] = mpfr_greaterequal_p(rand_f, in2_p0);
             fprintf(stderr, "%s", (in2[j] ? "\x1B[31m\xE2\x96\xA3\x1B[0m" : "\xE2\x96\xA3"));
         }
+        fprintf(stderr, "\n");
 
         // Compute derivatives
         for (j = 0; j < p_nrn1_size; j++) {
@@ -843,7 +840,7 @@ int main (int argc, char *argv[])
     mpfi_clear(neg_two);
 
     // Clear scratch space
-    mpfr_clear(temp_r);
+    mpfr_clear(rand_f);
     mpfr_clear(temp_error);
     mpfi_clear(temp_sum);
     mpfi_clear(temp1);
@@ -903,7 +900,7 @@ int main (int argc, char *argv[])
     //file_clear(p_syn_inh_size, f_syn_inh_S);
     //free(f_syn_inh_S);
 
-    gmp_randclear(rng);
+    gmp_randclear(rng_f);
     mpfr_free_cache();
 
     return 0;

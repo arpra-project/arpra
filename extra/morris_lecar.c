@@ -143,11 +143,13 @@ const double p_syn_inh_k = 1.0E6;
 
 
 int *in1, *in2;
-arpra_mpfr in1_p0, in2_p0, temp_r;
+arpra_mpfr in1_p0, in2_p0, rand_f;
 arpra_range GL, VL, GCa, VCa, GK, VK, V1, V2, V3, V4, phi, C, *syn_exc_GSyn,
             syn_exc_VSyn, syn_exc_thr, syn_exc_a, syn_exc_b, syn_exc_k, *syn_inh_GSyn,
             syn_inh_VSyn, syn_inh_thr, syn_inh_a, syn_inh_b, syn_inh_k, one, two, neg_two,
             temp1, temp2, M_ss, N_ss, *I1, *I2, in1_V_lo, in1_V_hi, in2_V_lo, in2_V_hi;
+gmp_randstate_t rng_f;
+unsigned long rng_f_seed;
 
 // State memory offsets
 const arpra_uint nrn1_N_offset = 0;
@@ -443,8 +445,6 @@ int main (int argc, char *argv[])
 {
     arpra_range h, t, *x;
     arpra_uint *reduce_epoch;
-    gmp_randstate_t rng;
-    unsigned long rng_seed;
     struct timespec sys_t;
     clock_t run_time;
     arpra_uint i, j;
@@ -529,7 +529,7 @@ int main (int argc, char *argv[])
     arpra_init2(&neg_two, p_prec);
 
     // Initialise scratch space
-    mpfr_init2(&temp_r, p_prec);
+    mpfr_init2(&rand_f, p_prec);
     arpra_init2(&temp1, p_prec);
     arpra_init2(&temp2, p_prec);
     arpra_init2(&M_ss, p_prec);
@@ -675,12 +675,12 @@ int main (int argc, char *argv[])
     //file_init("syn_inh_S", p_syn_inh_size, f_syn_inh_S_c, f_syn_inh_S_r, f_syn_inh_S_n, f_syn_inh_S_s, f_syn_inh_S_d);
 
     // Initialise RNG
-    gmp_randinit_default(rng);
+    gmp_randinit_default(rng_f);
     clock_gettime(CLOCK_REALTIME, &sys_t);
-    //rng_seed = 707135875931353ul;
-    rng_seed = sys_t.tv_sec + sys_t.tv_nsec;
-    gmp_randseed_ui(rng, rng_seed);
-    printf("GMP rand seed: %lu\n", rng_seed);
+    //rng_f_seed = 707135875931353ul;
+    rng_f_seed = sys_t.tv_sec + sys_t.tv_nsec;
+    gmp_randseed_ui(rng_f, rng_f_seed);
+    printf("GMP rand seed: %lu\n", rng_f_seed);
 
     // ODE system
     arpra_ode_system ode_system;
@@ -713,22 +713,19 @@ int main (int argc, char *argv[])
 
         // Event(s) occur if urandom >= e^-rate
         for (j = 0; j < p_in1_size; j++) {
-            mpfr_urandom(&temp_r, rng, MPFR_RNDN);
-            in1[j] = mpfr_greaterequal_p(&temp_r, &in1_p0);
-
+            mpfr_urandom(&rand_f, rng_f, MPFR_RNDN);
+            in1[j] = mpfr_greaterequal_p(&rand_f, &in1_p0);
             fprintf(stderr, "%s", (in1[j] ? "\x1B[31m\xE2\x96\xA3\x1B[0m" : "\xE2\x96\xA3"));
         }
-
-        fprintf(stderr, "\n");
-
+        fprintf(stderr, "  ");
         for (j = 0; j < p_in2_size; j++) {
-            mpfr_urandom(&temp_r, rng, MPFR_RNDN);
-            in2[j] = mpfr_greaterequal_p(&temp_r, &in2_p0);
-
+            mpfr_urandom(&rand_f, rng_f, MPFR_RNDN);
+            in2[j] = mpfr_greaterequal_p(&rand_f, &in2_p0);
             fprintf(stderr, "%s", (in2[j] ? "\x1B[31m\xE2\x96\xA3\x1B[0m" : "\xE2\x96\xA3"));
         }
+        fprintf(stderr, "\n");
 
-
+        // Step system
         arpra_ode_stepper_step(&ode_stepper, &h);
 
         for (j = 0; j < dimensions; j++) {
@@ -830,7 +827,7 @@ int main (int argc, char *argv[])
     arpra_clear(&neg_two);
 
     // Clear scratch space
-    mpfr_clear(&temp_r);
+    mpfr_clear(&rand_f);
     arpra_clear(&temp1);
     arpra_clear(&temp2);
     arpra_clear(&M_ss);
@@ -913,7 +910,7 @@ int main (int argc, char *argv[])
     //free(f_syn_inh_S_d);
 
     arpra_ode_stepper_clear(&ode_stepper);
-    gmp_randclear(rng);
+    gmp_randclear(rng_f);
     mpfr_free_cache();
 
     return 0;
