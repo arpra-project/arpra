@@ -90,6 +90,12 @@ extra_morris_lecar_SOURCES = extra/morris_lecar.c
 extra_morris_lecar_mpfr_SOURCES = extra/morris_lecar_mpfr.c
 extra_morris_lecar_mpfi_SOURCES = extra/morris_lecar_mpfi.c
 
+# Experiments
+EXTRA_PROGRAMS += experiments/experiment1 experiments/experiment2
+experiments_experiment1_LDADD = lib/libarpra.la
+experiments_experiment1_SOURCES = experiments/experiment1.c
+experiments_experiment2_SOURCES = experiments/experiment2.c
+
 # Documentation
 info_TEXINFOS = doc/arpra.texi
 doc_arpra_TEXINFOS = doc/fdl-1.3.texi
