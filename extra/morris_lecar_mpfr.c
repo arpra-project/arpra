@@ -576,9 +576,10 @@ int main (int argc, char *argv[])
 
     // Set excitatory synapse parameters
     for (i = 0; i < p_syn_exc_size; i++) {
-        mpfr_nrandom(rand_nf, rng_nf, MPFR_RNDN);
+        //mpfr_nrandom(rand_nf, rng_nf, MPFR_RNDN);
+        mpfr_grandom(rand_nf, NULL, rng_nf, MPFR_RNDN);
         mpfr_mul_d(rand_nf, rand_nf, p_syn_exc_GSyn_std, MPFR_RNDN);
-        mpfr_add_d(&(syn_exc_GSyn[i]), rand_nf, p_syn_exc_GSyn_mean, MPFR_RNDN)
+        mpfr_add_d(&(syn_exc_GSyn[i]), rand_nf, p_syn_exc_GSyn_mean, MPFR_RNDN);
     }
     mpfr_set_d(syn_exc_VSyn, p_syn_exc_VSyn, MPFR_RNDN);
     mpfr_set_d(syn_exc_thr, p_syn_exc_thr, MPFR_RNDN);
@@ -589,9 +590,10 @@ int main (int argc, char *argv[])
 
     // Set inhibitory synapse parameters
     for (i = 0; i < p_syn_inh_size; i++) {
-        mpfr_nrandom(rand_nf, rng_nf, MPFR_RNDN);
+        //mpfr_nrandom(rand_nf, rng_nf, MPFR_RNDN);
+        mpfr_grandom(rand_nf, NULL, rng_nf, MPFR_RNDN);
         mpfr_mul_d(rand_nf, rand_nf, p_syn_inh_GSyn_std, MPFR_RNDN);
-        mpfr_add_d(&(syn_inh_GSyn[i]), rand_nf, p_syn_inh_GSyn_mean, MPFR_RNDN)
+        mpfr_add_d(&(syn_inh_GSyn[i]), rand_nf, p_syn_inh_GSyn_mean, MPFR_RNDN);
     }
     mpfr_set_d(syn_inh_VSyn, p_syn_inh_VSyn, MPFR_RNDN);
     mpfr_set_d(syn_inh_thr, p_syn_inh_thr, MPFR_RNDN);
