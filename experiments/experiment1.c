@@ -66,80 +66,81 @@
  */
 
 // General parameters
-const double p_h = 0.5;
-const double p_t0 = 0.0;
-const double p_reduce_ratio = 0.3;
-const arpra_precision p_prec = 53;
-const arpra_uint p_sim_steps = 1000;
-const arpra_uint p_report_step = 20;
-const arpra_uint p_reduce_step = 50;
+#define p_h 0.5
+#define p_t0 0.0
+#define p_reduce_ratio 0.3
+#define p_prec 53
+#define p_sim_steps 1000
+#define p_report_step 20
+#define p_reduce_step 50
 
 // Poisson input parameters (group 1)
-arpra_uint p_in1_size = 50;
-double p_in1_freq = 5.0;
-const double p_in1_V_lo = -60.0;
-const double p_in1_V_hi = 20.0;
+#define p_in1_size in1_size_arg
+arpra_uint in1_size_arg;
+#define p_in1_freq in1_freq_arg
+double in1_freq_arg;
+#define p_in1_V_lo -60.0
+#define p_in1_V_hi 20.0
 
 // Poisson input parameters (group 2)
-const arpra_uint p_in2_size = 0;
-const double p_in2_freq = 5.0;
-const double p_in2_V_lo = -60.0;
-const double p_in2_V_hi = 20.0;
+#define p_in2_size 0
+#define p_in2_freq 5.0
+#define p_in2_V_lo -60.0
+#define p_in2_V_hi 20.0
 
 // Neuron parameters (group 1)
-const arpra_uint p_nrn1_size = 1;
-const double p_nrn1_N0 = 0.0;
-const double p_nrn1_V0 = -60.0;
-const int p_nrn1_class = 1;
+#define p_nrn1_size 1
+#define p_nrn1_N0 0.0
+#define p_nrn1_V0 -60.0
+#define p_nrn1_class 1
 
 // Neuron parameters (group 2)
-const arpra_uint p_nrn2_size = 0;
-const double p_nrn2_N0 = 0.0;
-const double p_nrn2_V0 = -60.0;
-const int p_nrn2_class = 1;
+#define p_nrn2_size 0
+#define p_nrn2_N0 0.0
+#define p_nrn2_V0 -60.0
+#define p_nrn2_class 1
 
 // Neuron parameters (common)
-const double p_GL = 2.0;
-const double p_GCa = 4.0; // Class 1
-//const double p_GCa = 4.4; // Class 2
-const double p_GK = 8.0;
-const double p_VL = -60.0;
-const double p_VCa = 120.0;
-const double p_VK = -80.0;
-const double p_V1 = -1.2;
-const double p_V2 = 18.0;
-const double p_V3 = 12.0; // Class 1
-//const double p_V3 = 2.0; // Class 2
-const double p_V4 = 17.4; // Class 1
-//const double p_V4 = 30.0; // Class 2
-const double p_phi = 1.0 / 15.0; // Class 1
-//const double p_phi = 1.0 / 25.0; // Class 2
-const double p_C = 20.0;
+#define p_GL 2.0
+#define p_GCa 4.0 // Class 1
+//#define p_GCa 4.4 // Class 2
+#define p_GK 8.0
+#define p_VL -60.0
+#define p_VCa 120.0
+#define p_VK -80.0
+#define p_V1 -1.2
+#define p_V2 18.0
+#define p_V3 12.0 // Class 1
+//#define p_V3 2.0 // Class 2
+#define p_V4 17.4 // Class 1
+//#define p_V4 30.0 // Class 2
+#define p_phi 1.0 / 15.0 // Class 1
+//#define p_phi 1.0 / 25.0 // Class 2
+#define p_C 20.0
 
 // Synapse parameters (excitatory)
-arpra_uint p_syn_exc_size;
-const double p_syn_exc_R0 = 0.0;
-const double p_syn_exc_S0 = 0.0;
-//const double p_syn_exc_GSyn = 40.0;
-const double p_syn_exc_GSyn = 3.0;
-const double p_syn_exc_VSyn = 0.0;
-const double p_syn_exc_thr = -50.0;
-const double p_syn_exc_a = 0.25; // in [1/10, 1/2]
-const double p_syn_exc_b = 0.15; // in [1/20, 1/4]
-const double p_syn_exc_k = 1.0E6;
+#define p_syn_exc_size p_in1_size * p_nrn1_size
+#define p_syn_exc_R0 0.0
+#define p_syn_exc_S0 0.0
+#define p_syn_exc_GSyn 3.0
+#define p_syn_exc_VSyn 0.0
+#define p_syn_exc_thr -50.0
+#define p_syn_exc_a 0.25 // in [1/10, 1/2]
+#define p_syn_exc_b 0.15 // in [1/20, 1/4]
+#define p_syn_exc_k 1.0E6
 
 // Synapse parameters (inhibitory)
-arpra_uint p_syn_inh_size;
-const double p_syn_inh_R0 = 0.0;
-const double p_syn_inh_S0 = 0.0;
-const double p_syn_inh_GSyn = 50.0;
-const double p_syn_inh_VSyn = -80.0;
-const double p_syn_inh_thr = -50.0;
-const double p_syn_inh_a = 0.075; // in [1/20, 1/10]
-const double p_syn_inh_b = 0.035; // in [1/50, 1/20]
-const double p_syn_inh_k = 1.0E6;
+#define p_syn_inh_size 0
+#define p_syn_inh_R0 0.0
+#define p_syn_inh_S0 0.0
+#define p_syn_inh_GSyn 50.0
+#define p_syn_inh_VSyn -80.0
+#define p_syn_inh_thr -50.0
+#define p_syn_inh_a 0.075 // in [1/20, 1/10]
+#define p_syn_inh_b 0.035 // in [1/50, 1/20]
+#define p_syn_inh_k 1.0E6
 
-// ===================== end of model parameters ======================
+//==================== end of model parameters=====================
 
 
 int *in1, *in2;
@@ -450,14 +451,10 @@ int main (int argc, char *argv[])
     arpra_uint i, j;
 
     // Parse args
-    p_in1_size = atoi(argv[1]);
-    p_in1_freq = atof(argv[2]);
+    in1_size_arg = atoi(argv[1]);
+    in1_freq_arg = atoi(argv[2]);
 
-    // Synapse group sizes
-    p_syn_exc_size = p_in1_size * p_nrn1_size;
-    p_syn_inh_size = 0;
-
-    // State memory offsets
+     // State memory offsets
     nrn1_N_offset = 0;
     nrn2_N_offset = nrn1_N_offset + p_nrn1_size;
     nrn1_V_offset = nrn2_N_offset + p_nrn2_size;
