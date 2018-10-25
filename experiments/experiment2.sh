@@ -8,7 +8,7 @@ for i in {1..100}; do
 
     rm -f *.dat
     ./experiments/experiment2
-    outdir=experiments2_out/i_${i}
+    outdir=experiment_2_out/i_${i}
 
     echo saving to ${outdir}
     mkdir -p ${outdir}

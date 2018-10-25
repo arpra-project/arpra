@@ -34,6 +34,12 @@ AM_PROG_AR
 LT_PREREQ([2.2])
 LT_INIT([])
 
+# Standard libs
+AC_CHECK_LIB([m], [ceil], [],
+  [AC_MSG_ERROR([libm is missing or unusable])])
+AC_CHECK_LIB([rt], [clock_gettime], [],
+  [AC_MSG_ERROR([librt is missing or unusable])])
+
 # GNU GMP
 AC_CHECK_HEADER([gmp.h], [],
   [AC_MSG_ERROR([GMP header is missing or unusable - see README])])
