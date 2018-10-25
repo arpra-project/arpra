@@ -118,8 +118,8 @@ const double p_C = 20.0;
 const unsigned long p_syn_exc_size = p_in1_size * p_nrn1_size;
 const double p_syn_exc_R0 = 0.0;
 const double p_syn_exc_S0 = 0.0;
-//const double p_syn_exc_GSyn = 40.0;
-const double p_syn_exc_GSyn = 3.0;
+const double p_syn_exc_GSyn_std = 0.5;
+const double p_syn_exc_GSyn_mean = 3.0;
 const double p_syn_exc_VSyn = 0.0;
 const double p_syn_exc_thr = -50.0;
 const double p_syn_exc_a = 0.25; // in [1/10, 1/2]
@@ -130,7 +130,8 @@ const double p_syn_exc_k = 1.0E6;
 const unsigned long p_syn_inh_size = 0;
 const double p_syn_inh_R0 = 0.0;
 const double p_syn_inh_S0 = 0.0;
-const double p_syn_inh_GSyn = 50.0;
+const double p_syn_inh_GSyn_std = 0.5;
+const double p_syn_inh_GSyn_mean = 3.0;
 const double p_syn_inh_VSyn = -80.0;
 const double p_syn_inh_thr = -50.0;
 const double p_syn_inh_a = 0.075; // in [1/20, 1/10]
@@ -144,11 +145,11 @@ int *in1, *in2;
 mpfr_t GL, VL, GCa, VCa, GK, VK, V1, V2, V3, V4, phi, C, syn_exc_VSyn, syn_exc_thr,
        syn_exc_a, syn_exc_b, syn_exc_k, syn_inh_VSyn, syn_inh_thr, syn_inh_a,
        syn_inh_b, syn_inh_k, one, two, neg_two, temp1, temp2, M_ss, N_ss, in1_V_lo,
-       in1_V_hi, in2_V_lo, in2_V_hi, in1_p0, in2_p0, rand_f;
-mpz_t rand_z;
+    in1_V_hi, in2_V_lo, in2_V_hi, in1_p0, in2_p0, rand_uf, rand_nf;
+mpz_t rand_uz;
 mpfr_ptr syn_exc_GSyn, syn_inh_GSyn, I1, I2;
-gmp_randstate_t rng_f, rng_z;
-unsigned long rng_f_seed, rng_z_seed;
+gmp_randstate_t rng_uf, rng_nf, rng_uz;
+unsigned long rng_uf_seed, rng_nf_seed, rng_uz_seed;
 
 // System state variables
 mpfr_ptr nrn1_N, nrn2_N, nrn1_V, nrn2_V, syn_exc_R, syn_inh_R, syn_exc_S, syn_inh_S;
@@ -283,9 +284,9 @@ void dVdt (const unsigned long idx, int grp)
 
     // Shuffle input currents with Fisher-Yates, then sum.
     for (i = 0; i < pre_size; i++) {
-        mpz_set_ui(rand_z, pre_size - i);
-        mpz_urandomm(rand_z, rng_z, rand_z);
-        j = i + mpz_get_ui(rand_z);
+        mpz_set_ui(rand_uz, pre_size - i);
+        mpz_urandomm(rand_uz, rng_uz, rand_uz);
+        j = i + mpz_get_ui(rand_uz);
         mpfr_swap(&(I[i]), &(I[j]));
         mpfr_add(d_V, d_V, &(I[i]), MPFR_RNDN);
     }
@@ -513,8 +514,9 @@ int main (int argc, char *argv[])
     mpfr_init2(neg_two, p_prec);
 
     // Initialise scratch space
-    mpfr_init2(rand_f, p_prec);
-    mpz_init(rand_z);
+    mpfr_init2(rand_uf, p_prec);
+    mpfr_init2(rand_nf, p_prec);
+    mpz_init(rand_uz);
     mpfr_init2(temp1, p_prec);
     mpfr_init2(temp2, p_prec);
     mpfr_init2(M_ss, p_prec);
@@ -574,7 +576,9 @@ int main (int argc, char *argv[])
 
     // Set excitatory synapse parameters
     for (i = 0; i < p_syn_exc_size; i++) {
-        mpfr_set_d(&(syn_exc_GSyn[i]), p_syn_exc_GSyn, MPFR_RNDN);
+        mpfr_nrandom(rand_nf, rng_nf, MPFR_RNDN);
+        mpfr_mul_d(rand_nf, rand_nf, p_syn_exc_GSyn_std, MPFR_RNDN);
+        mpfr_add_d(&(syn_exc_GSyn[i]), rand_nf, p_syn_exc_GSyn_mean, MPFR_RNDN)
     }
     mpfr_set_d(syn_exc_VSyn, p_syn_exc_VSyn, MPFR_RNDN);
     mpfr_set_d(syn_exc_thr, p_syn_exc_thr, MPFR_RNDN);
@@ -585,7 +589,9 @@ int main (int argc, char *argv[])
 
     // Set inhibitory synapse parameters
     for (i = 0; i < p_syn_inh_size; i++) {
-        mpfr_set_d(&(syn_inh_GSyn[i]), p_syn_inh_GSyn, MPFR_RNDN);
+        mpfr_nrandom(rand_nf, rng_nf, MPFR_RNDN);
+        mpfr_mul_d(rand_nf, rand_nf, p_syn_inh_GSyn_std, MPFR_RNDN);
+        mpfr_add_d(&(syn_inh_GSyn[i]), rand_nf, p_syn_inh_GSyn_mean, MPFR_RNDN)
     }
     mpfr_set_d(syn_inh_VSyn, p_syn_inh_VSyn, MPFR_RNDN);
     mpfr_set_d(syn_inh_thr, p_syn_inh_thr, MPFR_RNDN);
@@ -623,19 +629,29 @@ int main (int argc, char *argv[])
     //FILE **f_syn_inh_S = malloc(p_syn_inh_size * sizeof(FILE *));
     //file_init("syn_inh_S", p_syn_inh_size, f_syn_inh_S);
 
-    // Initialise RNGs
-    gmp_randinit_default(rng_f);
+    // Initialise uniform float RNG
+    gmp_randinit_default(rng_uf);
     clock_gettime(CLOCK_REALTIME, &sys_t);
-    //rng_f_seed = 707135875931353ul;
-    rng_f_seed = sys_t.tv_sec + sys_t.tv_nsec;
-    gmp_randseed_ui(rng_f, rng_f_seed);
-    printf("GMP rand input seed: %lu\n", rng_f_seed);
-    gmp_randinit_default(rng_z);
+    //rng_uf_seed = 707135875931353ul;
+    rng_uf_seed = sys_t.tv_sec + sys_t.tv_nsec;
+    gmp_randseed_ui(rng_uf, rng_uf_seed);
+    printf("GMP rand uniform float seed: %lu\n", rng_uf_seed);
+
+    // Initialise normal float RNG
+    gmp_randinit_default(rng_nf);
     clock_gettime(CLOCK_REALTIME, &sys_t);
-    //rng_z_seed = 2071328946103ul;
-    rng_z_seed = sys_t.tv_sec + sys_t.tv_nsec;
-    gmp_randseed_ui(rng_z, rng_z_seed);
-    printf("GMP rand input order seed: %lu\n", rng_z_seed);
+    //rng_nf_seed = 503108552855933ul;
+    rng_nf_seed = sys_t.tv_sec + sys_t.tv_nsec;
+    gmp_randseed_ui(rng_nf, rng_nf_seed);
+    printf("GMP rand normal float seed: %lu\n", rng_nf_seed);
+
+    // Initialise uniform float RNG
+    gmp_randinit_default(rng_uz);
+    clock_gettime(CLOCK_REALTIME, &sys_t);
+    //rng_uz_seed = 2071328946103ul;
+    rng_uz_seed = sys_t.tv_sec + sys_t.tv_nsec;
+    gmp_randseed_ui(rng_uz, rng_uz_seed);
+    printf("GMP rand uniform integer seed: %lu\n", rng_uz_seed);
 
 
     // Begin simulation loop
@@ -648,14 +664,14 @@ int main (int argc, char *argv[])
 
         // Event(s) occur if urandom >= e^-rate
         for (j = 0; j < p_in1_size; j++) {
-            mpfr_urandom(rand_f, rng_f, MPFR_RNDN);
-            in1[j] = mpfr_greaterequal_p(rand_f, in1_p0);
+            mpfr_urandom(rand_uf, rng_uf, MPFR_RNDN);
+            in1[j] = mpfr_greaterequal_p(rand_uf, in1_p0);
             fprintf(stderr, "%s", (in1[j] ? "\x1B[31m\xE2\x96\xA3\x1B[0m" : "\xE2\x96\xA3"));
         }
         fprintf(stderr, "  ");
         for (j = 0; j < p_in2_size; j++) {
-            mpfr_urandom(rand_f, rng_f, MPFR_RNDN);
-            in2[j] = mpfr_greaterequal_p(rand_f, in2_p0);
+            mpfr_urandom(rand_uf, rng_uf, MPFR_RNDN);
+            in2[j] = mpfr_greaterequal_p(rand_uf, in2_p0);
             fprintf(stderr, "%s", (in2[j] ? "\x1B[31m\xE2\x96\xA3\x1B[0m" : "\xE2\x96\xA3"));
         }
         fprintf(stderr, "\n");
@@ -805,8 +821,9 @@ int main (int argc, char *argv[])
     mpfr_clear(neg_two);
 
     // Clear scratch space
-    mpfr_clear(rand_f);
-    mpz_clear(rand_z);
+    mpfr_clear(rand_uf);
+    mpfr_clear(rand_nf);
+    mpz_clear(rand_uz);
     mpfr_clear(temp1);
     mpfr_clear(temp2);
     mpfr_clear(M_ss);
@@ -866,8 +883,9 @@ int main (int argc, char *argv[])
     //file_clear(p_syn_inh_size, f_syn_inh_S);
     //free(f_syn_inh_S);
 
-    gmp_randclear(rng_f);
-    gmp_randclear(rng_z);
+    gmp_randclear(rng_uf);
+    gmp_randclear(rng_nf);
+    gmp_randclear(rng_uz);
     mpfr_free_cache();
 
     return 0;
