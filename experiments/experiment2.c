@@ -436,6 +436,30 @@ int main (int argc, char *argv[])
     in1 = malloc(p_in1_size * sizeof(int));
     in2 = malloc(p_in2_size * sizeof(int));
 
+    // Initialise uniform float RNG
+    gmp_randinit_default(rng_uf);
+    clock_gettime(CLOCK_REALTIME, &sys_t);
+    //rng_uf_seed = 707135875931353ul;
+    rng_uf_seed = sys_t.tv_sec + sys_t.tv_nsec;
+    gmp_randseed_ui(rng_uf, rng_uf_seed);
+    printf("GMP rand uniform float seed: %lu\n", rng_uf_seed);
+
+    // Initialise normal float RNG
+    gmp_randinit_default(rng_nf);
+    clock_gettime(CLOCK_REALTIME, &sys_t);
+    //rng_nf_seed = 503108552855933ul;
+    rng_nf_seed = sys_t.tv_sec + sys_t.tv_nsec;
+    gmp_randseed_ui(rng_nf, rng_nf_seed);
+    printf("GMP rand normal float seed: %lu\n", rng_nf_seed);
+
+    // Initialise uniform float RNG
+    gmp_randinit_default(rng_uz);
+    clock_gettime(CLOCK_REALTIME, &sys_t);
+    //rng_uz_seed = 2071328946103ul;
+    rng_uz_seed = sys_t.tv_sec + sys_t.tv_nsec;
+    gmp_randseed_ui(rng_uz, rng_uz_seed);
+    printf("GMP rand uniform integer seed: %lu\n", rng_uz_seed);
+
     // Initialise system state
     mpfr_init2(h, p_prec);
     mpfr_init2(t, p_prec);
@@ -630,30 +654,6 @@ int main (int argc, char *argv[])
     //file_init("syn_inh_R", p_syn_inh_size, f_syn_inh_R);
     //FILE **f_syn_inh_S = malloc(p_syn_inh_size * sizeof(FILE *));
     //file_init("syn_inh_S", p_syn_inh_size, f_syn_inh_S);
-
-    // Initialise uniform float RNG
-    gmp_randinit_default(rng_uf);
-    clock_gettime(CLOCK_REALTIME, &sys_t);
-    //rng_uf_seed = 707135875931353ul;
-    rng_uf_seed = sys_t.tv_sec + sys_t.tv_nsec;
-    gmp_randseed_ui(rng_uf, rng_uf_seed);
-    printf("GMP rand uniform float seed: %lu\n", rng_uf_seed);
-
-    // Initialise normal float RNG
-    gmp_randinit_default(rng_nf);
-    clock_gettime(CLOCK_REALTIME, &sys_t);
-    //rng_nf_seed = 503108552855933ul;
-    rng_nf_seed = sys_t.tv_sec + sys_t.tv_nsec;
-    gmp_randseed_ui(rng_nf, rng_nf_seed);
-    printf("GMP rand normal float seed: %lu\n", rng_nf_seed);
-
-    // Initialise uniform float RNG
-    gmp_randinit_default(rng_uz);
-    clock_gettime(CLOCK_REALTIME, &sys_t);
-    //rng_uz_seed = 2071328946103ul;
-    rng_uz_seed = sys_t.tv_sec + sys_t.tv_nsec;
-    gmp_randseed_ui(rng_uz, rng_uz_seed);
-    printf("GMP rand uniform integer seed: %lu\n", rng_uz_seed);
 
 
     // Begin simulation loop
