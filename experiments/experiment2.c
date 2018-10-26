@@ -73,8 +73,8 @@
 #define p_report_step 20
 
 // Poisson input parameters (group 1)
-#define p_in1_size 50
-#define p_in1_freq 5.0
+#define p_in1_size 500
+#define p_in1_freq 50.0
 #define p_in1_V_lo -60.0
 #define p_in1_V_hi 20.0
 
@@ -119,7 +119,7 @@
 #define p_syn_exc_R0 0.0
 #define p_syn_exc_S0 0.0
 #define p_syn_exc_GSyn_std 0.5
-#define p_syn_exc_GSyn_mean 3.0
+#define p_syn_exc_GSyn_mean 0.1
 #define p_syn_exc_VSyn 0.0
 #define p_syn_exc_thr -50.0
 #define p_syn_exc_a 0.25 // in [1/10, 1/2]
@@ -439,20 +439,20 @@ int main (int argc, char *argv[])
     // Initialise uniform float RNG
     gmp_randinit_default(rng_uf);
     clock_gettime(CLOCK_REALTIME, &sys_t);
-    //rng_uf_seed = 707135875931353ul;
-    rng_uf_seed = sys_t.tv_sec + sys_t.tv_nsec;
+    rng_uf_seed = 707135875931353ul;
+    //rng_uf_seed = sys_t.tv_sec + sys_t.tv_nsec;
     gmp_randseed_ui(rng_uf, rng_uf_seed);
     printf("GMP rand uniform float seed: %lu\n", rng_uf_seed);
 
     // Initialise normal float RNG
     gmp_randinit_default(rng_nf);
     clock_gettime(CLOCK_REALTIME, &sys_t);
-    //rng_nf_seed = 503108552855933ul;
-    rng_nf_seed = sys_t.tv_sec + sys_t.tv_nsec;
+    rng_nf_seed = 503108552855933ul;
+    //rng_nf_seed = sys_t.tv_sec + sys_t.tv_nsec;
     gmp_randseed_ui(rng_nf, rng_nf_seed);
     printf("GMP rand normal float seed: %lu\n", rng_nf_seed);
 
-    // Initialise uniform float RNG
+    // Initialise uniform integer RNG
     gmp_randinit_default(rng_uz);
     clock_gettime(CLOCK_REALTIME, &sys_t);
     //rng_uz_seed = 2071328946103ul;

@@ -85,7 +85,7 @@ int main (int argc, char *argv[])
     }
 
     // Cleanup test.
-    printf("%llu out of %llu failed.\n", fail_n, test_n);
+    printf("%lu out of %lu failed.\n", fail_n, test_n);
     test_fixture_clear();
     test_log_clear();
     test_rand_clear();

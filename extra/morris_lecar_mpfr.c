@@ -452,7 +452,7 @@ int main (int argc, char *argv[])
     gmp_randseed_ui(rng_nf, rng_nf_seed);
     printf("GMP rand normal float seed: %lu\n", rng_nf_seed);
 
-    // Initialise uniform float RNG
+    // Initialise uniform integer RNG
     gmp_randinit_default(rng_uz);
     clock_gettime(CLOCK_REALTIME, &sys_t);
     //rng_uz_seed = 2071328946103ul;

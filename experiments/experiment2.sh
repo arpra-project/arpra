@@ -3,7 +3,7 @@
 echo Begin: ${0}
 make experiments/experiment2
 
-for i in {1..100}; do
+for i in {0..99}; do
     echo i: ${i}
 
     rm -f *.dat
@@ -14,3 +14,5 @@ for i in {1..100}; do
     mkdir -p ${outdir}
     mv *.dat ${outdir}
 done
+
+python3 ./tools/arpra_mpfr_2d.py
