@@ -70,7 +70,7 @@ void arpra_sum_exact (arpra_range *z, arpra_range *x, const arpra_uint n)
             return;
         }
         else {
-            arpra_set_nan(z);
+            arpra_set_zero(z);
             return;
         }
     }
