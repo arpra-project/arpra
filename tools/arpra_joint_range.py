@@ -7,8 +7,6 @@ import matplotlib.patches as patches
 # %load_ext autoreload
 # %autoreload 2
 # from tools.arpra_joint_range import arpra_joint_range
-# from tools.arpra_mpfi_2d import arpra_mpfi_2d
-# from tools.arpra_mpfr_2d import arpra_mpfr_2d
 # #####
 
 debug = 1

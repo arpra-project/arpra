@@ -5,9 +5,7 @@ import matplotlib.pyplot as plt
 # SETUP
 # %load_ext autoreload
 # %autoreload 2
-# from tools.arpra_joint_range import arpra_joint_range
 # from tools.arpra_mpfi_2d import arpra_mpfi_2d
-# from tools.arpra_mpfr_2d import arpra_mpfr_2d
 # #####
 
 def arpra_mpfi_2d (x, y, t, i_start, i_stop):

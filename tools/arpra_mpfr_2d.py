@@ -50,11 +50,12 @@ def main ():
     ax_x = fig.add_subplot(222)
     ax_y = fig.add_subplot(224, sharex=ax_x)
 
+    x = 'nrn1_V_000.dat'
+    y = 'nrn1_N_000.dat'
+    t = 'time_000.dat'
+
     for i in range(0, 100):
         path = 'experiment_2_out/i_' + str(i) + '/'
-        x = 'nrn1_V_000.dat'
-        y = 'nrn1_N_000.dat'
-        t = 'time_000.dat'
         arpra_mpfr_2d (x, y, t, 0, 1000, ax_traj, ax_x, ax_y, path)
 
     plt.show()

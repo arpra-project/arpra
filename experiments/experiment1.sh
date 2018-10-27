@@ -18,3 +18,5 @@ for inputs in {0..50..2}; do
         mv *.dat ${outdir}
     done
 done
+
+python3 ./experiment1.py
