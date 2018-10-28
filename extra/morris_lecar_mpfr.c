@@ -126,7 +126,7 @@
 #define p_syn_exc_b 0.15 // in [1/20, 1/4]
 #define p_syn_exc_k 1.0E6
 
-// zSynapse parameters (inhibitory)
+// Synapse parameters (inhibitory)
 #define p_syn_inh_size 0
 #define p_syn_inh_R0 0.0
 #define p_syn_inh_S0 0.0
@@ -145,7 +145,7 @@ int *in1, *in2;
 mpfr_t GL, VL, GCa, VCa, GK, VK, V1, V2, V3, V4, phi, C, syn_exc_VSyn, syn_exc_thr,
        syn_exc_a, syn_exc_b, syn_exc_k, syn_inh_VSyn, syn_inh_thr, syn_inh_a,
        syn_inh_b, syn_inh_k, one, two, neg_two, temp1, temp2, M_ss, N_ss, in1_V_lo,
-    in1_V_hi, in2_V_lo, in2_V_hi, in1_p0, in2_p0, rand_uf, rand_nf;
+       in1_V_hi, in2_V_lo, in2_V_hi, in1_p0, in2_p0, rand_uf, rand_nf;
 mpz_t rand_uz;
 mpfr_ptr syn_exc_GSyn, syn_inh_GSyn, I1, I2;
 gmp_randstate_t rng_uf, rng_nf, rng_uz;
@@ -300,7 +300,7 @@ void dVdt (const unsigned long idx, int grp)
         //fprintf(stderr, "sum(I): "); debug(d_V);
         //fprintf(stderr, "I[0]: "); debug(I);
         for (i = 0; i < pre_size; i++) {
-            //fprintf(stderr, "I[%u]: ", i); debug(&(I[i]));
+            //fprintf(stderr, "I[%lu]: ", i); debug(&(I[i]));
         }
     }
 
@@ -662,7 +662,7 @@ int main (int argc, char *argv[])
     run_time = clock();
 
     for (i = 0; i < p_sim_steps; i++) {
-        if (i % p_report_step == 0) printf("%u\n", i);
+        if (i % p_report_step == 0) printf("%lu\n", i);
 
         // Event(s) occur if urandom >= e^-rate
         for (j = 0; j < p_in1_size; j++) {

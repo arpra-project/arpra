@@ -323,7 +323,7 @@ void dVdt (const unsigned long idx, int grp)
         //fprintf(stderr, "sum(I): "); debug_i(d_V);
         //fprintf(stderr, "I[0]: "); debug_i(I);
         for (i = 0; i < pre_size; i++) {
-            //fprintf(stderr, "I[%u]: ", i); debug_i(&(I[i]));
+            //fprintf(stderr, "I[%lu]: ", i); debug_i(&(I[i]));
         }
     }
 
@@ -671,7 +671,7 @@ int main (int argc, char *argv[])
     run_time = clock();
 
     for (i = 0; i < p_sim_steps; i++) {
-        if (i % p_report_step == 0) printf("%u\n", i);
+        if (i % p_report_step == 0) printf("%lu\n", i);
 
         // Event(s) occur if urandom >= e^-rate
         for (j = 0; j < p_in1_size; j++) {

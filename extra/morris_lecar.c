@@ -337,7 +337,7 @@ void dxdt (arpra_range *out,
             //fprintf(stderr, "sum(I): "); debug(out->centre);
             //fprintf(stderr, "I[0]: "); debug(I[0].centre);
             for (i = 0; i < pre_size; i++) {
-                //fprintf(stderr, "I[%u]: ", i); debug(I[i].centre);
+                //fprintf(stderr, "I[%lu]: ", i); debug(I[i].centre);
             }
         }
 
@@ -705,7 +705,7 @@ int main (int argc, char *argv[])
     run_time = clock();
 
     for (i = 0; i < p_sim_steps; i++) {
-        if (i % p_report_step == 0) printf("%u\n", i);
+        if (i % p_report_step == 0) printf("%lu\n", i);
 
         for (j = 0; j < dimensions; j++) {
             reduce_epoch[j] = ode_system.x[j].nTerms;

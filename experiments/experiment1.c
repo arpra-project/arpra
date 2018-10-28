@@ -144,13 +144,13 @@ double in1_freq_arg;
 
 
 int *in1, *in2;
-arpra_mpfr in1_p0, in2_p0, rand_f;
+arpra_mpfr in1_p0, in2_p0, rand_uf;
 arpra_range GL, VL, GCa, VCa, GK, VK, V1, V2, V3, V4, phi, C, *syn_exc_GSyn,
             syn_exc_VSyn, syn_exc_thr, syn_exc_a, syn_exc_b, syn_exc_k, *syn_inh_GSyn,
             syn_inh_VSyn, syn_inh_thr, syn_inh_a, syn_inh_b, syn_inh_k, one, two, neg_two,
             temp1, temp2, M_ss, N_ss, *I1, *I2, in1_V_lo, in1_V_hi, in2_V_lo, in2_V_hi;
-gmp_randstate_t rng_f;
-unsigned long rng_f_seed;
+gmp_randstate_t rng_uf;
+unsigned long rng_uf_seed;
 
 // State memory offsets
 arpra_uint nrn1_N_offset;
@@ -338,7 +338,7 @@ void dxdt (arpra_range *out,
             //fprintf(stderr, "sum(I): "); debug(out->centre);
             //fprintf(stderr, "I[0]: "); debug(I[0].centre);
             for (i = 0; i < pre_size; i++) {
-                //fprintf(stderr, "I[%u]: ", i); debug(I[i].centre);
+                //fprintf(stderr, "I[%lu]: ", i); debug(I[i].centre);
             }
         }
 
@@ -545,7 +545,7 @@ int main (int argc, char *argv[])
     arpra_init2(&neg_two, p_prec);
 
     // Initialise scratch space
-    mpfr_init2(&rand_f, p_prec);
+    mpfr_init2(&rand_uf, p_prec);
     arpra_init2(&temp1, p_prec);
     arpra_init2(&temp2, p_prec);
     arpra_init2(&M_ss, p_prec);
@@ -631,12 +631,12 @@ int main (int argc, char *argv[])
     arpra_set_d(&neg_two, -2.0);
 
     // Initialise report files
-    FILE **f_time_c = malloc(sizeof(FILE *));;
-    FILE **f_time_r = malloc(sizeof(FILE *));;
-    FILE **f_time_n = malloc(sizeof(FILE *));;
-    FILE **f_time_s = malloc(sizeof(FILE *));;
-    FILE **f_time_d = malloc(sizeof(FILE *));;
-    file_init("time", 1, f_time_c, f_time_r, f_time_n, f_time_s, f_time_d);
+    /* FILE **f_time_c = malloc(sizeof(FILE *));; */
+    /* FILE **f_time_r = malloc(sizeof(FILE *));; */
+    /* FILE **f_time_n = malloc(sizeof(FILE *));; */
+    /* FILE **f_time_s = malloc(sizeof(FILE *));; */
+    /* FILE **f_time_d = malloc(sizeof(FILE *));; */
+    /* file_init("time", 1, f_time_c, f_time_r, f_time_n, f_time_s, f_time_d); */
 
     FILE **f_nrn1_N_c = malloc(p_nrn1_size * sizeof(FILE *));
     FILE **f_nrn1_N_r = malloc(p_nrn1_size * sizeof(FILE *));
@@ -651,52 +651,52 @@ int main (int argc, char *argv[])
     FILE **f_nrn1_V_d = malloc(p_nrn1_size * sizeof(FILE *));
     file_init("nrn1_V", p_nrn1_size, f_nrn1_V_c, f_nrn1_V_r, f_nrn1_V_n, f_nrn1_V_s, f_nrn1_V_d);
 
-    //FILE **f_nrn2_N_c = malloc(p_nrn2_size * sizeof(FILE *));
-    //FILE **f_nrn2_N_r = malloc(p_nrn2_size * sizeof(FILE *));
-    //FILE **f_nrn2_N_n = malloc(p_nrn2_size * sizeof(FILE *));
-    //FILE **f_nrn2_N_s = malloc(p_nrn2_size * sizeof(FILE *));
-    //FILE **f_nrn2_N_d = malloc(p_nrn2_size * sizeof(FILE *));
-    //file_init("nrn2_N", p_nrn2_size, f_nrn2_N_c, f_nrn2_N_r, f_nrn2_N_n, f_nrn2_N_s, f_nrn2_N_d);
-    //FILE **f_nrn2_V_c = malloc(p_nrn2_size * sizeof(FILE *));
-    //FILE **f_nrn2_V_r = malloc(p_nrn2_size * sizeof(FILE *));
-    //FILE **f_nrn2_V_n = malloc(p_nrn2_size * sizeof(FILE *));
-    //FILE **f_nrn2_V_s = malloc(p_nrn2_size * sizeof(FILE *));
-    //FILE **f_nrn2_V_d = malloc(p_nrn2_size * sizeof(FILE *));
-    //file_init("nrn2_V", p_nrn2_size, f_nrn2_V_c, f_nrn2_V_r, f_nrn2_V_n, f_nrn2_V_s, f_nrn2_V_d);
+    /* FILE **f_nrn2_N_c = malloc(p_nrn2_size * sizeof(FILE *)); */
+    /* FILE **f_nrn2_N_r = malloc(p_nrn2_size * sizeof(FILE *)); */
+    /* FILE **f_nrn2_N_n = malloc(p_nrn2_size * sizeof(FILE *)); */
+    /* FILE **f_nrn2_N_s = malloc(p_nrn2_size * sizeof(FILE *)); */
+    /* FILE **f_nrn2_N_d = malloc(p_nrn2_size * sizeof(FILE *)); */
+    /* file_init("nrn2_N", p_nrn2_size, f_nrn2_N_c, f_nrn2_N_r, f_nrn2_N_n, f_nrn2_N_s, f_nrn2_N_d); */
+    /* FILE **f_nrn2_V_c = malloc(p_nrn2_size * sizeof(FILE *)); */
+    /* FILE **f_nrn2_V_r = malloc(p_nrn2_size * sizeof(FILE *)); */
+    /* FILE **f_nrn2_V_n = malloc(p_nrn2_size * sizeof(FILE *)); */
+    /* FILE **f_nrn2_V_s = malloc(p_nrn2_size * sizeof(FILE *)); */
+    /* FILE **f_nrn2_V_d = malloc(p_nrn2_size * sizeof(FILE *)); */
+    /* file_init("nrn2_V", p_nrn2_size, f_nrn2_V_c, f_nrn2_V_r, f_nrn2_V_n, f_nrn2_V_s, f_nrn2_V_d); */
 
-    FILE **f_syn_exc_R_c = malloc(p_syn_exc_size * sizeof(FILE *));
-    FILE **f_syn_exc_R_r = malloc(p_syn_exc_size * sizeof(FILE *));
-    FILE **f_syn_exc_R_n = malloc(p_syn_exc_size * sizeof(FILE *));
-    FILE **f_syn_exc_R_s = malloc(p_syn_exc_size * sizeof(FILE *));
-    FILE **f_syn_exc_R_d = malloc(p_syn_exc_size * sizeof(FILE *));
-    file_init("syn_exc_R", p_syn_exc_size, f_syn_exc_R_c, f_syn_exc_R_r, f_syn_exc_R_n, f_syn_exc_R_s, f_syn_exc_R_d);
-    FILE **f_syn_exc_S_c = malloc(p_syn_exc_size * sizeof(FILE *));
-    FILE **f_syn_exc_S_r = malloc(p_syn_exc_size * sizeof(FILE *));
-    FILE **f_syn_exc_S_n = malloc(p_syn_exc_size * sizeof(FILE *));
-    FILE **f_syn_exc_S_s = malloc(p_syn_exc_size * sizeof(FILE *));
-    FILE **f_syn_exc_S_d = malloc(p_syn_exc_size * sizeof(FILE *));
-    file_init("syn_exc_S", p_syn_exc_size, f_syn_exc_S_c, f_syn_exc_S_r, f_syn_exc_S_n, f_syn_exc_S_s, f_syn_exc_S_d);
+    /* FILE **f_syn_exc_R_c = malloc(p_syn_exc_size * sizeof(FILE *)); */
+    /* FILE **f_syn_exc_R_r = malloc(p_syn_exc_size * sizeof(FILE *)); */
+    /* FILE **f_syn_exc_R_n = malloc(p_syn_exc_size * sizeof(FILE *)); */
+    /* FILE **f_syn_exc_R_s = malloc(p_syn_exc_size * sizeof(FILE *)); */
+    /* FILE **f_syn_exc_R_d = malloc(p_syn_exc_size * sizeof(FILE *)); */
+    /* file_init("syn_exc_R", p_syn_exc_size, f_syn_exc_R_c, f_syn_exc_R_r, f_syn_exc_R_n, f_syn_exc_R_s, f_syn_exc_R_d); */
+    /* FILE **f_syn_exc_S_c = malloc(p_syn_exc_size * sizeof(FILE *)); */
+    /* FILE **f_syn_exc_S_r = malloc(p_syn_exc_size * sizeof(FILE *)); */
+    /* FILE **f_syn_exc_S_n = malloc(p_syn_exc_size * sizeof(FILE *)); */
+    /* FILE **f_syn_exc_S_s = malloc(p_syn_exc_size * sizeof(FILE *)); */
+    /* FILE **f_syn_exc_S_d = malloc(p_syn_exc_size * sizeof(FILE *)); */
+    /* file_init("syn_exc_S", p_syn_exc_size, f_syn_exc_S_c, f_syn_exc_S_r, f_syn_exc_S_n, f_syn_exc_S_s, f_syn_exc_S_d); */
 
-    //FILE **f_syn_inh_R_c = malloc(p_syn_inh_size * sizeof(FILE *));
-    //FILE **f_syn_inh_R_r = malloc(p_syn_inh_size * sizeof(FILE *));
-    //FILE **f_syn_inh_R_n = malloc(p_syn_inh_size * sizeof(FILE *));
-    //FILE **f_syn_inh_R_s = malloc(p_syn_inh_size * sizeof(FILE *));
-    //FILE **f_syn_inh_R_d = malloc(p_syn_inh_size * sizeof(FILE *));
-    //file_init("syn_inh_R", p_syn_inh_size, f_syn_inh_R_c, f_syn_inh_R_r, f_syn_inh_R_n, f_syn_inh_R_s, f_syn_inh_R_d);
-    //FILE **f_syn_inh_S_c = malloc(p_syn_inh_size * sizeof(FILE *));
-    //FILE **f_syn_inh_S_r = malloc(p_syn_inh_size * sizeof(FILE *));
-    //FILE **f_syn_inh_S_n = malloc(p_syn_inh_size * sizeof(FILE *));
-    //FILE **f_syn_inh_S_s = malloc(p_syn_inh_size * sizeof(FILE *));
-    //FILE **f_syn_inh_S_d = malloc(p_syn_inh_size * sizeof(FILE *));
-    //file_init("syn_inh_S", p_syn_inh_size, f_syn_inh_S_c, f_syn_inh_S_r, f_syn_inh_S_n, f_syn_inh_S_s, f_syn_inh_S_d);
+    /* FILE **f_syn_inh_R_c = malloc(p_syn_inh_size * sizeof(FILE *)); */
+    /* FILE **f_syn_inh_R_r = malloc(p_syn_inh_size * sizeof(FILE *)); */
+    /* FILE **f_syn_inh_R_n = malloc(p_syn_inh_size * sizeof(FILE *)); */
+    /* FILE **f_syn_inh_R_s = malloc(p_syn_inh_size * sizeof(FILE *)); */
+    /* FILE **f_syn_inh_R_d = malloc(p_syn_inh_size * sizeof(FILE *)); */
+    /* file_init("syn_inh_R", p_syn_inh_size, f_syn_inh_R_c, f_syn_inh_R_r, f_syn_inh_R_n, f_syn_inh_R_s, f_syn_inh_R_d); */
+    /* FILE **f_syn_inh_S_c = malloc(p_syn_inh_size * sizeof(FILE *)); */
+    /* FILE **f_syn_inh_S_r = malloc(p_syn_inh_size * sizeof(FILE *)); */
+    /* FILE **f_syn_inh_S_n = malloc(p_syn_inh_size * sizeof(FILE *)); */
+    /* FILE **f_syn_inh_S_s = malloc(p_syn_inh_size * sizeof(FILE *)); */
+    /* FILE **f_syn_inh_S_d = malloc(p_syn_inh_size * sizeof(FILE *)); */
+    /* file_init("syn_inh_S", p_syn_inh_size, f_syn_inh_S_c, f_syn_inh_S_r, f_syn_inh_S_n, f_syn_inh_S_s, f_syn_inh_S_d); */
 
-    // Initialise RNG
-    gmp_randinit_default(rng_f);
+    // Initialise uniform float RNG
+    gmp_randinit_default(rng_uf);
     clock_gettime(CLOCK_REALTIME, &sys_t);
-    //rng_f_seed = 707135875931353ul;
-    rng_f_seed = sys_t.tv_sec + sys_t.tv_nsec;
-    gmp_randseed_ui(rng_f, rng_f_seed);
-    printf("GMP rand seed: %lu\n", rng_f_seed);
+    //rng_uf_seed = 707135875931353ul;
+    rng_uf_seed = sys_t.tv_sec + sys_t.tv_nsec;
+    gmp_randseed_ui(rng_uf, rng_uf_seed);
+    printf("GMP rand uniform float seed: %lu\n", rng_uf_seed);
 
     // ODE system
     arpra_ode_system ode_system;
@@ -721,7 +721,7 @@ int main (int argc, char *argv[])
     run_time = clock();
 
     for (i = 0; i < p_sim_steps; i++) {
-        if (i % p_report_step == 0) printf("%u\n", i);
+        if (i % p_report_step == 0) printf("%lu\n", i);
 
         for (j = 0; j < dimensions; j++) {
             reduce_epoch[j] = ode_system.x[j].nTerms;
@@ -729,17 +729,17 @@ int main (int argc, char *argv[])
 
         // Event(s) occur if urandom >= e^-rate
         for (j = 0; j < p_in1_size; j++) {
-            mpfr_urandom(&rand_f, rng_f, MPFR_RNDN);
-            in1[j] = mpfr_greaterequal_p(&rand_f, &in1_p0);
-            fprintf(stderr, "%s", (in1[j] ? "\x1B[31m\xE2\x96\xA3\x1B[0m" : "\xE2\x96\xA3"));
+            mpfr_urandom(&rand_uf, rng_uf, MPFR_RNDN);
+            in1[j] = mpfr_greaterequal_p(&rand_uf, &in1_p0);
+            //fprintf(stderr, "%s", (in1[j] ? "\x1B[31m\xE2\x96\xA3\x1B[0m" : "\xE2\x96\xA3"));
         }
-        fprintf(stderr, "  ");
+        //fprintf(stderr, "  ");
         for (j = 0; j < p_in2_size; j++) {
-            mpfr_urandom(&rand_f, rng_f, MPFR_RNDN);
-            in2[j] = mpfr_greaterequal_p(&rand_f, &in2_p0);
-            fprintf(stderr, "%s", (in2[j] ? "\x1B[31m\xE2\x96\xA3\x1B[0m" : "\xE2\x96\xA3"));
+            mpfr_urandom(&rand_uf, rng_uf, MPFR_RNDN);
+            in2[j] = mpfr_greaterequal_p(&rand_uf, &in2_p0);
+            //fprintf(stderr, "%s", (in2[j] ? "\x1B[31m\xE2\x96\xA3\x1B[0m" : "\xE2\x96\xA3"));
         }
-        fprintf(stderr, "\n");
+        //fprintf(stderr, "\n");
 
         // Step system
         arpra_ode_stepper_step(&ode_stepper, &h);
@@ -751,19 +751,19 @@ int main (int argc, char *argv[])
             }
         }
 
-        file_write(&t, 1, f_time_c, f_time_r, f_time_n, f_time_s, f_time_d);
+        /* file_write(&t, 1, f_time_c, f_time_r, f_time_n, f_time_s, f_time_d); */
 
         file_write(nrn1_N, p_nrn1_size, f_nrn1_N_c, f_nrn1_N_r, f_nrn1_N_n, f_nrn1_N_s, f_nrn1_N_d);
         file_write(nrn1_V, p_nrn1_size, f_nrn1_V_c, f_nrn1_V_r, f_nrn1_V_n, f_nrn1_V_s, f_nrn1_V_d);
 
-        //file_write(nrn2_N, p_nrn2_size, f_nrn2_N_c, f_nrn2_N_r, f_nrn2_N_n, f_nrn2_N_s, f_nrn2_N_d);
-        //file_write(nrn2_V, p_nrn2_size, f_nrn2_V_c, f_nrn2_V_r, f_nrn2_V_n, f_nrn2_V_s, f_nrn2_V_d);
+        /* file_write(nrn2_N, p_nrn2_size, f_nrn2_N_c, f_nrn2_N_r, f_nrn2_N_n, f_nrn2_N_s, f_nrn2_N_d); */
+        /* file_write(nrn2_V, p_nrn2_size, f_nrn2_V_c, f_nrn2_V_r, f_nrn2_V_n, f_nrn2_V_s, f_nrn2_V_d); */
 
-        file_write(syn_exc_R, p_syn_exc_size, f_syn_exc_R_c, f_syn_exc_R_r, f_syn_exc_R_n, f_syn_exc_R_s, f_syn_exc_R_d);
-        file_write(syn_exc_S, p_syn_exc_size, f_syn_exc_S_c, f_syn_exc_S_r, f_syn_exc_S_n, f_syn_exc_S_s, f_syn_exc_S_d);
+        /* file_write(syn_exc_R, p_syn_exc_size, f_syn_exc_R_c, f_syn_exc_R_r, f_syn_exc_R_n, f_syn_exc_R_s, f_syn_exc_R_d); */
+        /* file_write(syn_exc_S, p_syn_exc_size, f_syn_exc_S_c, f_syn_exc_S_r, f_syn_exc_S_n, f_syn_exc_S_s, f_syn_exc_S_d); */
 
-        //file_write(syn_inh_R, p_syn_inh_size, f_syn_inh_R_c, f_syn_inh_R_r, f_syn_inh_R_n, f_syn_inh_R_s, f_syn_inh_R_d);
-        //file_write(syn_inh_S, p_syn_inh_size, f_syn_inh_S_c, f_syn_inh_S_r, f_syn_inh_S_n, f_syn_inh_S_s, f_syn_inh_S_d);
+        /* file_write(syn_inh_R, p_syn_inh_size, f_syn_inh_R_c, f_syn_inh_R_r, f_syn_inh_R_n, f_syn_inh_R_s, f_syn_inh_R_d); */
+        /* file_write(syn_inh_S, p_syn_inh_size, f_syn_inh_S_c, f_syn_inh_S_r, f_syn_inh_S_n, f_syn_inh_S_s, f_syn_inh_S_d); */
     }
 
     run_time = clock() - run_time;
@@ -843,7 +843,7 @@ int main (int argc, char *argv[])
     arpra_clear(&neg_two);
 
     // Clear scratch space
-    mpfr_clear(&rand_f);
+    mpfr_clear(&rand_uf);
     arpra_clear(&temp1);
     arpra_clear(&temp2);
     arpra_clear(&M_ss);
@@ -866,12 +866,12 @@ int main (int argc, char *argv[])
     free(reduce_epoch);
 
     // Clear report files
-    file_clear(1, f_time_c, f_time_r, f_time_n, f_time_s, f_time_d);
-    free(f_time_c);
-    free(f_time_r);
-    free(f_time_n);
-    free(f_time_s);
-    free(f_time_d);
+    /* file_clear(1, f_time_c, f_time_r, f_time_n, f_time_s, f_time_d); */
+    /* free(f_time_c); */
+    /* free(f_time_r); */
+    /* free(f_time_n); */
+    /* free(f_time_s); */
+    /* free(f_time_d); */
 
     file_clear(p_nrn1_size, f_nrn1_N_c, f_nrn1_N_r, f_nrn1_N_n, f_nrn1_N_s, f_nrn1_N_d);
     free(f_nrn1_N_c);
@@ -886,47 +886,47 @@ int main (int argc, char *argv[])
     free(f_nrn1_V_s);
     free(f_nrn1_V_d);
 
-    //file_clear(p_nrn2_size, f_nrn2_N_c, f_nrn2_N_r, f_nrn2_N_n, f_nrn2_N_s, f_nrn2_N_d);
-    //free(f_nrn2_N_c);
-    //free(f_nrn2_N_r);
-    //free(f_nrn2_N_n);
-    //free(f_nrn2_N_s);
-    //free(f_nrn2_N_d);
-    //file_clear(p_nrn2_size, f_nrn2_V_c, f_nrn2_V_r, f_nrn2_V_n, f_nrn2_V_s, f_nrn2_V_d);
-    //free(f_nrn2_V_c);
-    //free(f_nrn2_V_r);
-    //free(f_nrn2_V_n);
-    //free(f_nrn2_V_s);
-    //free(f_nrn2_V_d);
+    /* file_clear(p_nrn2_size, f_nrn2_N_c, f_nrn2_N_r, f_nrn2_N_n, f_nrn2_N_s, f_nrn2_N_d); */
+    /* free(f_nrn2_N_c); */
+    /* free(f_nrn2_N_r); */
+    /* free(f_nrn2_N_n); */
+    /* free(f_nrn2_N_s); */
+    /* free(f_nrn2_N_d); */
+    /* file_clear(p_nrn2_size, f_nrn2_V_c, f_nrn2_V_r, f_nrn2_V_n, f_nrn2_V_s, f_nrn2_V_d); */
+    /* free(f_nrn2_V_c); */
+    /* free(f_nrn2_V_r); */
+    /* free(f_nrn2_V_n); */
+    /* free(f_nrn2_V_s); */
+    /* free(f_nrn2_V_d); */
 
-    file_clear(p_syn_exc_size, f_syn_exc_R_c, f_syn_exc_R_r, f_syn_exc_R_n, f_syn_exc_R_s, f_syn_exc_R_d);
-    free(f_syn_exc_R_c);
-    free(f_syn_exc_R_r);
-    free(f_syn_exc_R_n);
-    free(f_syn_exc_R_s);
-    free(f_syn_exc_R_d);
-    file_clear(p_syn_exc_size, f_syn_exc_S_c, f_syn_exc_S_r, f_syn_exc_S_n, f_syn_exc_S_s, f_syn_exc_S_d);
-    free(f_syn_exc_S_c);
-    free(f_syn_exc_S_r);
-    free(f_syn_exc_S_n);
-    free(f_syn_exc_S_s);
-    free(f_syn_exc_S_d);
+    /* file_clear(p_syn_exc_size, f_syn_exc_R_c, f_syn_exc_R_r, f_syn_exc_R_n, f_syn_exc_R_s, f_syn_exc_R_d); */
+    /* free(f_syn_exc_R_c); */
+    /* free(f_syn_exc_R_r); */
+    /* free(f_syn_exc_R_n); */
+    /* free(f_syn_exc_R_s); */
+    /* free(f_syn_exc_R_d); */
+    /* file_clear(p_syn_exc_size, f_syn_exc_S_c, f_syn_exc_S_r, f_syn_exc_S_n, f_syn_exc_S_s, f_syn_exc_S_d); */
+    /* free(f_syn_exc_S_c); */
+    /* free(f_syn_exc_S_r); */
+    /* free(f_syn_exc_S_n); */
+    /* free(f_syn_exc_S_s); */
+    /* free(f_syn_exc_S_d); */
 
-    //file_clear(p_syn_inh_size, f_syn_inh_R_c, f_syn_inh_R_r, f_syn_inh_R_n, f_syn_inh_R_s, f_syn_inh_R_d);
-    //free(f_syn_inh_R_c);
-    //free(f_syn_inh_R_r);
-    //free(f_syn_inh_R_n);
-    //free(f_syn_inh_R_s);
-    //free(f_syn_inh_R_d);
-    //file_clear(p_syn_inh_size, f_syn_inh_S_c, f_syn_inh_S_r, f_syn_inh_S_n, f_syn_inh_S_s, f_syn_inh_S_d);
-    //free(f_syn_inh_S_c);
-    //free(f_syn_inh_S_r);
-    //free(f_syn_inh_S_n);
-    //free(f_syn_inh_S_s);
-    //free(f_syn_inh_S_d);
+    /* file_clear(p_syn_inh_size, f_syn_inh_R_c, f_syn_inh_R_r, f_syn_inh_R_n, f_syn_inh_R_s, f_syn_inh_R_d); */
+    /* free(f_syn_inh_R_c); */
+    /* free(f_syn_inh_R_r); */
+    /* free(f_syn_inh_R_n); */
+    /* free(f_syn_inh_R_s); */
+    /* free(f_syn_inh_R_d); */
+    /* file_clear(p_syn_inh_size, f_syn_inh_S_c, f_syn_inh_S_r, f_syn_inh_S_n, f_syn_inh_S_s, f_syn_inh_S_d); */
+    /* free(f_syn_inh_S_c); */
+    /* free(f_syn_inh_S_r); */
+    /* free(f_syn_inh_S_n); */
+    /* free(f_syn_inh_S_s); */
+    /* free(f_syn_inh_S_d); */
 
     arpra_ode_stepper_clear(&ode_stepper);
-    gmp_randclear(rng_f);
+    gmp_randclear(rng_uf);
     mpfr_free_cache();
 
     return 0;

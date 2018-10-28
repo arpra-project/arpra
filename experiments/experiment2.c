@@ -73,7 +73,7 @@
 #define p_report_step 20
 
 // Poisson input parameters (group 1)
-#define p_in1_size 500
+#define p_in1_size 1000
 #define p_in1_freq 50.0
 #define p_in1_V_lo -60.0
 #define p_in1_V_hi 20.0
@@ -118,15 +118,15 @@
 #define p_syn_exc_size p_in1_size * p_nrn1_size
 #define p_syn_exc_R0 0.0
 #define p_syn_exc_S0 0.0
-#define p_syn_exc_GSyn_std 0.5
-#define p_syn_exc_GSyn_mean 0.1
+#define p_syn_exc_GSyn_std 1.0
+#define p_syn_exc_GSyn_mean 10.0 / p_in1_size
 #define p_syn_exc_VSyn 0.0
 #define p_syn_exc_thr -50.0
 #define p_syn_exc_a 0.25 // in [1/10, 1/2]
 #define p_syn_exc_b 0.15 // in [1/20, 1/4]
 #define p_syn_exc_k 1.0E6
 
-// zSynapse parameters (inhibitory)
+// Synapse parameters (inhibitory)
 #define p_syn_inh_size 0
 #define p_syn_inh_R0 0.0
 #define p_syn_inh_S0 0.0
@@ -145,7 +145,7 @@ int *in1, *in2;
 mpfr_t GL, VL, GCa, VCa, GK, VK, V1, V2, V3, V4, phi, C, syn_exc_VSyn, syn_exc_thr,
        syn_exc_a, syn_exc_b, syn_exc_k, syn_inh_VSyn, syn_inh_thr, syn_inh_a,
        syn_inh_b, syn_inh_k, one, two, neg_two, temp1, temp2, M_ss, N_ss, in1_V_lo,
-    in1_V_hi, in2_V_lo, in2_V_hi, in1_p0, in2_p0, rand_uf, rand_nf;
+       in1_V_hi, in2_V_lo, in2_V_hi, in1_p0, in2_p0, rand_uf, rand_nf;
 mpz_t rand_uz;
 mpfr_ptr syn_exc_GSyn, syn_inh_GSyn, I1, I2;
 gmp_randstate_t rng_uf, rng_nf, rng_uz;
@@ -300,7 +300,7 @@ void dVdt (const unsigned long idx, int grp)
         //fprintf(stderr, "sum(I): "); debug(d_V);
         //fprintf(stderr, "I[0]: "); debug(I);
         for (i = 0; i < pre_size; i++) {
-            //fprintf(stderr, "I[%u]: ", i); debug(&(I[i]));
+            //fprintf(stderr, "I[%lu]: ", i); debug(&(I[i]));
         }
     }
 
@@ -439,7 +439,8 @@ int main (int argc, char *argv[])
     // Initialise uniform float RNG
     gmp_randinit_default(rng_uf);
     clock_gettime(CLOCK_REALTIME, &sys_t);
-    rng_uf_seed = 707135875931353ul;
+    rng_uf_seed = 7043252931353ul;
+    //rng_uf_seed = 707135875931353ul;
     //rng_uf_seed = sys_t.tv_sec + sys_t.tv_nsec;
     gmp_randseed_ui(rng_uf, rng_uf_seed);
     printf("GMP rand uniform float seed: %lu\n", rng_uf_seed);
@@ -447,7 +448,8 @@ int main (int argc, char *argv[])
     // Initialise normal float RNG
     gmp_randinit_default(rng_nf);
     clock_gettime(CLOCK_REALTIME, &sys_t);
-    rng_nf_seed = 503108552855933ul;
+    rng_nf_seed = 5031041235352853ul;
+    //rng_nf_seed = 503108552855933ul;
     //rng_nf_seed = sys_t.tv_sec + sys_t.tv_nsec;
     gmp_randseed_ui(rng_nf, rng_nf_seed);
     printf("GMP rand normal float seed: %lu\n", rng_nf_seed);
@@ -640,20 +642,20 @@ int main (int argc, char *argv[])
     FILE **f_nrn1_V = malloc(p_nrn1_size * sizeof(FILE *));
     file_init("nrn1_V", p_nrn1_size, f_nrn1_V);
 
-    //FILE **f_nrn2_N = malloc(p_nrn2_size * sizeof(FILE *));
-    //file_init("nrn2_N", p_nrn2_size, f_nrn2_N);
-    //FILE **f_nrn2_V = malloc(p_nrn2_size * sizeof(FILE *));
-    //file_init("nrn2_V", p_nrn2_size, f_nrn2_V);
+    /* FILE **f_nrn2_N = malloc(p_nrn2_size * sizeof(FILE *)); */
+    /* file_init("nrn2_N", p_nrn2_size, f_nrn2_N); */
+    /* FILE **f_nrn2_V = malloc(p_nrn2_size * sizeof(FILE *)); */
+    /* file_init("nrn2_V", p_nrn2_size, f_nrn2_V); */
 
-    FILE **f_syn_exc_R = malloc(p_syn_exc_size * sizeof(FILE *));
-    file_init("syn_exc_R", p_syn_exc_size, f_syn_exc_R);
-    FILE **f_syn_exc_S = malloc(p_syn_exc_size * sizeof(FILE *));
-    file_init("syn_exc_S", p_syn_exc_size, f_syn_exc_S);
+    /* FILE **f_syn_exc_R = malloc(p_syn_exc_size * sizeof(FILE *)); */
+    /* file_init("syn_exc_R", p_syn_exc_size, f_syn_exc_R); */
+    /* FILE **f_syn_exc_S = malloc(p_syn_exc_size * sizeof(FILE *)); */
+    /* file_init("syn_exc_S", p_syn_exc_size, f_syn_exc_S); */
 
-    //FILE **f_syn_inh_R = malloc(p_syn_inh_size * sizeof(FILE *));
-    //file_init("syn_inh_R", p_syn_inh_size, f_syn_inh_R);
-    //FILE **f_syn_inh_S = malloc(p_syn_inh_size * sizeof(FILE *));
-    //file_init("syn_inh_S", p_syn_inh_size, f_syn_inh_S);
+    /* FILE **f_syn_inh_R = malloc(p_syn_inh_size * sizeof(FILE *)); */
+    /* file_init("syn_inh_R", p_syn_inh_size, f_syn_inh_R); */
+    /* FILE **f_syn_inh_S = malloc(p_syn_inh_size * sizeof(FILE *)); */
+    /* file_init("syn_inh_S", p_syn_inh_size, f_syn_inh_S); */
 
 
     // Begin simulation loop
@@ -662,21 +664,21 @@ int main (int argc, char *argv[])
     run_time = clock();
 
     for (i = 0; i < p_sim_steps; i++) {
-        if (i % p_report_step == 0) printf("%u\n", i);
+        if (i % p_report_step == 0) printf("%lu\n", i);
 
         // Event(s) occur if urandom >= e^-rate
         for (j = 0; j < p_in1_size; j++) {
             mpfr_urandom(rand_uf, rng_uf, MPFR_RNDN);
             in1[j] = mpfr_greaterequal_p(rand_uf, in1_p0);
-            fprintf(stderr, "%s", (in1[j] ? "\x1B[31m\xE2\x96\xA3\x1B[0m" : "\xE2\x96\xA3"));
+            //fprintf(stderr, "%s", (in1[j] ? "\x1B[31m\xE2\x96\xA3\x1B[0m" : "\xE2\x96\xA3"));
         }
-        fprintf(stderr, "  ");
+        //fprintf(stderr, "  ");
         for (j = 0; j < p_in2_size; j++) {
             mpfr_urandom(rand_uf, rng_uf, MPFR_RNDN);
             in2[j] = mpfr_greaterequal_p(rand_uf, in2_p0);
-            fprintf(stderr, "%s", (in2[j] ? "\x1B[31m\xE2\x96\xA3\x1B[0m" : "\xE2\x96\xA3"));
+            //fprintf(stderr, "%s", (in2[j] ? "\x1B[31m\xE2\x96\xA3\x1B[0m" : "\xE2\x96\xA3"));
         }
-        fprintf(stderr, "\n");
+        //fprintf(stderr, "\n");
 
         // Compute derivatives
         for (j = 0; j < p_nrn1_size; j++) {
@@ -728,14 +730,14 @@ int main (int argc, char *argv[])
         file_write(nrn1_N, p_nrn1_size, f_nrn1_N);
         file_write(nrn1_V, p_nrn1_size, f_nrn1_V);
 
-        //file_write(nrn2_N, p_nrn2_size, f_nrn2_N);
-        //file_write(nrn2_V, p_nrn2_size, f_nrn2_V);
+        /* file_write(nrn2_N, p_nrn2_size, f_nrn2_N); */
+        /* file_write(nrn2_V, p_nrn2_size, f_nrn2_V); */
 
-        file_write(syn_exc_R, p_syn_exc_size, f_syn_exc_R);
-        file_write(syn_exc_S, p_syn_exc_size, f_syn_exc_S);
+        /* file_write(syn_exc_R, p_syn_exc_size, f_syn_exc_R); */
+        /* file_write(syn_exc_S, p_syn_exc_size, f_syn_exc_S); */
 
-        //file_write(syn_inh_R, p_syn_inh_size, f_syn_inh_R);
-        //file_write(syn_inh_S, p_syn_inh_size, f_syn_inh_S);
+        /* file_write(syn_inh_R, p_syn_inh_size, f_syn_inh_R); */
+        /* file_write(syn_inh_S, p_syn_inh_size, f_syn_inh_S); */
     }
 
     run_time = clock() - run_time;
@@ -870,20 +872,20 @@ int main (int argc, char *argv[])
     file_clear(p_nrn1_size, f_nrn1_V);
     free(f_nrn1_V);
 
-    //file_clear(p_nrn2_size, f_nrn2_N);
-    //free(f_nrn2_N);
-    //file_clear(p_nrn2_size, f_nrn2_V);
-    //free(f_nrn2_V);
+    /* file_clear(p_nrn2_size, f_nrn2_N); */
+    /* free(f_nrn2_N); */
+    /* file_clear(p_nrn2_size, f_nrn2_V); */
+    /* free(f_nrn2_V); */
 
-    file_clear(p_syn_exc_size, f_syn_exc_R);
-    free(f_syn_exc_R);
-    file_clear(p_syn_exc_size, f_syn_exc_S);
-    free(f_syn_exc_S);
+    /* file_clear(p_syn_exc_size, f_syn_exc_R); */
+    /* free(f_syn_exc_R); */
+    /* file_clear(p_syn_exc_size, f_syn_exc_S); */
+    /* free(f_syn_exc_S); */
 
-    //file_clear(p_syn_inh_size, f_syn_inh_R);
-    //free(f_syn_inh_R);
-    //file_clear(p_syn_inh_size, f_syn_inh_S);
-    //free(f_syn_inh_S);
+    /* file_clear(p_syn_inh_size, f_syn_inh_R); */
+    /* free(f_syn_inh_R); */
+    /* file_clear(p_syn_inh_size, f_syn_inh_S); */
+    /* free(f_syn_inh_S); */
 
     gmp_randclear(rng_uf);
     gmp_randclear(rng_nf);

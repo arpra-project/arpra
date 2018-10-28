@@ -19,4 +19,4 @@ for inputs in {0..50..2}; do
     done
 done
 
-python3 ./experiment1.py
+python3 ./experiments/experiment1.py
