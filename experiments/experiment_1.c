@@ -454,7 +454,7 @@ int main (int argc, char *argv[])
     in1_size_arg = atoi(argv[1]);
     in1_freq_arg = atoi(argv[2]);
 
-     // State memory offsets
+    // State memory offsets
     nrn1_N_offset = 0;
     nrn2_N_offset = nrn1_N_offset + p_nrn1_size;
     nrn1_V_offset = nrn2_N_offset + p_nrn2_size;

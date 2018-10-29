@@ -640,20 +640,20 @@ int main (int argc, char *argv[])
     FILE **f_nrn1_V = malloc(p_nrn1_size * sizeof(FILE *));
     file_init("nrn1_V", p_nrn1_size, f_nrn1_V);
 
-    //FILE **f_nrn2_N = malloc(p_nrn2_size * sizeof(FILE *));
-    //file_init("nrn2_N", p_nrn2_size, f_nrn2_N);
-    //FILE **f_nrn2_V = malloc(p_nrn2_size * sizeof(FILE *));
-    //file_init("nrn2_V", p_nrn2_size, f_nrn2_V);
+    /* FILE **f_nrn2_N = malloc(p_nrn2_size * sizeof(FILE *)); */
+    /* file_init("nrn2_N", p_nrn2_size, f_nrn2_N); */
+    /* /FILE **f_nrn2_V = malloc(p_nrn2_size * sizeof(FILE *)); */
+    /* file_init("nrn2_V", p_nrn2_size, f_nrn2_V); */
 
-    FILE **f_syn_exc_R = malloc(p_syn_exc_size * sizeof(FILE *));
-    file_init("syn_exc_R", p_syn_exc_size, f_syn_exc_R);
-    FILE **f_syn_exc_S = malloc(p_syn_exc_size * sizeof(FILE *));
-    file_init("syn_exc_S", p_syn_exc_size, f_syn_exc_S);
+    /* FILE **f_syn_exc_R = malloc(p_syn_exc_size * sizeof(FILE *)); */
+    /* file_init("syn_exc_R", p_syn_exc_size, f_syn_exc_R); */
+    /* FILE **f_syn_exc_S = malloc(p_syn_exc_size * sizeof(FILE *)); */
+    /* file_init("syn_exc_S", p_syn_exc_size, f_syn_exc_S); */
 
-    //FILE **f_syn_inh_R = malloc(p_syn_inh_size * sizeof(FILE *));
-    //file_init("syn_inh_R", p_syn_inh_size, f_syn_inh_R);
-    //FILE **f_syn_inh_S = malloc(p_syn_inh_size * sizeof(FILE *));
-    //file_init("syn_inh_S", p_syn_inh_size, f_syn_inh_S);
+    /* FILE **f_syn_inh_R = malloc(p_syn_inh_size * sizeof(FILE *)); */
+    /* file_init("syn_inh_R", p_syn_inh_size, f_syn_inh_R); */
+    /* FILE **f_syn_inh_S = malloc(p_syn_inh_size * sizeof(FILE *)); */
+    /* file_init("syn_inh_S", p_syn_inh_size, f_syn_inh_S); */
 
 
     // Begin simulation loop
@@ -728,14 +728,14 @@ int main (int argc, char *argv[])
         file_write(nrn1_N, p_nrn1_size, f_nrn1_N);
         file_write(nrn1_V, p_nrn1_size, f_nrn1_V);
 
-        //file_write(nrn2_N, p_nrn2_size, f_nrn2_N);
-        //file_write(nrn2_V, p_nrn2_size, f_nrn2_V);
+        /* file_write(nrn2_N, p_nrn2_size, f_nrn2_N); */
+        /* file_write(nrn2_V, p_nrn2_size, f_nrn2_V); */
 
-        file_write(syn_exc_R, p_syn_exc_size, f_syn_exc_R);
-        file_write(syn_exc_S, p_syn_exc_size, f_syn_exc_S);
+        /* file_write(syn_exc_R, p_syn_exc_size, f_syn_exc_R); */
+        /* file_write(syn_exc_S, p_syn_exc_size, f_syn_exc_S); */
 
-        //file_write(syn_inh_R, p_syn_inh_size, f_syn_inh_R);
-        //file_write(syn_inh_S, p_syn_inh_size, f_syn_inh_S);
+        /* file_write(syn_inh_R, p_syn_inh_size, f_syn_inh_R); */
+        /* file_write(syn_inh_S, p_syn_inh_size, f_syn_inh_S); */
     }
 
     run_time = clock() - run_time;
@@ -870,20 +870,20 @@ int main (int argc, char *argv[])
     file_clear(p_nrn1_size, f_nrn1_V);
     free(f_nrn1_V);
 
-    //file_clear(p_nrn2_size, f_nrn2_N);
-    //free(f_nrn2_N);
-    //file_clear(p_nrn2_size, f_nrn2_V);
-    //free(f_nrn2_V);
+    /* file_clear(p_nrn2_size, f_nrn2_N); */
+    /* free(f_nrn2_N); */
+    /* file_clear(p_nrn2_size, f_nrn2_V); */
+    /* free(f_nrn2_V); */
 
-    file_clear(p_syn_exc_size, f_syn_exc_R);
-    free(f_syn_exc_R);
-    file_clear(p_syn_exc_size, f_syn_exc_S);
-    free(f_syn_exc_S);
+    /* file_clear(p_syn_exc_size, f_syn_exc_R); */
+    /* free(f_syn_exc_R); */
+    /* file_clear(p_syn_exc_size, f_syn_exc_S); */
+    /* free(f_syn_exc_S); */
 
-    //file_clear(p_syn_inh_size, f_syn_inh_R);
-    //free(f_syn_inh_R);
-    //file_clear(p_syn_inh_size, f_syn_inh_S);
-    //free(f_syn_inh_S);
+    /* file_clear(p_syn_inh_size, f_syn_inh_R); */
+    /* free(f_syn_inh_R); */
+    /* file_clear(p_syn_inh_size, f_syn_inh_S); */
+    /* free(f_syn_inh_S); */
 
     gmp_randclear(rng_uf);
     gmp_randclear(rng_nf);

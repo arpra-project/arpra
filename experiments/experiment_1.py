@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 # SETUP
 # %load_ext autoreload
 # %autoreload 2
-# from experiments.experiment1 import experiment1
+# from experiments.experiment_1 import experiment_1
 # #####
 
 def rad_sum (path, x, i_start, i_stop):
@@ -23,7 +23,7 @@ def rad_sum (path, x, i_start, i_stop):
             return np.inf
 
 
-def experiment1 ():
+def experiment_1 ():
 
     xr = 'nrn1_V_000_r.dat'
     yr = 'nrn1_N_000_r.dat'
@@ -67,4 +67,4 @@ def experiment1 ():
 
 
 if __name__ == '__main__':
-    experiment1()
+    experiment_1()

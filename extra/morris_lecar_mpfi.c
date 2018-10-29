@@ -66,91 +66,91 @@
  */
 
 // General parameters
-const double p_h = 0.5;
-const double p_t0 = 0.0;
-const mp_prec_t p_prec = 53;
-const mp_prec_t p_error_prec = 256;
-const unsigned long p_sim_steps = 1000;
-const unsigned long p_report_step = 20;
+#define p_h 0.5
+#define p_t0 0.0
+#define p_prec 53
+#define p_error_prec 256
+#define p_sim_steps 1000
+#define p_report_step 20
 
 // Poisson input parameters (group 1)
-const unsigned long p_in1_size = 50;
-const double p_in1_freq = 5.0;
-const double p_in1_V_lo = -60.0;
-const double p_in1_V_hi = 20.0;
+#define p_in1_size 50
+#define p_in1_freq 5.0
+#define p_in1_V_lo -60.0
+#define p_in1_V_hi 20.0
 
 // Poisson input parameters (group 2)
-const unsigned long p_in2_size = 0;
-const double p_in2_freq = 5.0;
-const double p_in2_V_lo = -60.0;
-const double p_in2_V_hi = 20.0;
+#define p_in2_size 0
+#define p_in2_freq 5.0
+#define p_in2_V_lo -60.0
+#define p_in2_V_hi 20.0
 
 // Neuron parameters (group 1)
-const unsigned long p_nrn1_size = 1;
-const double p_nrn1_N0 = 0.0;
-const double p_nrn1_V0 = -60.0;
-const int p_nrn1_class = 1;
+#define p_nrn1_size 1
+#define p_nrn1_N0 0.0
+#define p_nrn1_V0 -60.0
+#define p_nrn1_class 1
 
 // Neuron parameters (group 2)
-const unsigned long p_nrn2_size = 0;
-const double p_nrn2_N0 = 0.0;
-const double p_nrn2_V0 = -60.0;
-const int p_nrn2_class = 1;
+#define p_nrn2_size 0
+#define p_nrn2_N0 0.0
+#define p_nrn2_V0 -60.0
+#define p_nrn2_class 1
 
 // Neuron parameters (common)
-const double p_GL = 2.0;
-const double p_GCa = 4.0; // Class 1
-//const double p_GCa = 4.4; // Class 2
-const double p_GK = 8.0;
-const double p_VL = -60.0;
-const double p_VCa = 120.0;
-const double p_VK = -80.0;
-const double p_V1 = -1.2;
-const double p_V2 = 18.0;
-const double p_V3 = 12.0; // Class 1
-//const double p_V3 = 2.0; // Class 2
-const double p_V4 = 17.4; // Class 1
-//const double p_V4 = 30.0; // Class 2
-const double p_phi = 1.0 / 15.0; // Class 1
-//const double p_phi = 1.0 / 25.0; // Class 2
-const double p_C = 20.0;
+#define p_GL 2.0
+#define p_GCa 4.0 // Class 1
+//#define p_GCa 4.4 // Class 2
+#define p_GK 8.0
+#define p_VL -60.0
+#define p_VCa 120.0
+#define p_VK -80.0
+#define p_V1 -1.2
+#define p_V2 18.0
+#define p_V3 12.0 // Class 1
+//#define p_V3 2.0 // Class 2
+#define p_V4 17.4 // Class 1
+//#define p_V4 30.0 // Class 2
+#define p_phi 1.0 / 15.0 // Class 1
+//#define p_phi 1.0 / 25.0 // Class 2
+#define p_C 20.0
 
 // Synapse parameters (excitatory)
-const unsigned long p_syn_exc_size = p_in1_size * p_nrn1_size;
-const double p_syn_exc_R0 = 0.0;
-const double p_syn_exc_S0 = 0.0;
-//const double p_syn_exc_GSyn = 40.0;
-const double p_syn_exc_GSyn = 3.0;
-const double p_syn_exc_VSyn = 0.0;
-const double p_syn_exc_thr = -50.0;
-const double p_syn_exc_a = 0.25; // in [1/10, 1/2]
-const double p_syn_exc_b = 0.15; // in [1/20, 1/4]
-const double p_syn_exc_k = 1.0E6;
+#define p_syn_exc_size p_in1_size * p_nrn1_size
+#define p_syn_exc_R0 0.0
+#define p_syn_exc_S0 0.0
+//#define p_syn_exc_GSyn 40.0
+#define p_syn_exc_GSyn 3.0
+#define p_syn_exc_VSyn 0.0
+#define p_syn_exc_thr -50.0
+#define p_syn_exc_a 0.25 // in [1/10, 1/2]
+#define p_syn_exc_b 0.15 // in [1/20, 1/4]
+#define p_syn_exc_k 1.0E6
 
 // Synapse parameters (inhibitory)
-const unsigned long p_syn_inh_size = 0;
-const double p_syn_inh_R0 = 0.0;
-const double p_syn_inh_S0 = 0.0;
-const double p_syn_inh_GSyn = 50.0;
-const double p_syn_inh_VSyn = -80.0;
-const double p_syn_inh_thr = -50.0;
-const double p_syn_inh_a = 0.075; // in [1/20, 1/10]
-const double p_syn_inh_b = 0.035; // in [1/50, 1/20]
-const double p_syn_inh_k = 1.0E6;
+#define p_syn_inh_size 0
+#define p_syn_inh_R0 0.0
+#define p_syn_inh_S0 0.0
+#define p_syn_inh_GSyn 50.0
+#define p_syn_inh_VSyn -80.0
+#define p_syn_inh_thr -50.0
+#define p_syn_inh_a 0.075 // in [1/20, 1/10]
+#define p_syn_inh_b 0.035 // in [1/50, 1/20]
+#define p_syn_inh_k 1.0E6
 
 // ===================== end of model parameters ======================
 
 
 int *in1, *in2;
-mpfr_t rand_f, temp_error, in1_p0, in2_p0;
+mpfr_t rand_uf, temp_error, in1_p0, in2_p0;
 mpfr_ptr temp_sum_error1, *temp_sum_error1_ptr, temp_sum_error2, *temp_sum_error2_ptr;
 mpfi_t GL, VL, GCa, VCa, GK, VK, V1, V2, V3, V4, phi, C, syn_exc_VSyn, syn_exc_thr,
        syn_exc_a, syn_exc_b, syn_exc_k, syn_inh_VSyn, syn_inh_thr, syn_inh_a,
        syn_inh_b, syn_inh_k, one, two, neg_two, temp_sum, temp1, temp2, M_ss, N_ss,
        in1_V_lo, in1_V_hi, in2_V_lo, in2_V_hi;
 mpfi_ptr syn_exc_GSyn, syn_inh_GSyn, I1, I2;
-gmp_randstate_t rng_f;
-unsigned long rng_f_seed;
+gmp_randstate_t rng_uf;
+unsigned long rng_uf_seed;
 
 // System state variables
 mpfi_ptr nrn1_N, nrn2_N, nrn1_V, nrn2_V, syn_exc_R, syn_inh_R, syn_exc_S, syn_inh_S;
@@ -541,7 +541,7 @@ int main (int argc, char *argv[])
     mpfi_init2(neg_two, p_prec);
 
     // Initialise scratch space
-    mpfr_init2(rand_f, p_prec);
+    mpfr_init2(rand_uf, p_prec);
     mpfr_init2(temp_error, p_error_prec);
     mpfi_init2(temp_sum, p_error_prec);
     mpfi_init2(temp1, p_prec);
@@ -641,28 +641,28 @@ int main (int argc, char *argv[])
     FILE **f_nrn1_V = malloc(p_nrn1_size * sizeof(FILE *));
     file_init("nrn1_V", p_nrn1_size, f_nrn1_V);
 
-    //FILE **f_nrn2_N = malloc(p_nrn2_size * sizeof(FILE *));
-    //file_init("nrn2_N", p_nrn2_size, f_nrn2_N);
-    //FILE **f_nrn2_V = malloc(p_nrn2_size * sizeof(FILE *));
-    //file_init("nrn2_V", p_nrn2_size, f_nrn2_V);
+    /* FILE **f_nrn2_N = malloc(p_nrn2_size * sizeof(FILE *)); */
+    /* file_init("nrn2_N", p_nrn2_size, f_nrn2_N); */
+    /* FILE **f_nrn2_V = malloc(p_nrn2_size * sizeof(FILE *)); */
+    /* file_init("nrn2_V", p_nrn2_size, f_nrn2_V); */
 
-    FILE **f_syn_exc_R = malloc(p_syn_exc_size * sizeof(FILE *));
-    file_init("syn_exc_R", p_syn_exc_size, f_syn_exc_R);
-    FILE **f_syn_exc_S = malloc(p_syn_exc_size * sizeof(FILE *));
-    file_init("syn_exc_S", p_syn_exc_size, f_syn_exc_S);
+    /* FILE **f_syn_exc_R = malloc(p_syn_exc_size * sizeof(FILE *)); */
+    /* file_init("syn_exc_R", p_syn_exc_size, f_syn_exc_R); */
+    /* FILE **f_syn_exc_S = malloc(p_syn_exc_size * sizeof(FILE *)); */
+    /* file_init("syn_exc_S", p_syn_exc_size, f_syn_exc_S); */
 
-    //FILE **f_syn_inh_R = malloc(p_syn_inh_size * sizeof(FILE *));
-    //file_init("syn_inh_R", p_syn_inh_size, f_syn_inh_R);
-    //FILE **f_syn_inh_S = malloc(p_syn_inh_size * sizeof(FILE *));
-    //file_init("syn_inh_S", p_syn_inh_size, f_syn_inh_S);
+    /* FILE **f_syn_inh_R = malloc(p_syn_inh_size * sizeof(FILE *)); */
+    /* file_init("syn_inh_R", p_syn_inh_size, f_syn_inh_R); */
+    /* FILE **f_syn_inh_S = malloc(p_syn_inh_size * sizeof(FILE *)); */
+    /* file_init("syn_inh_S", p_syn_inh_size, f_syn_inh_S); */
 
     // Initialise RNG
-    gmp_randinit_default(rng_f);
+    gmp_randinit_default(rng_uf);
     clock_gettime(CLOCK_REALTIME, &sys_t);
-    //rng_f_seed = 707135875931353ul;
-    rng_f_seed = sys_t.tv_sec + sys_t.tv_nsec;
-    gmp_randseed_ui(rng_f, rng_f_seed);
-    printf("GMP rand seed: %lu\n", rng_f_seed);
+    //rng_uf_seed = 707135875931353ul;
+    rng_uf_seed = sys_t.tv_sec + sys_t.tv_nsec;
+    gmp_randseed_ui(rng_uf, rng_uf_seed);
+    printf("GMP rand seed: %lu\n", rng_uf_seed);
 
 
     // Begin simulation loop
@@ -675,14 +675,14 @@ int main (int argc, char *argv[])
 
         // Event(s) occur if urandom >= e^-rate
         for (j = 0; j < p_in1_size; j++) {
-            mpfr_urandom(rand_f, rng_f, MPFR_RNDN);
-            in1[j] = mpfr_greaterequal_p(rand_f, in1_p0);
+            mpfr_urandom(rand_uf, rng_uf, MPFR_RNDN);
+            in1[j] = mpfr_greaterequal_p(rand_uf, in1_p0);
             fprintf(stderr, "%s", (in1[j] ? "\x1B[31m\xE2\x96\xA3\x1B[0m" : "\xE2\x96\xA3"));
         }
         fprintf(stderr, "  ");
         for (j = 0; j < p_in2_size; j++) {
-            mpfr_urandom(rand_f, rng_f, MPFR_RNDN);
-            in2[j] = mpfr_greaterequal_p(rand_f, in2_p0);
+            mpfr_urandom(rand_uf, rng_uf, MPFR_RNDN);
+            in2[j] = mpfr_greaterequal_p(rand_uf, in2_p0);
             fprintf(stderr, "%s", (in2[j] ? "\x1B[31m\xE2\x96\xA3\x1B[0m" : "\xE2\x96\xA3"));
         }
         fprintf(stderr, "\n");
@@ -737,14 +737,14 @@ int main (int argc, char *argv[])
         file_write(nrn1_N, p_nrn1_size, f_nrn1_N);
         file_write(nrn1_V, p_nrn1_size, f_nrn1_V);
 
-        //file_write(nrn2_N, p_nrn2_size, f_nrn2_N);
-        //file_write(nrn2_V, p_nrn2_size, f_nrn2_V);
+        /* file_write(nrn2_N, p_nrn2_size, f_nrn2_N); */
+        /* file_write(nrn2_V, p_nrn2_size, f_nrn2_V); */
 
-        file_write(syn_exc_R, p_syn_exc_size, f_syn_exc_R);
-        file_write(syn_exc_S, p_syn_exc_size, f_syn_exc_S);
+        /* file_write(syn_exc_R, p_syn_exc_size, f_syn_exc_R); */
+        /* file_write(syn_exc_S, p_syn_exc_size, f_syn_exc_S); */
 
-        //file_write(syn_inh_R, p_syn_inh_size, f_syn_inh_R);
-        //file_write(syn_inh_S, p_syn_inh_size, f_syn_inh_S);
+        /* file_write(syn_inh_R, p_syn_inh_size, f_syn_inh_R); */
+        /* file_write(syn_inh_S, p_syn_inh_size, f_syn_inh_S); */
     }
 
     run_time = clock() - run_time;
@@ -840,7 +840,7 @@ int main (int argc, char *argv[])
     mpfi_clear(neg_two);
 
     // Clear scratch space
-    mpfr_clear(rand_f);
+    mpfr_clear(rand_uf);
     mpfr_clear(temp_error);
     mpfi_clear(temp_sum);
     mpfi_clear(temp1);
@@ -885,22 +885,22 @@ int main (int argc, char *argv[])
     file_clear(p_nrn1_size, f_nrn1_V);
     free(f_nrn1_V);
 
-    //file_clear(p_nrn2_size, f_nrn2_N);
-    //free(f_nrn2_N);
-    //file_clear(p_nrn2_size, f_nrn2_V);
-    //free(f_nrn2_V);
+    /* file_clear(p_nrn2_size, f_nrn2_N); */
+    /* free(f_nrn2_N); */
+    /* file_clear(p_nrn2_size, f_nrn2_V); */
+    /* free(f_nrn2_V); */
 
-    file_clear(p_syn_exc_size, f_syn_exc_R);
-    free(f_syn_exc_R);
-    file_clear(p_syn_exc_size, f_syn_exc_S);
-    free(f_syn_exc_S);
+    /* file_clear(p_syn_exc_size, f_syn_exc_R); */
+    /* free(f_syn_exc_R); */
+    /* file_clear(p_syn_exc_size, f_syn_exc_S); */
+    /* free(f_syn_exc_S); */
 
-    //file_clear(p_syn_inh_size, f_syn_inh_R);
-    //free(f_syn_inh_R);
-    //file_clear(p_syn_inh_size, f_syn_inh_S);
-    //free(f_syn_inh_S);
+    /* file_clear(p_syn_inh_size, f_syn_inh_R); */
+    /* free(f_syn_inh_R); */
+    /* file_clear(p_syn_inh_size, f_syn_inh_S); */
+    /* free(f_syn_inh_S); */
 
-    gmp_randclear(rng_f);
+    gmp_randclear(rng_uf);
     mpfr_free_cache();
 
     return 0;
