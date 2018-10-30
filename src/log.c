@@ -82,7 +82,7 @@ void arpra_log (arpra_range *z, const arpra_range *x)
             mpfr_log(&temp, &xb, MPFR_RNDD);
             mpfr_sub(&db, &temp, &db, MPFR_RNDD);
 
-            mpfr_min(&da, &da, &db, MPFR_RNDN);
+            mpfr_min(&da, &da, &db, MPFR_RNDD);
 
             // compute difference (log(u) - alpha u)
             mpfr_ui_div(&du, 1, &alpha, MPFR_RNDU);

@@ -74,7 +74,7 @@
 #define p_report_step 20
 
 // Poisson input parameters (group 1)
-#define p_in1_size 2000
+#define p_in1_size 5000
 #define p_in1_freq 200.0
 #define p_in1_V_lo -60.0
 #define p_in1_V_hi 20.0
@@ -119,8 +119,8 @@
 #define p_syn_exc_size p_in1_size * p_nrn1_size
 #define p_syn_exc_R0 0.0
 #define p_syn_exc_S0 0.0
-#define p_syn_exc_GSyn_std 0.0
-#define p_syn_exc_GSyn_mean 5.75 / p_in1_size
+#define p_syn_exc_GSyn_std 0.05
+#define p_syn_exc_GSyn_mean 5.85 / p_in1_size
 #define p_syn_exc_VSyn 0.0
 #define p_syn_exc_thr -50.0
 #define p_syn_exc_a 0.25 // in [1/10, 1/2]

@@ -65,6 +65,30 @@ void arpra_exp (arpra_range *z, const arpra_range *x)
         else {
             arpra_get_bounds(&xa, &xb, x);
 
+#if ARPRA_MIN_RANGE
+            // compute alpha
+            mpfr_exp(&alpha, &xa, MPFR_RNDN);
+
+            // compute difference (exp(a) - alpha a)
+            mpfr_mul(&da, &alpha, &xa, MPFR_RNDU);
+            mpfr_exp(&temp, &xa, MPFR_RNDD);
+            mpfr_sub(&da, &temp, &da, MPFR_RNDD);
+
+            // compute difference (exp(b) - alpha b)
+            mpfr_mul(&db, &alpha, &xb, MPFR_RNDD);
+            mpfr_exp(&temp, &xb, MPFR_RNDU);
+            mpfr_sub(&db, &temp, &db, MPFR_RNDU);
+
+            // compute gamma
+            mpfr_add(&gamma, &da, &db, MPFR_RNDN);
+            mpfr_div_si(&gamma, &gamma, 2, MPFR_RNDN);
+
+            // compute delta
+            mpfr_sub(&delta, &gamma, &da, MPFR_RNDU);
+            mpfr_sub(&temp, &db, &gamma, MPFR_RNDU);
+            mpfr_max(&delta, &delta, &temp, MPFR_RNDU);
+
+#else
             // compute alpha
             mpfr_exp(&alpha, &xb, MPFR_RNDN);
             mpfr_exp(&temp, &xa, MPFR_RNDN);
@@ -82,13 +106,13 @@ void arpra_exp (arpra_range *z, const arpra_range *x)
             mpfr_exp(&temp, &xb, MPFR_RNDU);
             mpfr_sub(&db, &temp, &db, MPFR_RNDU);
 
-            mpfr_max(&db, &da, &db, MPFR_RNDN);
+            mpfr_max(&db, &da, &db, MPFR_RNDU);
 
             // compute difference (exp(u) - alpha u)
             mpfr_log(&du, &alpha, MPFR_RNDU);
             mpfr_sub_si(&du, &du, 1, MPFR_RNDU);
             mpfr_mul(&du, &alpha, &du, MPFR_RNDU);
-            mpfr_neg(&du, &du, MPFR_RNDN);
+            mpfr_neg(&du, &du, MPFR_RNDD);
 
             // compute gamma
             mpfr_add(&gamma, &db, &du, MPFR_RNDN);
@@ -98,6 +122,8 @@ void arpra_exp (arpra_range *z, const arpra_range *x)
             mpfr_sub(&delta, &gamma, &du, MPFR_RNDU);
             mpfr_sub(&temp, &db, &gamma, MPFR_RNDU);
             mpfr_max(&delta, &delta, &temp, MPFR_RNDU);
+
+#endif // ARPRA_MIN_RANGE
 
             // compute affine approximation
             arpra_affine_1(z, x, &alpha, &gamma, &delta);
