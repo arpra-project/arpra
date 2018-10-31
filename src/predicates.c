@@ -28,7 +28,7 @@ int arpra_nan_p (const arpra_range *x)
 
 int arpra_inf_p (const arpra_range *x)
 {
-    return !mpfr_nan_p(&(x->centre)) && mpfr_inf_p(&(x->radius));
+    return !arpra_nan_p(x) && (mpfr_inf_p(&(x->centre)) || mpfr_inf_p(&(x->radius)));
 }
 
 int arpra_bounded_p (const arpra_range *x)
