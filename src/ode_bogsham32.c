@@ -308,9 +308,8 @@ static void bogsham32_step (arpra_ode_stepper *stepper, const arpra_range *h)
         // k[i] = f(t + c_i h, x(t) + a_i0 h k[0] + ... + a_is h k[s])
         for (x_grp = 0; x_grp < system->grps; x_grp++) {
             for (x_dim = 0; x_dim < system->dims[x_grp]; x_dim++) {
-                system->f[x_grp](&(scratch->k[k_i][x_grp][x_dim]),
-                                 &(scratch->temp_t[k_i]), (const arpra_range **) x_old,
-                                 x_grp, x_dim, system->params);
+                system->f[x_grp](&(scratch->k[k_i][x_grp][x_dim]), system->params[x_grp],
+                                 &(scratch->temp_t[k_i]), (const arpra_range **) x_old, x_grp, x_dim);
             }
         }
     }

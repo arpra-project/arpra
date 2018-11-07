@@ -148,9 +148,8 @@ static void trapezoidal_step (arpra_ode_stepper *stepper, const arpra_range *h)
     // k[0] = f(t, x(t))
     for (x_grp = 0; x_grp < system->grps; x_grp++) {
         for (x_dim = 0; x_dim < system->dims[x_grp]; x_dim++) {
-            system->f[x_grp](&(scratch->k_0[x_grp][x_dim]),
-                             system->t, (const arpra_range **) system->x,
-                             x_grp, x_dim, system->params);
+            system->f[x_grp](&(scratch->k_0[x_grp][x_dim]), system->params[x_grp],
+                             system->t, (const arpra_range **) system->x, x_grp, x_dim);
         }
     }
 
@@ -167,9 +166,8 @@ static void trapezoidal_step (arpra_ode_stepper *stepper, const arpra_range *h)
     // k[1] = f(t + h, x(t) + h k[0])
     for (x_grp = 0; x_grp < system->grps; x_grp++) {
         for (x_dim = 0; x_dim < system->dims[x_grp]; x_dim++) {
-            system->f[x_grp](&(scratch->k_1[x_grp][x_dim]),
-                             &(scratch->temp_t), (const arpra_range **) scratch->x_new,
-                             x_grp, x_dim, system->params);
+            system->f[x_grp](&(scratch->k_1[x_grp][x_dim]), system->params[x_grp],
+                             &(scratch->temp_t), (const arpra_range **) scratch->x_new, x_grp, x_dim);
         }
     }
 
