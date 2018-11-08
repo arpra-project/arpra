@@ -28,14 +28,15 @@
 typedef struct arpra_ode_system_struct arpra_ode_system;
 typedef struct arpra_ode_stepper_struct arpra_ode_stepper;
 typedef struct arpra_ode_method_struct arpra_ode_method;
+typedef void (*arpra_ode_f) (arpra_range *dxdt, const void *params,
+                             const arpra_range *t, const arpra_range **x,
+                             const arpra_uint x_grp, const arpra_uint x_dim);
 
 // System definition.
 struct arpra_ode_system_struct
 {
-    void (**f) (arpra_range *dxdt, const void *params,
-                const arpra_range *t, const arpra_range **x,
-                const arpra_uint x_grp, const arpra_uint x_dim);
-    const void **params;
+    arpra_ode_f *f;
+    void **params;
     arpra_range *t;
     arpra_range **x;
     arpra_uint grps;
