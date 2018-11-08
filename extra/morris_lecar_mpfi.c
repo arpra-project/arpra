@@ -193,7 +193,7 @@ void file_clear (unsigned long grp_size, FILE **f)
 
 void file_write (mpfi_srcptr A, unsigned long grp_size, FILE **f)
 {
-    unsigned long i, j;
+    unsigned long i;
 
     for (i = 0; i < grp_size; i++) {
         mpfr_out_str(f[i], 10, 40, &(A[i].left), MPFR_RNDN);
@@ -431,7 +431,7 @@ void dSdt (const unsigned long idx, int grp)
 int main (int argc, char *argv[])
 {
     mpfi_t h, t;
-    struct timespec sys_t;
+    struct timespec clock_time;
     clock_t run_time;
     unsigned long i, j;
 
@@ -658,9 +658,9 @@ int main (int argc, char *argv[])
 
     // Initialise RNG
     gmp_randinit_default(rng_uf);
-    clock_gettime(CLOCK_REALTIME, &sys_t);
+    clock_gettime(CLOCK_REALTIME, &clock_time);
     //rng_uf_seed = 707135875931353ul;
-    rng_uf_seed = sys_t.tv_sec + sys_t.tv_nsec;
+    rng_uf_seed = clock_time.tv_sec + clock_time.tv_nsec;
     gmp_randseed_ui(rng_uf, rng_uf_seed);
     printf("GMP rand seed: %lu\n", rng_uf_seed);
 

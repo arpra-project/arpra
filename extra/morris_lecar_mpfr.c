@@ -183,7 +183,7 @@ void file_clear (unsigned long grp_size, FILE **f)
 
 void file_write (mpfr_srcptr A, unsigned long grp_size, FILE **f)
 {
-    unsigned long i, j;
+    unsigned long i;
 
     for (i = 0; i < grp_size; i++) {
         mpfr_out_str(f[i], 10, 80, &(A[i]), MPFR_RNDN);
@@ -408,7 +408,7 @@ void dSdt (const unsigned long idx, int grp)
 int main (int argc, char *argv[])
 {
     mpfr_t h, t;
-    struct timespec sys_t;
+    struct timespec clock_time;
     clock_t run_time;
     unsigned long i, j;
 
@@ -438,25 +438,25 @@ int main (int argc, char *argv[])
 
     // Initialise uniform float RNG
     gmp_randinit_default(rng_uf);
-    clock_gettime(CLOCK_REALTIME, &sys_t);
+    clock_gettime(CLOCK_REALTIME, &clock_time);
     //rng_uf_seed = 707135875931353ul;
-    rng_uf_seed = sys_t.tv_sec + sys_t.tv_nsec;
+    rng_uf_seed = clock_time.tv_sec + clock_time.tv_nsec;
     gmp_randseed_ui(rng_uf, rng_uf_seed);
     printf("GMP rand uniform float seed: %lu\n", rng_uf_seed);
 
     // Initialise normal float RNG
     gmp_randinit_default(rng_nf);
-    clock_gettime(CLOCK_REALTIME, &sys_t);
+    clock_gettime(CLOCK_REALTIME, &clock_time);
     //rng_nf_seed = 503108552855933ul;
-    rng_nf_seed = sys_t.tv_sec + sys_t.tv_nsec;
+    rng_nf_seed = clock_time.tv_sec + clock_time.tv_nsec;
     gmp_randseed_ui(rng_nf, rng_nf_seed);
     printf("GMP rand normal float seed: %lu\n", rng_nf_seed);
 
     // Initialise uniform integer RNG
     gmp_randinit_default(rng_uz);
-    clock_gettime(CLOCK_REALTIME, &sys_t);
+    clock_gettime(CLOCK_REALTIME, &clock_time);
     //rng_uz_seed = 2071328946103ul;
-    rng_uz_seed = sys_t.tv_sec + sys_t.tv_nsec;
+    rng_uz_seed = clock_time.tv_sec + clock_time.tv_nsec;
     gmp_randseed_ui(rng_uz, rng_uz_seed);
     printf("GMP rand uniform integer seed: %lu\n", rng_uz_seed);
 
