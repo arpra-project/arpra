@@ -25,7 +25,7 @@ void arpra_reduce_small (arpra_range *z, double min_fraction)
 {
     arpra_uint zTerm, zNext;
     arpra_mpfr threshold;
-    arpra_precision prec_internal;
+    arpra_prec prec_internal;
 
     // Handle trivial cases.
     if (z->nTerms < 2) return;
@@ -86,7 +86,7 @@ void arpra_reduce_small_abs (arpra_range *z, const arpra_mpfr *abs_threshold)
 void arpra_reduce_small_rel (arpra_range *z, const arpra_mpfr *rel_threshold)
 {
     arpra_mpfr abs_threshold;
-    arpra_precision prec_internal;
+    arpra_prec prec_internal;
 
     // Handle trivial cases.
     if (z->nTerms < 2) return;

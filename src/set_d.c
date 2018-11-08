@@ -23,7 +23,7 @@
 
 void arpra_set_d (arpra_range *z, const double centre)
 {
-    arpra_precision prec, prec_internal;
+    arpra_prec prec, prec_internal;
 
     // Handle domain violations.
     if (isnan(centre)) {

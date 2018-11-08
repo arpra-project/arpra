@@ -23,7 +23,7 @@
 
 void arpra_set_mpfr (arpra_range *z, const arpra_mpfr *centre)
 {
-    arpra_precision prec, prec_internal;
+    arpra_prec prec, prec_internal;
 
     // Handle domain violations.
     if (mpfr_nan_p(centre)) {

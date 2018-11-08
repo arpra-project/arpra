@@ -24,7 +24,7 @@
 void arpra_set (arpra_range *z, const arpra_range *x)
 {
     arpra_uint xTerm, zTerm;
-    arpra_precision prec, prec_internal;
+    arpra_prec prec, prec_internal;
     arpra_mpfr temp, error;
 
     // Handle trivial cases.

@@ -23,7 +23,7 @@
 
 void arpra_set_mpfi (arpra_range *z, mpfi_srcptr x)
 {
-    arpra_precision prec, prec_internal;
+    arpra_prec prec, prec_internal;
     arpra_mpfr temp;
 
     // Handle domain violations.

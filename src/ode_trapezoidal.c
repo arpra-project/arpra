@@ -40,7 +40,7 @@ typedef struct trapezoidal_scratch_struct
 static void trapezoidal_init (arpra_ode_stepper *stepper, arpra_ode_system *system)
 {
     arpra_uint x_grp, x_dim, state_size;
-    arpra_precision prec_x, prec_internal;
+    arpra_prec prec_x, prec_internal;
     trapezoidal_scratch *scratch;
 
     // Allocate scratch memory.
@@ -123,7 +123,7 @@ static void trapezoidal_clear (arpra_ode_stepper *stepper)
 static void trapezoidal_step (arpra_ode_stepper *stepper, const arpra_range *h)
 {
     arpra_uint x_grp, x_dim;
-    arpra_precision prec_t, prec_x;
+    arpra_prec prec_t, prec_x;
     arpra_ode_system *system;
     trapezoidal_scratch *scratch;
 

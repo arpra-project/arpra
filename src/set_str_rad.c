@@ -23,7 +23,7 @@
 
 void arpra_set_str_rad (arpra_range *z, const char *centre, const char *radius, const arpra_int base)
 {
-    arpra_precision prec, prec_internal;
+    arpra_prec prec, prec_internal;
     arpra_mpfr temp;
 
     // Initialise vars.

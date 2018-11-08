@@ -28,7 +28,7 @@ mpfi_t x_I, y_I, z_I, z_AI;
 arpra_mpfr rdiam_I, rdiam_AI, rdiam_diff;
 #endif // WITH_MPFI
 
-void test_fixture_init (arpra_precision prec, arpra_precision prec_internal)
+void test_fixture_init (arpra_prec prec, arpra_prec prec_internal)
 {
     // Ensure that we do not double-initialise.
     if (!test_fixture_ready) {

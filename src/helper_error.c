@@ -29,8 +29,8 @@
 
 void arpra_helper_error (arpra_mpfr *error, const arpra_mpfr *x)
 {
-    arpra_precision p;
-    arpra_exponent e;
+    mpfr_prec_t p;
+    mpfr_exp_t e;
 
     if (mpfr_zero_p(x)) {
         // error = nextabove(x)

@@ -21,9 +21,9 @@
 
 #include "arpra-impl.h"
 
-void arpra_init2 (arpra_range *z, const arpra_precision prec)
+void arpra_init2 (arpra_range *z, const arpra_prec prec)
 {
-    arpra_precision prec_internal;
+    arpra_prec prec_internal;
 
     // Increase internal precision if < 'prec'.
     prec_internal = arpra_get_internal_precision();
@@ -38,7 +38,7 @@ void arpra_init2 (arpra_range *z, const arpra_precision prec)
     mpfr_init2(&(z->radius), prec_internal);
 }
 
-void arpra_inits2 (const arpra_precision prec, arpra_range *z, ...)
+void arpra_inits2 (const arpra_prec prec, arpra_range *z, ...)
 {
     va_list arg;
 

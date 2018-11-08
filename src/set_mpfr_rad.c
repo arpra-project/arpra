@@ -23,7 +23,7 @@
 
 void arpra_set_mpfr_rad (arpra_range *z, const arpra_mpfr *centre, const arpra_mpfr *radius)
 {
-    arpra_precision prec, prec_internal;
+    arpra_prec prec, prec_internal;
     arpra_mpfr temp;
 
     // Handle domain violations.

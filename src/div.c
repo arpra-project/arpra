@@ -27,7 +27,7 @@
 
 void arpra_div (arpra_range *z, const arpra_range *x, const arpra_range *y)
 {
-    arpra_precision prec;
+    arpra_prec prec;
     arpra_range zNew;
 
     // Init temp z.

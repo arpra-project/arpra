@@ -24,8 +24,8 @@
 int main (int argc, char *argv[])
 {
 #ifdef WITH_MPFI
-    const arpra_precision prec = 53;
-    const arpra_precision prec_internal = 128;
+    const arpra_prec prec = 53;
+    const arpra_prec prec_internal = 128;
     const arpra_uint test_n = 100000;
     arpra_uint i, fail, fail_n;
 

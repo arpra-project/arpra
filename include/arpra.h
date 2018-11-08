@@ -25,17 +25,13 @@
 #include <mpfr.h>
 
 // Arpra range typedefs.
-typedef struct arpra_range_struct arpra_range;
-typedef unsigned long int arpra_uint;
 typedef long int arpra_int;
-
-// MPFR number typedefs.
+typedef unsigned long int arpra_uint;
+typedef mpfr_prec_t arpra_prec;
 typedef __mpfr_struct arpra_mpfr;
-typedef mpfr_prec_t arpra_precision;
-typedef mpfr_sign_t arpra_sign;
-typedef mpfr_exp_t arpra_exponent;
+typedef struct arpra_range_struct arpra_range;
 
-// The Arpra range type.
+// The Arpra range struct.
 struct arpra_range_struct
 {
     arpra_mpfr centre;
@@ -52,8 +48,8 @@ extern "C" {
 // Initialise and clear.
 void arpra_init (arpra_range *z);
 void arpra_inits (arpra_range *z, ...);
-void arpra_init2 (arpra_range *z, const arpra_precision prec);
-void arpra_inits2 (const arpra_precision prec, arpra_range *z, ...);
+void arpra_init2 (arpra_range *z, const arpra_prec prec);
+void arpra_inits2 (const arpra_prec prec, arpra_range *z, ...);
 void arpra_clear (arpra_range *z);
 void arpra_clears (arpra_range *z, ...);
 void arpra_clear_terms (arpra_range *z);
@@ -97,12 +93,12 @@ void arpra_log (arpra_range *z, const arpra_range *x);
 void arpra_inv (arpra_range *z, const arpra_range *x);
 
 // Numerical precision.
-arpra_precision arpra_get_precision (const arpra_range *x);
-arpra_precision arpra_get_default_precision ();
-arpra_precision arpra_get_internal_precision ();
-void arpra_set_precision (arpra_range *z, const arpra_precision prec);
-void arpra_set_default_precision (const arpra_precision prec);
-void arpra_set_internal_precision (const arpra_precision prec);
+arpra_prec arpra_get_precision (const arpra_range *x);
+arpra_prec arpra_get_default_precision ();
+arpra_prec arpra_get_internal_precision ();
+void arpra_set_precision (arpra_range *z, const arpra_prec prec);
+void arpra_set_default_precision (const arpra_prec prec);
+void arpra_set_internal_precision (const arpra_prec prec);
 
 // Deviation term reduction.
 void arpra_reduce_last_n (arpra_range *z, arpra_uint n);

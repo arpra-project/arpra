@@ -28,7 +28,7 @@
 void arpra_inv (arpra_range *z, const arpra_range *x)
 {
     arpra_mpfr temp, xa, xb, da, db, du, alpha, gamma, delta;
-    arpra_precision prec_internal;
+    arpra_prec prec_internal;
     arpra_int sign;
 
     // Initialise vars.

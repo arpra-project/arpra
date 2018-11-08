@@ -45,7 +45,7 @@ typedef struct dopri54_scratch_struct
     arpra_range temp_x;
 } dopri54_scratch;
 
-static void dopri54_compute_constants (arpra_ode_stepper *stepper, const arpra_precision prec)
+static void dopri54_compute_constants (arpra_ode_stepper *stepper, const arpra_prec prec)
 {
     arpra_uint k_i, k_j;
     arpra_range numerator, denominator;
@@ -227,7 +227,7 @@ static void dopri54_compute_constants (arpra_ode_stepper *stepper, const arpra_p
 static void dopri54_init (arpra_ode_stepper *stepper, arpra_ode_system *system)
 {
     arpra_uint x_grp, x_dim, k_i, k_j, state_size;
-    arpra_precision prec_x, prec_internal;
+    arpra_prec prec_x, prec_internal;
     dopri54_scratch *scratch;
 
     // Allocate scratch memory.
@@ -344,7 +344,7 @@ static void dopri54_clear (arpra_ode_stepper *stepper)
 static void dopri54_step (arpra_ode_stepper *stepper, const arpra_range *h)
 {
     arpra_uint x_grp, x_dim, k_i, k_j;
-    arpra_precision prec_t, prec_x;
+    arpra_prec prec_t, prec_x;
     arpra_range **x_old, **x_sum;
     arpra_ode_system *system;
     dopri54_scratch *scratch;

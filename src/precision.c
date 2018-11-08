@@ -21,14 +21,14 @@
 
 #include "arpra-impl.h"
 
-arpra_precision arpra_get_precision (const arpra_range *x)
+arpra_prec arpra_get_precision (const arpra_range *x)
 {
     return mpfr_get_prec(&(x->centre));
 }
 
-void arpra_set_precision (arpra_range *z, const arpra_precision prec)
+void arpra_set_precision (arpra_range *z, const arpra_prec prec)
 {
-    arpra_precision internal_prec;
+    arpra_prec internal_prec;
 
     // Increase internal_prec if < prec.
     internal_prec = arpra_get_internal_precision();

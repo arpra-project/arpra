@@ -24,7 +24,7 @@
 void arpra_neg (arpra_range *z, const arpra_range *x)
 {
     arpra_mpfr alpha, gamma, delta;
-    arpra_precision prec;
+    arpra_prec prec;
 
     // Initialise vars.
     prec = arpra_get_precision(z);

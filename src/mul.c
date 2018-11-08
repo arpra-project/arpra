@@ -26,7 +26,7 @@ void arpra_mul (arpra_range *z, const arpra_range *x, const arpra_range *y)
     arpra_uint xTerm, yTerm, zTerm;
     arpra_int xHasNext, yHasNext;
     arpra_mpfr temp, error;
-    arpra_precision prec, prec_internal;
+    arpra_prec prec, prec_internal;
     arpra_range zNew;
 
     // Domain violations:

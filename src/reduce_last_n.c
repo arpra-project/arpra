@@ -26,7 +26,7 @@ void arpra_reduce_last_n (arpra_range *z, arpra_uint n)
     arpra_uint zTerm, zNext;
     arpra_mpfr **summands;
     arpra_mpfr temp;
-    arpra_precision prec_internal;
+    arpra_prec prec_internal;
 
     // Handle trivial cases.
     if (n > z->nTerms) n = z->nTerms;
@@ -103,7 +103,7 @@ void new_arpra_reduce_last_n (arpra_range *z, const arpra_range *x, const arpra_
 {
     arpra_uint xTerm, zTerm, unmerged;
     arpra_mpfr temp, error;
-    arpra_precision prec, prec_internal;
+    arpra_prec prec, prec_internal;
     arpra_range zNew;
 
     // Handle trivial cases.

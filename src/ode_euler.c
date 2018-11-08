@@ -35,7 +35,7 @@ typedef struct euler_scratch_struct
 static void euler_init (arpra_ode_stepper *stepper, arpra_ode_system *system)
 {
     arpra_uint x_grp, x_dim, state_size;
-    arpra_precision prec_x, prec_internal;
+    arpra_prec prec_x, prec_internal;
     euler_scratch *scratch;
 
     // Allocate scratch memory.
@@ -101,7 +101,7 @@ static void euler_clear (arpra_ode_stepper *stepper)
 static void euler_step (arpra_ode_stepper *stepper, const arpra_range *h)
 {
     arpra_uint x_grp, x_dim;
-    arpra_precision prec_x;
+    arpra_prec prec_x;
     arpra_ode_system *system;
     euler_scratch *scratch;
 

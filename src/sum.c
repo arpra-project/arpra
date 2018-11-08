@@ -29,7 +29,7 @@ void arpra_sum_exact (arpra_range *z, arpra_range *x, const arpra_uint n)
     arpra_int xHasNext;
     arpra_mpfr **summands;
     arpra_mpfr temp, error;
-    arpra_precision prec, prec_internal;
+    arpra_prec prec, prec_internal;
     arpra_range zNew;
 
     // Domain violations:
@@ -196,7 +196,7 @@ void arpra_sum_recursive (arpra_range *z, arpra_range *x, const arpra_uint n)
     arpra_int xHasNext;
     arpra_mpfr **summands;
     arpra_mpfr temp, error;
-    arpra_precision prec, prec_internal;
+    arpra_prec prec, prec_internal;
     arpra_range zNew;
 
     // Domain violations:

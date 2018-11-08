@@ -26,7 +26,7 @@ void test_rand_arpra (arpra_range *z,
                       enum test_rand_mode mode_deviations)
 {
     arpra_uint zTerm;
-    arpra_precision prec, prec_internal;
+    arpra_prec prec, prec_internal;
     arpra_mpfr temp;
 
     // Initialise vars.

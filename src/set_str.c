@@ -23,7 +23,7 @@
 
 void arpra_set_str (arpra_range *z, const char *centre, const arpra_int base)
 {
-    arpra_precision prec, prec_internal;
+    arpra_prec prec, prec_internal;
 
     // Initialise vars.
     prec = arpra_get_precision(z);

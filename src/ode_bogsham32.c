@@ -45,7 +45,7 @@ typedef struct bogsham32_scratch_struct
     arpra_range temp_x;
 } bogsham32_scratch;
 
-static void bogsham32_compute_constants (arpra_ode_stepper *stepper, const arpra_precision prec)
+static void bogsham32_compute_constants (arpra_ode_stepper *stepper, const arpra_prec prec)
 {
     arpra_uint k_i, k_j;
     arpra_range numerator, denominator;
@@ -136,7 +136,7 @@ static void bogsham32_compute_constants (arpra_ode_stepper *stepper, const arpra
 static void bogsham32_init (arpra_ode_stepper *stepper, arpra_ode_system *system)
 {
     arpra_uint x_grp, x_dim, k_i, k_j, state_size;
-    arpra_precision prec_x, prec_internal;
+    arpra_prec prec_x, prec_internal;
     bogsham32_scratch *scratch;
 
     // Allocate scratch memory.
@@ -253,7 +253,7 @@ static void bogsham32_clear (arpra_ode_stepper *stepper)
 static void bogsham32_step (arpra_ode_stepper *stepper, const arpra_range *h)
 {
     arpra_uint x_grp, x_dim, k_i, k_j;
-    arpra_precision prec_t, prec_x;
+    arpra_prec prec_t, prec_x;
     arpra_range **x_old, **x_sum;
     arpra_ode_system *system;
     bogsham32_scratch *scratch;
