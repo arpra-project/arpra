@@ -121,7 +121,6 @@
 #define p_syn_exc_size p_in1_size * p_nrn1_size
 #define p_syn_exc_R0 0.0
 #define p_syn_exc_S0 0.0
-//#define p_syn_exc_GSyn 40.0
 #define p_syn_exc_GSyn 3.0
 #define p_syn_exc_VSyn 0.0
 #define p_syn_exc_thr -50.0
@@ -452,8 +451,10 @@ int main (int argc, char *argv[])
     arpra_uint i, j;
     arpra_range h, sys_t;
 
-    enum grps {grp_nrn1_N, grp_nrn1_V, grp_nrn2_N, grp_nrn2_V,
-               grp_syn_exc_R, grp_syn_exc_S, grp_syn_inh_R, grp_syn_inh_S};
+    enum grps {
+        grp_nrn1_N, grp_nrn1_V, grp_nrn2_N, grp_nrn2_V,
+        grp_syn_exc_R, grp_syn_exc_S, grp_syn_inh_R, grp_syn_inh_S
+    };
 
     // Allocate system state
     arpra_range *nrn1_N = malloc(p_nrn1_size * sizeof(arpra_range));
@@ -483,9 +484,9 @@ int main (int argc, char *argv[])
 
     arpra_mpfr in1_p0, in2_p0, rand_uf;
     arpra_range GL, VL, GCa, VCa, GK, VK, V1, V2, V3, V4, phi, C,
-        syn_exc_VSyn, syn_exc_thr, syn_exc_a, syn_exc_b, syn_exc_k,
-        syn_inh_VSyn, syn_inh_thr, syn_inh_a, syn_inh_b, syn_inh_k, one, two, neg_two,
-        temp1, temp2, M_ss, N_ss, in1_V_lo, in1_V_hi, in2_V_lo, in2_V_hi;
+                syn_exc_VSyn, syn_exc_thr, syn_exc_a, syn_exc_b, syn_exc_k,
+                syn_inh_VSyn, syn_inh_thr, syn_inh_a, syn_inh_b, syn_inh_k, one, two, neg_two,
+                temp1, temp2, M_ss, N_ss, in1_V_lo, in1_V_hi, in2_V_lo, in2_V_hi;
 
     // Initialise system state
     arpra_init2(&h, p_prec);
@@ -702,7 +703,7 @@ int main (int argc, char *argv[])
     /* FILE **f_syn_inh_S_d = malloc(p_syn_inh_size * sizeof(FILE *)); */
     /* file_init("syn_inh_S", p_syn_inh_size, f_syn_inh_S_c, f_syn_inh_S_r, f_syn_inh_S_n, f_syn_inh_S_s, f_syn_inh_S_d); */
 
-    // Initialise RNG
+    // Initialise uniform float RNG
     gmp_randstate_t rng_uf;
     gmp_randinit_default(rng_uf);
     struct timespec clock_time;
@@ -710,7 +711,7 @@ int main (int argc, char *argv[])
     //unsigned long rng_uf_seed = 707135875931353ul;
     unsigned long rng_uf_seed = clock_time.tv_sec + clock_time.tv_nsec;
     gmp_randseed_ui(rng_uf, rng_uf_seed);
-    printf("GMP rand seed: %lu\n", rng_uf_seed);
+    printf("GMP rand uniform float seed: %lu\n", rng_uf_seed);
 
     // Set parameter structs
     struct dNdt_params params_nrn1_N = {
@@ -831,12 +832,20 @@ int main (int argc, char *argv[])
 
     // ODE system
     arpra_uint sys_grps = 8;
-    arpra_uint sys_dims[8] = {p_nrn1_size, p_nrn1_size, p_nrn2_size, p_nrn2_size,
-                              p_syn_exc_size, p_syn_exc_size, p_syn_inh_size, p_syn_inh_size};
-    arpra_ode_f sys_f[8] = {dNdt, dVdt, dNdt, dVdt, dRdt, dSdt, dRdt, dSdt};
-    void *sys_params[8] = {&params_nrn1_N, &params_nrn1_V, &params_nrn2_N, &params_nrn2_V,
-                           &params_syn_exc_R, &params_syn_exc_S, &params_syn_inh_R, &params_syn_inh_S};
-    arpra_range *sys_x[8] = {nrn1_N, nrn1_V, nrn2_N, nrn2_V, syn_exc_R, syn_exc_S, syn_inh_R, syn_inh_S};
+    arpra_uint sys_dims[8] = {
+        p_nrn1_size, p_nrn1_size, p_nrn2_size, p_nrn2_size,
+        p_syn_exc_size, p_syn_exc_size, p_syn_inh_size, p_syn_inh_size
+    };
+    arpra_ode_f sys_f[8] = {
+        dNdt, dVdt, dNdt, dVdt, dRdt, dSdt, dRdt, dSdt
+    };
+    void *sys_params[8] = {
+        &params_nrn1_N, &params_nrn1_V, &params_nrn2_N, &params_nrn2_V,
+        &params_syn_exc_R, &params_syn_exc_S, &params_syn_inh_R, &params_syn_inh_S
+    };
+    arpra_range *sys_x[8] = {
+        nrn1_N, nrn1_V, nrn2_N, nrn2_V, syn_exc_R, syn_exc_S, syn_inh_R, syn_inh_S
+    };
     arpra_ode_system ode_system = {
         .f = sys_f,
         .params = sys_params,
