@@ -1,5 +1,5 @@
 /*
- * helper_error.c -- Compute the error of an inexact MPFR operation.
+ * helper_error.c -- Compute the error of inexact MPFR operations.
  *
  * Copyright 2017-2018 James Paul Turner.
  *
@@ -24,10 +24,10 @@
 /*
  * This function assumes that x is inexact - i.e. the last MPFR function
  * of x returned nonzero. If x DID NOT underflow, then error is set to
- * 1/2 ULP(x). If x DID underflow, then error is set to nextabove(0).
+ * ULP(x). If x DID underflow, then error is set to nextabove(0).
  */
 
-void arpra_helper_error (arpra_mpfr *error, const arpra_mpfr *x)
+void arpra_helper_error_ulp (arpra_mpfr *error, const arpra_mpfr *x)
 {
     mpfr_prec_t p;
     mpfr_exp_t e;
@@ -38,10 +38,37 @@ void arpra_helper_error (arpra_mpfr *error, const arpra_mpfr *x)
         mpfr_nextabove(error);
     }
     else {
-        // error = 1/2 ULP(x) = 2^(e-p-1)
+        // Power minus 1, since MPFR significands are in [0.5, 1).
         p = mpfr_get_prec(x);
         e = mpfr_get_exp(x);
-        // Power - 1, since MPFR significands are in [0.5, 1).
+
+        // error = ULP(x) = 2^(e-p)
+        mpfr_set_si_2exp(error, 1, (e - p), MPFR_RNDU);
+    }
+}
+
+/*
+ * This function assumes that x is inexact - i.e. the last MPFR function
+ * of x returned nonzero. If x DID NOT underflow, then error is set to
+ * 1/2 ULP(x). If x DID underflow, then error is set to nextabove(0).
+ */
+
+void arpra_helper_error_half_ulp (arpra_mpfr *error, const arpra_mpfr *x)
+{
+    mpfr_prec_t p;
+    mpfr_exp_t e;
+
+    if (mpfr_zero_p(x)) {
+        // error = nextabove(x)
+        mpfr_set_si(error, 0, MPFR_RNDN);
+        mpfr_nextabove(error);
+    }
+    else {
+        // Power minus 1, since MPFR significands are in [0.5, 1).
+        p = mpfr_get_prec(x);
+        e = mpfr_get_exp(x);
+
+        // error = 1/2 ULP(x) = 2^(e-p-1)
         mpfr_set_si_2exp(error, 1, (e - p - 1), MPFR_RNDU);
     }
 }

@@ -74,7 +74,7 @@ void arpra_affine_2 (arpra_range *z, const arpra_range *x, const arpra_range *y,
 
     // z_0 = (alpha * x_0) + (beta * y_0) + gamma
     if (arpra_helper_term(&(zNew.centre), &(x->centre), &(y->centre), alpha, beta, gamma)) {
-        arpra_helper_error(&temp, &(zNew.centre));
+        arpra_helper_error_half_ulp(&temp, &(zNew.centre));
         mpfr_add(&error, &error, &temp, MPFR_RNDU);
     }
 
@@ -95,7 +95,7 @@ void arpra_affine_2 (arpra_range *z, const arpra_range *x, const arpra_range *y,
 
             // z_i = (alpha * x_i)
             if (mpfr_mul(&(zNew.deviations[zTerm]), alpha, &(x->deviations[xTerm]), MPFR_RNDN)) {
-                arpra_helper_error(&temp, &(zNew.deviations[zTerm]));
+                arpra_helper_error_half_ulp(&temp, &(zNew.deviations[zTerm]));
                 mpfr_add(&error, &error, &temp, MPFR_RNDU);
             }
 
@@ -107,7 +107,7 @@ void arpra_affine_2 (arpra_range *z, const arpra_range *x, const arpra_range *y,
 
             // z_i = (beta * y_i)
             if (mpfr_mul(&(zNew.deviations[zTerm]), beta, &(y->deviations[yTerm]), MPFR_RNDN)) {
-                arpra_helper_error(&temp, &(zNew.deviations[zTerm]));
+                arpra_helper_error_half_ulp(&temp, &(zNew.deviations[zTerm]));
                 mpfr_add(&error, &error, &temp, MPFR_RNDU);
             }
 
@@ -119,7 +119,7 @@ void arpra_affine_2 (arpra_range *z, const arpra_range *x, const arpra_range *y,
 
             // z_i = (alpha * x_i) + (beta * y_i)
             if (arpra_helper_term(&(zNew.deviations[zTerm]), &(x->deviations[xTerm]), &(y->deviations[yTerm]), alpha, beta, NULL)) {
-                arpra_helper_error(&temp, &(zNew.deviations[zTerm]));
+                arpra_helper_error_half_ulp(&temp, &(zNew.deviations[zTerm]));
                 mpfr_add(&error, &error, &temp, MPFR_RNDU);
             }
 

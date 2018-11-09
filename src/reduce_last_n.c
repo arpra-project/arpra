@@ -135,7 +135,7 @@ void new_arpra_reduce_last_n (arpra_range *z, const arpra_range *x, const arpra_
 
     // z_0 = x_0
     if (mpfr_set(&(zNew.centre), &(x->centre), MPFR_RNDN)) {
-        arpra_helper_error(&temp, &(zNew.centre));
+        arpra_helper_error_half_ulp(&temp, &(zNew.centre));
         mpfr_add(&error, &error, &temp, MPFR_RNDU);
     }
 
@@ -153,7 +153,7 @@ void new_arpra_reduce_last_n (arpra_range *z, const arpra_range *x, const arpra_
         // ============= WE DONT NEED TO SAVE SIGN UNTIL RADIUS CALCULATION =======
 
         if (mpfr_set(&(zNew.deviations[zTerm]), &(x->deviations[xTerm]), MPFR_RNDN)) {
-            arpra_helper_error(&temp, &(zNew.deviations[zTerm]));
+            arpra_helper_error_half_ulp(&temp, &(zNew.deviations[zTerm]));
             mpfr_add(&error, &error, &temp, MPFR_RNDU);
         }
 
