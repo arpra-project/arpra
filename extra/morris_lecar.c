@@ -1142,6 +1142,7 @@ int main (int argc, char *argv[])
     /* free(f_syn_inh_S_d); */
 
     arpra_ode_stepper_clear(&ode_stepper);
+    arpra_clear_buffers();
     gmp_randclear(rng_uf);
     mpfr_free_cache();
 
