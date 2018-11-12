@@ -68,12 +68,17 @@
 // General parameters
 #define p_h 0.5
 #define p_t0 0.0
-#define p_grps 8
 #define p_reduce_ratio 0.3
 #define p_prec 53
+#define p_prec_internal 2048
 #define p_sim_steps 1000
 #define p_report_step 20
 #define p_reduce_step 50
+
+// RNG parameters
+// Seeds are random if not #defined
+#define p_rand_prec 53
+//#define p_rng_uf_seed 707135875931353ul
 
 // Poisson input parameters (group 1)
 #define p_in1_size 50
@@ -456,6 +461,8 @@ int main (int argc, char *argv[])
         grp_syn_exc_R, grp_syn_exc_S, grp_syn_inh_R, grp_syn_inh_S
     };
 
+    arpra_set_internal_precision(p_prec_internal);
+
     // Allocate system state
     arpra_range *nrn1_N = malloc(p_nrn1_size * sizeof(arpra_range));
     arpra_range *nrn1_V = malloc(p_nrn1_size * sizeof(arpra_range));
@@ -558,7 +565,7 @@ int main (int argc, char *argv[])
     arpra_init2(&neg_two, p_prec);
 
     // Initialise scratch space
-    mpfr_init2(&rand_uf, p_prec);
+    mpfr_init2(&rand_uf, p_rand_prec);
     arpra_init2(&temp1, p_prec);
     arpra_init2(&temp2, p_prec);
     arpra_init2(&M_ss, p_prec);
@@ -708,8 +715,11 @@ int main (int argc, char *argv[])
     gmp_randinit_default(rng_uf);
     struct timespec clock_time;
     clock_gettime(CLOCK_REALTIME, &clock_time);
-    //unsigned long rng_uf_seed = 707135875931353ul;
+#ifdef p_rng_uf_seed
+    unsigned long rng_uf_seed = p_rng_uf_seed;
+#else
     unsigned long rng_uf_seed = clock_time.tv_sec + clock_time.tv_nsec;
+#endif
     gmp_randseed_ui(rng_uf, rng_uf_seed);
     printf("GMP rand uniform float seed: %lu\n", rng_uf_seed);
 

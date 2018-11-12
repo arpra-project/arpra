@@ -73,15 +73,20 @@
 #define p_sim_steps 1000
 #define p_report_step 20
 
+// RNG parameters
+// Seeds are random if not #defined
+#define p_rand_prec 53
+//#define p_rng_uf_seed 707135875931353ul
+
 // Poisson input parameters (group 1)
 #define p_in1_size 50
-#define p_in1_freq 5.0
+#define p_in1_freq 10.0
 #define p_in1_V_lo -60.0
 #define p_in1_V_hi 20.0
 
 // Poisson input parameters (group 2)
 #define p_in2_size 0
-#define p_in2_freq 5.0
+#define p_in2_freq 10.0
 #define p_in2_V_lo -60.0
 #define p_in2_V_hi 20.0
 
@@ -149,8 +154,6 @@ mpfi_t GL, VL, GCa, VCa, GK, VK, V1, V2, V3, V4, phi, C, syn_exc_VSyn, syn_exc_t
        syn_inh_b, syn_inh_k, one, two, neg_two, temp_sum, temp1, temp2, M_ss, N_ss,
        in1_V_lo, in1_V_hi, in2_V_lo, in2_V_hi;
 mpfi_ptr syn_exc_GSyn, syn_inh_GSyn, I1, I2;
-gmp_randstate_t rng_uf;
-unsigned long rng_uf_seed;
 
 // System state variables
 mpfi_ptr nrn1_N, nrn2_N, nrn1_V, nrn2_V, syn_exc_R, syn_inh_R, syn_exc_S, syn_inh_S;
@@ -431,8 +434,6 @@ void dSdt (const unsigned long idx, int grp)
 int main (int argc, char *argv[])
 {
     mpfi_t h, t;
-    struct timespec clock_time;
-    clock_t run_time;
     unsigned long i, j;
 
     // Allocate dynamic arrays
@@ -541,7 +542,7 @@ int main (int argc, char *argv[])
     mpfi_init2(neg_two, p_prec);
 
     // Initialise scratch space
-    mpfr_init2(rand_uf, p_prec);
+    mpfr_init2(rand_uf, p_rand_prec);
     mpfr_init2(temp_error, p_error_prec);
     mpfi_init2(temp_sum, p_error_prec);
     mpfi_init2(temp1, p_prec);
@@ -656,19 +657,24 @@ int main (int argc, char *argv[])
     /* FILE **f_syn_inh_S = malloc(p_syn_inh_size * sizeof(FILE *)); */
     /* file_init("syn_inh_S", p_syn_inh_size, f_syn_inh_S); */
 
-    // Initialise RNG
+    // Initialise uniform float RNG
+    gmp_randstate_t rng_uf;
     gmp_randinit_default(rng_uf);
+    struct timespec clock_time;
     clock_gettime(CLOCK_REALTIME, &clock_time);
-    //rng_uf_seed = 707135875931353ul;
-    rng_uf_seed = clock_time.tv_sec + clock_time.tv_nsec;
+#ifdef p_rng_uf_seed
+    unsigned long rng_uf_seed = p_rng_uf_seed;
+#else
+    unsigned long rng_uf_seed = clock_time.tv_sec + clock_time.tv_nsec;
+#endif
     gmp_randseed_ui(rng_uf, rng_uf_seed);
-    printf("GMP rand seed: %lu\n", rng_uf_seed);
+    printf("GMP rand uniform float seed: %lu\n", rng_uf_seed);
 
 
     // Begin simulation loop
     // =====================
 
-    run_time = clock();
+    clock_t run_time = clock();
 
     for (i = 0; i < p_sim_steps; i++) {
         if (i % p_report_step == 0) printf("%lu\n", i);
