@@ -23,8 +23,8 @@
 
 void arpra_set_mpfi (arpra_range *z, mpfi_srcptr x)
 {
-    arpra_prec prec, prec_internal;
-    arpra_mpfr temp;
+    arpra_mpfr z_lo, z_hi, temp;
+    arpra_prec prec_internal;
 
     // Handle domain violations.
     if (mpfi_nan_p(x)) {
@@ -37,9 +37,11 @@ void arpra_set_mpfi (arpra_range *z, mpfi_srcptr x)
     }
 
     // Initialise vars.
-    prec = arpra_get_precision(z);
     prec_internal = arpra_get_internal_precision();
+    mpfr_init2(&z_lo, prec_internal);
+    mpfr_init2(&z_hi, prec_internal);
     mpfr_init2(&temp, prec_internal);
+    mpfr_set_prec(&(z->centre), prec_internal);
     mpfr_set_prec(&(z->radius), prec_internal);
 
     // z_0 = (x_lo + x_hi) / 2
@@ -54,27 +56,44 @@ void arpra_set_mpfi (arpra_range *z, mpfi_srcptr x)
     // Clear existing deviation terms.
     arpra_clear_terms(z);
 
-    // If radius is nonzero:
+    // Round the result to the target precision.
+    mpfr_sub(&z_lo, &(z->centre), &(z->radius), MPFR_RNDD);
+    if (mpfr_prec_round(&z_lo, z->precision, MPFR_RNDD)) {
+        arpra_helper_error_ulp(&z_lo, &z_lo);
+    }
+    else {
+        mpfr_set_ui(&z_lo, 0, MPFR_RNDN);
+    }
+    mpfr_add(&z_hi, &(z->centre), &(z->radius), MPFR_RNDU);
+    if (mpfr_prec_round(&z_hi, z->precision, MPFR_RNDU)) {
+        arpra_helper_error_ulp(&z_hi, &z_hi);
+    }
+    else {
+        mpfr_set_ui(&z_hi, 0, MPFR_RNDN);
+    }
+    mpfr_max(&temp, &z_lo, &z_hi, MPFR_RNDU);
+    mpfr_add(&(z->radius), &(z->radius), &temp, MPFR_RNDU);
+
+    // Store nonzero numerical error term.
     if (!mpfr_zero_p(&(z->radius))) {
-        // Allocate one deviation term.
         z->nTerms = 1;
         z->symbols = malloc(sizeof(arpra_uint));
         z->deviations = malloc(sizeof(arpra_range));
-
-        // Set deviation term.
         z->symbols[0] = arpra_next_symbol();
-        mpfr_init2(&(z->deviations[0]), prec);
+        mpfr_init2(&(z->deviations[0]), prec_internal);
         mpfr_set(&(z->deviations[0]), &(z->radius), MPFR_RNDU);
     }
 
     // Handle domain violations.
-    if (mpfr_nan_p(&(z->centre)) || mpfr_nan_p(&(z->deviations[0]))) {
+    if (mpfr_nan_p(&(z->centre)) || mpfr_nan_p(&(z->radius))) {
         arpra_set_nan(z);
     }
-    else if (mpfr_inf_p(&(z->centre)) || mpfr_inf_p(&(z->deviations[0]))) {
+    else if (mpfr_inf_p(&(z->centre)) || mpfr_inf_p(&(z->radius))) {
         arpra_set_inf(z);
     }
 
     // Clear vars.
+    mpfr_clear(&z_lo);
+    mpfr_clear(&z_hi);
     mpfr_clear(&temp);
 }

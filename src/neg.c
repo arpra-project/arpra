@@ -24,15 +24,13 @@
 void arpra_neg (arpra_range *z, const arpra_range *x)
 {
     arpra_mpfr alpha, gamma, delta;
-    arpra_prec prec;
 
     // Initialise vars.
-    prec = arpra_get_precision(z);
-    mpfr_init2(&alpha, prec);
+    mpfr_init2(&alpha, 2);
     mpfr_set_si(&alpha, -1, MPFR_RNDN);
-    mpfr_init2(&gamma, prec);
+    mpfr_init2(&gamma, 2);
     mpfr_set_si(&gamma, 0, MPFR_RNDN);
-    mpfr_init2(&delta, prec);
+    mpfr_init2(&delta, 2);
     mpfr_set_si(&delta, 0, MPFR_RNDN);
 
     // z = - x

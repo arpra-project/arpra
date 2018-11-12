@@ -24,8 +24,8 @@
 void arpra_set (arpra_range *z, const arpra_range *x)
 {
     arpra_uint xTerm, zTerm;
-    arpra_prec prec, prec_internal;
-    arpra_mpfr temp, error;
+    arpra_mpfr z_lo, z_hi, temp, error;
+    arpra_prec prec_internal;
 
     // Handle trivial cases.
     if (z == x) return;
@@ -41,12 +41,14 @@ void arpra_set (arpra_range *z, const arpra_range *x)
     }
 
     // Initialise vars.
-    prec = arpra_get_precision(z);
     prec_internal = arpra_get_internal_precision();
+    mpfr_init2(&z_lo, prec_internal);
+    mpfr_init2(&z_hi, prec_internal);
     mpfr_init2(&temp, prec_internal);
     mpfr_init2(&error, prec_internal);
-    mpfr_set_ui(&error, 0, MPFR_RNDU);
+    mpfr_set_prec(&(z->centre), prec_internal);
     mpfr_set_prec(&(z->radius), prec_internal);
+    mpfr_set_ui(&error, 0, MPFR_RNDU);
     mpfr_set_ui(&(z->radius), 0, MPFR_RNDU);
 
     // z_0 = x_0
@@ -64,7 +66,7 @@ void arpra_set (arpra_range *z, const arpra_range *x)
     // Copy deviation terms over.
     for (xTerm = 0, zTerm = 0; xTerm < x->nTerms; xTerm++) {
         z->symbols[zTerm] = x->symbols[zTerm];
-        mpfr_init2(&(z->deviations[zTerm]), prec);
+        mpfr_init2(&(z->deviations[zTerm]), prec_internal);
 
         // z_i = x_i
         if (mpfr_set(&(z->deviations[zTerm]), &(x->deviations[xTerm]), MPFR_RNDN)) {
@@ -83,10 +85,30 @@ void arpra_set (arpra_range *z, const arpra_range *x)
         }
     }
 
+    // Round the result to the target precision.
+    mpfr_sub(&z_lo, &(z->centre), &(z->radius), MPFR_RNDD);
+    mpfr_sub(&z_lo, &z_lo, &error, MPFR_RNDD);
+    if (mpfr_prec_round(&z_lo, z->precision, MPFR_RNDD)) {
+        arpra_helper_error_ulp(&z_lo, &z_lo);
+    }
+    else {
+        mpfr_set_ui(&z_lo, 0, MPFR_RNDN);
+    }
+    mpfr_add(&z_hi, &(z->centre), &(z->radius), MPFR_RNDU);
+    mpfr_add(&z_hi, &z_hi, &error, MPFR_RNDU);
+    if (mpfr_prec_round(&z_hi, z->precision, MPFR_RNDU)) {
+        arpra_helper_error_ulp(&z_hi, &z_hi);
+    }
+    else {
+        mpfr_set_ui(&z_hi, 0, MPFR_RNDN);
+    }
+    mpfr_max(&temp, &z_lo, &z_hi, MPFR_RNDU);
+    mpfr_add(&error, &error, &temp, MPFR_RNDU);
+
     // Store nonzero numerical error term.
     if (!mpfr_zero_p(&error)) {
         z->symbols[zTerm] = arpra_next_symbol();
-        mpfr_init2(&(z->deviations[zTerm]), prec);
+        mpfr_init2(&(z->deviations[zTerm]), prec_internal);
         mpfr_set(&(z->deviations[zTerm]), &error, MPFR_RNDU);
         mpfr_add(&(z->radius), &(z->radius), &(z->deviations[zTerm]), MPFR_RNDU);
         zTerm++;
@@ -112,6 +134,8 @@ void arpra_set (arpra_range *z, const arpra_range *x)
     }
 
     // Clear vars.
+    mpfr_clear(&z_lo);
+    mpfr_clear(&z_hi);
     mpfr_clear(&temp);
     mpfr_clear(&error);
 }

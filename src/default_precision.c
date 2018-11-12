@@ -31,9 +31,4 @@ arpra_prec arpra_get_default_precision ()
 void arpra_set_default_precision (const arpra_prec prec)
 {
     precision = prec;
-
-    // Internal precision must be >= working precision.
-    if (arpra_get_internal_precision() < precision) {
-        arpra_set_internal_precision(precision);
-    }
 }

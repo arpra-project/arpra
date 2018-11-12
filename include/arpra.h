@@ -39,6 +39,7 @@ struct arpra_range_struct
     arpra_mpfr *deviations;
     arpra_uint *symbols;
     arpra_uint nTerms;
+    arpra_prec precision;
 };
 
 #ifdef __cplusplus

@@ -25,7 +25,7 @@ void arpra_reduce_last_n (arpra_range *z, arpra_uint n)
 {
     arpra_uint zTerm, zNext;
     arpra_mpfr **summands;
-    arpra_mpfr temp;
+    arpra_mpfr z_lo, z_hi, temp;
     arpra_prec prec_internal;
 
     // Handle trivial cases.
@@ -38,8 +38,9 @@ void arpra_reduce_last_n (arpra_range *z, arpra_uint n)
 
     // Initialise vars.
     prec_internal = arpra_get_internal_precision();
+    mpfr_init2(&z_lo, prec_internal);
+    mpfr_init2(&z_hi, prec_internal);
     mpfr_init2(&temp, prec_internal);
-    mpfr_set_prec(&(z->radius), prec_internal);
     mpfr_set_ui(&(z->radius), 0, MPFR_RNDU);
     zTerm = z->nTerms - n;
     summands = malloc(n * sizeof(arpra_mpfr *));
@@ -56,6 +57,26 @@ void arpra_reduce_last_n (arpra_range *z, arpra_uint n)
         mpfr_abs(&temp, &(z->deviations[zNext]), MPFR_RNDU);
         mpfr_add(&(z->radius), &(z->radius), &temp, MPFR_RNDU);
     }
+
+    // Round the result to the target precision.
+    mpfr_sub(&z_lo, &(z->centre), &(z->radius), MPFR_RNDD);
+    mpfr_sub(&z_lo, &z_lo, &(z->deviations[zTerm]), MPFR_RNDD);
+    if (mpfr_prec_round(&z_lo, z->precision, MPFR_RNDD)) {
+        arpra_helper_error_ulp(&z_lo, &z_lo);
+    }
+    else {
+        mpfr_set_ui(&z_lo, 0, MPFR_RNDN);
+    }
+    mpfr_add(&z_hi, &(z->centre), &(z->radius), MPFR_RNDU);
+    mpfr_add(&z_hi, &z_hi, &(z->deviations[zTerm]), MPFR_RNDU);
+    if (mpfr_prec_round(&z_hi, z->precision, MPFR_RNDU)) {
+        arpra_helper_error_ulp(&z_hi, &z_hi);
+    }
+    else {
+        mpfr_set_ui(&z_hi, 0, MPFR_RNDN);
+    }
+    mpfr_max(&temp, &z_lo, &z_hi, MPFR_RNDU);
+    mpfr_add(&(z->deviations[zTerm]), &(z->deviations[zTerm]), &temp, MPFR_RNDU);
 
     // Store nonzero merged deviation term.
     if (!mpfr_zero_p(&(z->deviations[zTerm]))) {
@@ -89,128 +110,8 @@ void arpra_reduce_last_n (arpra_range *z, arpra_uint n)
     }
 
     // Clear vars.
+    mpfr_clear(&z_lo);
+    mpfr_clear(&z_hi);
     mpfr_clear(&temp);
     free(summands);
 }
-
-
-
-
-
-
-/*
-void new_arpra_reduce_last_n (arpra_range *z, const arpra_range *x, const arpra_uint n)
-{
-    arpra_uint xTerm, zTerm, unmerged;
-    arpra_mpfr temp, error;
-    arpra_prec prec, prec_internal;
-    arpra_range zNew;
-
-    // Handle trivial cases.
-    if (n < 2) return;
-
-    // Domain violations:
-    // NaN  =  Nan
-    // Inf  =  Inf
-
-    // Handle domain violations.
-    if (arpra_nan_p(x)) {
-        arpra_set_nan(z);
-        return;
-    }
-    if (arpra_inf_p(x)) {
-        arpra_set_inf(z);
-        return;
-    }
-
-    // Initialise vars.
-    prec = arpra_get_precision(z);
-    prec_internal = arpra_get_internal_precision();
-    mpfr_init2(&temp, prec_internal);
-    mpfr_init2(&error, prec_internal);
-    mpfr_init2(&(zNew.centre), prec);
-    mpfr_init2(&(zNew.radius), prec_internal);
-    mpfr_set_si(&error, 0, MPFR_RNDU);
-    unmerged = (n < x->nTerms) ? (x->nTerms - n) : 0;
-
-    // z_0 = x_0
-    if (mpfr_set(&(zNew.centre), &(x->centre), MPFR_RNDN)) {
-        arpra_helper_error_half_ulp(&temp, &(zNew.centre));
-        mpfr_add(&error, &error, &temp, MPFR_RNDU);
-    }
-
-    // Allocate memory for all possible deviation terms.
-    zNew.nTerms = unmerged + 1;
-    zNew.symbols = malloc(zNew.nTerms * sizeof(arpra_uint));
-    zNew.deviations = malloc(zNew.nTerms * sizeof(arpra_mpfr));
-
-    for (xTerm = 0, zTerm = 0; xTerm < unmerged; xTerm++) {
-        zNew.symbols[zTerm] = x->symbols[xTerm];
-        mpfr_init2(&(zNew.deviations[zTerm]), prec);
-
-        // z_i = x_i
-
-        // ============= WE DONT NEED TO SAVE SIGN UNTIL RADIUS CALCULATION =======
-
-        if (mpfr_set(&(zNew.deviations[zTerm]), &(x->deviations[xTerm]), MPFR_RNDN)) {
-            arpra_helper_error_half_ulp(&temp, &(zNew.deviations[zTerm]));
-            mpfr_add(&error, &error, &temp, MPFR_RNDU);
-        }
-
-        // Store nonzero deviation terms.
-        if (mpfr_zero_p(&(zNew.deviations[zTerm]))) {
-            mpfr_clear(&(zNew.deviations[zTerm]));
-        }
-        else {
-
-
-            // x cannot be used because x is const, and may still be needed
-            // z cannot be used because z may have fewer terms than x
-
-            // znew can be used because we can save abs x, then restore signs from x
-
-            // but znew does not have room to store merge terms
-
-
-            zTerm++;
-        }
-
-        // SET ZNEW AND DO ABS OF X
-    }
-
-
-
-    // Store nonzero reduced deviation term.
-    if (!mpfr_zero_p(&(z->deviations[zTerm]))) {
-        z->symbols[zTerm] = arpra_next_symbol();
-        zTerm++;
-    }
-
-    // Clear unused deviation terms.
-    //for (zNext = zTerm; zNext < z->nTerms; zNext++) {
-    //    mpfr_clear(&(z->deviations[zNext]));
-    //}
-
-    // Handle domain violations, and resize memory.
-    z->nTerms = zTerm;
-    if (mpfr_nan_p(&(z->radius))) {
-        arpra_set_nan(z);
-    }
-    else if (mpfr_inf_p(&(z->radius))) {
-        arpra_set_inf(z);
-    }
-    else {
-        if (z->nTerms == 0) {
-            free(z->symbols);
-            free(z->deviations);
-        }
-        else {
-            z->symbols = realloc(z->symbols, z->nTerms * sizeof(arpra_uint));
-            z->deviations = realloc(z->deviations, z->nTerms * sizeof(arpra_mpfr));
-        }
-    }
-
-    // Compute new radius.
-    arpra_helper_radius(z);
-}
-*/

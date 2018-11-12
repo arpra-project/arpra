@@ -25,16 +25,10 @@ void arpra_init2 (arpra_range *z, const arpra_prec prec)
 {
     arpra_prec prec_internal;
 
-    // Increase internal precision if < 'prec'.
     prec_internal = arpra_get_internal_precision();
-    if (prec_internal < prec) {
-        arpra_set_internal_precision(prec);
-        prec_internal = prec;
-    }
-
-    // Init centre and radius with 'prec' precision.
     z->nTerms = 0;
-    mpfr_init2(&(z->centre), prec);
+    z->precision = prec;
+    mpfr_init2(&(z->centre), prec_internal);
     mpfr_init2(&(z->radius), prec_internal);
 }
 
@@ -42,7 +36,6 @@ void arpra_inits2 (const arpra_prec prec, arpra_range *z, ...)
 {
     va_list arg;
 
-    // Init each argument with precision 'prec'.
     va_start(arg, z);
     while (z != NULL) {
         arpra_init2(z, prec);

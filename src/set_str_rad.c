@@ -23,16 +23,18 @@
 
 void arpra_set_str_rad (arpra_range *z, const char *centre, const char *radius, const arpra_int base)
 {
-    arpra_prec prec, prec_internal;
-    arpra_mpfr temp;
+    arpra_mpfr z_lo, z_hi, temp;
+    arpra_prec prec_internal;
 
     // Initialise vars.
-    prec = arpra_get_precision(z);
     prec_internal = arpra_get_internal_precision();
+    mpfr_init2(&z_lo, prec_internal);
+    mpfr_init2(&z_hi, prec_internal);
     mpfr_init2(&temp, prec_internal);
-    mpfr_set_str(&temp, radius, base, MPFR_RNDU);
+    mpfr_set_prec(&(z->centre), prec_internal);
     mpfr_set_prec(&(z->radius), prec_internal);
-    mpfr_abs(&(z->radius), &temp, MPFR_RNDU);
+    mpfr_set_str(&(z->radius), radius, base, MPFR_RNDU);
+    mpfr_abs(&(z->radius), &(z->radius), MPFR_RNDU);
 
     // Add centre rounding error to deviation.
     if (mpfr_set_str(&(z->centre), centre, base, MPFR_RNDN)) {
@@ -40,21 +42,35 @@ void arpra_set_str_rad (arpra_range *z, const char *centre, const char *radius, 
         mpfr_add(&(z->radius), &(z->radius), &temp, MPFR_RNDU);
     }
 
-    // Clear existing deviaion terms.
+    // Clear existing deviation terms.
     arpra_clear_terms(z);
 
-    // If radius is nonzero:
+    // Round the result to the target precision.
+    mpfr_sub(&z_lo, &(z->centre), &(z->radius), MPFR_RNDD);
+    if (mpfr_prec_round(&z_lo, z->precision, MPFR_RNDD)) {
+        arpra_helper_error_ulp(&z_lo, &z_lo);
+    }
+    else {
+        mpfr_set_ui(&z_lo, 0, MPFR_RNDN);
+    }
+    mpfr_add(&z_hi, &(z->centre), &(z->radius), MPFR_RNDU);
+    if (mpfr_prec_round(&z_hi, z->precision, MPFR_RNDU)) {
+        arpra_helper_error_ulp(&z_hi, &z_hi);
+    }
+    else {
+        mpfr_set_ui(&z_hi, 0, MPFR_RNDN);
+    }
+    mpfr_max(&temp, &z_lo, &z_hi, MPFR_RNDU);
+    mpfr_add(&(z->radius), &(z->radius), &temp, MPFR_RNDU);
+
+    // Store nonzero numerical error term.
     if (!mpfr_zero_p(&(z->radius))) {
-        // Allocate one deviation term.
         z->nTerms = 1;
         z->symbols = malloc(sizeof(arpra_uint));
         z->deviations = malloc(sizeof(arpra_range));
-
-        // Set deviation term.
         z->symbols[0] = arpra_next_symbol();
-        mpfr_init2(&(z->deviations[0]), prec);
+        mpfr_init2(&(z->deviations[0]), prec_internal);
         mpfr_set(&(z->deviations[0]), &(z->radius), MPFR_RNDU);
-        mpfr_set(&(z->radius), &(z->deviations[0]), MPFR_RNDU);
     }
 
     // Handle domain violations.
@@ -66,5 +82,7 @@ void arpra_set_str_rad (arpra_range *z, const char *centre, const char *radius, 
     }
 
     // Clear vars.
+    mpfr_clear(&z_lo);
+    mpfr_clear(&z_hi);
     mpfr_clear(&temp);
 }

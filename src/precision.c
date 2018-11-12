@@ -23,24 +23,16 @@
 
 arpra_prec arpra_get_precision (const arpra_range *x)
 {
-    return mpfr_get_prec(&(x->centre));
+    return x->precision;
 }
 
 void arpra_set_precision (arpra_range *z, const arpra_prec prec)
 {
     arpra_prec internal_prec;
 
-    // Increase internal_prec if < prec.
     internal_prec = arpra_get_internal_precision();
-    if (internal_prec < prec) {
-        arpra_set_internal_precision(prec);
-        internal_prec = prec;
-    }
-
-    // Clear existing deviation terms.
-    arpra_clear_terms(z);
-
-    // Reset centre and radius precision.
-    mpfr_set_prec(&(z->centre), prec);
+    mpfr_set_prec(&(z->centre), internal_prec);
     mpfr_set_prec(&(z->radius), internal_prec);
+    arpra_clear_terms(z);
+    z->precision = prec;
 }

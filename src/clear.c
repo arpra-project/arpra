@@ -23,7 +23,6 @@
 
 void arpra_clear (arpra_range *z)
 {
-    // Clear centre, radius and deviation terms.
     mpfr_clear(&(z->centre));
     mpfr_clear(&(z->radius));
     arpra_clear_terms(z);
@@ -33,7 +32,6 @@ void arpra_clears (arpra_range *z, ...)
 {
     va_list arg;
 
-    // Clear each arguemnt.
     va_start(arg, z);
     while (z != NULL) {
         arpra_clear(z);
@@ -46,7 +44,6 @@ void arpra_clear_terms (arpra_range *z)
 {
     arpra_uint zTerm;
 
-    // Clear existing deviation terms.
     if (z->nTerms > 0) {
         for (zTerm = 0; zTerm < z->nTerms; zTerm++) {
             mpfr_clear(&(z->deviations[zTerm]));

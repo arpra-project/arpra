@@ -23,30 +23,21 @@
 
 void arpra_set_nan (arpra_range *z)
 {
-    // Clear existing deviation terms.
-    arpra_clear_terms(z);
-
-    // Set centre to NaN and radius to NaN.
     mpfr_set_nan(&(z->centre));
     mpfr_set_nan(&(z->radius));
+    arpra_clear_terms(z);
 }
 
 void arpra_set_inf (arpra_range *z)
 {
-    // Clear existing deviation terms.
-    arpra_clear_terms(z);
-
-    // Set centre to +0 and radius to +Inf.
     mpfr_set_zero(&(z->centre), 1);
     mpfr_set_inf(&(z->radius), 1);
+    arpra_clear_terms(z);
 }
 
 void arpra_set_zero (arpra_range *z)
 {
-    // Clear existing deviation terms.
-    arpra_clear_terms(z);
-
-    // Set centre to +0 and radius to +0.
     mpfr_set_zero(&(z->centre), 1);
     mpfr_set_zero(&(z->radius), 1);
+    arpra_clear_terms(z);
 }

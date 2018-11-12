@@ -25,11 +25,11 @@ void arpra_init (arpra_range *z)
 {
     arpra_prec prec, prec_internal;
 
-    // Init centre and radius.
     prec = arpra_get_default_precision();
     prec_internal = arpra_get_internal_precision();
     z->nTerms = 0;
-    mpfr_init2(&(z->centre), prec);
+    z->precision = prec;
+    mpfr_init2(&(z->centre), prec_internal);
     mpfr_init2(&(z->radius), prec_internal);
 }
 
@@ -37,7 +37,6 @@ void arpra_inits (arpra_range *z, ...)
 {
     va_list arg;
 
-    // Init each argument's centre and radius.
     va_start(arg, z);
     while (z != NULL) {
         arpra_init(z);

@@ -28,8 +28,8 @@ void arpra_sum_exact (arpra_range *z, arpra_range *x, const arpra_uint n)
     arpra_uint *xTerm;
     arpra_int xHasNext;
     arpra_mpfr **summands;
-    arpra_mpfr temp, error;
-    arpra_prec prec, prec_internal;
+    arpra_mpfr z_lo, z_hi, temp, error;
+    arpra_prec prec_internal;
     arpra_range zNew;
 
     // Domain violations:
@@ -76,14 +76,16 @@ void arpra_sum_exact (arpra_range *z, arpra_range *x, const arpra_uint n)
     }
 
     // Initialise vars.
-    prec = arpra_get_precision(z);
     prec_internal = arpra_get_internal_precision();
+    mpfr_init2(&z_lo, prec_internal);
+    mpfr_init2(&z_hi, prec_internal);
     mpfr_init2(&temp, prec_internal);
     mpfr_init2(&error, prec_internal);
-    mpfr_init2(&(zNew.centre), prec);
+    mpfr_init2(&(zNew.centre), prec_internal);
     mpfr_init2(&(zNew.radius), prec_internal);
     mpfr_set_si(&error, 0, MPFR_RNDU);
     mpfr_set_si(&(zNew.radius), 0, MPFR_RNDU);
+    zNew.precision = z->precision;
     xTerm = malloc(n * sizeof(arpra_uint));
     summands = malloc(n * sizeof(arpra_mpfr *));
 
@@ -123,7 +125,7 @@ void arpra_sum_exact (arpra_range *z, arpra_range *x, const arpra_uint n)
             }
         }
         zNew.symbols[zTerm] = xSymbol;
-        mpfr_init2(&(zNew.deviations[zTerm]), prec);
+        mpfr_init2(&(zNew.deviations[zTerm]), prec_internal);
 
         // For all x with the next symbol:
         for (i = 0, j = 0; i < n; i++) {
@@ -155,10 +157,30 @@ void arpra_sum_exact (arpra_range *z, arpra_range *x, const arpra_uint n)
         }
     }
 
+    // Round the result to the target precision.
+    mpfr_sub(&z_lo, &(zNew.centre), &(zNew.radius), MPFR_RNDD);
+    mpfr_sub(&z_lo, &z_lo, &error, MPFR_RNDD);
+    if (mpfr_prec_round(&z_lo, zNew.precision, MPFR_RNDD)) {
+        arpra_helper_error_ulp(&z_lo, &z_lo);
+    }
+    else {
+        mpfr_set_ui(&z_lo, 0, MPFR_RNDN);
+    }
+    mpfr_add(&z_hi, &(zNew.centre), &(zNew.radius), MPFR_RNDU);
+    mpfr_add(&z_hi, &z_hi, &error, MPFR_RNDU);
+    if (mpfr_prec_round(&z_hi, zNew.precision, MPFR_RNDU)) {
+        arpra_helper_error_ulp(&z_hi, &z_hi);
+    }
+    else {
+        mpfr_set_ui(&z_hi, 0, MPFR_RNDN);
+    }
+    mpfr_max(&temp, &z_lo, &z_hi, MPFR_RNDU);
+    mpfr_add(&error, &error, &temp, MPFR_RNDU);
+
     // Store nonzero numerical error term.
     if (!mpfr_zero_p(&error)) {
         zNew.symbols[zTerm] = arpra_next_symbol();
-        mpfr_init2(&(zNew.deviations[zTerm]), prec);
+        mpfr_init2(&(zNew.deviations[zTerm]), prec_internal);
         mpfr_set(&(zNew.deviations[zTerm]), &error, MPFR_RNDU);
         mpfr_add(&(zNew.radius), &(zNew.radius), &(zNew.deviations[zTerm]), MPFR_RNDU);
         zTerm++;
@@ -180,6 +202,8 @@ void arpra_sum_exact (arpra_range *z, arpra_range *x, const arpra_uint n)
     }
 
     // Clear vars, and set z.
+    mpfr_clear(&z_lo);
+    mpfr_clear(&z_hi);
     mpfr_clear(&temp);
     mpfr_clear(&error);
     arpra_clear(z);
@@ -195,8 +219,8 @@ void arpra_sum_recursive (arpra_range *z, arpra_range *x, const arpra_uint n)
     arpra_uint *xTerm;
     arpra_int xHasNext;
     arpra_mpfr **summands;
-    arpra_mpfr temp, error;
-    arpra_prec prec, prec_internal;
+    arpra_mpfr z_lo, z_hi, temp, error;
+    arpra_prec prec_internal;
     arpra_range zNew;
 
     // Domain violations:
@@ -243,14 +267,16 @@ void arpra_sum_recursive (arpra_range *z, arpra_range *x, const arpra_uint n)
     }
 
     // Initialise vars.
-    prec = arpra_get_precision(z);
     prec_internal = arpra_get_internal_precision();
+    mpfr_init2(&z_lo, prec_internal);
+    mpfr_init2(&z_hi, prec_internal);
     mpfr_init2(&temp, prec_internal);
     mpfr_init2(&error, prec_internal);
-    mpfr_init2(&(zNew.centre), prec);
+    mpfr_init2(&(zNew.centre), prec_internal);
     mpfr_init2(&(zNew.radius), prec_internal);
     mpfr_set_si(&error, 0, MPFR_RNDU);
     mpfr_set_si(&(zNew.radius), 0, MPFR_RNDU);
+    zNew.precision = z->precision;
     xTerm = malloc(n * sizeof(arpra_uint));
     summands = malloc(n * sizeof(arpra_mpfr *));
 
@@ -290,7 +316,7 @@ void arpra_sum_recursive (arpra_range *z, arpra_range *x, const arpra_uint n)
             }
         }
         zNew.symbols[zTerm] = xSymbol;
-        mpfr_init2(&(zNew.deviations[zTerm]), prec);
+        mpfr_init2(&(zNew.deviations[zTerm]), prec_internal);
 
         // For all x with the next symbol:
         for (i = 0, j = 0; i < n; i++) {
@@ -345,7 +371,7 @@ void arpra_sum_recursive (arpra_range *z, arpra_range *x, const arpra_uint n)
     }
 
     // Compute error(sum(x)) = (n - 1) u sum(|x|).
-    mpfr_set_si_2exp(&temp, 1, -prec, MPFR_RNDU);
+    mpfr_set_si_2exp(&temp, 1, -zNew.precision, MPFR_RNDU);
     mpfr_mul_ui(&temp, &temp, (n - 1), MPFR_RNDU);
     arpra_helper_mpfr_sum(&(sum_error[0]), sum_error, n, MPFR_RNDU);
     mpfr_mul(&(sum_error[0]), &(sum_error[0]), &temp, MPFR_RNDU);
@@ -359,10 +385,30 @@ void arpra_sum_recursive (arpra_range *z, arpra_range *x, const arpra_uint n)
      * END: Error bound for recursive summation.
      */
 
+    // Round the result to the target precision.
+    mpfr_sub(&z_lo, &(zNew.centre), &(zNew.radius), MPFR_RNDD);
+    mpfr_sub(&z_lo, &z_lo, &error, MPFR_RNDD);
+    if (mpfr_prec_round(&z_lo, zNew.precision, MPFR_RNDD)) {
+        arpra_helper_error_ulp(&z_lo, &z_lo);
+    }
+    else {
+        mpfr_set_ui(&z_lo, 0, MPFR_RNDN);
+    }
+    mpfr_add(&z_hi, &(zNew.centre), &(zNew.radius), MPFR_RNDU);
+    mpfr_add(&z_hi, &z_hi, &error, MPFR_RNDU);
+    if (mpfr_prec_round(&z_hi, zNew.precision, MPFR_RNDU)) {
+        arpra_helper_error_ulp(&z_hi, &z_hi);
+    }
+    else {
+        mpfr_set_ui(&z_hi, 0, MPFR_RNDN);
+    }
+    mpfr_max(&temp, &z_lo, &z_hi, MPFR_RNDU);
+    mpfr_add(&error, &error, &temp, MPFR_RNDU);
+
     // Store nonzero numerical error term.
     if (!mpfr_zero_p(&error)) {
         zNew.symbols[zTerm] = arpra_next_symbol();
-        mpfr_init2(&(zNew.deviations[zTerm]), prec);
+        mpfr_init2(&(zNew.deviations[zTerm]), prec_internal);
         mpfr_set(&(zNew.deviations[zTerm]), &error, MPFR_RNDU);
         mpfr_add(&(zNew.radius), &(zNew.radius), &(zNew.deviations[zTerm]), MPFR_RNDU);
         zTerm++;
@@ -384,6 +430,8 @@ void arpra_sum_recursive (arpra_range *z, arpra_range *x, const arpra_uint n)
     }
 
     // Clear vars, and set z.
+    mpfr_clear(&z_lo);
+    mpfr_clear(&z_hi);
     mpfr_clear(&temp);
     mpfr_clear(&error);
     arpra_clear(z);
