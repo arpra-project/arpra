@@ -316,6 +316,7 @@ void dVdt (arpra_range *out, const void *params,
     arpra_range *I = p->I;
     arpra_range *M_ss = p->M_ss;
     arpra_range *temp1 = p->temp1;
+    arpra_uint i;
 
     // Ca++ channel activation steady-state
     // M_ss = 1 / (1 + exp(-2 (V - V1) / V2))
@@ -328,7 +329,7 @@ void dVdt (arpra_range *out, const void *params,
 
     // Synapse current
     arpra_sub(temp1, VSyn, V);
-    for (arpra_uint i = 0; i < p->pre_syn_size; i++) {
+    for (i = 0; i < p->pre_syn_size; i++) {
         arpra_mul(&(I[i]), temp1, &(GSyn[i]));
         arpra_mul(&(I[i]), &(I[i]), &(S[i]));
     }
@@ -343,7 +344,7 @@ void dVdt (arpra_range *out, const void *params,
     if (x_dim == 0) {
         //fprintf(stderr, "sum(I): "); debug(out->centre);
         //fprintf(stderr, "I[0]: "); debug(I[0].centre);
-        for (arpra_uint i = 0; i < p->pre_syn_size; i++) {
+        for (i = 0; i < p->pre_syn_size; i++) {
             //fprintf(stderr, "I[%lu]: ", i); debug(I[i].centre);
         }
     }

@@ -657,7 +657,7 @@ int main (int argc, char *argv[])
 
     /* FILE **f_nrn2_N = malloc(p_nrn2_size * sizeof(FILE *)); */
     /* file_init("nrn2_N", p_nrn2_size, f_nrn2_N); */
-    /* /FILE **f_nrn2_V = malloc(p_nrn2_size * sizeof(FILE *)); */
+    /* FILE **f_nrn2_V = malloc(p_nrn2_size * sizeof(FILE *)); */
     /* file_init("nrn2_V", p_nrn2_size, f_nrn2_V); */
 
     /* FILE **f_syn_exc_R = malloc(p_syn_exc_size * sizeof(FILE *)); */

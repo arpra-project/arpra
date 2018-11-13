@@ -154,7 +154,7 @@ mpfr_t GL, VL, GCa, VCa, GK, VK, V1, V2, V3, V4, phi, C, syn_exc_VSyn, syn_exc_t
        syn_inh_b, syn_inh_k, one, two, neg_two, temp1, temp2, M_ss, N_ss, in1_V_lo,
        in1_V_hi, in2_V_lo, in2_V_hi, in1_p0, in2_p0, rand_uf, rand_nf;
 mpz_t rand_uz;
-mpfr_ptr syn_exc_GSyn, syn_inh_GSyn, I1, I2;
+mpfr_ptr syn_exc_GSyn, syn_inh_GSyn, I_ptr_swap, I1, *I1_ptr, *I1_ptr_temp, I2, *I2_ptr, *I2_ptr_temp;
 gmp_randstate_t rng_uf, rng_nf, rng_uz;
 
 // System state variables
@@ -247,7 +247,7 @@ void dVdt (const unsigned long idx, int grp)
     mpfr_ptr d_V;
     mpfr_srcptr N, V;
     mpfr_srcptr S, GSyn, VSyn;
-    mpfr_ptr I;
+    mpfr_ptr I, *I_ptr, *I_ptr_temp;
     unsigned long i, j, pre_size;
 
     if (grp == 1) {
@@ -259,6 +259,8 @@ void dVdt (const unsigned long idx, int grp)
         GSyn = syn_exc_GSyn + (idx * pre_size);
         VSyn = syn_exc_VSyn;
         I = I1;
+        I_ptr = I1_ptr;
+        I_ptr_temp = I1_ptr_temp;
     }
     //else if (grp == 2) {
     //   d_V = d_nrn2_V + idx;
@@ -269,6 +271,8 @@ void dVdt (const unsigned long idx, int grp)
     //   GSyn = syn_exc_GSyn + (idx * pre_size);
     //   VSyn = syn_exc_VSyn;
     //   I = I2;
+    //   I_ptr = I2_ptr;
+    //   I_ptr_temp = I2_ptr_temp;
     //}
 
     // Ca++ channel activation steady-state
@@ -286,15 +290,60 @@ void dVdt (const unsigned long idx, int grp)
     for (i = 0; i < pre_size; i++) {
         mpfr_mul(&(I[i]), temp1, &(GSyn[i]), MPFR_RNDN);
         mpfr_mul(&(I[i]), &(I[i]), &(S[i]), MPFR_RNDN);
+        I_ptr[i] = &(I[i]);
     }
 
-    // Shuffle input currents with Fisher-Yates, then sum.
+
+    /* // Shuffle input currents with Fisher-Yates. */
+    /* for (i = 0; i < pre_size; i++) { */
+    /*     mpz_set_ui(rand_uz, pre_size - i); */
+    /*     mpz_urandomm(rand_uz, rng_uz, rand_uz); */
+    /*     j = i + mpz_get_ui(rand_uz); */
+    /*     I_ptr_swap = I_ptr[i]; */
+    /*     I_ptr[i] = I_ptr[j]; */
+    /*     I_ptr[j] = I_ptr_swap; */
+    /* } */
+
+
+    // Merge sort input currents
+    unsigned long pa, pb, pc, chunk_size, k;
+
+//  >  increasing (best case approx)
+//  <  decreasing (worst case approx)
+#define SORT_COMPARE >
+
+    for (chunk_size = 1; chunk_size < pre_size; chunk_size *= 2) {
+        for (pa = 0; (pa + chunk_size) < pre_size; pa += (2 * chunk_size)) {
+            pb = pa + chunk_size;
+            pc = pb + chunk_size;
+            if (pc > pre_size) pc = pre_size;
+            i = pa;
+            j = pb;
+            k = pa;
+            while ((i < pb) && (j < pc)) {
+                if (mpfr_cmpabs(I_ptr[j], I_ptr[i]) SORT_COMPARE 0) {
+                    I_ptr_temp[k++] = I_ptr[i++];
+                }
+                else {
+                    I_ptr_temp[k++] = I_ptr[j++];
+                }
+            }
+            while (i < pb) {
+                I_ptr_temp[k++] = I_ptr[i++];
+            }
+            while (j < pc) {
+                I_ptr_temp[k++] = I_ptr[j++];
+            }
+        }
+        for (k = 0; k < pre_size; k++) {
+            I_ptr[k] = I_ptr_temp[k];
+        }
+    }
+
+
+    // Sum input currents
     for (i = 0; i < pre_size; i++) {
-        mpz_set_ui(rand_uz, pre_size - i);
-        mpz_urandomm(rand_uz, rng_uz, rand_uz);
-        j = i + mpz_get_ui(rand_uz);
-        mpfr_swap(&(I[i]), &(I[j]));
-        mpfr_add(d_V, d_V, &(I[i]), MPFR_RNDN);
+        mpfr_add(d_V, d_V, I_ptr[i], MPFR_RNDN);
     }
 
 
@@ -302,6 +351,10 @@ void dVdt (const unsigned long idx, int grp)
 
     // ======== TEMP DEBUG ==========
     //mpfr_set_d(d_V, 80.0, MPFR_RNDN); // bifurcation at sum(I) = 80.0
+    //for (i = 0; i < pre_size; i++) {
+    //    debug(I_ptr[i]);
+    //}
+    //fprintf(stderr, "\n");
     if (idx == 0) {
         //fprintf(stderr, "sum(I): "); debug(d_V);
         //fprintf(stderr, "I[0]: "); debug(I);
@@ -436,7 +489,11 @@ int main (int argc, char *argv[])
     syn_exc_GSyn = malloc(p_syn_exc_size * sizeof(mpfr_t));
     syn_inh_GSyn = malloc(p_syn_inh_size * sizeof(mpfr_t));
     I1 = malloc(p_in1_size * sizeof(mpfr_t));
+    I1_ptr = malloc(p_in1_size * sizeof(mpfr_ptr));
+    I1_ptr_temp = malloc(p_in1_size * sizeof(mpfr_ptr));
     I2 = malloc(p_in2_size * sizeof(mpfr_t));
+    I2_ptr = malloc(p_in2_size * sizeof(mpfr_ptr));
+    I2_ptr_temp = malloc(p_in2_size * sizeof(mpfr_ptr));
     in1 = malloc(p_in1_size * sizeof(int));
     in2 = malloc(p_in2_size * sizeof(int));
 
@@ -872,7 +929,11 @@ int main (int argc, char *argv[])
     free(syn_exc_GSyn);
     free(syn_inh_GSyn);
     free(I1);
+    free(I1_ptr);
+    free(I1_ptr_temp);
     free(I2);
+    free(I2_ptr);
+    free(I2_ptr_temp);
     free(in1);
     free(in2);
 
