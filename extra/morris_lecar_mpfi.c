@@ -77,6 +77,7 @@
 // Seeds are random if not #defined
 #define p_rand_prec 53
 //#define p_rng_uf_seed 707135875931353ul
+//#define p_rng_nf_seed 503108552855933ul
 
 // Poisson input parameters (group 1)
 #define p_in1_size 50
@@ -124,8 +125,8 @@
 #define p_syn_exc_size p_in1_size * p_nrn1_size
 #define p_syn_exc_R0 0.0
 #define p_syn_exc_S0 0.0
-//#define p_syn_exc_GSyn 40.0
-#define p_syn_exc_GSyn 3.0
+#define p_syn_exc_GSyn_std 0.5
+#define p_syn_exc_GSyn_mean 3.0
 #define p_syn_exc_VSyn 0.0
 #define p_syn_exc_thr -50.0
 #define p_syn_exc_a 0.25 // in [1/10, 1/2]
@@ -136,7 +137,8 @@
 #define p_syn_inh_size 0
 #define p_syn_inh_R0 0.0
 #define p_syn_inh_S0 0.0
-#define p_syn_inh_GSyn 50.0
+#define p_syn_inh_GSyn_std 0.5
+#define p_syn_inh_GSyn_mean 3.0
 #define p_syn_inh_VSyn -80.0
 #define p_syn_inh_thr -50.0
 #define p_syn_inh_a 0.075 // in [1/20, 1/10]
@@ -147,13 +149,14 @@
 
 
 int *in1, *in2;
-mpfr_t rand_uf, temp_error, in1_p0, in2_p0;
+mpfr_t rand_uf, rand_nf, temp_error, in1_p0, in2_p0;
 mpfr_ptr temp_sum_error1, *temp_sum_error1_ptr, temp_sum_error2, *temp_sum_error2_ptr;
 mpfi_t GL, VL, GCa, VCa, GK, VK, V1, V2, V3, V4, phi, C, syn_exc_VSyn, syn_exc_thr,
        syn_exc_a, syn_exc_b, syn_exc_k, syn_inh_VSyn, syn_inh_thr, syn_inh_a,
        syn_inh_b, syn_inh_k, one, two, neg_two, temp_sum, temp1, temp2, M_ss, N_ss,
        in1_V_lo, in1_V_hi, in2_V_lo, in2_V_hi;
 mpfi_ptr syn_exc_GSyn, syn_inh_GSyn, I1, I2;
+gmp_randstate_t rng_uf, rng_nf;
 
 // System state variables
 mpfi_ptr nrn1_N, nrn2_N, nrn1_V, nrn2_V, syn_exc_R, syn_inh_R, syn_exc_S, syn_inh_S;
@@ -464,6 +467,30 @@ int main (int argc, char *argv[])
     in1 = malloc(p_in1_size * sizeof(int));
     in2 = malloc(p_in2_size * sizeof(int));
 
+    struct timespec clock_time;
+
+    // Initialise uniform float RNG
+    gmp_randinit_default(rng_uf);
+    clock_gettime(CLOCK_REALTIME, &clock_time);
+#ifdef p_rng_uf_seed
+    unsigned long rng_uf_seed = p_rng_uf_seed;
+#else
+    unsigned long rng_uf_seed = clock_time.tv_sec + clock_time.tv_nsec;
+#endif
+    gmp_randseed_ui(rng_uf, rng_uf_seed);
+    printf("GMP rand uniform float seed: %lu\n", rng_uf_seed);
+
+    // Initialise normal float RNG
+    gmp_randinit_default(rng_nf);
+    clock_gettime(CLOCK_REALTIME, &clock_time);
+#ifdef p_rng_nf_seed
+    unsigned long rng_nf_seed = p_rng_nf_seed;
+#else
+    unsigned long rng_nf_seed = clock_time.tv_sec + clock_time.tv_nsec;
+#endif
+    gmp_randseed_ui(rng_nf, rng_nf_seed);
+    printf("GMP rand normal float seed: %lu\n", rng_nf_seed);
+
     // Initialise system state
     mpfi_init2(h, p_prec);
     mpfi_init2(t, p_prec);
@@ -543,6 +570,7 @@ int main (int argc, char *argv[])
 
     // Initialise scratch space
     mpfr_init2(rand_uf, p_rand_prec);
+    mpfr_init2(rand_nf, p_rand_prec);
     mpfr_init2(temp_error, p_error_prec);
     mpfi_init2(temp_sum, p_error_prec);
     mpfi_init2(temp1, p_prec);
@@ -608,7 +636,11 @@ int main (int argc, char *argv[])
 
     // Set excitatory synapse parameters
     for (i = 0; i < p_syn_exc_size; i++) {
-        mpfi_set_d(&(syn_exc_GSyn[i]), p_syn_exc_GSyn);
+        //mpfr_nrandom(rand_nf, rng_nf, MPFR_RNDN);
+        mpfr_grandom(rand_nf, NULL, rng_nf, MPFR_RNDN);
+        mpfr_mul_d(rand_nf, rand_nf, p_syn_exc_GSyn_std, MPFR_RNDN);
+        mpfr_add_d(rand_nf, rand_nf, p_syn_exc_GSyn_mean, MPFR_RNDN);
+        mpfi_set_fr(&(syn_exc_GSyn[i]), rand_nf);
     }
     mpfi_set_d(syn_exc_VSyn, p_syn_exc_VSyn);
     mpfi_set_d(syn_exc_thr, p_syn_exc_thr);
@@ -619,7 +651,11 @@ int main (int argc, char *argv[])
 
     // Set inhibitory synapse parameters
     for (i = 0; i < p_syn_inh_size; i++) {
-        mpfi_set_d(&(syn_inh_GSyn[i]), p_syn_inh_GSyn);
+        //mpfr_nrandom(rand_nf, rng_nf, MPFR_RNDN);
+        mpfr_grandom(rand_nf, NULL, rng_nf, MPFR_RNDN);
+        mpfr_mul_d(rand_nf, rand_nf, p_syn_inh_GSyn_std, MPFR_RNDN);
+        mpfr_add_d(rand_nf, rand_nf, p_syn_inh_GSyn_mean, MPFR_RNDN);
+        mpfi_set_fr(&(syn_inh_GSyn[i]), rand_nf);
     }
     mpfi_set_d(syn_inh_VSyn, p_syn_inh_VSyn);
     mpfi_set_d(syn_inh_thr, p_syn_inh_thr);
@@ -656,19 +692,6 @@ int main (int argc, char *argv[])
     /* file_init("syn_inh_R", p_syn_inh_size, f_syn_inh_R); */
     /* FILE **f_syn_inh_S = malloc(p_syn_inh_size * sizeof(FILE *)); */
     /* file_init("syn_inh_S", p_syn_inh_size, f_syn_inh_S); */
-
-    // Initialise uniform float RNG
-    gmp_randstate_t rng_uf;
-    gmp_randinit_default(rng_uf);
-    struct timespec clock_time;
-    clock_gettime(CLOCK_REALTIME, &clock_time);
-#ifdef p_rng_uf_seed
-    unsigned long rng_uf_seed = p_rng_uf_seed;
-#else
-    unsigned long rng_uf_seed = clock_time.tv_sec + clock_time.tv_nsec;
-#endif
-    gmp_randseed_ui(rng_uf, rng_uf_seed);
-    printf("GMP rand uniform float seed: %lu\n", rng_uf_seed);
 
 
     // Begin simulation loop
@@ -847,6 +870,7 @@ int main (int argc, char *argv[])
 
     // Clear scratch space
     mpfr_clear(rand_uf);
+    mpfr_clear(rand_nf);
     mpfr_clear(temp_error);
     mpfi_clear(temp_sum);
     mpfi_clear(temp1);
@@ -907,6 +931,7 @@ int main (int argc, char *argv[])
     /* free(f_syn_inh_S); */
 
     gmp_randclear(rng_uf);
+    gmp_randclear(rng_nf);
     mpfr_free_cache();
 
     return 0;
