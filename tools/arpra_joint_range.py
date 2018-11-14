@@ -36,18 +36,18 @@ def arpra_joint_range (x, y, t, i_start, i_stop):
             tc_file.readline();
             tr_file.readline();
 
-        xc = np.array([xc_file.readline() for i in range(i_start, i_stop)], dtype=np.float)
-        xr = np.array([xr_file.readline() for i in range(i_start, i_stop)], dtype=np.float)
+        xc = np.array([xc_file.readline() for i in range(i_start, i_stop)], dtype=np.float64)
+        xr = np.array([xr_file.readline() for i in range(i_start, i_stop)], dtype=np.float64)
         xlo = xc - xr
         xhi = xc + xr;
 
-        yc = np.array([yc_file.readline() for i in range(i_start, i_stop)], dtype=np.float)
-        yr = np.array([yr_file.readline() for i in range(i_start, i_stop)], dtype=np.float)
+        yc = np.array([yc_file.readline() for i in range(i_start, i_stop)], dtype=np.float64)
+        yr = np.array([yr_file.readline() for i in range(i_start, i_stop)], dtype=np.float64)
         ylo = yc - yr
         yhi = yc + yr;
 
-        tc = np.array([tc_file.readline() for i in range(i_start, i_stop)], dtype=np.float)
-        tr = np.array([tr_file.readline() for i in range(i_start, i_stop)], dtype=np.float)
+        tc = np.array([tc_file.readline() for i in range(i_start, i_stop)], dtype=np.float64)
+        tr = np.array([tr_file.readline() for i in range(i_start, i_stop)], dtype=np.float64)
 
     fig = plt.figure()
     fig.canvas.set_window_title('arpra_joint_range')

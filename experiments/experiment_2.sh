@@ -14,8 +14,24 @@ for i in {0..99}; do
     echo Changing to ${outsubdir}
     mkdir -p ${outsubdir}
     cd ${outsubdir}
-    ../../experiment_2
+    ../../experiment_2 0
     cd ../..
 done
 
-python3 ../tools/arpra_mpfr_2d.py
+echo ascending
+outsubdir=${outdir}/ascending
+echo Changing to ${outsubdir}
+mkdir -p ${outsubdir}
+cd ${outsubdir}
+../../experiment_2 1
+cd ../..
+
+echo descending
+outsubdir=${outdir}/descending
+echo Changing to ${outsubdir}
+mkdir -p ${outsubdir}
+cd ${outsubdir}
+../../experiment_2 2
+cd ../..
+
+python3 ./experiment_2.py

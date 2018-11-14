@@ -16,7 +16,7 @@ def rad_sum (path, x, i_start, i_stop):
             for i in range(i_start):
                 xr_file.readline();
 
-            xr = np.array([xr_file.readline() for i in range(i_start, i_stop)], dtype=np.float)
+            xr = np.array([xr_file.readline() for i in range(i_start, i_stop)], dtype=np.float64)
             return np.sum(xr)
 
         except ValueError:
@@ -27,8 +27,8 @@ def experiment_1 ():
 
     xr = 'nrn1_V_000_r.dat'
     yr = 'nrn1_N_000_r.dat'
-    xr_sum_mat = np.zeros((26, 26), dtype=np.float)
-    yr_sum_mat = np.zeros((26, 26), dtype=np.float)
+    xr_sum_mat = np.zeros((26, 26), dtype=np.float64)
+    yr_sum_mat = np.zeros((26, 26), dtype=np.float64)
 
     for i in range(0, 26):
         inps = i * 2

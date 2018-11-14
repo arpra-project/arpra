@@ -19,9 +19,9 @@ def arpra_mpfi_2d (x, y, t, i_start, i_stop):
             yy_file.readline();
             tt_file.readline();
 
-        xx = np.array([xx_file.readline().split() for i in range(i_start, i_stop)], dtype=np.float)
-        yy = np.array([yy_file.readline().split() for i in range(i_start, i_stop)], dtype=np.float)
-        tt = np.array([tt_file.readline().split() for i in range(i_start, i_stop)], dtype=np.float)
+        xx = np.array([xx_file.readline().split() for i in range(i_start, i_stop)], dtype=np.float64)
+        yy = np.array([yy_file.readline().split() for i in range(i_start, i_stop)], dtype=np.float64)
+        tt = np.array([tt_file.readline().split() for i in range(i_start, i_stop)], dtype=np.float64)
 
     fig = plt.figure()
     fig.canvas.set_window_title('arpra_mpfi_2d')

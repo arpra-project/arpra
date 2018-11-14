@@ -68,9 +68,16 @@
 // General parameters
 #define p_h 0.5
 #define p_t0 0.0
-#define p_prec 53
+#define p_prec 24
 #define p_sim_steps 1000
 #define p_report_step 20
+
+// Current sum reordering
+int current_order;
+//#define p_shuffle_current
+//#define p_sort_current >
+//  >  increasing (best case approx)
+//  <  decreasing (worst case approx)
 
 // RNG parameters
 // Seeds are random if not #defined
@@ -80,8 +87,8 @@
 //#define p_rng_uz_seed 2071328946103ul
 
 // Poisson input parameters (group 1)
-#define p_in1_size 5000
-#define p_in1_freq 200.0
+#define p_in1_size 20000
+#define p_in1_freq 50.0
 #define p_in1_V_lo -60.0
 #define p_in1_V_hi 20.0
 
@@ -126,7 +133,8 @@
 #define p_syn_exc_R0 0.0
 #define p_syn_exc_S0 0.0
 #define p_syn_exc_GSyn_std 0.05
-#define p_syn_exc_GSyn_mean 5.85 / p_in1_size
+//#define p_syn_exc_GSyn_mean 5.86 / p_in1_size
+#define p_syn_exc_GSyn_mean 20.0 / p_in1_size
 #define p_syn_exc_VSyn 0.0
 #define p_syn_exc_thr -50.0
 #define p_syn_exc_a 0.25 // in [1/10, 1/2]
@@ -293,24 +301,24 @@ void dVdt (const unsigned long idx, int grp)
         I_ptr[i] = &(I[i]);
     }
 
+//#ifdef p_shuffle_current
+    if (current_order == 0) {
+    // Shuffle input currents with Fisher-Yates.
+    for (i = 0; i < pre_size; i++) {
+        mpz_set_ui(rand_uz, pre_size - i);
+        mpz_urandomm(rand_uz, rng_uz, rand_uz);
+        j = i + mpz_get_ui(rand_uz);
+        I_ptr_swap = I_ptr[i];
+        I_ptr[i] = I_ptr[j];
+        I_ptr[j] = I_ptr_swap;
+    }
+    }
+//#endif // p_shuffle_current
 
-    /* // Shuffle input currents with Fisher-Yates. */
-    /* for (i = 0; i < pre_size; i++) { */
-    /*     mpz_set_ui(rand_uz, pre_size - i); */
-    /*     mpz_urandomm(rand_uz, rng_uz, rand_uz); */
-    /*     j = i + mpz_get_ui(rand_uz); */
-    /*     I_ptr_swap = I_ptr[i]; */
-    /*     I_ptr[i] = I_ptr[j]; */
-    /*     I_ptr[j] = I_ptr_swap; */
-    /* } */
-
-
+//#ifdef p_sort_current
+    if (current_order > 0) {
     // Merge sort input currents
     unsigned long pa, pb, pc, chunk_size, k;
-
-//  >  increasing (best case approx)
-//  <  decreasing (worst case approx)
-#define SORT_COMPARE >
 
     for (chunk_size = 1; chunk_size < pre_size; chunk_size *= 2) {
         for (pa = 0; (pa + chunk_size) < pre_size; pa += (2 * chunk_size)) {
@@ -321,12 +329,37 @@ void dVdt (const unsigned long idx, int grp)
             j = pb;
             k = pa;
             while ((i < pb) && (j < pc)) {
-                if (mpfr_cmpabs(I_ptr[j], I_ptr[i]) SORT_COMPARE 0) {
+                /* if (mpfr_cmpabs(I_ptr[j], I_ptr[i]) p_sort_current 0) { */
+                /*     I_ptr_temp[k++] = I_ptr[i++]; */
+                /* } */
+                /* else { */
+                /*     I_ptr_temp[k++] = I_ptr[j++]; */
+                /* } */
+
+
+                // ascending (best)
+                if (current_order == 1) {
+                if (mpfr_cmpabs(I_ptr[j], I_ptr[i]) > 0) {
                     I_ptr_temp[k++] = I_ptr[i++];
                 }
                 else {
                     I_ptr_temp[k++] = I_ptr[j++];
                 }
+                }
+
+
+                // descending (worst)
+                if (current_order == 2) {
+                if (mpfr_cmpabs(I_ptr[j], I_ptr[i]) < 0) {
+                    I_ptr_temp[k++] = I_ptr[i++];
+                }
+                else {
+                    I_ptr_temp[k++] = I_ptr[j++];
+                }
+                }
+
+
+
             }
             while (i < pb) {
                 I_ptr_temp[k++] = I_ptr[i++];
@@ -339,7 +372,8 @@ void dVdt (const unsigned long idx, int grp)
             I_ptr[k] = I_ptr_temp[k];
         }
     }
-
+    }
+//#endif // p_sort_current
 
     // Sum input currents
     for (i = 0; i < pre_size; i++) {
@@ -468,6 +502,9 @@ int main (int argc, char *argv[])
 {
     mpfr_t h, t;
     unsigned long i, j;
+
+    // Parse args
+    current_order = atoi(argv[1]);
 
     // Allocate dynamic arrays
     nrn1_N = malloc(p_nrn1_size * sizeof(mpfr_t));
