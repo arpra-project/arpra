@@ -115,14 +115,6 @@ def arpra_joint_range (x, y, t, i_start=None, i_stop=None, i_step=None, path='.'
     return
 
 
-    # DEBUG
-    #p = yc_file.readline()
-    #print(p)
-    #print(float(p))
-    #print([float(pp) for pp in p.split()])
-    # #####
-
-
     ## Plot affine regions
     # maxterms = 15;
     # e = zeros(maxterms, 2^maxterms);

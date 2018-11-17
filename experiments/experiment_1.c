@@ -69,7 +69,7 @@
 #define p_h 0.5
 #define p_t0 0.0
 #define p_reduce_ratio 0.3
-#define p_prec 53
+#define p_prec 24
 #define p_prec_internal 2048
 #define p_sim_steps 1000
 #define p_report_step 20
@@ -696,12 +696,12 @@ int main (int argc, char *argv[])
     arpra_set_d(&neg_two, -2.0);
 
     // Initialise report files
-    /* FILE **f_time_c = malloc(sizeof(FILE *));; */
-    /* FILE **f_time_r = malloc(sizeof(FILE *));; */
-    /* FILE **f_time_n = malloc(sizeof(FILE *));; */
-    /* FILE **f_time_s = malloc(sizeof(FILE *));; */
-    /* FILE **f_time_d = malloc(sizeof(FILE *));; */
-    /* file_init("time", 1, f_time_c, f_time_r, f_time_n, f_time_s, f_time_d); */
+    FILE **f_time_c = malloc(sizeof(FILE *));;
+    FILE **f_time_r = malloc(sizeof(FILE *));;
+    FILE **f_time_n = malloc(sizeof(FILE *));;
+    FILE **f_time_s = malloc(sizeof(FILE *));;
+    FILE **f_time_d = malloc(sizeof(FILE *));;
+    file_init("time", 1, f_time_c, f_time_r, f_time_n, f_time_s, f_time_d);
 
     FILE **f_nrn1_N_c = malloc(p_nrn1_size * sizeof(FILE *));
     FILE **f_nrn1_N_r = malloc(p_nrn1_size * sizeof(FILE *));
@@ -935,15 +935,15 @@ int main (int argc, char *argv[])
         for (j = 0; j < p_in1_size; j++) {
             mpfr_urandom(&rand_uf, rng_uf, MPFR_RNDN);
             in1[j] = mpfr_greaterequal_p(&rand_uf, &in1_p0);
-            //fprintf(stderr, "%s", (in1[j] ? "\x1B[31m\xE2\x96\xA3\x1B[0m" : "\xE2\x96\xA3"));
+            fprintf(stderr, "%s", (in1[j] ? "\x1B[31m\xE2\x96\xA3\x1B[0m" : "\xE2\x96\xA3"));
         }
-        //fprintf(stderr, "  ");
+        fprintf(stderr, "  ");
         for (j = 0; j < p_in2_size; j++) {
             mpfr_urandom(&rand_uf, rng_uf, MPFR_RNDN);
             in2[j] = mpfr_greaterequal_p(&rand_uf, &in2_p0);
-            //fprintf(stderr, "%s", (in2[j] ? "\x1B[31m\xE2\x96\xA3\x1B[0m" : "\xE2\x96\xA3"));
+            fprintf(stderr, "%s", (in2[j] ? "\x1B[31m\xE2\x96\xA3\x1B[0m" : "\xE2\x96\xA3"));
         }
-        //fprintf(stderr, "\n");
+        fprintf(stderr, "\n");
 
         // Step system
         arpra_ode_stepper_step(&ode_stepper, &h);
@@ -993,7 +993,7 @@ int main (int argc, char *argv[])
             }
         }
 
-        /* file_write(&sys_t, 1, f_time_c, f_time_r, f_time_n, f_time_s, f_time_d); */
+        file_write(&sys_t, 1, f_time_c, f_time_r, f_time_n, f_time_s, f_time_d);
 
         file_write(nrn1_N, p_nrn1_size, f_nrn1_N_c, f_nrn1_N_r, f_nrn1_N_n, f_nrn1_N_s, f_nrn1_N_d);
         file_write(nrn1_V, p_nrn1_size, f_nrn1_V_c, f_nrn1_V_r, f_nrn1_V_n, f_nrn1_V_s, f_nrn1_V_d);
@@ -1125,12 +1125,12 @@ int main (int argc, char *argv[])
     free(syn_inh_S_reduce_epoch);
 
     // Clear report files
-    /* file_clear(1, f_time_c, f_time_r, f_time_n, f_time_s, f_time_d); */
-    /* free(f_time_c); */
-    /* free(f_time_r); */
-    /* free(f_time_n); */
-    /* free(f_time_s); */
-    /* free(f_time_d); */
+    file_clear(1, f_time_c, f_time_r, f_time_n, f_time_s, f_time_d);
+    free(f_time_c);
+    free(f_time_r);
+    free(f_time_n);
+    free(f_time_s);
+    free(f_time_d);
 
     file_clear(p_nrn1_size, f_nrn1_N_c, f_nrn1_N_r, f_nrn1_N_n, f_nrn1_N_s, f_nrn1_N_d);
     free(f_nrn1_N_c);
