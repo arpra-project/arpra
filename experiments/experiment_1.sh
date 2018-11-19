@@ -17,7 +17,7 @@ for inputs in {0..50..2}; do
         echo Changing to ${outsubdir}
         mkdir -p ${outsubdir}
         cd ${outsubdir}
-        ../../experiment_1 ${inputs} ${frequency} 2>/dev/null
+        ../../experiment_1 53 2048 ${inputs} ${frequency} 2>/dev/null
         cd ../..
     done
 done

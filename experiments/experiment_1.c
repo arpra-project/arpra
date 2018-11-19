@@ -68,12 +68,14 @@
 // General parameters
 #define p_h 0.5
 #define p_t0 0.0
-#define p_reduce_ratio 0.3
-#define p_prec 24
-#define p_prec_internal 2048
+#define p_prec prec_arg
+unsigned long prec_arg;
+#define p_prec_internal prec_internal_arg
+unsigned long prec_internal_arg;
 #define p_sim_steps 1000
 #define p_report_step 20
 #define p_reduce_step 50
+#define p_reduce_ratio 0.3
 
 // RNG parameters
 // Seeds are random if not #defined
@@ -129,8 +131,8 @@ double in1_freq_arg;
 #define p_syn_exc_size p_in1_size * p_nrn1_size
 #define p_syn_exc_R0 0.0
 #define p_syn_exc_S0 0.0
-#define p_syn_exc_GSyn_std 0.5
-#define p_syn_exc_GSyn_mean 3.0
+#define p_syn_exc_GSyn_std 0.05
+#define p_syn_exc_GSyn_mean 25.0 / p_in1_size
 #define p_syn_exc_VSyn 0.0
 #define p_syn_exc_thr -50.0
 #define p_syn_exc_a 0.25 // in [1/10, 1/2]
@@ -470,8 +472,10 @@ int main (int argc, char *argv[])
     arpra_set_internal_precision(p_prec_internal);
 
     // Parse args
-    in1_size_arg = atoi(argv[1]);
-    in1_freq_arg = atoi(argv[2]);
+    prec_arg = atoll(argv[1]);
+    prec_internal_arg = atoll(argv[2]);
+    in1_size_arg = atoi(argv[3]);
+    in1_freq_arg = atoi(argv[4]);
 
     // Allocate system state
     arpra_range *nrn1_N = malloc(p_nrn1_size * sizeof(arpra_range));

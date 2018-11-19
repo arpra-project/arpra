@@ -68,12 +68,13 @@
 // General parameters
 #define p_h 0.5
 #define p_t0 0.0
-#define p_prec 24
+#define p_prec prec_arg
+unsigned long prec_arg;
 #define p_sim_steps 1000
 #define p_report_step 20
 
 // Current sum reordering
-int current_order;
+int current_order_arg;
 //#define p_shuffle_current
 //#define p_sort_current >
 //  >  increasing (best case approx)
@@ -301,7 +302,7 @@ void dVdt (const unsigned long idx, int grp)
     }
 
 //#ifdef p_shuffle_current
-    if (current_order == 0) {
+    if (current_order_arg == 0) {
     // Shuffle input currents with Fisher-Yates.
     for (i = 0; i < pre_size; i++) {
         mpz_set_ui(rand_uz, pre_size - i);
@@ -315,7 +316,7 @@ void dVdt (const unsigned long idx, int grp)
 //#endif // p_shuffle_current
 
 //#ifdef p_sort_current
-    if (current_order > 0) {
+    if (current_order_arg > 0) {
     // Merge sort input currents
     unsigned long pa, pb, pc, chunk_size, k;
 
@@ -337,7 +338,7 @@ void dVdt (const unsigned long idx, int grp)
 
 
                 // ascending (best)
-                if (current_order == 1) {
+                if (current_order_arg == 1) {
                 if (mpfr_cmpabs(I_ptr[j], I_ptr[i]) > 0) {
                     I_ptr_temp[k++] = I_ptr[i++];
                 }
@@ -348,7 +349,7 @@ void dVdt (const unsigned long idx, int grp)
 
 
                 // descending (worst)
-                if (current_order == 2) {
+                if (current_order_arg == 2) {
                 if (mpfr_cmpabs(I_ptr[j], I_ptr[i]) < 0) {
                     I_ptr_temp[k++] = I_ptr[i++];
                 }
@@ -503,17 +504,20 @@ int main (int argc, char *argv[])
     unsigned long i, j;
 
     // Parse args
-    current_order = atoi(argv[1]);
+    prec_arg = atoll(argv[1]);
+    current_order_arg = atoi(argv[2]);
 
-    // Allocate dynamic arrays
+    // Allocate system state
     nrn1_N = malloc(p_nrn1_size * sizeof(mpfr_t));
-    nrn2_N = malloc(p_nrn2_size * sizeof(mpfr_t));
     nrn1_V = malloc(p_nrn1_size * sizeof(mpfr_t));
+    nrn2_N = malloc(p_nrn2_size * sizeof(mpfr_t));
     nrn2_V = malloc(p_nrn2_size * sizeof(mpfr_t));
     syn_exc_R = malloc(p_syn_exc_size * sizeof(mpfr_t));
-    syn_inh_R = malloc(p_syn_inh_size * sizeof(mpfr_t));
     syn_exc_S = malloc(p_syn_exc_size * sizeof(mpfr_t));
+    syn_inh_R = malloc(p_syn_inh_size * sizeof(mpfr_t));
     syn_inh_S = malloc(p_syn_inh_size * sizeof(mpfr_t));
+
+    // Allocate other arrays
     d_nrn1_N = malloc(p_nrn1_size * sizeof(mpfr_t));
     d_nrn2_N = malloc(p_nrn2_size * sizeof(mpfr_t));
     d_nrn1_V = malloc(p_nrn1_size * sizeof(mpfr_t));
@@ -945,15 +949,17 @@ int main (int argc, char *argv[])
         mpfr_clear(&(I2[i]));
     }
 
-    // Free dynamic arrays
+    // Free system state
     free(nrn1_N);
-    free(nrn2_N);
     free(nrn1_V);
+    free(nrn2_N);
     free(nrn2_V);
     free(syn_exc_R);
-    free(syn_inh_R);
     free(syn_exc_S);
+    free(syn_inh_R);
     free(syn_inh_S);
+
+    // Free other arrays
     free(d_nrn1_N);
     free(d_nrn2_N);
     free(d_nrn1_V);

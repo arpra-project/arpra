@@ -416,15 +416,17 @@ int main (int argc, char *argv[])
     mpfr_t h, t;
     unsigned long i, j;
 
-    // Allocate dynamic arrays
+    // Allocate system state
     nrn1_N = malloc(p_nrn1_size * sizeof(mpfr_t));
-    nrn2_N = malloc(p_nrn2_size * sizeof(mpfr_t));
     nrn1_V = malloc(p_nrn1_size * sizeof(mpfr_t));
+    nrn2_N = malloc(p_nrn2_size * sizeof(mpfr_t));
     nrn2_V = malloc(p_nrn2_size * sizeof(mpfr_t));
     syn_exc_R = malloc(p_syn_exc_size * sizeof(mpfr_t));
-    syn_inh_R = malloc(p_syn_inh_size * sizeof(mpfr_t));
     syn_exc_S = malloc(p_syn_exc_size * sizeof(mpfr_t));
+    syn_inh_R = malloc(p_syn_inh_size * sizeof(mpfr_t));
     syn_inh_S = malloc(p_syn_inh_size * sizeof(mpfr_t));
+
+    // Allocate other arrays
     d_nrn1_N = malloc(p_nrn1_size * sizeof(mpfr_t));
     d_nrn2_N = malloc(p_nrn2_size * sizeof(mpfr_t));
     d_nrn1_V = malloc(p_nrn1_size * sizeof(mpfr_t));
@@ -852,15 +854,17 @@ int main (int argc, char *argv[])
         mpfr_clear(&(I2[i]));
     }
 
-    // Free dynamic arrays
+    // Free system state
     free(nrn1_N);
-    free(nrn2_N);
     free(nrn1_V);
+    free(nrn2_N);
     free(nrn2_V);
     free(syn_exc_R);
-    free(syn_inh_R);
     free(syn_exc_S);
+    free(syn_inh_R);
     free(syn_inh_S);
+
+    // Free other arrays
     free(d_nrn1_N);
     free(d_nrn2_N);
     free(d_nrn1_V);
