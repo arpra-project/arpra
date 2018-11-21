@@ -167,15 +167,15 @@ void file_init (char *grp, arpra_uint grp_size,
     arpra_uint i;
 
     for (i = 0; i < grp_size; i++) {
-        sprintf(fname, "%s_%03u_c.dat", grp, (unsigned) i);
+        sprintf(fname, "%s_%03lu_c.dat", grp, i);
         c[i] = fopen(fname, "w");
-        sprintf(fname, "%s_%03u_r.dat", grp, (unsigned) i);
+        sprintf(fname, "%s_%03lu_r.dat", grp, i);
         r[i] = fopen(fname, "w");
-        sprintf(fname, "%s_%03u_n.dat", grp, (unsigned) i);
+        sprintf(fname, "%s_%03lu_n.dat", grp, i);
         n[i] = fopen(fname, "w");
-        sprintf(fname, "%s_%03u_s.dat", grp, (unsigned) i);
+        sprintf(fname, "%s_%03lu_s.dat", grp, i);
         s[i] = fopen(fname, "w");
-        sprintf(fname, "%s_%03u_d.dat", grp, (unsigned) i);
+        sprintf(fname, "%s_%03lu_d.dat", grp, i);
         d[i] = fopen(fname, "w");
     }
 }
@@ -469,13 +469,13 @@ int main (int argc, char *argv[])
         grp_syn_exc_R, grp_syn_exc_S, grp_syn_inh_R, grp_syn_inh_S
     };
 
-    arpra_set_internal_precision(p_prec_internal);
-
     // Parse args
     prec_arg = atoll(argv[1]);
     prec_internal_arg = atoll(argv[2]);
     in1_size_arg = atoi(argv[3]);
     in1_freq_arg = atoi(argv[4]);
+
+    arpra_set_internal_precision(p_prec_internal);
 
     // Allocate system state
     arpra_range *nrn1_N = malloc(p_nrn1_size * sizeof(arpra_range));

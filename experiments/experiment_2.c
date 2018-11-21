@@ -181,7 +181,7 @@ void file_init (char *grp, unsigned long grp_size, FILE **f)
     unsigned long i;
 
     for (i = 0; i < grp_size; i++) {
-        sprintf(fname, "%s_%03u.dat", grp, (unsigned) i);
+        sprintf(fname, "%s_%03lu.dat", grp, i);
         f[i] = fopen(fname, "w");
     }
 }

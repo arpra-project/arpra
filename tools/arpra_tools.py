@@ -12,7 +12,7 @@ import matplotlib.patches as patches
 # #####
 
 
-def arpra_plot (x, y, t, i_start=None, i_stop=None, i_step=None, path='.'):
+def arpra_plot (x, y, t, path='.', i_start=None, i_stop=None, i_step=None):
 
     with ExitStack() as stack:
         xc_file = stack.enter_context(open(path + '/' + x + '_c.dat', 'r'))
@@ -63,7 +63,7 @@ def arpra_plot (x, y, t, i_start=None, i_stop=None, i_step=None, path='.'):
     return
 
 
-def arpra_joint_range (x, y, t, i_start=None, i_stop=None, i_step=None, path='.'):
+def arpra_joint_range (x, y, t, path='.', i_start=None, i_stop=None, i_step=None):
 
     with ExitStack() as stack:
         xc_file = stack.enter_context(open(path + '/' + x + '_c.dat', 'r'))

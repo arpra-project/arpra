@@ -125,8 +125,8 @@
 #define p_syn_exc_size p_in1_size * p_nrn1_size
 #define p_syn_exc_R0 0.0
 #define p_syn_exc_S0 0.0
-#define p_syn_exc_GSyn_std 0.5
-#define p_syn_exc_GSyn_mean 3.0
+#define p_syn_exc_GSyn_std 0.05
+#define p_syn_exc_GSyn_mean 25.0 / p_in1_size
 #define p_syn_exc_VSyn 0.0
 #define p_syn_exc_thr -50.0
 #define p_syn_exc_a 0.25 // in [1/10, 1/2]
@@ -173,7 +173,7 @@ void file_init (char *grp, unsigned long grp_size, FILE **f)
     unsigned long i;
 
     for (i = 0; i < grp_size; i++) {
-        sprintf(fname, "%s_%03u.dat", grp, (unsigned) i);
+        sprintf(fname, "%s_%03lu.dat", grp, i);
         f[i] = fopen(fname, "w");
     }
 }

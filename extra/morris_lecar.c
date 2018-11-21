@@ -68,12 +68,12 @@
 // General parameters
 #define p_h 0.5
 #define p_t0 0.0
-#define p_reduce_ratio 0.3
 #define p_prec 53
 #define p_prec_internal 2048
 #define p_sim_steps 1000
 #define p_report_step 20
 #define p_reduce_step 50
+#define p_reduce_ratio 0.3
 
 // RNG parameters
 // Seeds are random if not #defined
@@ -82,8 +82,8 @@
 //#define p_rng_nf_seed 503108552855933ul
 
 // Poisson input parameters (group 1)
-#define p_in1_size 500
-#define p_in1_freq 50.0
+#define p_in1_size 50
+#define p_in1_freq 10.0
 #define p_in1_V_lo -60.0
 #define p_in1_V_hi 20.0
 
@@ -163,15 +163,15 @@ void file_init (char *grp, arpra_uint grp_size,
     arpra_uint i;
 
     for (i = 0; i < grp_size; i++) {
-        sprintf(fname, "%s_%03u_c.dat", grp, (unsigned) i);
+        sprintf(fname, "%s_%03lu_c.dat", grp, i);
         c[i] = fopen(fname, "w");
-        sprintf(fname, "%s_%03u_r.dat", grp, (unsigned) i);
+        sprintf(fname, "%s_%03lu_r.dat", grp, i);
         r[i] = fopen(fname, "w");
-        sprintf(fname, "%s_%03u_n.dat", grp, (unsigned) i);
+        sprintf(fname, "%s_%03lu_n.dat", grp, i);
         n[i] = fopen(fname, "w");
-        sprintf(fname, "%s_%03u_s.dat", grp, (unsigned) i);
+        sprintf(fname, "%s_%03lu_s.dat", grp, i);
         s[i] = fopen(fname, "w");
-        sprintf(fname, "%s_%03u_d.dat", grp, (unsigned) i);
+        sprintf(fname, "%s_%03lu_d.dat", grp, i);
         d[i] = fopen(fname, "w");
     }
 }
