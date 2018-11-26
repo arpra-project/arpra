@@ -23,38 +23,36 @@
 
 int arpra_nan_p (const arpra_range *x)
 {
-    return mpfr_nan_p(&(x->centre)) || mpfr_nan_p(&(x->radius));
+    return mpfi_nan_p(&(x->true_range));
 }
 
 int arpra_inf_p (const arpra_range *x)
 {
-    return !arpra_nan_p(x) && (mpfr_inf_p(&(x->centre)) || mpfr_inf_p(&(x->radius)));
+    return mpfi_inf_p(&(x->true_range));
 }
 
 int arpra_bounded_p (const arpra_range *x)
 {
-    return mpfr_number_p(&(x->centre)) && mpfr_number_p(&(x->radius));
+    return mpfi_bounded_p(&(x->true_range));
 }
 
 int arpra_zero_p (const arpra_range *x)
 {
-    return mpfr_zero_p(&(x->centre)) && mpfr_zero_p(&(x->radius));
+    return mpfr_zero_p(&(x->true_range.left)) && mpfr_zero_p(&(x->true_range.right));
 }
 
 int arpra_has_zero_p (const arpra_range *x)
 {
-    return !arpra_nan_p(x)
-           && mpfr_cmpabs(&(x->centre), &(x->radius)) <= 0;
+    return !mpfi_nan_p(&(x->true_range))
+           && (mpfr_sgn(&(x->true_range.left)) <= 0) && (mpfr_sgn(&(x->true_range.right)) >= 0);
 }
 
 int arpra_has_pos_p (const arpra_range *x)
 {
-    return mpfr_sgn(&(x->centre)) > 0
-           || mpfr_cmpabs(&(x->centre), &(x->radius)) < 0;
+    return mpfr_sgn(&(x->true_range.right)) > 0;
 }
 
 int arpra_has_neg_p (const arpra_range *x)
 {
-    return mpfr_sgn(&(x->centre)) < 0
-           || mpfr_cmpabs(&(x->centre), &(x->radius)) < 0;
+    return mpfr_sgn(&(x->true_range.left)) < 0;
 }

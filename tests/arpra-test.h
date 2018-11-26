@@ -33,9 +33,6 @@
 #include <time.h>
 
 #include <arpra.h>
-#ifdef WITH_MPFI
-#include <arpra_to_mpfi.h>
-#endif // WITH_MPFI
 
 // RNG output mode enumeration.
 enum test_rand_mode
@@ -58,10 +55,8 @@ extern "C" {
 // Global test variables.
 extern arpra_range x_A, y_A, z_A;
 extern int test_fixture_ready;
-#ifdef WITH_MPFI
 extern mpfi_t x_I, y_I, z_I, z_AI;
 extern arpra_mpfr rdiam_I, rdiam_AI, rdiam_diff;
-#endif // WITH_MPFI
 
 // Global RNG variables.
 extern gmp_randstate_t test_randstate;
@@ -82,20 +77,16 @@ void test_rand_mpfr (arpra_mpfr *z, enum test_rand_mode mode);
 void test_rand_arpra (arpra_range *z,
                       enum test_rand_mode mode_centre,
                       enum test_rand_mode mode_deviations);
-#ifdef WITH_MPFI
 void test_rand_mpfi (mpfi_ptr z,
                      enum test_rand_mode mode_low,
                      enum test_rand_mode mode_high);
-#endif // WITH_MPFI
 
 // Logfile functions.
 void test_log_init (const char *test_name);
 void test_log_clear ();
 void test_log_printf (const char *format, ...);
 void test_log_mpfr (const arpra_mpfr *x, const char *var_name);
-#ifdef WITH_MPFI
 void test_log_mpfi (mpfi_srcptr x, const char *var_name);
-#endif // WITH_MPFI
 
 // Symbol adjustments.
 void test_share_all_syms (arpra_range *x, arpra_range *y);
@@ -103,14 +94,12 @@ void test_share_rand_syms (arpra_range *x, arpra_range *y);
 
 // Test functions.
 int test_compare_arpra (const arpra_range *x, const arpra_range *y);
-#ifdef WITH_MPFI
 void test_univariate (
     void (*f_arpra) (arpra_range *z, const arpra_range *x),
     int  (*f_mpfi) (mpfi_ptr z, mpfi_srcptr x));
 void test_bivariate (
     void (*f_arpra) (arpra_range *z, const arpra_range *x, const arpra_range *y),
     int  (*f_mpfi) (mpfi_ptr z, mpfi_srcptr x, mpfi_srcptr y));
-#endif // WITH_MPFI
 
 #ifdef __cplusplus
 }

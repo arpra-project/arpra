@@ -21,9 +21,6 @@ AM_CPPFLAGS = -I$(top_srcdir)/include
 
 # Public headers
 include_HEADERS = include/arpra.h include/arpra_ode.h
-if WITH_MPFI
-include_HEADERS += include/arpra_to_mpfi.h
-endif WITH_MPFI
 
 # Arpra library
 lib_LTLIBRARIES = lib/libarpra.la
@@ -39,11 +36,8 @@ lib_libarpra_la_SOURCES = \
 	src/get_bounds.c src/ode_stepper.c src/ode_euler.c		\
 	src/ode_trapezoidal.c src/ode_bogsham32.c src/ode_dopri54.c	\
 	src/ode_dopri87.c src/helper_term.c src/helper_error.c		\
-	src/helper_buffer.c src/helper_mpfr_sum.c
-if WITH_MPFI
-lib_libarpra_la_SOURCES += \
-	src/get_mpfi.c src/set_mpfi.c
-endif WITH_MPFI
+	src/helper_buffer.c src/helper_mpfr_sum.c src/get_mpfi.c	\
+	src/set_mpfi.c
 
 # Testsuite helper library
 check_LTLIBRARIES = tests/libarpra-test.la
@@ -52,12 +46,8 @@ tests_libarpra_test_la_SOURCES = \
 	tests/arpra-test.h tests/share_syms.c tests/fixture.c		\
 	tests/logfile.c tests/logfile_printf.c tests/logfile_mpfr.c	\
 	tests/rand.c tests/rand_mpfr.c tests/rand_arpra.c		\
-	tests/compare_arpra.c
-if WITH_MPFI
-tests_libarpra_test_la_SOURCES += \
-	tests/univariate.c tests/bivariate.c tests/rand_mpfi.c		\
-	tests/logfile_mpfi.c
-endif WITH_MPFI
+	tests/compare_arpra.c tests/univariate.c tests/bivariate.c	\
+	tests/rand_mpfi.c tests/logfile_mpfi.c
 
 # Testsuite test programs
 check_PROGRAMS = \

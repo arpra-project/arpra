@@ -25,6 +25,8 @@ void arpra_set_nan (arpra_range *z)
 {
     mpfr_set_nan(&(z->centre));
     mpfr_set_nan(&(z->radius));
+    mpfr_set_nan(&(z->true_range.left));
+    mpfr_set_nan(&(z->true_range.right));
     arpra_clear_terms(z);
 }
 
@@ -32,6 +34,8 @@ void arpra_set_inf (arpra_range *z)
 {
     mpfr_set_zero(&(z->centre), 1);
     mpfr_set_inf(&(z->radius), 1);
+    mpfr_set_inf(&(z->true_range.left), -1);
+    mpfr_set_inf(&(z->true_range.right), 1);
     arpra_clear_terms(z);
 }
 
@@ -39,5 +43,7 @@ void arpra_set_zero (arpra_range *z)
 {
     mpfr_set_zero(&(z->centre), 1);
     mpfr_set_zero(&(z->radius), 1);
+    mpfr_set_zero(&(z->true_range.left), -1);
+    mpfr_set_zero(&(z->true_range.right), 1);
     arpra_clear_terms(z);
 }

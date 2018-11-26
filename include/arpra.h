@@ -23,12 +23,14 @@
 #define ARPRA_H
 
 #include <mpfr.h>
+#include <mpfi.h>
 
 // Arpra range typedefs.
 typedef long int arpra_int;
 typedef unsigned long int arpra_uint;
 typedef mpfr_prec_t arpra_prec;
 typedef __mpfr_struct arpra_mpfr;
+typedef __mpfi_struct arpra_mpfi;
 typedef struct arpra_range_struct arpra_range;
 
 // The Arpra range struct.
@@ -36,6 +38,7 @@ struct arpra_range_struct
 {
     arpra_mpfr centre;
     arpra_mpfr radius;
+    arpra_mpfi true_range;
     arpra_mpfr *deviations;
     arpra_uint *symbols;
     arpra_uint nTerms;
@@ -57,6 +60,7 @@ void arpra_clear_terms (arpra_range *z);
 
 // Get from an Arpra range.
 void arpra_get_bounds (arpra_mpfr *lo, arpra_mpfr *hi, const arpra_range *x);
+void arpra_get_mpfi (arpra_mpfi *z, const arpra_range *x);
 
 // Set to an Arpra range.
 void arpra_set (arpra_range *z, const arpra_range *x);
@@ -66,6 +70,7 @@ void arpra_set_str (arpra_range *z, const char *centre, const arpra_int base);
 void arpra_set_str_rad (arpra_range *z, const char *centre, const char *radius, const arpra_int base);
 void arpra_set_mpfr (arpra_range *z, const arpra_mpfr *centre);
 void arpra_set_mpfr_rad (arpra_range *z, const arpra_mpfr *centre, const arpra_mpfr *radius);
+void arpra_set_mpfi (arpra_range *z, const arpra_mpfi *x);
 
 // Set special values.
 void arpra_set_nan (arpra_range *z);

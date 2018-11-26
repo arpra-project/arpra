@@ -33,6 +33,7 @@ void arpra_set_precision (arpra_range *z, const arpra_prec prec)
     internal_prec = arpra_get_internal_precision();
     mpfr_set_prec(&(z->centre), internal_prec);
     mpfr_set_prec(&(z->radius), internal_prec);
+    mpfi_set_prec(&(z->true_range), prec);
     arpra_clear_terms(z);
     z->precision = prec;
 }

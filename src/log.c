@@ -22,25 +22,26 @@
 #include "arpra-impl.h"
 
 /*
- * This affine natural log function uses a Chebyshev linear approximation.
+ * This affine natural logarithm function uses a Chebyshev linear approximation.
  */
 
 void arpra_log (arpra_range *z, const arpra_range *x)
 {
-    arpra_mpfr temp, xa, xb, da, db, du, alpha, gamma, delta;
+    arpra_mpfr temp, da, db, du, alpha, gamma, delta;
+    arpra_mpfi z_range, x_range;
     arpra_prec prec_internal;
 
     // Initialise vars.
     prec_internal = arpra_get_internal_precision();
     mpfr_init2(&temp, prec_internal);
-    mpfr_init2(&xa, prec_internal);
-    mpfr_init2(&xb, prec_internal);
     mpfr_init2(&da, prec_internal);
     mpfr_init2(&db, prec_internal);
     mpfr_init2(&du, prec_internal);
     mpfr_init2(&alpha, prec_internal);
     mpfr_init2(&gamma, prec_internal);
     mpfr_init2(&delta, prec_internal);
+    mpfi_init2(&z_range, z->precision);
+    mpfi_init2(&x_range, x->precision);
 
     // Handle x with zero radius.
     if (mpfr_zero_p(&(x->radius))) {
@@ -63,23 +64,23 @@ void arpra_log (arpra_range *z, const arpra_range *x)
 
         // Domain is OK.
         else {
-            arpra_get_bounds(&xa, &xb, x);
+            mpfi_set(&x_range, &(x->true_range));
 
             // compute alpha
-            mpfr_log(&alpha, &xb, MPFR_RNDN);
-            mpfr_log(&temp, &xa, MPFR_RNDN);
+            mpfr_log(&alpha, &(x_range.right), MPFR_RNDN);
+            mpfr_log(&temp, &(x_range.left), MPFR_RNDN);
             mpfr_sub(&alpha, &alpha, &temp, MPFR_RNDN);
-            mpfr_sub(&temp, &xb, &xa, MPFR_RNDN);
+            mpfr_sub(&temp, &(x_range.right), &(x_range.left), MPFR_RNDN);
             mpfr_div(&alpha, &alpha, &temp, MPFR_RNDN);
 
             // compute difference (log(a) - alpha a)
-            mpfr_mul(&da, &alpha, &xa, MPFR_RNDU);
-            mpfr_log(&temp, &xa, MPFR_RNDD);
+            mpfr_mul(&da, &alpha, &(x_range.left), MPFR_RNDU);
+            mpfr_log(&temp, &(x_range.left), MPFR_RNDD);
             mpfr_sub(&da, &temp, &da, MPFR_RNDD);
 
             // compute difference (log(b) - alpha b)
-            mpfr_mul(&db, &alpha, &xb, MPFR_RNDU);
-            mpfr_log(&temp, &xb, MPFR_RNDD);
+            mpfr_mul(&db, &alpha, &(x_range.right), MPFR_RNDU);
+            mpfr_log(&temp, &(x_range.right), MPFR_RNDD);
             mpfr_sub(&db, &temp, &db, MPFR_RNDD);
 
             mpfr_min(&da, &da, &db, MPFR_RNDD);
@@ -98,19 +99,25 @@ void arpra_log (arpra_range *z, const arpra_range *x)
             mpfr_sub(&temp, &gamma, &da, MPFR_RNDU);
             mpfr_max(&delta, &delta, &temp, MPFR_RNDU);
 
+            // MPFI natural logarithm
+            mpfi_log(&z_range, &(x->true_range));
+
             // compute affine approximation
             arpra_affine_1(z, x, &alpha, &gamma, &delta);
+
+            // Compute true range.
+            mpfi_intersect(&(z->true_range), &(z->true_range), &z_range);
         }
     }
 
     // Clear vars.
     mpfr_clear(&temp);
-    mpfr_clear(&xa);
-    mpfr_clear(&xb);
     mpfr_clear(&da);
     mpfr_clear(&db);
     mpfr_clear(&du);
     mpfr_clear(&alpha);
     mpfr_clear(&gamma);
     mpfr_clear(&delta);
+    mpfi_clear(&z_range);
+    mpfi_clear(&x_range);
 }

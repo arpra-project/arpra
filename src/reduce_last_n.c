@@ -25,7 +25,8 @@ void arpra_reduce_last_n (arpra_range *z, arpra_uint n)
 {
     arpra_uint zTerm, zNext;
     arpra_mpfr **summands;
-    arpra_mpfr z_lo, z_hi, temp;
+    arpra_mpfr temp;
+    arpra_mpfi z_range;
     arpra_prec prec_internal;
 
     // Handle trivial cases.
@@ -38,9 +39,8 @@ void arpra_reduce_last_n (arpra_range *z, arpra_uint n)
 
     // Initialise vars.
     prec_internal = arpra_get_internal_precision();
-    mpfr_init2(&z_lo, prec_internal);
-    mpfr_init2(&z_hi, prec_internal);
     mpfr_init2(&temp, prec_internal);
+    mpfi_init2(&z_range, prec_internal);
     mpfr_set_ui(&(z->radius), 0, MPFR_RNDU);
     zTerm = z->nTerms - n;
     summands = malloc(n * sizeof(arpra_mpfr *));
@@ -59,23 +59,23 @@ void arpra_reduce_last_n (arpra_range *z, arpra_uint n)
     }
 
     // Round the result to the target precision.
-    mpfr_sub(&z_lo, &(z->centre), &(z->radius), MPFR_RNDD);
-    mpfr_sub(&z_lo, &z_lo, &(z->deviations[zTerm]), MPFR_RNDD);
-    if (mpfr_prec_round(&z_lo, z->precision, MPFR_RNDD)) {
-        arpra_helper_error_ulp(&z_lo, &z_lo);
+    mpfr_sub(&(z_range.left), &(z->centre), &(z->radius), MPFR_RNDD);
+    mpfr_sub(&(z_range.left), &(z_range.left), &(z->deviations[zTerm]), MPFR_RNDD);
+    if (mpfr_prec_round(&(z_range.left), z->precision, MPFR_RNDD)) {
+        arpra_helper_error_ulp(&(z_range.left), &(z_range.left));
     }
     else {
-        mpfr_set_ui(&z_lo, 0, MPFR_RNDN);
+        mpfr_set_ui(&(z_range.left), 0, MPFR_RNDN);
     }
-    mpfr_add(&z_hi, &(z->centre), &(z->radius), MPFR_RNDU);
-    mpfr_add(&z_hi, &z_hi, &(z->deviations[zTerm]), MPFR_RNDU);
-    if (mpfr_prec_round(&z_hi, z->precision, MPFR_RNDU)) {
-        arpra_helper_error_ulp(&z_hi, &z_hi);
+    mpfr_add(&(z_range.right), &(z->centre), &(z->radius), MPFR_RNDU);
+    mpfr_add(&(z_range.right), &(z_range.right), &(z->deviations[zTerm]), MPFR_RNDU);
+    if (mpfr_prec_round(&(z_range.right), z->precision, MPFR_RNDU)) {
+        arpra_helper_error_ulp(&(z_range.right), &(z_range.right));
     }
     else {
-        mpfr_set_ui(&z_hi, 0, MPFR_RNDN);
+        mpfr_set_ui(&(z_range.right), 0, MPFR_RNDN);
     }
-    mpfr_max(&temp, &z_lo, &z_hi, MPFR_RNDU);
+    mpfr_max(&temp, &(z_range.left), &(z_range.right), MPFR_RNDU);
     mpfr_add(&(z->deviations[zTerm]), &(z->deviations[zTerm]), &temp, MPFR_RNDU);
 
     // Store nonzero merged deviation term.
@@ -110,8 +110,7 @@ void arpra_reduce_last_n (arpra_range *z, arpra_uint n)
     }
 
     // Clear vars.
-    mpfr_clear(&z_lo);
-    mpfr_clear(&z_hi);
     mpfr_clear(&temp);
+    mpfi_clear(&z_range);
     free(summands);
 }

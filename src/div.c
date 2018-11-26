@@ -27,17 +27,24 @@
 
 void arpra_div (arpra_range *z, const arpra_range *x, const arpra_range *y)
 {
-    arpra_prec prec;
     arpra_range zNew;
+    arpra_mpfi z_range;
 
-    // Init temp z.
-    prec = arpra_get_precision(z);
-    arpra_init2(&zNew, prec);
+    // Initialise vars.
+    arpra_init2(&zNew, z->precision);
+    mpfi_init2(&z_range, z->precision);
+
+    // MPFI division
+    mpfi_div(&z_range, &(x->true_range), &(y->true_range));
 
     // z = x * (1 / y)
     arpra_inv(&zNew, y);
     arpra_mul(z, x, &zNew);
 
-    // Clear temp z.
+    // Compute true range.
+    mpfi_intersect(&(z->true_range), &(z->true_range), &z_range);
+
+    // Clear vars.
     arpra_clear(&zNew);
+    mpfi_clear(&z_range);
 }

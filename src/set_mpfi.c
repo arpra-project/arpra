@@ -21,9 +21,10 @@
 
 #include "arpra-impl.h"
 
-void arpra_set_mpfi (arpra_range *z, mpfi_srcptr x)
+void arpra_set_mpfi (arpra_range *z, const arpra_mpfi *x)
 {
-    arpra_mpfr z_lo, z_hi, temp;
+    arpra_mpfr temp;
+    arpra_mpfi range;
     arpra_prec prec_internal;
 
     // Handle domain violations.
@@ -38,9 +39,8 @@ void arpra_set_mpfi (arpra_range *z, mpfi_srcptr x)
 
     // Initialise vars.
     prec_internal = arpra_get_internal_precision();
-    mpfr_init2(&z_lo, prec_internal);
-    mpfr_init2(&z_hi, prec_internal);
     mpfr_init2(&temp, prec_internal);
+    mpfi_init2(&range, prec_internal);
     mpfr_set_prec(&(z->centre), prec_internal);
     mpfr_set_prec(&(z->radius), prec_internal);
 
@@ -57,22 +57,25 @@ void arpra_set_mpfi (arpra_range *z, mpfi_srcptr x)
     arpra_clear_terms(z);
 
     // Round the result to the target precision.
-    mpfr_sub(&z_lo, &(z->centre), &(z->radius), MPFR_RNDD);
-    if (mpfr_prec_round(&z_lo, z->precision, MPFR_RNDD)) {
-        arpra_helper_error_ulp(&z_lo, &z_lo);
+    mpfr_sub(&(range.left), &(z->centre), &(z->radius), MPFR_RNDD);
+    if (mpfr_prec_round(&(range.left), z->precision, MPFR_RNDD)) {
+        arpra_helper_error_ulp(&(range.left), &(range.left));
     }
     else {
-        mpfr_set_ui(&z_lo, 0, MPFR_RNDN);
+        mpfr_set_ui(&(range.left), 0, MPFR_RNDN);
     }
-    mpfr_add(&z_hi, &(z->centre), &(z->radius), MPFR_RNDU);
-    if (mpfr_prec_round(&z_hi, z->precision, MPFR_RNDU)) {
-        arpra_helper_error_ulp(&z_hi, &z_hi);
+    mpfr_add(&(range.right), &(z->centre), &(z->radius), MPFR_RNDU);
+    if (mpfr_prec_round(&(range.right), z->precision, MPFR_RNDU)) {
+        arpra_helper_error_ulp(&(range.right), &(range.right));
     }
     else {
-        mpfr_set_ui(&z_hi, 0, MPFR_RNDN);
+        mpfr_set_ui(&(range.right), 0, MPFR_RNDN);
     }
-    mpfr_max(&temp, &z_lo, &z_hi, MPFR_RNDU);
+    mpfr_max(&temp, &(range.left), &(range.right), MPFR_RNDU);
     mpfr_add(&(z->radius), &(z->radius), &temp, MPFR_RNDU);
+
+    // Compute true range.
+    mpfi_set(&(z->true_range), x);
 
     // Store nonzero numerical error term.
     if (!mpfr_zero_p(&(z->radius))) {
@@ -93,7 +96,6 @@ void arpra_set_mpfi (arpra_range *z, mpfi_srcptr x)
     }
 
     // Clear vars.
-    mpfr_clear(&z_lo);
-    mpfr_clear(&z_hi);
     mpfr_clear(&temp);
+    mpfi_clear(&range);
 }

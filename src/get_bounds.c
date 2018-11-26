@@ -23,9 +23,6 @@
 
 void arpra_get_bounds (arpra_mpfr *lo, arpra_mpfr *hi, const arpra_range *x)
 {
-    // lo = x_0 - rad(x)
-    mpfr_sub(lo, &(x->centre), &(x->radius), MPFR_RNDD);
-
-    // hi = x_0 + rad(x)
-    mpfr_add(hi, &(x->centre), &(x->radius), MPFR_RNDU);
+    mpfr_set(lo, &(x->true_range.left), MPFR_RNDD);
+    mpfr_set(hi, &(x->true_range.right), MPFR_RNDU);
 }

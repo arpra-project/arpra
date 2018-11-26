@@ -21,14 +21,14 @@
 
 #include "arpra-impl.h"
 
-static arpra_prec precision = ARPRA_DEFAULT_PRECISION;
+static arpra_prec default_precision = ARPRA_DEFAULT_PRECISION;
 
 arpra_prec arpra_get_default_precision ()
 {
-    return precision;
+    return default_precision;
 }
 
 void arpra_set_default_precision (const arpra_prec prec)
 {
-    precision = prec;
+    default_precision = prec;
 }

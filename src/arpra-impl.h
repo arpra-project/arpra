@@ -33,9 +33,6 @@
 
 #include <arpra.h>
 #include <arpra_ode.h>
-#ifdef WITH_MPFI
-#include <arpra_to_mpfi.h>
-#endif // WITH_MPFI
 
 // Default precisions.
 #define ARPRA_DEFAULT_PRECISION 53
@@ -43,6 +40,9 @@
 
 // Temp buffers.
 #define ARPRA_BUFFER_RESIZE_FACTOR 256
+
+// Use Min-Range linear approximation
+#define ARPRA_MIN_RANGE 1
 
 /*
  * If ARPRA_TIGHT_MUL is defined, then the linear approximation of the quadratic term of

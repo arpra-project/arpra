@@ -30,6 +30,7 @@ void arpra_init2 (arpra_range *z, const arpra_prec prec)
     z->precision = prec;
     mpfr_init2(&(z->centre), prec_internal);
     mpfr_init2(&(z->radius), prec_internal);
+    mpfi_init2(&(z->true_range), prec);
 }
 
 void arpra_inits2 (const arpra_prec prec, arpra_range *z, ...)
