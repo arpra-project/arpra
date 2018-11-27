@@ -27,7 +27,6 @@ void arpra_affine_1 (arpra_range *z, const arpra_range *x,
 {
     arpra_uint xTerm, zTerm;
     arpra_mpfr temp, error;
-    arpra_mpfi z_range;
     arpra_range zNew;
     arpra_prec prec_internal;
 
@@ -49,10 +48,9 @@ void arpra_affine_1 (arpra_range *z, const arpra_range *x,
     prec_internal = arpra_get_internal_precision();
     mpfr_init2(&temp, prec_internal);
     mpfr_init2(&error, prec_internal);
-    mpfi_init2(&z_range, prec_internal);
     arpra_init2(&zNew, z->precision);
-    mpfr_set(&error, delta, MPFR_RNDU);
-    mpfr_set_si(&(zNew.radius), 0, MPFR_RNDU);
+    mpfr_set_ui(&error, 0, MPFR_RNDU);
+    mpfr_set_ui(&(zNew.radius), 0, MPFR_RNDU);
 
     // z_0 = (alpha * x_0) + gamma
     if (mpfr_fma(&(zNew.centre), alpha, &(x->centre), gamma, MPFR_RNDN)) {
@@ -86,25 +84,8 @@ void arpra_affine_1 (arpra_range *z, const arpra_range *x,
         }
     }
 
-    // Round the result to the target precision.
-    mpfr_sub(&(z_range.left), &(zNew.centre), &(zNew.radius), MPFR_RNDD);
-    mpfr_sub(&(z_range.left), &(z_range.left), &error, MPFR_RNDD);
-    if (mpfr_prec_round(&(z_range.left), zNew.precision, MPFR_RNDD)) {
-        arpra_helper_error_ulp(&(z_range.left), &(z_range.left));
-    }
-    else {
-        mpfr_set_ui(&(z_range.left), 0, MPFR_RNDN);
-    }
-    mpfr_add(&(z_range.right), &(zNew.centre), &(zNew.radius), MPFR_RNDU);
-    mpfr_add(&(z_range.right), &(z_range.right), &error, MPFR_RNDU);
-    if (mpfr_prec_round(&(z_range.right), zNew.precision, MPFR_RNDU)) {
-        arpra_helper_error_ulp(&(z_range.right), &(z_range.right));
-    }
-    else {
-        mpfr_set_ui(&(z_range.right), 0, MPFR_RNDN);
-    }
-    mpfr_max(&temp, &(z_range.left), &(z_range.right), MPFR_RNDU);
-    mpfr_add(&error, &error, &temp, MPFR_RNDU);
+    // Add delta error.
+    mpfr_add(&error, &error, delta, MPFR_RNDU);
 
     // Store nonzero numerical error term.
     if (!mpfr_zero_p(&error)) {
@@ -137,7 +118,6 @@ void arpra_affine_1 (arpra_range *z, const arpra_range *x,
     // Clear vars, and set z.
     mpfr_clear(&temp);
     mpfr_clear(&error);
-    mpfi_clear(&z_range);
     arpra_clear(z);
     *z = zNew;
 }

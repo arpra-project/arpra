@@ -24,13 +24,13 @@
 void arpra_set_str_rad (arpra_range *z, const char *centre, const char *radius, const arpra_int base)
 {
     arpra_mpfr temp;
-    arpra_mpfi range;
+    arpra_mpfi temp_range;
     arpra_prec prec_internal;
 
     // Initialise vars.
     prec_internal = arpra_get_internal_precision();
     mpfr_init2(&temp, prec_internal);
-    mpfi_init2(&range, prec_internal);
+    mpfi_init2(&temp_range, prec_internal);
     mpfr_set_prec(&(z->centre), prec_internal);
     mpfr_set_prec(&(z->radius), prec_internal);
     mpfr_set_str(&(z->radius), radius, base, MPFR_RNDU);
@@ -45,22 +45,16 @@ void arpra_set_str_rad (arpra_range *z, const char *centre, const char *radius, 
     // Clear existing deviation terms.
     arpra_clear_terms(z);
 
-    // Round the result to the target precision.
-    mpfr_sub(&(range.left), &(z->centre), &(z->radius), MPFR_RNDD);
-    if (mpfr_prec_round(&(range.left), z->precision, MPFR_RNDD)) {
-        arpra_helper_error_ulp(&(range.left), &(range.left));
-    }
-    else {
-        mpfr_set_ui(&(range.left), 0, MPFR_RNDN);
-    }
-    mpfr_add(&(range.right), &(z->centre), &(z->radius), MPFR_RNDU);
-    if (mpfr_prec_round(&(range.right), z->precision, MPFR_RNDU)) {
-        arpra_helper_error_ulp(&(range.right), &(range.right));
-    }
-    else {
-        mpfr_set_ui(&(range.right), 0, MPFR_RNDN);
-    }
-    mpfr_max(&temp, &(range.left), &(range.right), MPFR_RNDU);
+    // Compute target precision rounding error.
+    mpfr_sub(&(temp_range.left), &(z->centre), &(z->radius), MPFR_RNDD);
+    mpfr_set(&(z->true_range.left), &(temp_range.left), MPFR_RNDD);
+    mpfr_sub(&(temp_range.left), &(temp_range.left), &(z->true_range.left), MPFR_RNDU);
+
+    mpfr_add(&(temp_range.right), &(z->centre), &(z->radius), MPFR_RNDU);
+    mpfr_set(&(z->true_range.right), &(temp_range.right), MPFR_RNDU);
+    mpfr_sub(&(temp_range.right), &(z->true_range.right), &(temp_range.right), MPFR_RNDU);
+
+    mpfr_max(&temp, &(temp_range.left), &(temp_range.right), MPFR_RNDU);
     mpfr_add(&(z->radius), &(z->radius), &temp, MPFR_RNDU);
 
     // Store nonzero numerical error term.
@@ -87,5 +81,5 @@ void arpra_set_str_rad (arpra_range *z, const char *centre, const char *radius, 
 
     // Clear vars.
     mpfr_clear(&temp);
-    mpfi_clear(&range);
+    mpfi_clear(&temp_range);
 }

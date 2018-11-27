@@ -1,5 +1,5 @@
 /*
- * set.c -- Set one Arpra range with the values of another.
+ * set.c -- Set one Arpra temp_range with the values of another.
  *
  * Copyright 2016-2018 James Paul Turner.
  *
@@ -25,7 +25,7 @@ void arpra_set (arpra_range *z, const arpra_range *x)
 {
     arpra_uint xTerm, zTerm;
     arpra_mpfr temp, error;
-    arpra_mpfi range;
+    arpra_mpfi temp_range;
     arpra_prec prec_internal;
 
     // Handle trivial cases.
@@ -45,7 +45,7 @@ void arpra_set (arpra_range *z, const arpra_range *x)
     prec_internal = arpra_get_internal_precision();
     mpfr_init2(&temp, prec_internal);
     mpfr_init2(&error, prec_internal);
-    mpfi_init2(&range, prec_internal);
+    mpfi_init2(&temp_range, prec_internal);
     mpfr_set_prec(&(z->centre), prec_internal);
     mpfr_set_prec(&(z->radius), prec_internal);
     mpfr_set_ui(&error, 0, MPFR_RNDU);
@@ -85,24 +85,18 @@ void arpra_set (arpra_range *z, const arpra_range *x)
         }
     }
 
-    // Round the result to the target precision.
-    mpfr_sub(&(range.left), &(z->centre), &(z->radius), MPFR_RNDD);
-    mpfr_sub(&(range.left), &(range.left), &error, MPFR_RNDD);
-    if (mpfr_prec_round(&(range.left), z->precision, MPFR_RNDD)) {
-        arpra_helper_error_ulp(&(range.left), &(range.left));
-    }
-    else {
-        mpfr_set_ui(&(range.left), 0, MPFR_RNDN);
-    }
-    mpfr_add(&(range.right), &(z->centre), &(z->radius), MPFR_RNDU);
-    mpfr_add(&(range.right), &(range.right), &error, MPFR_RNDU);
-    if (mpfr_prec_round(&(range.right), z->precision, MPFR_RNDU)) {
-        arpra_helper_error_ulp(&(range.right), &(range.right));
-    }
-    else {
-        mpfr_set_ui(&(range.right), 0, MPFR_RNDN);
-    }
-    mpfr_max(&temp, &(range.left), &(range.right), MPFR_RNDU);
+    // Compute target precision rounding error.
+    mpfr_sub(&(temp_range.left), &(z->centre), &(z->radius), MPFR_RNDD);
+    mpfr_sub(&(temp_range.left), &(temp_range.left), &error, MPFR_RNDD);
+    mpfr_set(&(z->true_range.left), &(temp_range.left), MPFR_RNDD);
+    mpfr_sub(&(temp_range.left), &(temp_range.left), &(z->true_range.left), MPFR_RNDU);
+
+    mpfr_add(&(temp_range.right), &(z->centre), &(z->radius), MPFR_RNDU);
+    mpfr_add(&(temp_range.right), &(temp_range.right), &error, MPFR_RNDU);
+    mpfr_set(&(z->true_range.right), &(temp_range.right), MPFR_RNDU);
+    mpfr_sub(&(temp_range.right), &(z->true_range.right), &(temp_range.right), MPFR_RNDU);
+
+    mpfr_max(&temp, &(temp_range.left), &(temp_range.right), MPFR_RNDU);
     mpfr_add(&error, &error, &temp, MPFR_RNDU);
 
     // Store nonzero numerical error term.
@@ -114,7 +108,7 @@ void arpra_set (arpra_range *z, const arpra_range *x)
         zTerm++;
     }
 
-    // Compute true range.
+    // Compute true temp_range.
     mpfi_set(&(z->true_range), &(x->true_range));
 
     // Handle domain violations, and resize memory.
@@ -139,5 +133,5 @@ void arpra_set (arpra_range *z, const arpra_range *x)
     // Clear vars.
     mpfr_clear(&temp);
     mpfr_clear(&error);
-    mpfi_clear(&range);
+    mpfi_clear(&temp_range);
 }
