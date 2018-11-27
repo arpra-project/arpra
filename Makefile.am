@@ -81,10 +81,16 @@ extra_morris_lecar_mpfr_SOURCES = extra/morris_lecar_mpfr.c
 extra_morris_lecar_mpfi_SOURCES = extra/morris_lecar_mpfi.c
 
 # Experiments
-EXTRA_PROGRAMS += experiments/experiment_1 experiments/experiment_2
+EXTRA_PROGRAMS += experiments/experiment_1 experiments/experiment_2 experiments/experiment_3/morris_lecar
+
 experiments_experiment_1_LDADD = lib/libarpra.la
 experiments_experiment_1_SOURCES = experiments/experiment_1.c
+
 experiments_experiment_2_SOURCES = experiments/experiment_2.c
+
+experiments_experiment_3_morris_lecar_LDADD = lib/libarpra.la
+experiments_experiment_3_morris_lecar_SOURCES = experiments/experiment_3/morris_lecar.c
+
 
 # Documentation
 info_TEXINFOS = doc/arpra.texi
