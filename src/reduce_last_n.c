@@ -56,12 +56,10 @@ void arpra_reduce_last_n (arpra_range *z, arpra_uint n)
         mpfr_add(&(z->radius), &(z->radius), &temp, MPFR_RNDU);
     }
 
-    // Store nonzero merged deviation term.
-    if (!mpfr_zero_p(&(z->deviations[zTerm]))) {
-        z->symbols[zTerm] = arpra_next_symbol();
-        mpfr_add(&(z->radius), &(z->radius), &(z->deviations[zTerm]), MPFR_RNDU);
-        zTerm++;
-    }
+    // Store merged deviation term.
+    z->symbols[zTerm] = arpra_next_symbol();
+    mpfr_add(&(z->radius), &(z->radius), &(z->deviations[zTerm]), MPFR_RNDU);
+    zTerm++;
 
     // Clear unused deviation terms.
     for (zNext = zTerm; zNext < z->nTerms; zNext++) {

@@ -136,17 +136,12 @@ void arpra_affine_2 (arpra_range *z, const arpra_range *x, const arpra_range *y,
         }
     }
 
-    // Add delta error.
-    mpfr_add(&error, &error, delta, MPFR_RNDU);
-
-    // Store nonzero numerical error term.
-    if (!mpfr_zero_p(&error)) {
-        zNew.symbols[zTerm] = arpra_next_symbol();
-        mpfr_init2(&(zNew.deviations[zTerm]), prec_internal);
-        mpfr_set(&(zNew.deviations[zTerm]), &error, MPFR_RNDU);
-        mpfr_add(&(zNew.radius), &(zNew.radius), &(zNew.deviations[zTerm]), MPFR_RNDU);
-        zTerm++;
-    }
+    // Store numerical error term.
+    zNew.symbols[zTerm] = arpra_next_symbol();
+    zNew.deviations[zTerm] = error;
+    mpfr_add(&(zNew.deviations[zTerm]), &(zNew.deviations[zTerm]), delta, MPFR_RNDU);
+    mpfr_add(&(zNew.radius), &(zNew.radius), &(zNew.deviations[zTerm]), MPFR_RNDU);
+    zTerm++;
 
     // Compute true range.
     mpfr_sub(&(zNew.true_range.left), &(zNew.centre), &(zNew.radius), MPFR_RNDD);
@@ -169,7 +164,6 @@ void arpra_affine_2 (arpra_range *z, const arpra_range *x, const arpra_range *y,
 
     // Clear vars, and set z.
     mpfr_clear(&temp);
-    mpfr_clear(&error);
     arpra_clear(z);
     *z = zNew;
 }

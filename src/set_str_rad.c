@@ -47,13 +47,11 @@ void arpra_set_str_rad (arpra_range *z, const char *centre, const char *radius, 
 
     // Compute target precision rounding error.
     mpfr_sub(&(temp_range.left), &(z->centre), &(z->radius), MPFR_RNDD);
-    mpfr_set(&(z->true_range.left), &(temp_range.left), MPFR_RNDD);
-    mpfr_sub(&(temp_range.left), &(temp_range.left), &(z->true_range.left), MPFR_RNDU);
-
     mpfr_add(&(temp_range.right), &(z->centre), &(z->radius), MPFR_RNDU);
-    mpfr_set(&(z->true_range.right), &(temp_range.right), MPFR_RNDU);
-    mpfr_sub(&(temp_range.right), &(z->true_range.right), &(temp_range.right), MPFR_RNDU);
+    mpfi_set(&(z->true_range), &(temp_range));
 
+    mpfr_sub(&(temp_range.left), &(temp_range.left), &(z->true_range.left), MPFR_RNDU);
+    mpfr_sub(&(temp_range.right), &(z->true_range.right), &(temp_range.right), MPFR_RNDU);
     mpfr_max(&temp, &(temp_range.left), &(temp_range.right), MPFR_RNDU);
     mpfr_add(&(z->radius), &(z->radius), &temp, MPFR_RNDU);
 

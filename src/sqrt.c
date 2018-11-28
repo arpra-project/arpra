@@ -28,7 +28,7 @@
 void arpra_sqrt (arpra_range *z, const arpra_range *x)
 {
     arpra_mpfr temp, da, db, du, alpha, gamma, delta;
-    arpra_mpfi z_range, x_range;
+    arpra_mpfi ia_range, x_range;
     arpra_prec prec_internal;
 
     // Initialise vars.
@@ -40,7 +40,7 @@ void arpra_sqrt (arpra_range *z, const arpra_range *x)
     mpfr_init2(&alpha, prec_internal);
     mpfr_init2(&gamma, prec_internal);
     mpfr_init2(&delta, prec_internal);
-    mpfi_init2(&z_range, z->precision);
+    mpfi_init2(&ia_range, z->precision);
     mpfi_init2(&x_range, x->precision);
 
     // Handle x with zero radius.
@@ -64,6 +64,9 @@ void arpra_sqrt (arpra_range *z, const arpra_range *x)
 
         // Domain is OK.
         else {
+            // MPFI square root
+            mpfi_sqrt(&ia_range, &(x->true_range));
+
             mpfi_set(&x_range, &(x->true_range));
 
             // compute alpha
@@ -97,14 +100,11 @@ void arpra_sqrt (arpra_range *z, const arpra_range *x)
             mpfr_sub(&temp, &gamma, &da, MPFR_RNDU);
             mpfr_max(&delta, &delta, &temp, MPFR_RNDU);
 
-            // MPFI square root
-            mpfi_sqrt(&z_range, &(x->true_range));
-
             // compute affine approximation
             arpra_affine_1(z, x, &alpha, &gamma, &delta);
 
             // Compute true range.
-            mpfi_intersect(&(z->true_range), &(z->true_range), &z_range);
+            mpfi_intersect(&(z->true_range), &(z->true_range), &ia_range);
         }
     }
 
@@ -116,6 +116,6 @@ void arpra_sqrt (arpra_range *z, const arpra_range *x)
     mpfr_clear(&alpha);
     mpfr_clear(&gamma);
     mpfr_clear(&delta);
-    mpfi_clear(&z_range);
+    mpfi_clear(&ia_range);
     mpfi_clear(&x_range);
 }

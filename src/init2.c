@@ -26,11 +26,11 @@ void arpra_init2 (arpra_range *z, const arpra_prec prec)
     arpra_prec prec_internal;
 
     prec_internal = arpra_get_internal_precision();
-    z->nTerms = 0;
-    z->precision = prec;
     mpfr_init2(&(z->centre), prec_internal);
     mpfr_init2(&(z->radius), prec_internal);
     mpfi_init2(&(z->true_range), prec);
+    z->nTerms = 0;
+    z->precision = prec;
 }
 
 void arpra_inits2 (const arpra_prec prec, arpra_range *z, ...)

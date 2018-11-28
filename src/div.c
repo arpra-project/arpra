@@ -28,23 +28,23 @@
 void arpra_div (arpra_range *z, const arpra_range *x, const arpra_range *y)
 {
     arpra_range zNew;
-    arpra_mpfi z_range;
+    arpra_mpfi ia_range;
 
     // Initialise vars.
     arpra_init2(&zNew, z->precision);
-    mpfi_init2(&z_range, z->precision);
+    mpfi_init2(&ia_range, z->precision);
 
     // MPFI division
-    mpfi_div(&z_range, &(x->true_range), &(y->true_range));
+    mpfi_div(&ia_range, &(x->true_range), &(y->true_range));
 
     // z = x * (1 / y)
     arpra_inv(&zNew, y);
     arpra_mul(z, x, &zNew);
 
     // Compute true range.
-    mpfi_intersect(&(z->true_range), &(z->true_range), &z_range);
+    mpfi_intersect(&(z->true_range), &(z->true_range), &ia_range);
 
     // Clear vars.
     arpra_clear(&zNew);
-    mpfi_clear(&z_range);
+    mpfi_clear(&ia_range);
 }

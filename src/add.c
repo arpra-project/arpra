@@ -24,32 +24,32 @@
 void arpra_add (arpra_range *z, const arpra_range *x, const arpra_range *y)
 {
     arpra_mpfr alpha, beta, gamma, delta;
-    arpra_mpfi z_range;
+    arpra_mpfi ia_range;
 
     // Initialise vars.
     mpfr_init2(&alpha, 2);
     mpfr_init2(&beta, 2);
     mpfr_init2(&gamma, 2);
     mpfr_init2(&delta, 2);
-    mpfi_init2(&z_range, z->precision);
+    mpfi_init2(&ia_range, z->precision);
     mpfr_set_si(&alpha, 1, MPFR_RNDN);
     mpfr_set_si(&beta, 1, MPFR_RNDN);
     mpfr_set_si(&gamma, 0, MPFR_RNDN);
     mpfr_set_si(&delta, 0, MPFR_RNDN);
 
     // MPFI addition
-    mpfi_add(&z_range, &(x->true_range), &(y->true_range));
+    mpfi_add(&ia_range, &(x->true_range), &(y->true_range));
 
     // z = x + y
     arpra_affine_2(z, x, y, &alpha, &beta, &gamma, &delta);
 
     // Compute true range.
-    mpfi_intersect(&(z->true_range), &(z->true_range), &z_range);
+    mpfi_intersect(&(z->true_range), &(z->true_range), &ia_range);
 
     // Clear vars.
     mpfr_clear(&alpha);
     mpfr_clear(&beta);
     mpfr_clear(&gamma);
     mpfr_clear(&delta);
-    mpfi_clear(&z_range);
+    mpfi_clear(&ia_range);
 }
