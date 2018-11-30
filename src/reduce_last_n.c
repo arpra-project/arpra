@@ -66,23 +66,13 @@ void arpra_reduce_last_n (arpra_range *z, arpra_uint n)
         mpfr_clear(&(z->deviations[zNext]));
     }
 
-    // Handle domain violations, and resize memory.
+    // Handle domain violations.
     z->nTerms = zTerm;
     if (mpfr_nan_p(&(z->radius))) {
         arpra_set_nan(z);
     }
     else if (mpfr_inf_p(&(z->radius))) {
         arpra_set_inf(z);
-    }
-    else {
-        if (z->nTerms == 0) {
-            free(z->symbols);
-            free(z->deviations);
-        }
-        else {
-            z->symbols = realloc(z->symbols, z->nTerms * sizeof(arpra_uint));
-            z->deviations = realloc(z->deviations, z->nTerms * sizeof(arpra_mpfr));
-        }
     }
 
     // Clear vars.

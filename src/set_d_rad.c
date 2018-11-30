@@ -24,11 +24,10 @@
 void arpra_set_d_rad (arpra_range *z, const double centre, const double radius)
 {
     arpra_mpfr temp;
-    arpra_mpfi temp_range;
     arpra_prec prec_internal;
 
     // Handle domain violations.
-    if (isnan(centre) || isnan(radius)) {
+    if (isnan(centre) || isnan(radius) || (radius < 0)) {
         arpra_set_nan(z);
         return;
     }
@@ -40,30 +39,24 @@ void arpra_set_d_rad (arpra_range *z, const double centre, const double radius)
     // Initialise vars.
     prec_internal = arpra_get_internal_precision();
     mpfr_init2(&temp, prec_internal);
-    mpfi_init2(&temp_range, prec_internal);
     mpfr_set_prec(&(z->centre), prec_internal);
     mpfr_set_prec(&(z->radius), prec_internal);
-    mpfr_set_d(&(z->radius), radius, MPFR_RNDU);
-    mpfr_abs(&(z->radius), &(z->radius), MPFR_RNDU);
 
-    // Add centre rounding error to deviation.
-    if (mpfr_set_d(&(z->centre), centre, MPFR_RNDN)) {
-        arpra_helper_error_half_ulp(&temp, &(z->centre));
-        mpfr_add(&(z->radius), &(z->radius), &temp, MPFR_RNDU);
-    }
+    // MPFI set_d
+    mpfi_set_d(&(z->true_range), centre);
+    mpfr_sub_d(&(z->true_range.left), &(z->true_range.left), radius, MPFR_RNDD);
+    mpfr_add_d(&(z->true_range.right), &(z->true_range.right), radius, MPFR_RNDU);
+
+    // z_0 = (x_lo + x_hi) / 2
+    mpfi_mid(&(z->centre), &(z->true_range));
+
+    // rad(z) = max{(z_0 - x_lo), (x_hi - z_0)}
+    mpfr_sub(&(z->radius), &(z->centre), &(z->true_range.left), MPFR_RNDU);
+    mpfr_sub(&temp, &(z->true_range.right), &(z->centre), MPFR_RNDU);
+    mpfr_max(&(z->radius), &(z->radius), &temp, MPFR_RNDU);
 
     // Clear existing deviation terms.
     arpra_clear_terms(z);
-
-    // Compute target precision rounding error.
-    mpfr_sub(&(temp_range.left), &(z->centre), &(z->radius), MPFR_RNDD);
-    mpfr_add(&(temp_range.right), &(z->centre), &(z->radius), MPFR_RNDU);
-    mpfi_set(&(z->true_range), &(temp_range));
-
-    mpfr_sub(&(temp_range.left), &(temp_range.left), &(z->true_range.left), MPFR_RNDU);
-    mpfr_sub(&(temp_range.right), &(z->true_range.right), &(temp_range.right), MPFR_RNDU);
-    mpfr_max(&temp, &(temp_range.left), &(temp_range.right), MPFR_RNDU);
-    mpfr_add(&(z->radius), &(z->radius), &temp, MPFR_RNDU);
 
     // Store nonzero numerical error term.
     if (!mpfr_zero_p(&(z->radius))) {
@@ -75,10 +68,6 @@ void arpra_set_d_rad (arpra_range *z, const double centre, const double radius)
         mpfr_set(&(z->deviations[0]), &(z->radius), MPFR_RNDU);
     }
 
-    // Compute true range.
-    mpfr_sub(&(z->true_range.left), &(z->centre), &(z->radius), MPFR_RNDD);
-    mpfr_add(&(z->true_range.right), &(z->centre), &(z->radius), MPFR_RNDU);
-
     // Handle domain violations.
     if (mpfr_nan_p(&(z->centre)) || mpfr_nan_p(&(z->radius))) {
         arpra_set_nan(z);
@@ -89,5 +78,4 @@ void arpra_set_d_rad (arpra_range *z, const double centre, const double radius)
 
     // Clear vars.
     mpfr_clear(&temp);
-    mpfi_clear(&temp_range);
 }

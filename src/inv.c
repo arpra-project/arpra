@@ -27,31 +27,33 @@
 
 void arpra_inv (arpra_range *z, const arpra_range *x)
 {
-    arpra_mpfr temp, da, db, du, alpha, gamma, delta;
+    arpra_mpfr alpha, gamma, delta;
+    arpra_mpfr temp1, temp2, da, db, du, *error;
     arpra_mpfi ia_range, x_range;
     arpra_prec prec_internal;
     arpra_int sign;
 
     // Initialise vars.
     prec_internal = arpra_get_internal_precision();
-    mpfr_init2(&temp, prec_internal);
-    mpfr_init2(&da, prec_internal);
-    mpfr_init2(&db, prec_internal);
-    mpfr_init2(&du, prec_internal);
     mpfr_init2(&alpha, prec_internal);
     mpfr_init2(&gamma, prec_internal);
     mpfr_init2(&delta, prec_internal);
+    mpfr_init2(&temp1, prec_internal);
+    mpfr_init2(&temp2, prec_internal);
+    mpfr_init2(&da, prec_internal);
+    mpfr_init2(&db, prec_internal);
+    mpfr_init2(&du, prec_internal);
     mpfi_init2(&ia_range, z->precision);
     mpfi_init2(&x_range, x->precision);
 
     // Handle x with zero radius.
     if (mpfr_zero_p(&(x->radius))) {
-        if (mpfr_ui_div(&temp, 1, &(x->centre), MPFR_RNDN)) {
-            arpra_helper_error_half_ulp(&delta, &temp);
-            arpra_set_mpfr_rad(z, &temp, &delta);
+        if (mpfr_ui_div(&temp1, 1, &(x->centre), MPFR_RNDN)) {
+            arpra_helper_error_half_ulp(&delta, &temp1);
+            arpra_set_mpfr_rad(z, &temp1, &delta);
         }
         else {
-            arpra_set_mpfr(z, &temp);
+            arpra_set_mpfr(z, &temp1);
         }
     }
     else {
@@ -84,13 +86,13 @@ void arpra_inv (arpra_range *z, const arpra_range *x)
 
             // compute difference (1/a - alpha a)
             mpfr_mul(&da, &alpha, &(x_range.left), MPFR_RNDD);
-            mpfr_ui_div(&temp, 1, &(x_range.left), MPFR_RNDU);
-            mpfr_sub(&da, &temp, &da, MPFR_RNDU);
+            mpfr_ui_div(&temp1, 1, &(x_range.left), MPFR_RNDU);
+            mpfr_sub(&da, &temp1, &da, MPFR_RNDU);
 
             // compute difference (1/b - alpha b)
             mpfr_mul(&db, &alpha, &(x_range.right), MPFR_RNDU);
-            mpfr_ui_div(&temp, 1, &(x_range.right), MPFR_RNDD);
-            mpfr_sub(&db, &temp, &db, MPFR_RNDD);
+            mpfr_ui_div(&temp1, 1, &(x_range.right), MPFR_RNDD);
+            mpfr_sub(&db, &temp1, &db, MPFR_RNDD);
 
             // compute gamma
             mpfr_add(&gamma, &da, &db, MPFR_RNDN);
@@ -98,8 +100,8 @@ void arpra_inv (arpra_range *z, const arpra_range *x)
 
             // compute delta
             mpfr_sub(&delta, &gamma, &db, MPFR_RNDU);
-            mpfr_sub(&temp, &da, &gamma, MPFR_RNDU);
-            mpfr_max(&delta, &delta, &temp, MPFR_RNDU);
+            mpfr_sub(&temp1, &da, &gamma, MPFR_RNDU);
+            mpfr_max(&delta, &delta, &temp1, MPFR_RNDU);
 
 #else
             // compute alpha
@@ -108,13 +110,13 @@ void arpra_inv (arpra_range *z, const arpra_range *x)
 
             // compute difference (1/a - alpha a)
             mpfr_mul(&da, &alpha, &(x_range.left), MPFR_RNDD);
-            mpfr_ui_div(&temp, 1, &(x_range.left), MPFR_RNDU);
-            mpfr_sub(&da, &temp, &da, MPFR_RNDU);
+            mpfr_ui_div(&temp1, 1, &(x_range.left), MPFR_RNDU);
+            mpfr_sub(&da, &temp1, &da, MPFR_RNDU);
 
             // compute difference (1/b - alpha b)
             mpfr_mul(&db, &alpha, &(x_range.right), MPFR_RNDD);
-            mpfr_ui_div(&temp, 1, &(x_range.right), MPFR_RNDU);
-            mpfr_sub(&db, &temp, &db, MPFR_RNDU);
+            mpfr_ui_div(&temp1, 1, &(x_range.right), MPFR_RNDU);
+            mpfr_sub(&db, &temp1, &db, MPFR_RNDU);
 
             mpfr_max(&db, &da, &db, MPFR_RNDU);
 
@@ -129,8 +131,8 @@ void arpra_inv (arpra_range *z, const arpra_range *x)
 
             // compute delta
             mpfr_sub(&delta, &gamma, &du, MPFR_RNDU);
-            mpfr_sub(&temp, &db, &gamma, MPFR_RNDU);
-            mpfr_max(&delta, &delta, &temp, MPFR_RNDU);
+            mpfr_sub(&temp1, &db, &gamma, MPFR_RNDU);
+            mpfr_max(&delta, &delta, &temp1, MPFR_RNDU);
 
 #endif // ARPRA_MIN_RANGE
 
@@ -141,19 +143,31 @@ void arpra_inv (arpra_range *z, const arpra_range *x)
             // compute affine approximation
             arpra_affine_1(z, x, &alpha, &gamma, &delta);
 
-            // Compute true range.
+            // Trim error term if Arpra range fully contains IA range.
+            error = &(z->deviations[z->nTerms - 1]);
+            if (mpfr_less_p(&(z->true_range.left), &(ia_range.left))
+                && mpfr_greater_p(&(z->true_range.right), &(ia_range.right))) {
+                mpfr_sub(&temp1, &(ia_range.left), &(z->true_range.left), MPFR_RNDD);
+                mpfr_sub(&temp2, &(z->true_range.right), &(ia_range.right), MPFR_RNDD);
+                mpfr_min(&temp1, &temp1, &temp2, MPFR_RNDD);
+                mpfr_sub(error, error, &temp1, MPFR_RNDU);
+                if (mpfr_cmp_ui(error, 0) < 0) {
+                    mpfr_set_ui(error, 0, MPFR_RNDN);
+                }
+            }
             mpfi_intersect(&(z->true_range), &(z->true_range), &ia_range);
         }
     }
 
     // Clear vars.
-    mpfr_clear(&temp);
-    mpfr_clear(&da);
-    mpfr_clear(&db);
-    mpfr_clear(&du);
     mpfr_clear(&alpha);
     mpfr_clear(&gamma);
     mpfr_clear(&delta);
+    mpfr_clear(&temp1);
+    mpfr_clear(&temp2);
+    mpfr_clear(&da);
+    mpfr_clear(&db);
+    mpfr_clear(&du);
     mpfi_clear(&ia_range);
     mpfi_clear(&x_range);
 }

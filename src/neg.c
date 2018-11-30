@@ -24,12 +24,17 @@
 void arpra_neg (arpra_range *z, const arpra_range *x)
 {
     arpra_mpfr alpha, gamma, delta;
+    arpra_mpfr temp1, temp2, *error;
     arpra_mpfi ia_range;
+    arpra_prec prec_internal;
 
     // Initialise vars.
+    prec_internal = arpra_get_internal_precision();
     mpfr_init2(&alpha, 2);
     mpfr_init2(&gamma, 2);
     mpfr_init2(&delta, 2);
+    mpfr_init2(&temp1, prec_internal);
+    mpfr_init2(&temp2, prec_internal);
     mpfi_init2(&ia_range, z->precision);
     mpfr_set_si(&alpha, -1, MPFR_RNDN);
     mpfr_set_si(&gamma, 0, MPFR_RNDN);
@@ -41,12 +46,25 @@ void arpra_neg (arpra_range *z, const arpra_range *x)
     // z = - x
     arpra_affine_1(z, x, &alpha, &gamma, &delta);
 
-    // Compute true range.
+    // Trim error term if Arpra range fully contains IA range.
+    error = &(z->deviations[z->nTerms - 1]);
+    if (mpfr_less_p(&(z->true_range.left), &(ia_range.left))
+        && mpfr_greater_p(&(z->true_range.right), &(ia_range.right))) {
+        mpfr_sub(&temp1, &(ia_range.left), &(z->true_range.left), MPFR_RNDD);
+        mpfr_sub(&temp2, &(z->true_range.right), &(ia_range.right), MPFR_RNDD);
+        mpfr_min(&temp1, &temp1, &temp2, MPFR_RNDD);
+        mpfr_sub(error, error, &temp1, MPFR_RNDU);
+        if (mpfr_cmp_ui(error, 0) < 0) {
+            mpfr_set_ui(error, 0, MPFR_RNDN);
+        }
+    }
     mpfi_intersect(&(z->true_range), &(z->true_range), &ia_range);
 
     // Clear vars.
     mpfr_clear(&alpha);
     mpfr_clear(&gamma);
     mpfr_clear(&delta);
+    mpfr_clear(&temp1);
+    mpfr_clear(&temp2);
     mpfi_clear(&ia_range);
 }
