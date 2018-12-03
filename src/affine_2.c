@@ -136,6 +136,9 @@ void arpra_affine_2 (arpra_range *z, const arpra_range *x, const arpra_range *y,
         }
     }
 
+    // Add delta error.
+    mpfr_add(&error, &error, delta, MPFR_RNDU);
+
     // Round range to target precision.
     mpfr_sub(&temp1, &(zNew.centre), &(zNew.radius), MPFR_RNDD);
     mpfr_sub(&temp1, &temp1, &error, MPFR_RNDD);
@@ -148,14 +151,9 @@ void arpra_affine_2 (arpra_range *z, const arpra_range *x, const arpra_range *y,
     mpfr_max(&temp1, &temp1, &temp2, MPFR_RNDU);
     mpfr_add(&error, &error, &temp1, MPFR_RNDU);
 
-    // Compute true range.
-    mpfr_sub(&(zNew.true_range.left), &(zNew.centre), &(zNew.radius), MPFR_RNDD);
-    mpfr_add(&(zNew.true_range.right), &(zNew.centre), &(zNew.radius), MPFR_RNDU);
-
     // Store numerical error term.
     zNew.symbols[zTerm] = arpra_next_symbol();
     zNew.deviations[zTerm] = error;
-    mpfr_add(&(zNew.deviations[zTerm]), &(zNew.deviations[zTerm]), delta, MPFR_RNDU);
     mpfr_add(&(zNew.radius), &(zNew.radius), &(zNew.deviations[zTerm]), MPFR_RNDU);
     zTerm++;
 
