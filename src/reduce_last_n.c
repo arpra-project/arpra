@@ -25,7 +25,8 @@ void arpra_reduce_last_n (arpra_range *z, arpra_uint n)
 {
     arpra_uint zTerm, zNext;
     arpra_mpfr **summands;
-    arpra_mpfr temp;
+    arpra_mpfr temp1, temp2;
+    arpra_mpfi temp_range;
     arpra_prec prec_internal;
 
     // Handle trivial cases.
@@ -38,7 +39,9 @@ void arpra_reduce_last_n (arpra_range *z, arpra_uint n)
 
     // Initialise vars.
     prec_internal = arpra_get_internal_precision();
-    mpfr_init2(&temp, prec_internal);
+    mpfr_init2(&temp1, prec_internal);
+    mpfr_init2(&temp2, prec_internal);
+    mpfi_init2(&temp_range, z->precision);
     mpfr_set_ui(&(z->radius), 0, MPFR_RNDU);
     zTerm = z->nTerms - n;
     summands = malloc(n * sizeof(arpra_mpfr *));
@@ -52,8 +55,24 @@ void arpra_reduce_last_n (arpra_range *z, arpra_uint n)
 
     // Add the remaining deviation terms to radius.
     for (zNext = 0; zNext < zTerm; zNext++) {
-        mpfr_abs(&temp, &(z->deviations[zNext]), MPFR_RNDU);
-        mpfr_add(&(z->radius), &(z->radius), &temp, MPFR_RNDU);
+        mpfr_abs(&temp1, &(z->deviations[zNext]), MPFR_RNDU);
+        mpfr_add(&(z->radius), &(z->radius), &temp1, MPFR_RNDU);
+    }
+
+    // Trim reduced term if Arpra range fully contains true range.
+    mpfr_sub(&temp1, &(z->centre), &(z->radius), MPFR_RNDD);
+    mpfr_sub(&(temp_range.left), &temp1, &(z->deviations[zTerm]), MPFR_RNDD);
+    mpfr_add(&temp2, &(z->centre), &(z->radius), MPFR_RNDU);
+    mpfr_add(&(temp_range.right), &temp2, &(z->deviations[zTerm]), MPFR_RNDU);
+    if (mpfr_less_p(&(temp_range.left), &(z->true_range.left))
+        && mpfr_greater_p(&(temp_range.right), &(z->true_range.right))) {
+        mpfr_sub(&temp1, &(z->true_range.left), &(temp_range.left), MPFR_RNDD);
+        mpfr_sub(&temp2, &(temp_range.right), &(z->true_range.right), MPFR_RNDD);
+        mpfr_min(&temp1, &temp1, &temp2, MPFR_RNDD);
+        mpfr_sub(&(z->deviations[zTerm]), &(z->deviations[zTerm]), &temp1, MPFR_RNDU);
+        if (mpfr_cmp_ui(&(z->deviations[zTerm]), 0) < 0) {
+            mpfr_set_ui(&(z->deviations[zTerm]), 0, MPFR_RNDN);
+        }
     }
 
     // Store merged deviation term.
@@ -76,6 +95,8 @@ void arpra_reduce_last_n (arpra_range *z, arpra_uint n)
     }
 
     // Clear vars.
-    mpfr_clear(&temp);
+    mpfr_clear(&temp1);
+    mpfr_clear(&temp2);
+    mpfi_clear(&temp_range);
     free(summands);
 }
