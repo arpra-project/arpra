@@ -91,6 +91,12 @@ experiments_experiment_2_SOURCES = experiments/experiment_2.c
 experiments_experiment_3_morris_lecar_LDADD = lib/libarpra.la
 experiments_experiment_3_morris_lecar_SOURCES = experiments/experiment_3/morris_lecar.c
 
+EXTRA_PROGRAMS += experiments/fig5/ml-arpra experiments/fig5/ml-mpfr experiments/fig5/ml-mpfi
+experiments_fig5_ml_arpra_LDADD = lib/libarpra.la
+experiments_fig5_ml_arpra_SOURCES = experiments/fig5/ml-arpra.c
+experiments_fig5_ml_mpfr_SOURCES = experiments/fig5/ml-mpfr.c
+experiments_fig5_ml_mpfi_SOURCES = experiments/fig5/ml-mpfi.c
+
 
 # Documentation
 info_TEXINFOS = doc/arpra.texi
