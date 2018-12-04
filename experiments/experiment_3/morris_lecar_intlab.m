@@ -1,8 +1,8 @@
 
-startintlab();
-format long intval;
+format long;
+intvalinit('DisplayInfsup')
 affariinit();
-affariinit('ApproxMinRange');
+affariinit('DisplayIntval');
 
 % General parameters
 global h = affari(0.5);
@@ -171,18 +171,8 @@ end
 
 
 % Initialise report files
-%FILE **f_time = malloc(sizeof(FILE *));;
-%file_init("time", 1, f_time);
-
-%FILE **f_nrn1_N = malloc(p_nrn1_size * sizeof(FILE *));
-%file_init("nrn1_N", p_nrn1_size, f_nrn1_N);
-%FILE **f_nrn1_V = malloc(p_nrn1_size * sizeof(FILE *));
-%file_init("nrn1_V", p_nrn1_size, f_nrn1_V);
-
-%FILE **f_syn_exc_R = malloc(in_size * sizeof(FILE *));
-%file_init("syn_exc_R", in_size, f_syn_exc_R);
-%FILE **f_syn_exc_S = malloc(in_size * sizeof(FILE *));
-%file_init("syn_exc_S", in_size, f_syn_exc_S);
+N_file = fopen('nrn1_N_intlab.dat', 'w');
+V_file = fopen('nrn1_V_intlab.dat', 'w');
 
 
 % Begin simulation loop
@@ -217,13 +207,11 @@ for iter = 1:sim_steps
     N
     V
 
-    %file_write(t, 1, f_time);
-
-    %file_write(nrn1_N, p_nrn1_size, f_nrn1_N);
-    %file_write(nrn1_V, p_nrn1_size, f_nrn1_V);
-
-    %file_write(syn_exc_R, in_size, f_syn_exc_R);
-    %file_write(syn_exc_S, in_size, f_syn_exc_S);
+    fprintf(N_file, '%.60f %.60f\n', N.inf, N.sup);
+    fprintf(V_file, '%.60f %.60f\n', V.inf, V.sup);
 end
 
 toc;
+
+fclose(N_file);
+fclose(V_file);
