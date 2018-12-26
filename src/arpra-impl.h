@@ -56,7 +56,7 @@
  * \sum^{n}_{i=1} x_{i} \sum^{n}_{i=1} y_{i}
  */
 
-#define ARPRA_TIGHT_MUL 0
+#define ARPRA_TIGHT_MUL 1
 
 // Internal helper functions.
 void arpra_helper_error_ulp (arpra_mpfr *error, const arpra_mpfr *x);
