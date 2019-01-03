@@ -74,19 +74,7 @@ running the following command:
 
     sudo make uninstall
 
-Arpra can be built to support MPFI interval variables. MPFI is an interval
-arithmetic library built on top of GNU MPFR. Enable support by passing
---with-mpfi as a configure option (required for testing):
-
-    ./configure --with-mpfi
-    make
-    sudo make install
-
-Note that the MPFI package must already be present and working on the
-system. See <http://perso.ens-lyon.fr/nathalie.revol/software.html> for
-more information on the MPFI interval arithmetic library. If Arpra was
-configured with MPFI support, a suite of test programs can be executed
-with the following command:
+A suite of test programs can be executed with the following command:
 
     make check
 
