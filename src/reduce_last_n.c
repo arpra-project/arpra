@@ -30,7 +30,7 @@ void arpra_reduce_last_n (arpra_range *z, arpra_uint n)
     arpra_prec prec_internal;
 
     // Handle trivial cases.
-    if (n == 0) return;
+    if ((z->nTerms == 0) || (n == 0)) return;
     if (n > z->nTerms) n = z->nTerms;
 
     // Handle domain violations.
