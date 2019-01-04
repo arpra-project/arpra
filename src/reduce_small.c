@@ -28,7 +28,7 @@ void arpra_reduce_small (arpra_range *z, double min_fraction)
     arpra_prec prec_internal;
 
     // Handle trivial cases.
-    if (z->nTerms < 2) return;
+    if (z->nTerms == 0) return;
     if (min_fraction <= 0.0) return;
 
     // Handle domain violations.
@@ -62,7 +62,7 @@ void arpra_reduce_small_abs (arpra_range *z, const arpra_mpfr *abs_threshold)
     arpra_uint zTerm, zNext;
 
     // Handle trivial cases.
-    if (z->nTerms < 2) return;
+    if (z->nTerms == 0) return;
     if (mpfr_cmp_ui(abs_threshold, 0) <= 0) return;
 
     // Handle domain violations.
@@ -89,7 +89,7 @@ void arpra_reduce_small_rel (arpra_range *z, const arpra_mpfr *rel_threshold)
     arpra_prec prec_internal;
 
     // Handle trivial cases.
-    if (z->nTerms < 2) return;
+    if (z->nTerms == 0) return;
     if (mpfr_cmp_ui(rel_threshold, 0) <= 0) return;
 
     // Handle domain violations.
