@@ -60,7 +60,7 @@ void arpra_set_mpfr (arpra_range *z, const arpra_mpfr *centre)
     if (!mpfr_zero_p(&(z->radius))) {
         z->nTerms = 1;
         z->symbols = malloc(sizeof(arpra_uint));
-        z->deviations = malloc(sizeof(arpra_range));
+        z->deviations = malloc(sizeof(arpra_mpfr));
         z->symbols[0] = arpra_next_symbol();
         mpfr_init2(&(z->deviations[0]), prec_internal);
         mpfr_set(&(z->deviations[0]), &(z->radius), MPFR_RNDU);

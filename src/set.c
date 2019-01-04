@@ -69,7 +69,7 @@ void arpra_set (arpra_range *z, const arpra_range *x)
     arpra_clear_terms(z);
     z->nTerms = x->nTerms + 1;
     z->symbols = malloc(z->nTerms * sizeof(arpra_uint));
-    z->deviations = malloc(z->nTerms * sizeof(arpra_range));
+    z->deviations = malloc(z->nTerms * sizeof(arpra_mpfr));
 
     // Copy deviation terms over.
     for (xTerm = 0, zTerm = 0; xTerm < x->nTerms; xTerm++) {
