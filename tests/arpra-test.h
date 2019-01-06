@@ -32,7 +32,7 @@
 #include <string.h>
 #include <time.h>
 
-#include <arpra.h>
+#include "../src/arpra-impl.h"
 
 // RNG output mode enumeration.
 typedef enum test_rand_mode
