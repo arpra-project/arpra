@@ -23,11 +23,10 @@
 
 int main (int argc, char *argv[])
 {
-#ifdef WITH_MPFI
-    const arpra_prec prec = 53;
-    const arpra_prec prec_internal = 128;
+    const arpra_prec prec = 24;
+    const arpra_prec prec_internal = 256;
     const arpra_uint test_n = 100000;
-    arpra_uint i, fail, fail_n;
+    unsigned i, fail, fail_n;
 
     // Init test.
     test_fixture_init(prec, prec_internal);
@@ -45,11 +44,11 @@ int main (int argc, char *argv[])
         // 1) Arpra z contains MPFI z.
         // 2) Arpra z unbounded and MPFI z unbounded.
         test_bivariate(arpra_sub, mpfi_sub);
-        if (mpfr_greaterequal_p(&(z_I->left), &(z_AI->left))
-                && mpfr_lessequal_p(&(z_I->right), &(z_AI->right))) {
+        if (mpfr_greaterequal_p(&(z_I.left), &(z_A.true_range.left))
+                && mpfr_lessequal_p(&(z_I.right), &(z_A.true_range.right))) {
             test_log_printf("Result (unshared symbols): PASS\n\n");
         }
-        else if (!arpra_bounded_p(&z_A) && !mpfi_bounded_p(z_I)) {
+        else if (!arpra_bounded_p(&z_A) && !mpfi_bounded_p(&z_I)) {
             test_log_printf("Result (unshared symbols): PASS\n\n");
         }
         else {
@@ -61,7 +60,7 @@ int main (int argc, char *argv[])
         // 1) bounded(Arpra z) = bounded(MPFI z).
         test_share_rand_syms(&x_A, &y_A);
         test_bivariate(arpra_sub, mpfi_sub);
-        if (arpra_bounded_p(&z_A) == mpfi_bounded_p(z_I)) {
+        if (arpra_bounded_p(&z_A) == mpfi_bounded_p(&z_I)) {
             test_log_printf("Result (random shared symbols): PASS\n\n");
         }
         else {
@@ -73,7 +72,7 @@ int main (int argc, char *argv[])
         // 1) bounded(Arpra z) = bounded(MPFI z).
         test_share_all_syms(&x_A, &y_A);
         test_bivariate(arpra_sub, mpfi_sub);
-        if (arpra_bounded_p(&z_A) == mpfi_bounded_p(z_I)) {
+        if (arpra_bounded_p(&z_A) == mpfi_bounded_p(&z_I)) {
             test_log_printf("Result (all shared symbols): PASS\n\n");
         }
         else {
@@ -90,11 +89,4 @@ int main (int argc, char *argv[])
     test_log_clear();
     test_rand_clear();
     return fail_n > 0;
-
-#else // WITH_MPFI
-    fprintf(stderr,
-            "This test uses the MPFI interval arithmetic library.\n"
-            "Recompile with MPFI support enabled to run this test.\n");
-    return 77; // Exit code 77: skip test.
-#endif // WITH_MPFI
 }

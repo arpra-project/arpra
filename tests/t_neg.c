@@ -23,11 +23,10 @@
 
 int main (int argc, char *argv[])
 {
-#ifdef WITH_MPFI
-    const arpra_prec prec = 53;
-    const arpra_prec prec_internal = 128;
+    const arpra_prec prec = 24;
+    const arpra_prec prec_internal = 256;
     const arpra_uint test_n = 100000;
-    arpra_uint i, fail_n;
+    unsigned i, fail_n;
 
     // Init test.
     test_fixture_init(prec, prec_internal);
@@ -42,8 +41,8 @@ int main (int argc, char *argv[])
         // Pass criteria:
         // 1) Arpra z contains MPFI z.
         test_univariate(arpra_neg, mpfi_neg);
-        if (mpfr_greaterequal_p(&(z_I->left), &(z_AI->left))
-                && mpfr_lessequal_p(&(z_I->right), &(z_AI->right))) {
+        if (mpfr_greaterequal_p(&(z_I.left), &(z_A.true_range.left))
+                && mpfr_lessequal_p(&(z_I.right), &(z_A.true_range.right))) {
             test_log_printf("Result: PASS\n\n");
         }
         else {
@@ -58,11 +57,4 @@ int main (int argc, char *argv[])
     test_log_clear();
     test_rand_clear();
     return fail_n > 0;
-
-#else // WITH_MPFI
-    fprintf(stderr,
-            "This test uses the MPFI interval arithmetic library.\n"
-            "Recompile with MPFI support enabled to run this test.\n");
-    return 77; // Exit code 77: skip test.
-#endif // WITH_MPFI
 }

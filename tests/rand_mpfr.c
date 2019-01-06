@@ -21,7 +21,7 @@
 
 #include "arpra-test.h"
 
-void test_rand_mpfr (arpra_mpfr *z, enum test_rand_mode mode)
+void test_rand_mpfr (arpra_mpfr *z, arpra_prec prec, test_rand_mode mode)
 {
     arpra_uint r_ui;
     arpra_mpfr r_mpfr;
@@ -70,16 +70,16 @@ void test_rand_mpfr (arpra_mpfr *z, enum test_rand_mode mode)
             exit(EXIT_FAILURE);
         }
 
-        // Generate random number with 5-bit precision.
-        mpfr_init2(&r_mpfr, 5);
-        mpfr_urandomb (&r_mpfr, test_randstate);
+        // Generate random number.
+        mpfr_init2(&r_mpfr, prec);
+        mpfr_urandom(&r_mpfr, test_randstate, MPFR_RNDN);
         if (r_ui == 1) {
-            mpfr_neg (&r_mpfr, &r_mpfr, MPFR_RNDD);
+            mpfr_neg(&r_mpfr, &r_mpfr, MPFR_RNDD);
         }
         else if (r_ui >= 2) {
-            mpfr_ui_div (&r_mpfr, 1, &r_mpfr, MPFR_RNDD);
+            mpfr_ui_div(&r_mpfr, 1, &r_mpfr, MPFR_RNDD);
             if (r_ui == 3) {
-                mpfr_neg (&r_mpfr, &r_mpfr, MPFR_RNDD);
+                mpfr_neg(&r_mpfr, &r_mpfr, MPFR_RNDD);
             }
         }
         mpfr_set(z, &r_mpfr, MPFR_RNDN);

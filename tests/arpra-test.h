@@ -35,7 +35,7 @@
 #include <arpra.h>
 
 // RNG output mode enumeration.
-enum test_rand_mode
+typedef enum test_rand_mode
 {
     TEST_RAND_MIXED = 0,  // (-oo <  z  < +oo)
     TEST_RAND_SMALL_POS,  // (+0 <=  z  <  +1)
@@ -46,25 +46,25 @@ enum test_rand_mode
     TEST_RAND_LARGE,      // (+1 <= |z| < +oo)
     TEST_RAND_POS,        // (+0 <=  z  < +oo)
     TEST_RAND_NEG,        // (-oo <  z  <= -0)
-};
+} test_rand_mode;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 // Global test variables.
-extern arpra_range x_A, y_A, z_A;
 extern int test_fixture_ready;
-extern mpfi_t x_I, y_I, z_I, z_AI;
-extern arpra_mpfr rdiam_I, rdiam_AI, rdiam_diff;
+extern arpra_range x_A, y_A, z_A;
+extern arpra_mpfi z_I;
+extern arpra_mpfr rdiam_I, rdiam_A, rdiam_diff;
 
 // Global RNG variables.
-extern gmp_randstate_t test_randstate;
 extern int test_rand_ready;
+extern gmp_randstate_t test_randstate;
 
 // Global logfile variables.
-extern FILE *test_log;
 extern int test_log_ready;
+extern FILE *test_log;
 
 // Test fixture functions.
 void test_fixture_init (arpra_prec prec, arpra_prec prec_internal);
@@ -73,13 +73,8 @@ void test_fixture_clear ();
 // RNG functions.
 void test_rand_init ();
 void test_rand_clear ();
-void test_rand_mpfr (arpra_mpfr *z, enum test_rand_mode mode);
-void test_rand_arpra (arpra_range *z,
-                      enum test_rand_mode mode_centre,
-                      enum test_rand_mode mode_deviations);
-void test_rand_mpfi (mpfi_ptr z,
-                     enum test_rand_mode mode_low,
-                     enum test_rand_mode mode_high);
+void test_rand_mpfr (arpra_mpfr *z, arpra_prec prec, test_rand_mode mode);
+void test_rand_arpra (arpra_range *z, test_rand_mode mode_c, test_rand_mode mode_d);
 
 // Logfile functions.
 void test_log_init (const char *test_name);

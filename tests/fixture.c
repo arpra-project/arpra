@@ -21,12 +21,10 @@
 
 #include "arpra-test.h"
 
-arpra_range x_A, y_A, z_A;
 int test_fixture_ready = 0;
-#ifdef WITH_MPFI
-mpfi_t x_I, y_I, z_I, z_AI;
-arpra_mpfr rdiam_I, rdiam_AI, rdiam_diff;
-#endif // WITH_MPFI
+arpra_range x_A, y_A, z_A;
+arpra_mpfi z_I;
+arpra_mpfr rdiam_I, rdiam_A, rdiam_diff;
 
 void test_fixture_init (arpra_prec prec, arpra_prec prec_internal)
 {
@@ -42,18 +40,13 @@ void test_fixture_init (arpra_prec prec, arpra_prec prec_internal)
         arpra_init2(&y_A, prec);
         arpra_init2(&z_A, prec);
 
-#ifdef WITH_MPFI
         // Initialise MPFI variables.
-        mpfi_init2(x_I, prec);
-        mpfi_init2(y_I, prec);
-        mpfi_init2(z_I, prec);
-        mpfi_init2(z_AI, prec);
+        mpfi_init2(&z_I, prec);
 
         // Initialise relative diameter variables.
         mpfr_init2(&rdiam_I, prec_internal);
-        mpfr_init2(&rdiam_AI, prec_internal);
+        mpfr_init2(&rdiam_A, prec_internal);
         mpfr_init2(&rdiam_diff, prec_internal);
-#endif // WITH_MPFI
     }
     else {
         fprintf(stderr, "Error: test fixture is alreay initialised.\n");
@@ -72,18 +65,13 @@ void test_fixture_clear ()
         arpra_clear(&y_A);
         arpra_clear(&z_A);
 
-#ifdef WITH_MPFI
         // Clear MPFI variables.
-        mpfi_clear(x_I);
-        mpfi_clear(y_I);
-        mpfi_clear(z_I);
-        mpfi_clear(z_AI);
+        mpfi_clear(&z_I);
 
         // Clear relative diameter variables.
         mpfr_clear(&rdiam_I);
-        mpfr_clear(&rdiam_AI);
+        mpfr_clear(&rdiam_A);
         mpfr_clear(&rdiam_diff);
-#endif // WITH_MPFI
 
         // All else.
         mpfr_free_cache();

@@ -21,8 +21,8 @@
 
 #include "arpra-test.h"
 
-FILE *test_log;
 int test_log_ready = 0;
+FILE *test_log;
 
 void test_log_init (const char *test_name)
 {

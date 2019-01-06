@@ -47,7 +47,7 @@ tests_libarpra_test_la_SOURCES = \
 	tests/logfile.c tests/logfile_printf.c tests/logfile_mpfr.c	\
 	tests/rand.c tests/rand_mpfr.c tests/rand_arpra.c		\
 	tests/compare_arpra.c tests/univariate.c tests/bivariate.c	\
-	tests/rand_mpfi.c tests/logfile_mpfi.c
+	tests/logfile_mpfi.c
 
 # Testsuite test programs
 check_PROGRAMS = \

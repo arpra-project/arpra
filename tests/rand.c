@@ -21,8 +21,8 @@
 
 #include "arpra-test.h"
 
-gmp_randstate_t test_randstate;
 int test_rand_ready = 0;
+gmp_randstate_t test_randstate;
 
 void test_rand_init ()
 {

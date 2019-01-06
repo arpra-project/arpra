@@ -26,23 +26,20 @@ void test_bivariate (
     int  (*f_mpfi) (mpfi_ptr z, mpfi_srcptr x, mpfi_srcptr y))
 {
     // Convert arguments.
-    arpra_get_mpfi(x_I, &x_A);
-    arpra_get_mpfi(y_I, &y_A);
-    test_log_mpfi(x_I, "x  ");
-    test_log_mpfi(y_I, "y  ");
+    test_log_mpfi(&(x_A.true_range), "x  ");
+    test_log_mpfi(&(y_A.true_range), "y  ");
 
     // Compute z with MPFI.
-    f_mpfi(z_I, x_I, y_I);
-    test_log_mpfi(z_I, "z_I");
+    f_mpfi(&z_I, &(x_A.true_range), &(y_A.true_range));
+    test_log_mpfi(&z_I, "z_I");
 
     // Compute z with Arpra.
     f_arpra(&z_A, &x_A, &y_A);
-    arpra_get_mpfi(z_AI, &z_A);
-    test_log_mpfi(z_AI, "z_A");
+    test_log_mpfi(&(z_A.true_range), "z_A");
 
     // Compute relative diameter difference.
-    mpfi_diam_rel(&rdiam_I, z_I);
-    mpfi_diam_rel(&rdiam_AI, z_AI);
-    mpfr_sub(&rdiam_diff, &rdiam_AI, &rdiam_I, MPFR_RNDN);
+    mpfi_diam_rel(&rdiam_I, &z_I);
+    mpfi_diam_rel(&rdiam_A, &(z_A.true_range));
+    mpfr_sub(&rdiam_diff, &rdiam_A, &rdiam_I, MPFR_RNDN);
     test_log_mpfr(&rdiam_diff, "z_D");
 }
