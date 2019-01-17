@@ -28,6 +28,11 @@ int main (int argc, char *argv[])
     const arpra_uint test_n = 100000;
     unsigned i, fail, fail_n;
 
+    FILE *shared_log, *partshared_log, *unshared_log;
+    shared_log = fopen("add_shared.log", "w");
+    partshared_log = fopen("add_partshared.log", "w");
+    unshared_log = fopen("add_unshared.log", "w");
+
     // Init test.
     test_fixture_init(prec, prec_internal);
     test_log_init("add");
@@ -56,6 +61,9 @@ int main (int argc, char *argv[])
             fail = 1;
         }
 
+        mpfr_out_str(unshared_log, 10, 40, &rdiam_diff, MPFR_RNDN);
+        fputs("\n", unshared_log);
+
         // Pass criteria (random shared symbols):
         // 1) bounded(Arpra z) = bounded(MPFI z).
         test_share_rand_syms(&x_A, &y_A);
@@ -67,6 +75,9 @@ int main (int argc, char *argv[])
             test_log_printf("Result (random shared symbols): FAIL\n\n");
             fail = 1;
         }
+
+        mpfr_out_str(partshared_log, 10, 40, &rdiam_diff, MPFR_RNDN);
+        fputs("\n", partshared_log);
 
         // Pass criteria (all shared symbols):
         // 1) bounded(Arpra z) = bounded(MPFI z).
@@ -80,8 +91,15 @@ int main (int argc, char *argv[])
             fail = 1;
         }
 
+        mpfr_out_str(shared_log, 10, 40, &rdiam_diff, MPFR_RNDN);
+        fputs("\n", shared_log);
+
         if (fail) fail_n++;
     }
+
+    fclose(shared_log);
+    fclose(partshared_log);
+    fclose(unshared_log);
 
     // Cleanup test.
     printf("%lu out of %lu failed.\n", fail_n, test_n);

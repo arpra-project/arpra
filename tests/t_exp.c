@@ -28,6 +28,9 @@ int main (int argc, char *argv[])
     const arpra_uint test_n = 100000;
     unsigned i, fail_n;
 
+    FILE *unshared_log;
+    unshared_log = fopen("exp_unshared.log", "w");
+
     // Init test.
     test_fixture_init(prec, prec_internal);
     test_log_init("exp");
@@ -49,7 +52,13 @@ int main (int argc, char *argv[])
             test_log_printf("Result: FAIL\n\n");
             fail_n++;
         }
+
+        mpfr_out_str(unshared_log, 10, 40, &rdiam_diff, MPFR_RNDN);
+        fputs("\n", unshared_log);
+
     }
+
+    fclose(unshared_log);
 
     // Cleanup test.
     printf("%lu out of %lu failed.\n", fail_n, test_n);
