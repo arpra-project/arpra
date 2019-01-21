@@ -39,6 +39,6 @@ void test_univariate (
     // Compute relative diameter difference.
     mpfi_diam_rel(&rdiam_I, &z_I);
     mpfi_diam_rel(&rdiam_A, &(z_A.true_range));
-    mpfr_sub(&rdiam_diff, &rdiam_A, &rdiam_I, MPFR_RNDN);
+    mpfr_sub(&rdiam_diff, &rdiam_I, &rdiam_A, MPFR_RNDN);
     test_log_mpfr(&rdiam_diff, "z_D");
 }
