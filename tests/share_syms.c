@@ -55,28 +55,64 @@ void test_share_rand_syms (arpra_range *x, arpra_range *y)
     term = 0;
     x_has_next = x->nTerms > 0;
     y_has_next = y->nTerms > 0;
+
     while (x_has_next || y_has_next) {
         symbol = arpra_next_symbol();
 
-        // Set x symbol if y has no more terms.
+        // Set x and y symbol if they exist.
         if (!y_has_next) {
             x->symbols[term] = symbol;
         }
-
-        // Set y symbol if x has no more terms.
         else if (!x_has_next) {
             y->symbols[term] = symbol;
         }
 
-        // x and y have symbols left.
+        // Else randomly share x and y symbols.
         else {
             if (gmp_urandomb_ui(test_randstate, 1)) {
-                // x and y share this symbol.
                 x->symbols[term] = symbol;
                 y->symbols[term] = symbol;
             }
             else {
-                // x and y have different symbols.
+                x->symbols[term] = symbol;
+                y->symbols[term] = arpra_next_symbol();
+            }
+        }
+
+        term++;
+        x_has_next = term < x->nTerms;
+        y_has_next = term < y->nTerms;
+    }
+}
+
+void test_share_n_syms (arpra_range *x, arpra_range *y, arpra_uint n)
+{
+    arpra_uint symbol, term;
+    arpra_int x_has_next, y_has_next;
+
+    term = 0;
+    x_has_next = x->nTerms > 0;
+    y_has_next = y->nTerms > 0;
+
+    while (x_has_next || y_has_next) {
+        symbol = arpra_next_symbol();
+
+        // Set x and y symbol if they exist.
+        if (!y_has_next) {
+            x->symbols[term] = symbol;
+        }
+        else if (!x_has_next) {
+            y->symbols[term] = symbol;
+        }
+
+        // Else share the first n symbols in x and y.
+        else {
+            if (n > 0) {
+                x->symbols[term] = symbol;
+                y->symbols[term] = symbol;
+                n--;
+            }
+            else {
                 x->symbols[term] = symbol;
                 y->symbols[term] = arpra_next_symbol();
             }

@@ -24,7 +24,7 @@
 int test_fixture_ready = 0;
 arpra_range x_A, y_A, z_A;
 arpra_mpfi z_I;
-arpra_mpfr rdiam_I, rdiam_A, rdiam_diff;
+arpra_mpfr z_I_diam, z_A_diam, z_A_diam_rel;
 
 void test_fixture_init (arpra_prec prec, arpra_prec prec_internal)
 {
@@ -44,9 +44,9 @@ void test_fixture_init (arpra_prec prec, arpra_prec prec_internal)
         mpfi_init2(&z_I, prec);
 
         // Initialise relative diameter variables.
-        mpfr_init2(&rdiam_I, prec_internal);
-        mpfr_init2(&rdiam_A, prec_internal);
-        mpfr_init2(&rdiam_diff, prec_internal);
+        mpfr_init2(&z_I_diam, prec_internal);
+        mpfr_init2(&z_A_diam, prec_internal);
+        mpfr_init2(&z_A_diam_rel, prec_internal);
     }
     else {
         fprintf(stderr, "Error: test fixture is alreay initialised.\n");
@@ -69,9 +69,9 @@ void test_fixture_clear ()
         mpfi_clear(&z_I);
 
         // Clear relative diameter variables.
-        mpfr_clear(&rdiam_I);
-        mpfr_clear(&rdiam_A);
-        mpfr_clear(&rdiam_diff);
+        mpfr_clear(&z_I_diam);
+        mpfr_clear(&z_A_diam);
+        mpfr_clear(&z_A_diam_rel);
 
         // All else.
         mpfr_free_cache();

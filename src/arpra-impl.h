@@ -42,7 +42,7 @@
 #define ARPRA_BUFFER_RESIZE_FACTOR 256
 
 // Use Min-Range linear approximation
-#define ARPRA_MIN_RANGE 1
+//#define ARPRA_MIN_RANGE 1
 
 /*
  * If ARPRA_TIGHT_MUL is defined, then the linear approximation of the quadratic term of

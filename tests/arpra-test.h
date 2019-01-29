@@ -56,7 +56,7 @@ extern "C" {
 extern int test_fixture_ready;
 extern arpra_range x_A, y_A, z_A;
 extern arpra_mpfi z_I;
-extern arpra_mpfr rdiam_I, rdiam_A, rdiam_diff;
+extern arpra_mpfr z_I_diam, z_A_diam, z_A_diam_rel;
 
 // Global RNG variables.
 extern int test_rand_ready;
@@ -86,6 +86,7 @@ void test_log_mpfi (mpfi_srcptr x, const char *var_name);
 // Symbol adjustments.
 void test_share_all_syms (arpra_range *x, arpra_range *y);
 void test_share_rand_syms (arpra_range *x, arpra_range *y);
+void test_share_n_syms (arpra_range *x, arpra_range *y, arpra_uint n);
 
 // Test functions.
 int test_compare_arpra (const arpra_range *x, const arpra_range *y);

@@ -57,7 +57,7 @@ int main (int argc, char *argv[])
             fail_n++;
         }
 
-        mpfr_out_str(unshared_log, 10, 40, &rdiam_diff, MPFR_RNDN);
+        mpfr_out_str(unshared_log, 10, 40, &z_A_diam_rel, MPFR_RNDN);
         fputs("\n", unshared_log);
 
     }

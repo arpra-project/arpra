@@ -61,12 +61,12 @@ int main (int argc, char *argv[])
             fail = 1;
         }
 
-        mpfr_out_str(unshared_log, 10, 40, &rdiam_diff, MPFR_RNDN);
+        mpfr_out_str(unshared_log, 10, 40, &z_A_diam_rel, MPFR_RNDN);
         fputs("\n", unshared_log);
 
         // Pass criteria (random shared symbols):
         // 1) bounded(Arpra z) = bounded(MPFI z).
-        test_share_rand_syms(&x_A, &y_A);
+        test_share_n_syms(&x_A, &y_A, 3);
         test_bivariate(arpra_add, mpfi_add);
         if (arpra_bounded_p(&z_A) == mpfi_bounded_p(&z_I)) {
             test_log_printf("Result (random shared symbols): PASS\n\n");
@@ -76,7 +76,7 @@ int main (int argc, char *argv[])
             fail = 1;
         }
 
-        mpfr_out_str(partshared_log, 10, 40, &rdiam_diff, MPFR_RNDN);
+        mpfr_out_str(partshared_log, 10, 40, &z_A_diam_rel, MPFR_RNDN);
         fputs("\n", partshared_log);
 
         // Pass criteria (all shared symbols):
@@ -91,7 +91,7 @@ int main (int argc, char *argv[])
             fail = 1;
         }
 
-        mpfr_out_str(shared_log, 10, 40, &rdiam_diff, MPFR_RNDN);
+        mpfr_out_str(shared_log, 10, 40, &z_A_diam_rel, MPFR_RNDN);
         fputs("\n", shared_log);
 
         if (fail) fail_n++;

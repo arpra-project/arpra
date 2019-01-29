@@ -42,9 +42,9 @@ void test_rand_arpra (arpra_range *z, test_rand_mode mode_c, test_rand_mode mode
     // Set random centre.
     test_rand_mpfr(&(z->centre), z->precision, mode_c);
 
-    // Allocate 0 to 9 terms.
+    // Allocate 5 to 9 terms.
     arpra_clear_terms(z);
-    z->nTerms = gmp_urandomm_ui(test_randstate, 10);
+    z->nTerms = gmp_urandomm_ui(test_randstate, 5) + 5;
     z->symbols = malloc((z->nTerms + 1) * sizeof(arpra_uint));
     z->deviations = malloc((z->nTerms + 1) * sizeof(arpra_mpfr));
     lo_sum = malloc(z->nTerms * sizeof(arpra_mpfr));
