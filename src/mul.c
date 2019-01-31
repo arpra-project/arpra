@@ -256,27 +256,26 @@ void arpra_mul (arpra_range *z, const arpra_range *x, const arpra_range *y)
     mpfr_max(&temp1, &temp1, &temp2, MPFR_RNDU);
     mpfr_add(&error, &error, &temp1, MPFR_RNDU);
 
+    // Store numerical error term.
+    zNew.symbols[zTerm] = arpra_next_symbol();
+    zNew.deviations[zTerm] = error;
+    mpfr_add(&(zNew.radius), &(zNew.radius), &(zNew.deviations[zTerm]), MPFR_RNDU);
+    zNew.nTerms = zTerm + 1;
+
     // Trim error term if Arpra range fully contains IA range.
     if (mpfr_less_p(&(zNew.true_range.left), &(ia_range.left))
         && mpfr_greater_p(&(zNew.true_range.right), &(ia_range.right))) {
         mpfr_sub(&temp1, &(ia_range.left), &(zNew.true_range.left), MPFR_RNDD);
         mpfr_sub(&temp2, &(zNew.true_range.right), &(ia_range.right), MPFR_RNDD);
         mpfr_min(&temp1, &temp1, &temp2, MPFR_RNDD);
-        mpfr_sub(&error, &error, &temp1, MPFR_RNDU);
-        if (mpfr_cmp_ui(&error, 0) < 0) {
-            mpfr_set_ui(&error, 0, MPFR_RNDN);
+        mpfr_sub(&(zNew.deviations[zTerm]), &(zNew.deviations[zTerm]), &temp1, MPFR_RNDU);
+        if (mpfr_cmp_ui(&(zNew.deviations[zTerm]), 0) < 0) {
+            mpfr_set_ui(&(zNew.deviations[zTerm]), 0, MPFR_RNDN);
         }
     }
     mpfi_intersect(&(zNew.true_range), &(zNew.true_range), &ia_range);
 
-    // Store numerical error term.
-    zNew.symbols[zTerm] = arpra_next_symbol();
-    zNew.deviations[zTerm] = error;
-    mpfr_add(&(zNew.radius), &(zNew.radius), &(zNew.deviations[zTerm]), MPFR_RNDU);
-    zTerm++;
-
     // Handle domain violations.
-    zNew.nTerms = zTerm;
     if (mpfr_nan_p(&(zNew.centre)) || mpfr_nan_p(&(zNew.radius))) {
         arpra_set_nan(&zNew);
     }
