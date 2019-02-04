@@ -141,12 +141,13 @@ void arpra_mul (arpra_range *z, const arpra_range *x, const arpra_range *y)
     }
 
 #ifdef ARPRA_TIGHT_MUL
-    // Linear approximation of the quadratic term is defined the same as in (26) of:
-    // S. M. Rump and M. Kashiwagi, Implementation and improvements of affine arithmetic,
-    // Nonlinear Theory an Its Applications, IEICE, vol. 6, no. 3, pp. 341-359, 2015.
-
     arpra_uint xi_idx, xj_idx, yi_idx, yj_idx;
     arpra_mpfr xiyj, xjyi, xiyi_pos_error, xiyi_neg_error;
+
+    // If ARPRA_TIGHT_MUL is defined, then the linear approximation of the quadratic term of
+    // arpra_mul (in mul.c) is defined the same as in (26) of:
+    // S. M. Rump and M. Kashiwagi, Implementation and improvements of affine arithmetic,
+    // Nonlinear Theory an Its Applications, IEICE, vol. 6, no. 3, pp. 341-359, 2015.
 
     // Init extra temp vars.
     mpfr_init2(&xiyj, prec_internal);
@@ -239,7 +240,7 @@ void arpra_mul (arpra_range *z, const arpra_range *x, const arpra_range *y)
     mpfr_clear(&xiyi_pos_error);
     mpfr_clear(&xiyi_neg_error);
 #else
-    // Linear approximation of quadratic term is rad(x) * rad(y).
+    // Trivial linear approximation of quadratic term is rad(x) * rad(y).
     mpfr_mul(&temp1, &(x->radius), &(y->radius), MPFR_RNDU);
     mpfr_add(&error, &error, &temp1, MPFR_RNDU);
 #endif
@@ -262,6 +263,7 @@ void arpra_mul (arpra_range *z, const arpra_range *x, const arpra_range *y)
     mpfr_add(&(zNew.radius), &(zNew.radius), &(zNew.deviations[zTerm]), MPFR_RNDU);
     zNew.nTerms = zTerm + 1;
 
+#ifdef ARPRA_TRIM_RANGES
     // Trim error term if Arpra range fully contains IA range.
     if (mpfr_less_p(&(zNew.true_range.left), &(ia_range.left))
         && mpfr_greater_p(&(zNew.true_range.right), &(ia_range.right))) {
@@ -274,6 +276,7 @@ void arpra_mul (arpra_range *z, const arpra_range *x, const arpra_range *y)
         }
     }
     mpfi_intersect(&(zNew.true_range), &(zNew.true_range), &ia_range);
+#endif // ARPRA_TRIM_RANGES
 
     // Handle domain violations.
     if (mpfr_nan_p(&(zNew.centre)) || mpfr_nan_p(&(zNew.radius))) {

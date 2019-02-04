@@ -34,29 +34,21 @@
 #include <arpra.h>
 #include <arpra_ode.h>
 
+// Temp buffers.
+#define ARPRA_BUFFER_RESIZE_FACTOR 256
+
 // Default precisions.
 #define ARPRA_DEFAULT_PRECISION 53
 #define ARPRA_DEFAULT_INTERNAL_PRECISION 256
 
-// Temp buffers.
-#define ARPRA_BUFFER_RESIZE_FACTOR 256
+// Range trimming.
+#define ARPRA_TRIM_RANGES 1
 
-// Use Min-Range linear approximation
-//#define ARPRA_MIN_RANGE 1
-
-/*
- * If ARPRA_TIGHT_MUL is defined, then the linear approximation of the quadratic term of
- * arpra_mul (in mul.c) is defined the same as in (26) of:
- *
- * S. M. Rump and M. Kashiwagi, Implementation and improvements of affine arithmetic,
- * Nonlinear Theory an Its Applications, IEICE, vol. 6, no. 3, pp. 341-359, 2015.
- *
- * Otherwise it is trivially defined as the product of the radii of x and y:
- *
- * \sum^{n}_{i=1} x_{i} \sum^{n}_{i=1} y_{i}
- */
-
+// Multiplication.
 #define ARPRA_TIGHT_MUL 1
+
+// Min-Range approximation.
+//#define ARPRA_MIN_RANGE 1
 
 // Internal helper functions.
 void arpra_helper_error_ulp (arpra_mpfr *error, const arpra_mpfr *x);

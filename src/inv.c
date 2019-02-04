@@ -143,6 +143,7 @@ void arpra_inv (arpra_range *z, const arpra_range *x)
             // compute affine approximation
             arpra_affine_1(z, x, &alpha, &gamma, &delta);
 
+#ifdef ARPRA_TRIM_RANGES
             // Trim error term if Arpra range fully contains IA range.
             if (mpfr_less_p(&(z->true_range.left), &(ia_range.left))
                 && mpfr_greater_p(&(z->true_range.right), &(ia_range.right))) {
@@ -155,6 +156,7 @@ void arpra_inv (arpra_range *z, const arpra_range *x)
                 }
             }
             mpfi_intersect(&(z->true_range), &(z->true_range), &ia_range);
+#endif // ARPRA_TRIM_RANGES
         }
     }
 
