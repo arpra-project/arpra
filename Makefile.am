@@ -74,29 +74,43 @@ tests_t_log_SOURCES = tests/t_log.c
 TESTS = $(check_PROGRAMS)
 
 # Extra programs
-EXTRA_PROGRAMS = extra/morris_lecar extra/morris_lecar_mpfr extra/morris_lecar_mpfi
+EXTRA_PROGRAMS =
+
+EXTRA_PROGRAMS += extra/henon_map
+extra_henon_map_LDADD = lib/libarpra.la
+extra_henon_map_SOURCES = extra/henon_map.c
+
+EXTRA_PROGRAMS += extra/morris_lecar
 extra_morris_lecar_LDADD = lib/libarpra.la
 extra_morris_lecar_SOURCES = extra/morris_lecar.c
+
+EXTRA_PROGRAMS += extra/morris_lecar_mpfr
 extra_morris_lecar_mpfr_SOURCES = extra/morris_lecar_mpfr.c
+
+EXTRA_PROGRAMS += extra/morris_lecar_mpfi
 extra_morris_lecar_mpfi_SOURCES = extra/morris_lecar_mpfi.c
 
 # Experiments
-EXTRA_PROGRAMS += experiments/experiment_1 experiments/experiment_2 experiments/experiment_3/morris_lecar
-
+EXTRA_PROGRAMS += experiments/experiment_1
 experiments_experiment_1_LDADD = lib/libarpra.la
 experiments_experiment_1_SOURCES = experiments/experiment_1.c
 
+EXTRA_PROGRAMS += experiments/experiment_2
 experiments_experiment_2_SOURCES = experiments/experiment_2.c
 
+EXTRA_PROGRAMS += experiments/experiment_3/morris_lecar
 experiments_experiment_3_morris_lecar_LDADD = lib/libarpra.la
 experiments_experiment_3_morris_lecar_SOURCES = experiments/experiment_3/morris_lecar.c
 
-EXTRA_PROGRAMS += experiments/fig5/ml-arpra experiments/fig5/ml-mpfr experiments/fig5/ml-mpfi
+EXTRA_PROGRAMS += experiments/fig5/ml-arpra
 experiments_fig5_ml_arpra_LDADD = lib/libarpra.la
 experiments_fig5_ml_arpra_SOURCES = experiments/fig5/ml-arpra.c
-experiments_fig5_ml_mpfr_SOURCES = experiments/fig5/ml-mpfr.c
-experiments_fig5_ml_mpfi_SOURCES = experiments/fig5/ml-mpfi.c
 
+EXTRA_PROGRAMS += experiments/fig5/ml-mpfr
+experiments_fig5_ml_mpfr_SOURCES = experiments/fig5/ml-mpfr.c
+
+EXTRA_PROGRAMS += experiments/fig5/ml-mpfi
+experiments_fig5_ml_mpfi_SOURCES = experiments/fig5/ml-mpfi.c
 
 # Documentation
 info_TEXINFOS = doc/arpra.texi
