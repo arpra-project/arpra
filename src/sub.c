@@ -48,7 +48,8 @@ void arpra_sub (arpra_range *z, const arpra_range *x, const arpra_range *y)
     // z = x - y
     arpra_affine_2(z, x, y, &alpha, &beta, &gamma, &delta);
 
-#ifdef ARPRA_TRIM_RANGES
+#ifdef ARPRA_MIXED_IAAA
+#ifdef ARPRA_MIXED_TRIMMED_IAAA
     // Trim error term if Arpra range fully contains IA range.
     if (mpfr_less_p(&(z->true_range.left), &(ia_range.left))
         && mpfr_greater_p(&(z->true_range.right), &(ia_range.right))) {
@@ -60,8 +61,9 @@ void arpra_sub (arpra_range *z, const arpra_range *x, const arpra_range *y)
             mpfr_set_ui(&(z->deviations[z->nTerms - 1]), 0, MPFR_RNDN);
         }
     }
+#endif // ARPRA_MIXED_TRIMMED_IAAA
     mpfi_intersect(&(z->true_range), &(z->true_range), &ia_range);
-#endif // ARPRA_TRIM_RANGES
+#endif // ARPRA_MIXED_IAAA
 
     // Clear vars.
     mpfr_clear(&alpha);

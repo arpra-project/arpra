@@ -263,7 +263,8 @@ void arpra_mul (arpra_range *z, const arpra_range *x, const arpra_range *y)
     mpfr_add(&(zNew.radius), &(zNew.radius), &(zNew.deviations[zTerm]), MPFR_RNDU);
     zNew.nTerms = zTerm + 1;
 
-#ifdef ARPRA_TRIM_RANGES
+#ifdef ARPRA_MIXED_IAAA
+#ifdef ARPRA_MIXED_TRIMMED_IAAA
     // Trim error term if Arpra range fully contains IA range.
     if (mpfr_less_p(&(zNew.true_range.left), &(ia_range.left))
         && mpfr_greater_p(&(zNew.true_range.right), &(ia_range.right))) {
@@ -275,8 +276,9 @@ void arpra_mul (arpra_range *z, const arpra_range *x, const arpra_range *y)
             mpfr_set_ui(&(zNew.deviations[zTerm]), 0, MPFR_RNDN);
         }
     }
+#endif // ARPRA_MIXED_TRIMMED_IAAA
     mpfi_intersect(&(zNew.true_range), &(zNew.true_range), &ia_range);
-#endif // ARPRA_TRIM_RANGES
+#endif // ARPRA_MIXED_IAAA
 
     // Handle domain violations.
     if (mpfr_nan_p(&(zNew.centre)) || mpfr_nan_p(&(zNew.radius))) {

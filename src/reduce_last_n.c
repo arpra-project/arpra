@@ -64,12 +64,10 @@ void arpra_reduce_last_n (arpra_range *z, arpra_uint n)
     mpfr_add(&(z->radius), &(z->radius), &(z->deviations[zTerm]), MPFR_RNDU);
     z->nTerms = zTerm + 1;
 
-#ifdef ARPRA_TRIM_RANGES
-    // Compute temp_range from centre and radius.
+#ifdef ARPRA_MIXED_TRIMMED_IAAA
+    // Trim reduced term if temp_range fully contains true_range.
     mpfr_sub(&(temp_range.left), &(z->centre), &(z->radius), MPFR_RNDD);
     mpfr_add(&(temp_range.right), &(z->centre), &(z->radius), MPFR_RNDU);
-
-    // Trim reduced term if temp_range fully contains true_range.
     if (mpfr_less_p(&(temp_range.left), &(z->true_range.left))
         && mpfr_greater_p(&(temp_range.right), &(z->true_range.right))) {
         mpfr_sub(&temp1, &(z->true_range.left), &(temp_range.left), MPFR_RNDD);
@@ -80,7 +78,7 @@ void arpra_reduce_last_n (arpra_range *z, arpra_uint n)
             mpfr_set_ui(&(z->deviations[zTerm]), 0, MPFR_RNDN);
         }
     }
-#endif // ARPRA_TRIM_RANGES
+#endif // ARPRA_MIXED_TRIMMED_IAAA
 
     // Clear unused deviation terms.
     for (zNext = zTerm; zNext < z->nTerms; zNext++) {

@@ -41,8 +41,9 @@
 #define ARPRA_DEFAULT_PRECISION 53
 #define ARPRA_DEFAULT_INTERNAL_PRECISION 256
 
-// Range trimming.
-#define ARPRA_TRIM_RANGES 1
+// Mixed IA/AA.
+#define ARPRA_MIXED_IAAA 1
+#define ARPRA_MIXED_TRIMMED_IAAA 1
 
 // Multiplication.
 #define ARPRA_TIGHT_MUL 1
