@@ -155,10 +155,9 @@ void arpra_affine_2 (arpra_range *z, const arpra_range *x, const arpra_range *y,
     zNew.symbols[zTerm] = arpra_next_symbol();
     zNew.deviations[zTerm] = error;
     mpfr_add(&(zNew.radius), &(zNew.radius), &(zNew.deviations[zTerm]), MPFR_RNDU);
-    zTerm++;
+    zNew.nTerms = zTerm + 1;
 
     // Handle domain violations.
-    zNew.nTerms = zTerm;
     if (mpfr_nan_p(&(zNew.centre)) || mpfr_nan_p(&(zNew.radius))) {
         arpra_set_nan(&zNew);
     }

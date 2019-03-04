@@ -169,10 +169,9 @@ void arpra_sum_exact (arpra_range *z, arpra_range *x, const arpra_uint n)
     zNew.symbols[zTerm] = arpra_next_symbol();
     zNew.deviations[zTerm] = error;
     mpfr_add(&(zNew.radius), &(zNew.radius), &(zNew.deviations[zTerm]), MPFR_RNDU);
-    zTerm++;
+    zNew.nTerms = zTerm + 1;
 
     // Handle domain violations.
-    zNew.nTerms = zTerm;
     if (mpfr_nan_p(&(zNew.centre)) || mpfr_nan_p(&(zNew.radius))) {
         arpra_set_nan(&zNew);
     }
@@ -374,10 +373,9 @@ void arpra_sum_recursive (arpra_range *z, arpra_range *x, const arpra_uint n)
     zNew.symbols[zTerm] = arpra_next_symbol();
     zNew.deviations[zTerm] = error;
     mpfr_add(&(zNew.radius), &(zNew.radius), &(zNew.deviations[zTerm]), MPFR_RNDU);
-    zTerm++;
+    zNew.nTerms = zTerm + 1;
 
     // Handle domain violations.
-    zNew.nTerms = zTerm;
     if (mpfr_nan_p(&(zNew.centre)) || mpfr_nan_p(&(zNew.radius))) {
         arpra_set_nan(&zNew);
     }
