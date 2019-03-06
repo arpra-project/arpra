@@ -28,13 +28,14 @@ int main (int argc, char *argv[])
     arpra_range one, x_new, y_new;
     arpra_range a, b, x, y;
     FILE *x_out, *y_out;
-    arpra_uint prec, prec_internal;
+    arpra_prec prec, prec_internal;
     arpra_uint n, i;
+    arpra_uint old_x_nTerms, old_y_nTerms;
 
     n = 500;
     prec = 53;
-    prec_internal = 256;
-
+    //prec_internal = prec;
+    prec_internal = atol(argv[1]);
     arpra_set_default_precision(prec);
     arpra_set_internal_precision(prec_internal);
 
@@ -49,7 +50,8 @@ int main (int argc, char *argv[])
 
     // Set Arpra ranges (almost chaotic)
     arpra_set_d(&one, 1.0);
-    arpra_set_str(&a, "1.057", 10);
+    //arpra_set_str(&a, "1.057", 10);
+    arpra_set_str(&a, argv[2], 10);
     arpra_set_str(&b, "0.3", 10);
     arpra_set_str_rad(&x, "0", "1e-5", 10);
     arpra_set_str_rad(&y, "0", "1e-5", 10);
@@ -64,6 +66,10 @@ int main (int argc, char *argv[])
             printf("%u\n", i);
         }
 
+        // Save current nTerms
+        old_x_nTerms = x.nTerms;
+        old_y_nTerms = y.nTerms;
+
         // Compute new x
         arpra_mul(&x_new, &x, &x);
         arpra_mul(&x_new, &x_new, &a);
@@ -76,6 +82,11 @@ int main (int argc, char *argv[])
         // Update x and y
         arpra_set(&x, &x_new);
         arpra_set(&y, &y_new);
+
+        // Reduce independent terms
+        arpra_reduce_last_n(&x, (x.nTerms - old_x_nTerms));
+        arpra_reduce_last_n(&y, (y.nTerms - old_y_nTerms));
+        printf("x.n: %u  y.n: %u\n", x.nTerms, y.nTerms);
 
         // Write output
         mpfr_out_str(x_out, 10, 40, &(x.true_range.left), MPFR_RNDN);

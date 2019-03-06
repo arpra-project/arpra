@@ -58,7 +58,7 @@ void arpra_set_d_rad (arpra_range *z, const double centre, const double radius)
     // Clear existing deviation terms.
     arpra_clear_terms(z);
 
-    // Store nonzero numerical error term.
+    // Store nonzero rounding error term.
     if (!mpfr_zero_p(&(z->radius))) {
         z->nTerms = 1;
         z->symbols = malloc(sizeof(arpra_uint));

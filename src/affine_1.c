@@ -46,8 +46,8 @@ void arpra_affine_1 (arpra_range *z, const arpra_range *x,
 
     // Initialise vars.
     prec_internal = arpra_get_internal_precision();
-    mpfr_init2(&temp1, prec_internal);
-    mpfr_init2(&temp2, prec_internal);
+    mpfr_init2(&temp1, prec_internal + 8);
+    mpfr_init2(&temp2, prec_internal + 8);
     mpfr_init2(&error, prec_internal);
     arpra_init2(&zNew, z->precision);
     mpfr_set_ui(&error, 0, MPFR_RNDU);
@@ -74,15 +74,9 @@ void arpra_affine_1 (arpra_range *z, const arpra_range *x,
             mpfr_add(&error, &error, &temp1, MPFR_RNDU);
         }
 
-        // Store nonzero deviation terms.
-        if (mpfr_zero_p(&(zNew.deviations[zTerm]))) {
-            mpfr_clear(&(zNew.deviations[zTerm]));
-        }
-        else {
-            mpfr_abs(&temp1, &(zNew.deviations[zTerm]), MPFR_RNDU);
-            mpfr_add(&(zNew.radius), &(zNew.radius), &temp1, MPFR_RNDU);
-            zTerm++;
-        }
+        mpfr_abs(&temp1, &(zNew.deviations[zTerm]), MPFR_RNDU);
+        mpfr_add(&(zNew.radius), &(zNew.radius), &temp1, MPFR_RNDU);
+        zTerm++;
     }
 
     // Add delta error.

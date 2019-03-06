@@ -39,9 +39,9 @@ void arpra_reduce_last_n (arpra_range *z, arpra_uint n)
 
     // Initialise vars.
     prec_internal = arpra_get_internal_precision();
-    mpfr_init2(&temp1, prec_internal);
-    mpfr_init2(&temp2, prec_internal);
-    mpfi_init2(&temp_range, z->precision);
+    mpfr_init2(&temp1, prec_internal + 8);
+    mpfr_init2(&temp2, prec_internal + 8);
+    mpfi_init2(&temp_range, z->precision + 8);
     mpfr_set_ui(&(z->radius), 0, MPFR_RNDU);
     zTerm = z->nTerms - n;
     summands = malloc(n * sizeof(arpra_mpfr *));

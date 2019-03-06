@@ -63,8 +63,8 @@ void arpra_mul (arpra_range *z, const arpra_range *x, const arpra_range *y)
 
     // Initialise vars.
     prec_internal = arpra_get_internal_precision();
-    mpfr_init2(&temp1, prec_internal);
-    mpfr_init2(&temp2, prec_internal);
+    mpfr_init2(&temp1, prec_internal + 8);
+    mpfr_init2(&temp2, prec_internal + 8);
     mpfr_init2(&error, prec_internal);
     mpfi_init2(&ia_range, z->precision);
     arpra_init2(&zNew, z->precision);
@@ -129,15 +129,9 @@ void arpra_mul (arpra_range *z, const arpra_range *x, const arpra_range *y)
             yHasNext = ++yTerm < y->nTerms;
         }
 
-        // Store nonzero deviation terms.
-        if (mpfr_zero_p(&(zNew.deviations[zTerm]))) {
-            mpfr_clear(&(zNew.deviations[zTerm]));
-        }
-        else {
-            mpfr_abs(&temp1, &(zNew.deviations[zTerm]), MPFR_RNDU);
-            mpfr_add(&(zNew.radius), &(zNew.radius), &temp1, MPFR_RNDU);
-            zTerm++;
-        }
+        mpfr_abs(&temp1, &(zNew.deviations[zTerm]), MPFR_RNDU);
+        mpfr_add(&(zNew.radius), &(zNew.radius), &temp1, MPFR_RNDU);
+        zTerm++;
     }
 
 #ifdef ARPRA_TIGHT_MUL
