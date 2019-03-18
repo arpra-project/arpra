@@ -30,7 +30,12 @@ int main (int argc, char *argv[])
     FILE *x_out, *y_out;
     arpra_prec prec, prec_internal;
     arpra_uint n, i;
+
     arpra_uint old_x_nTerms, old_y_nTerms;
+    //arpra_uint reduce_epoch = 1;
+    arpra_uint reduce_epoch = 50;
+    double rel_threshold = 0.3; // try 0.1, 0.2, 0.3
+    arpra_mpfr rt;
 
     n = 500;
     prec = 53;
@@ -47,6 +52,7 @@ int main (int argc, char *argv[])
     arpra_init(&b);
     arpra_init(&x);
     arpra_init(&y);
+    mpfr_init(&rt);
 
     // Set Arpra ranges (almost chaotic)
     arpra_set_d(&one, 1.0);
@@ -55,6 +61,7 @@ int main (int argc, char *argv[])
     arpra_set_str(&b, "0.3", 10);
     arpra_set_str_rad(&x, "0", "1e-5", 10);
     arpra_set_str_rad(&y, "0", "1e-5", 10);
+    mpfr_set_d(&rt, rel_threshold, MPFR_RNDN);
 
     // Open output files
     x_out = fopen("henon_x.dat", "w");
@@ -84,8 +91,15 @@ int main (int argc, char *argv[])
         arpra_set(&y, &y_new);
 
         // Reduce independent terms
-        arpra_reduce_last_n(&x, (x.nTerms - old_x_nTerms));
-        arpra_reduce_last_n(&y, (y.nTerms - old_y_nTerms));
+        //arpra_reduce_last_n(&x, (x.nTerms - old_x_nTerms));
+        //arpra_reduce_last_n(&y, (y.nTerms - old_y_nTerms));
+
+        // Reduce small terms
+        if (i % reduce_epoch == 0) {
+            arpra_reduce_small_rel(&x, &rt);
+            arpra_reduce_small_rel(&y, &rt);
+        }
+
         printf("x.n: %u  y.n: %u\n", x.nTerms, y.nTerms);
 
         // Write output
@@ -107,6 +121,7 @@ int main (int argc, char *argv[])
     arpra_clear(&b);
     arpra_clear(&x);
     arpra_clear(&y);
+    mpfr_clear(&rt);
 
     // Close output files
     fclose(x_out);

@@ -321,11 +321,11 @@ void arpra_sum_recursive (arpra_range *z, arpra_range *x, const arpra_uint n)
     for (i = 0; i < n; i++) {
         mpfr_init2(&(sum_error[i]), prec_internal);
 
-        if (mpfr_sgn(&(x->centre)) >= 0) {
-            mpfr_add(&(sum_error[i]), &(x->centre), &(x->radius), MPFR_RNDU);
+        if (mpfr_sgn(&(x[i]->centre)) >= 0) {
+            mpfr_add(&(sum_error[i]), &(x[i]->centre), &(x[i]->radius), MPFR_RNDU);
         }
         else {
-            mpfr_sub(&(sum_error[i]), &(x->centre), &(x->radius), MPFR_RNDD);
+            mpfr_sub(&(sum_error[i]), &(x[i]->centre), &(x[i]->radius), MPFR_RNDD);
             mpfr_abs(&(sum_error[i]), &(sum_error[i]), MPFR_RNDU);
         }
     }
