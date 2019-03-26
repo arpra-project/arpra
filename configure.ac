@@ -24,7 +24,7 @@ AC_CONFIG_SRCDIR([include/arpra.h])
 AC_CONFIG_HEADER([config.h])
 AC_CONFIG_MACRO_DIR([m4])
 
-AM_INIT_AUTOMAKE([1.13 -Wall -Werror subdir-objects dist-bzip2])
+AM_INIT_AUTOMAKE([1.13 -Wall -Werror subdir-objects dist-zip dist-xz])
 
 # Programs
 AC_PROG_CC
