@@ -33,7 +33,7 @@ void arpra_helper_true_range (arpra_range *z)
     mpfr_init2(&temp2, prec_internal + 8);
     zTerm = z->nTerms - 1;
 
-    // Round range to target precision.
+    // Compute true_range in working precision.
     mpfr_sub(&temp1, &(z->centre), &(z->radius), MPFR_RNDD);
     mpfr_add(&temp2, &(z->centre), &(z->radius), MPFR_RNDU);
     mpfr_set(&(z->true_range.left), &temp1, MPFR_RNDD);

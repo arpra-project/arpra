@@ -106,20 +106,28 @@ void arpra_sqrt (arpra_range *z, const arpra_range *x)
             arpra_affine_1(z, x, &alpha, &gamma, &delta);
 
 #ifdef ARPRA_MIXED_IAAA
+            // Intersect AA and IA ranges.
+            mpfi_intersect(&(z->true_range), &(z->true_range), &ia_range);
+
 #ifdef ARPRA_MIXED_TRIMMED_IAAA
-            // Trim error term if Arpra range fully contains IA range.
-            if (mpfr_less_p(&(z->true_range.left), &(ia_range.left))
-                && mpfr_greater_p(&(z->true_range.right), &(ia_range.right))) {
-                mpfr_sub(&temp1, &(ia_range.left), &(z->true_range.left), MPFR_RNDD);
-                mpfr_sub(&temp2, &(z->true_range.right), &(ia_range.right), MPFR_RNDD);
+            // Trim error term if AA range fully encloses mixed IA/AA range.
+            mpfr_sub(&temp1, &(z->centre), &(z->radius), MPFR_RNDD);
+            mpfr_add(&temp2, &(z->centre), &(z->radius), MPFR_RNDU);
+            if (mpfr_less_p(&temp1, &(z->true_range.left))
+                && mpfr_greater_p(&temp2, &(z->true_range.right))) {
+                mpfr_sub(&temp1, &(z->true_range.left), &temp1, MPFR_RNDD);
+                mpfr_sub(&temp2, &temp2, &(z->true_range.right), MPFR_RNDD);
                 mpfr_min(&temp1, &temp1, &temp2, MPFR_RNDD);
-                mpfr_sub(&(z->deviations[z->nTerms - 1]), &(z->deviations[z->nTerms - 1]), &temp1, MPFR_RNDU);
-                if (mpfr_cmp_ui(&(z->deviations[z->nTerms - 1]), 0) < 0) {
-                    mpfr_set_ui(&(z->deviations[z->nTerms - 1]), 0, MPFR_RNDN);
+                if (mpfr_greater_p(&temp1, &(z->deviations[z->nTerms - 1]))) {
+                    mpfr_sub(&(z->radius), &(z->radius), &(z->deviations[z->nTerms - 1]), MPFR_RNDU);
+                    mpfr_set_ui(&(z->deviations[z->nTerms - 1]), 0, MPFR_RNDZ);
+                }
+                else {
+                    mpfr_sub(&(z->radius), &(z->radius), &temp1, MPFR_RNDU);
+                    mpfr_sub(&(z->deviations[z->nTerms - 1]), &(z->deviations[z->nTerms - 1]), &temp1, MPFR_RNDU);
                 }
             }
 #endif // ARPRA_MIXED_TRIMMED_IAAA
-            mpfi_intersect(&(z->true_range), &(z->true_range), &ia_range);
 #endif // ARPRA_MIXED_IAAA
         }
     }

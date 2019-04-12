@@ -147,23 +147,22 @@ void arpra_sum_exact (arpra_range *z, arpra_range *x, const arpra_uint n)
         zTerm++;
     }
 
-    // Round range to target precision.
-    mpfr_sub(&temp1, &(zNew.centre), &(zNew.radius), MPFR_RNDD);
-    mpfr_sub(&temp1, &temp1, &error, MPFR_RNDD);
-    mpfr_set(&(zNew.true_range.left), &temp1, MPFR_RNDD);
-    mpfr_sub(&temp1, &temp1, &(zNew.true_range.left), MPFR_RNDU);
-    mpfr_add(&temp2, &(zNew.centre), &(zNew.radius), MPFR_RNDU);
-    mpfr_add(&temp2, &temp2, &error, MPFR_RNDU);
-    mpfr_set(&(zNew.true_range.right), &temp2, MPFR_RNDU);
-    mpfr_sub(&temp2, &(zNew.true_range.right), &temp2, MPFR_RNDU);
-    mpfr_max(&temp1, &temp1, &temp2, MPFR_RNDU);
-    mpfr_add(&error, &error, &temp1, MPFR_RNDU);
-
     // Store numerical error term.
     zNew.symbols[zTerm] = arpra_next_symbol();
     zNew.deviations[zTerm] = error;
     mpfr_add(&(zNew.radius), &(zNew.radius), &(zNew.deviations[zTerm]), MPFR_RNDU);
     zNew.nTerms = zTerm + 1;
+
+    // Round range to target precision.
+    mpfr_sub(&temp1, &(zNew.centre), &(zNew.radius), MPFR_RNDD);
+    mpfr_add(&temp2, &(zNew.centre), &(zNew.radius), MPFR_RNDU);
+    mpfr_set(&(zNew.true_range.left), &temp1, MPFR_RNDD);
+    mpfr_set(&(zNew.true_range.right), &temp2, MPFR_RNDU);
+    mpfr_sub(&temp1, &temp1, &(zNew.true_range.left), MPFR_RNDU);
+    mpfr_sub(&temp2, &(zNew.true_range.right), &temp2, MPFR_RNDU);
+    mpfr_max(&temp1, &temp1, &temp2, MPFR_RNDU);
+    mpfr_add(&(zNew.deviations[zNew.nTerms - 1]), &(zNew.deviations[zNew.nTerms - 1]), &temp1, MPFR_RNDU);
+    mpfr_add(&(zNew.radius), &(zNew.radius), &temp1, MPFR_RNDU);
 
     // Handle domain violations.
     if (mpfr_nan_p(&(zNew.centre)) || mpfr_nan_p(&(zNew.radius))) {
@@ -345,23 +344,22 @@ void arpra_sum_recursive (arpra_range *z, arpra_range *x, const arpra_uint n)
      * END: Error bound for recursive summation.
      */
 
-    // Round range to target precision.
-    mpfr_sub(&temp1, &(zNew.centre), &(zNew.radius), MPFR_RNDD);
-    mpfr_sub(&temp1, &temp1, &error, MPFR_RNDD);
-    mpfr_set(&(zNew.true_range.left), &temp1, MPFR_RNDD);
-    mpfr_sub(&temp1, &temp1, &(zNew.true_range.left), MPFR_RNDU);
-    mpfr_add(&temp2, &(zNew.centre), &(zNew.radius), MPFR_RNDU);
-    mpfr_add(&temp2, &temp2, &error, MPFR_RNDU);
-    mpfr_set(&(zNew.true_range.right), &temp2, MPFR_RNDU);
-    mpfr_sub(&temp2, &(zNew.true_range.right), &temp2, MPFR_RNDU);
-    mpfr_max(&temp1, &temp1, &temp2, MPFR_RNDU);
-    mpfr_add(&error, &error, &temp1, MPFR_RNDU);
-
     // Store numerical error term.
     zNew.symbols[zTerm] = arpra_next_symbol();
     zNew.deviations[zTerm] = error;
     mpfr_add(&(zNew.radius), &(zNew.radius), &(zNew.deviations[zTerm]), MPFR_RNDU);
     zNew.nTerms = zTerm + 1;
+
+    // Round range to target precision.
+    mpfr_sub(&temp1, &(zNew.centre), &(zNew.radius), MPFR_RNDD);
+    mpfr_add(&temp2, &(zNew.centre), &(zNew.radius), MPFR_RNDU);
+    mpfr_set(&(zNew.true_range.left), &temp1, MPFR_RNDD);
+    mpfr_set(&(zNew.true_range.right), &temp2, MPFR_RNDU);
+    mpfr_sub(&temp1, &temp1, &(zNew.true_range.left), MPFR_RNDU);
+    mpfr_sub(&temp2, &(zNew.true_range.right), &temp2, MPFR_RNDU);
+    mpfr_max(&temp1, &temp1, &temp2, MPFR_RNDU);
+    mpfr_add(&(zNew.deviations[zNew.nTerms - 1]), &(zNew.deviations[zNew.nTerms - 1]), &temp1, MPFR_RNDU);
+    mpfr_add(&(zNew.radius), &(zNew.radius), &temp1, MPFR_RNDU);
 
     // Handle domain violations.
     if (mpfr_nan_p(&(zNew.centre)) || mpfr_nan_p(&(zNew.radius))) {
