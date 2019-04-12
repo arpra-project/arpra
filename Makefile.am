@@ -37,7 +37,7 @@ lib_libarpra_la_SOURCES = \
 	src/ode_trapezoidal.c src/ode_bogsham32.c src/ode_dopri54.c	\
 	src/ode_dopri87.c src/helper_term.c src/helper_error.c		\
 	src/helper_buffer.c src/helper_mpfr_sum.c src/get_mpfi.c	\
-	src/set_mpfi.c
+	src/set_mpfi.c src/helper_true_range.c
 
 # Testsuite helper library
 check_LTLIBRARIES = tests/libarpra-test.la
