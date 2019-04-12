@@ -93,16 +93,8 @@ void arpra_set (arpra_range *z, const arpra_range *x)
     mpfr_add(&(z->radius), &(z->radius), &(z->deviations[zTerm]), MPFR_RNDU);
     z->nTerms = zTerm + 1;
 
-    // Round range to target precision.
-    mpfr_sub(&temp1, &(z->centre), &(z->radius), MPFR_RNDD);
-    mpfr_add(&temp2, &(z->centre), &(z->radius), MPFR_RNDU);
-    mpfr_set(&(z->true_range.left), &temp1, MPFR_RNDD);
-    mpfr_set(&(z->true_range.right), &temp2, MPFR_RNDU);
-    mpfr_sub(&temp1, &temp1, &(z->true_range.left), MPFR_RNDU);
-    mpfr_sub(&temp2, &(z->true_range.right), &temp2, MPFR_RNDU);
-    mpfr_max(&temp1, &temp1, &temp2, MPFR_RNDU);
-    mpfr_add(&(z->deviations[z->nTerms - 1]), &(z->deviations[z->nTerms - 1]), &temp1, MPFR_RNDU);
-    mpfr_add(&(z->radius), &(z->radius), &temp1, MPFR_RNDU);
+    // Compute true_range in working precision.
+    arpra_helper_true_range(z);
 
 #ifdef ARPRA_MIXED_IAAA
     // Intersect AA and IA ranges.

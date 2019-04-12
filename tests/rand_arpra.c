@@ -73,7 +73,7 @@ void test_rand_arpra (arpra_range *z, test_rand_mode mode_c, test_rand_mode mode
     lo_sum_ptr[zTerm] = &(z->centre);
     hi_sum_ptr[zTerm] = &(z->centre);
 
-    // Round range to target precision.
+    // Compute true_range in working precision.
     if (mpfr_sum(&(z->true_range.left), lo_sum_ptr, (z->nTerms + 1), MPFR_RNDD)) {
         arpra_helper_error_ulp(&temp1, &(z->true_range.left));
     }
