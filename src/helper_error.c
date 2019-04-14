@@ -33,8 +33,8 @@ void arpra_helper_error_ulp (arpra_mpfr *error, const arpra_mpfr *x)
     mpfr_exp_t e;
 
     if (mpfr_zero_p(x)) {
-        // error = nextabove(x)
-        mpfr_set_si(error, 0, MPFR_RNDN);
+        // error = nextabove(0)
+        mpfr_set_si(error, 0, MPFR_RNDZ);
         mpfr_nextabove(error);
     }
     else {
@@ -59,8 +59,8 @@ void arpra_helper_error_half_ulp (arpra_mpfr *error, const arpra_mpfr *x)
     mpfr_exp_t e;
 
     if (mpfr_zero_p(x)) {
-        // error = nextabove(x)
-        mpfr_set_si(error, 0, MPFR_RNDN);
+        // error = nextabove(0)
+        mpfr_set_si(error, 0, MPFR_RNDZ);
         mpfr_nextabove(error);
     }
     else {

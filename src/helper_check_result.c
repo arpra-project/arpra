@@ -24,12 +24,12 @@
 void arpra_helper_check_result (arpra_range *z)
 {
     // Check for NaN range.
-    if (mpfr_nan_p(&(z->centre)) || mpfr_nan_p(&(z->radius))) {
+    if (mpfr_nan_p(&(z->true_range.left)) || mpfr_nan_p(&(z->true_range.right))) {
         arpra_set_nan(z);
     }
 
     // Check for Inf range.
-    else if (mpfr_inf_p(&(z->centre)) || mpfr_inf_p(&(z->radius))) {
+    else if (mpfr_inf_p(&(z->true_range.left)) || mpfr_inf_p(&(z->true_range.right))) {
         arpra_set_inf(z);
     }
 }

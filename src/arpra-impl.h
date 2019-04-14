@@ -51,7 +51,7 @@
 // Min-Range approximation.
 //#define ARPRA_MIN_RANGE 1
 
-// Internal helper functions.
+// Internal auxiliary functions.
 void arpra_helper_error_ulp (arpra_mpfr *error, const arpra_mpfr *x);
 void arpra_helper_error_half_ulp (arpra_mpfr *error, const arpra_mpfr *x);
 void arpra_helper_true_range (arpra_range *z);
