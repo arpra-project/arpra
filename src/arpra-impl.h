@@ -55,6 +55,7 @@
 void arpra_helper_error_ulp (arpra_mpfr *error, const arpra_mpfr *x);
 void arpra_helper_error_half_ulp (arpra_mpfr *error, const arpra_mpfr *x);
 void arpra_helper_true_range (arpra_range *z);
+void arpra_helper_check_result (arpra_range *z);
 int arpra_helper_term (arpra_mpfr *z, const arpra_mpfr *x, const arpra_mpfr *y,
                        const arpra_mpfr *alpha, const arpra_mpfr *beta,
                        const arpra_mpfr *gamma);
