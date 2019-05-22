@@ -1,5 +1,5 @@
 /*
- * symbol.c -- Noise symbol functions.
+ * helper_symbol.c -- Noise symbol functions.
  *
  * Copyright 2016-2018 James Paul Turner.
  *
@@ -23,7 +23,17 @@
 
 static arpra_uint symbol_count = 0;
 
-arpra_uint arpra_next_symbol ()
+arpra_uint arpra_helper_next_symbol ()
 {
     return symbol_count++;
+}
+
+arpra_uint arpra_helper_get_symbol_count ()
+{
+    return symbol_count;
+}
+
+void arpra_helper_set_symbol_count (arpra_uint n)
+{
+    symbol_count = n;
 }

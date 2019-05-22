@@ -36,13 +36,14 @@ typedef struct arpra_range_struct arpra_range;
 // The Arpra range struct.
 struct arpra_range_struct
 {
+    arpra_prec precision;
     arpra_mpfr centre;
     arpra_mpfr radius;
     arpra_mpfi true_range;
     arpra_mpfr *deviations;
     arpra_uint *symbols;
     arpra_uint nTerms;
-    arpra_prec precision;
+    arpra_uint term_memory;
 };
 
 #ifdef __cplusplus
@@ -120,9 +121,6 @@ int arpra_zero_p (const arpra_range *x);
 int arpra_has_zero_p (const arpra_range *x);
 int arpra_has_pos_p (const arpra_range *x);
 int arpra_has_neg_p (const arpra_range *x);
-
-// Get new deviation symbols.
-arpra_uint arpra_next_symbol ();
 
 // Clear temporary data.
 void arpra_clear_buffers ();

@@ -52,6 +52,10 @@
 //#define ARPRA_MIN_RANGE 1
 
 // Internal auxiliary functions.
+void arpra_helper_set_symbol_count (arpra_uint n);
+arpra_uint arpra_helper_get_symbol_count ();
+arpra_uint arpra_helper_next_symbol ();
+void arpra_helper_resize_term_memory (arpra_range *z, arpra_uint n);
 void arpra_helper_error_ulp (arpra_mpfr *error, const arpra_mpfr *x);
 void arpra_helper_error_half_ulp (arpra_mpfr *error, const arpra_mpfr *x);
 void arpra_helper_range (arpra_range *z);
