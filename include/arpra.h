@@ -43,7 +43,6 @@ struct arpra_range_struct
     arpra_mpfr *deviations;
     arpra_uint *symbols;
     arpra_uint nTerms;
-    arpra_uint term_memory;
 };
 
 #ifdef __cplusplus
@@ -52,12 +51,8 @@ extern "C" {
 
 // Initialise and clear.
 void arpra_init (arpra_range *z);
-void arpra_inits (arpra_range *z, ...);
 void arpra_init2 (arpra_range *z, const arpra_prec prec);
-void arpra_inits2 (const arpra_prec prec, arpra_range *z, ...);
 void arpra_clear (arpra_range *z);
-void arpra_clears (arpra_range *z, ...);
-void arpra_clear_terms (arpra_range *z);
 
 // Get from an Arpra range.
 void arpra_get_bounds (arpra_mpfr *lo, arpra_mpfr *hi, const arpra_range *x);
