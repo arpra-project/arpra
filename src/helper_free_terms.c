@@ -1,5 +1,5 @@
 /*
- * helper_resize_term_memory.c -- Resize a range's deviation term arrays.
+ * helper_free_terms.c -- Free deviation term arrays.
  *
  * Copyright 2019 James Paul Turner.
  *
@@ -21,7 +21,7 @@
 
 #include "arpra-impl.h"
 
-void arpra_helper_resize_term_memory (arpra_range *z, arpra_uint n)
+void arpra_helper_free_terms (arpra_range *z)
 {
     arpra_uint zTerm;
 
@@ -29,26 +29,13 @@ void arpra_helper_resize_term_memory (arpra_range *z, arpra_uint n)
     for (zTerm = 0; zTerm < z->nTerms; zTerm++) {
         mpfr_clear(&(z->deviations[zTerm]));
     }
+
+    // Free deviation term arrays.
+    free(z->symbols);
+    free(z->deviations);
+
+    // No dangling pointers.
+    z->symbols = NULL;
+    z->deviations = NULL;
     z->nTerms = 0;
-
-    // Free term memory.
-    if ((n == 0) && (z->term_memory > 0)) {
-        free(z->symbols);
-        free(z->deviations);
-        z->term_memory = 0;
-    }
-
-    // Allocate term memory.
-    else if ((n > 0) && (z->term_memory == 0)) {
-        z->symbols = malloc(n * sizeof(arpra_uint));
-        z->deviations = malloc(n * sizeof(arpra_mpfr));
-        z->term_memory = n;
-    }
-
-    // Reallocate term memory.
-    else if (n != z->term_memory) {
-        z->symbols = realloc(z->symbols, n * sizeof(arpra_uint));
-        z->deviations = realloc(z->deviations, n * sizeof(arpra_mpfr));
-        z->term_memory = n;
-    }
 }
