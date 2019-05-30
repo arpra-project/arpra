@@ -36,8 +36,8 @@ void test_rand_arpra (arpra_range *z, test_rand_mode mode_c, test_rand_mode mode
     mpfr_init2(&error, prec_internal);
     mpfr_set_prec(&(z->centre), prec_internal);
     mpfr_set_prec(&(z->radius), prec_internal);
-    mpfr_set_ui(&error, 0, MPFR_RNDU);
-    mpfr_set_ui(&(z->radius), 0, MPFR_RNDU);
+    mpfr_set_zero(&error, 1);
+    mpfr_set_zero(&(z->radius), 1);
 
     // Set random centre.
     test_rand_mpfr(&(z->centre), z->precision, mode_c);
@@ -54,7 +54,7 @@ void test_rand_arpra (arpra_range *z, test_rand_mode mode_c, test_rand_mode mode
 
     // Set random deviation terms.
     for (zTerm = 0; zTerm < z->nTerms; zTerm++) {
-        z->symbols[zTerm] = arpra_next_symbol();
+        z->symbols[zTerm] = arpra_helper_next_symbol();
         mpfr_init2(&(z->deviations[zTerm]), prec_internal);
         test_rand_mpfr(&(z->deviations[zTerm]), z->precision, mode_d);
         mpfr_abs(&temp1, &(z->deviations[zTerm]), MPFR_RNDU);
@@ -78,20 +78,20 @@ void test_rand_arpra (arpra_range *z, test_rand_mode mode_c, test_rand_mode mode
         arpra_helper_error_ulp(&temp1, &(z->true_range.left));
     }
     else {
-        mpfr_set_ui(&temp1, 0, MPFR_RNDN);
+        mpfr_set_zero(&temp1, 1);
     }
     if (mpfr_sum(&(z->true_range.right), hi_sum_ptr, (z->nTerms + 1), MPFR_RNDU)) {
         arpra_helper_error_ulp(&temp2, &(z->true_range.right));
     }
     else {
-        mpfr_set_ui(&temp2, 0, MPFR_RNDN);
+        mpfr_set_zero(&temp2, 1);
     }
     mpfr_max(&error, &temp1, &temp2, MPFR_RNDU);
     mpfr_add(&(z->radius), &(z->radius), &error, MPFR_RNDU);
 
     // Store nonzero rounding error term.
     if (!mpfr_zero_p(&error) && mpfr_number_p(&error)) {
-        z->symbols[zTerm] = arpra_next_symbol();
+        z->symbols[zTerm] = arpra_helper_next_symbol();
         z->deviations[zTerm] = error;
         z->nTerms++;
     }
@@ -105,13 +105,8 @@ void test_rand_arpra (arpra_range *z, test_rand_mode mode_c, test_rand_mode mode
         free(z->deviations);
     }
 
-    // Handle domain violations.
-    if (mpfr_nan_p(&(z->centre)) || mpfr_nan_p(&(z->radius))) {
-        arpra_set_nan(z);
-    }
-    else if (mpfr_inf_p(&(z->centre)) || mpfr_inf_p(&(z->radius))) {
-        arpra_set_inf(z);
-    }
+    // Check for NaN and Inf.
+    arpra_helper_check_result(z);
 
     // Clear vars.
     mpfr_clear(&temp1);

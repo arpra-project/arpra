@@ -40,7 +40,7 @@ void arpra_reduce_last_n (arpra_range *z, arpra_uint n)
     prec_internal = arpra_get_internal_precision();
     mpfr_init2(&temp1, prec_internal + 8);
     mpfr_init2(&temp2, prec_internal + 8);
-    mpfr_set_ui(&(z->radius), 0, MPFR_RNDU);
+    mpfr_set_zero(&(z->radius), 1);
     zTerm = z->nTerms - n;
     summands = malloc(n * sizeof(arpra_mpfr *));
 
@@ -49,7 +49,7 @@ void arpra_reduce_last_n (arpra_range *z, arpra_uint n)
         mpfr_abs(&(z->deviations[zNext]), &(z->deviations[zNext]), MPFR_RNDN);
         summands[zNext - zTerm] = &(z->deviations[zNext]);
     }
-    z->symbols[zTerm] = arpra_next_symbol();
+    z->symbols[zTerm] = arpra_helper_next_symbol();
     mpfr_sum(&(z->deviations[zTerm]), summands, n, MPFR_RNDU);
 
     // Clear the unused deviation terms.
@@ -76,7 +76,7 @@ void arpra_reduce_last_n (arpra_range *z, arpra_uint n)
         mpfr_min(&temp1, &temp1, &temp2, MPFR_RNDD);
         if (mpfr_greater_p(&temp1, &(z->deviations[z->nTerms - 1]))) {
             mpfr_sub(&(z->radius), &(z->radius), &(z->deviations[z->nTerms - 1]), MPFR_RNDU);
-            mpfr_set_ui(&(z->deviations[z->nTerms - 1]), 0, MPFR_RNDZ);
+            mpfr_set_zero(&(z->deviations[z->nTerms - 1]), 1);
         }
         else {
             mpfr_sub(&(z->radius), &(z->radius), &temp1, MPFR_RNDU);
@@ -85,13 +85,8 @@ void arpra_reduce_last_n (arpra_range *z, arpra_uint n)
     }
 #endif // ARPRA_MIXED_TRIMMED_IAAA
 
-    // Handle domain violations.
-    if (mpfr_nan_p(&(z->radius))) {
-        arpra_set_nan(z);
-    }
-    else if (mpfr_inf_p(&(z->radius))) {
-        arpra_set_inf(z);
-    }
+    // Check for NaN and Inf.
+    arpra_helper_check_result(z);
 
     // Clear vars.
     mpfr_clear(&temp1);
