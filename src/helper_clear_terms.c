@@ -1,5 +1,5 @@
 /*
- * helper_term_arrays.c -- Allocate and free deviation term arrays.
+ * helper_clear_terms.c -- Clear and free deviation term arrays.
  *
  * Copyright 2019 James Paul Turner.
  *
@@ -21,24 +21,14 @@
 
 #include "arpra-impl.h"
 
-void arpra_helper_alloc_term_arrays (arpra_range *z, arpra_uint n)
-{
-    if (n > 0) {
-        z->symbols = malloc(n * sizeof(arpra_uint));
-        z->deviations = malloc(n * sizeof(arpra_mpfr));
-    }
-}
-
-void arpra_helper_free_term_arrays (arpra_range *z)
+void arpra_helper_clear_terms (arpra_range *z)
 {
     arpra_uint zTerm;
 
-    // Clear existing deviation terms.
-    for (zTerm = 0; zTerm < z->nTerms; zTerm++) {
-        mpfr_clear(&(z->deviations[zTerm]));
-    }
-
     if (z->nTerms > 0) {
+        for (zTerm = 0; zTerm < z->nTerms; zTerm++) {
+            mpfr_clear(&(z->deviations[zTerm]));
+        }
         free(z->symbols);
         free(z->deviations);
     }
