@@ -26,5 +26,5 @@ void arpra_clear (arpra_range *z)
     mpfr_clear(&(z->centre));
     mpfr_clear(&(z->radius));
     mpfi_clear(&(z->true_range));
-    arpra_clear_terms(z);
+    arpra_helper_clear_terms(z);
 }
