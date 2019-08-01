@@ -74,12 +74,10 @@ void arpra_set_inf (arpra_range *z);
 void arpra_set_zero (arpra_range *z);
 
 // Affine operations.
-void arpra_affine_1 (arpra_range *z, const arpra_range *x,
-                     const arpra_mpfr *alpha, const arpra_mpfr *gamma,
-                     const arpra_mpfr *delta);
-void arpra_affine_2 (arpra_range *z, const arpra_range *x, const arpra_range *y,
-                     const arpra_mpfr *alpha, const arpra_mpfr *beta,
-                     const arpra_mpfr *gamma, const arpra_mpfr *delta);
+void arpra_affine_1 (arpra_range *y, const arpra_range *x1,
+                     mpfr_srcptr a, mpfr_srcptr c, mpfr_srcptr d);
+void arpra_affine_2 (arpra_range *y, const arpra_range *x1, const arpra_range *x2,
+                     mpfr_srcptr a, mpfr_srcptr b, mpfr_srcptr c, mpfr_srcptr d);
 void arpra_add (arpra_range *z, const arpra_range *x, const arpra_range *y);
 void arpra_sub (arpra_range *z, const arpra_range *x, const arpra_range *y);
 void arpra_neg (arpra_range *z, const arpra_range *x);

@@ -1,7 +1,7 @@
 /*
  * affine_1.c -- Compute a univariate affine function of an Arpra range.
  *
- * Copyright 2016-2018 James Paul Turner.
+ * Copyright 2016-2019 James Paul Turner.
  *
  * This file is part of the Arpra library.
  *
@@ -21,87 +21,53 @@
 
 #include "arpra-impl.h"
 
-void arpra_affine_1 (arpra_range *z, const arpra_range *x,
-                     const arpra_mpfr *alpha, const arpra_mpfr *gamma,
-                     const arpra_mpfr *delta)
+void arpra_affine_1 (arpra_range *y, const arpra_range *x1,
+                     mpfr_srcptr a, mpfr_srcptr c, mpfr_srcptr d)
 {
-    arpra_uint xTerm, zTerm;
-    arpra_mpfr temp1, temp2, error;
-    arpra_range zNew;
+    arpra_uint i;
+    arpra_range yy;
+    mpfr_t temp, error;
     arpra_prec prec_internal;
-
-    // Domain violations:
-    // NaN  =  NaN
-    // Inf  =  Inf
-
-    // Handle domain violations.
-    if (arpra_nan_p(x)) {
-        arpra_set_nan(z);
-        return;
-    }
-    if (arpra_inf_p(x)) {
-        arpra_set_inf(z);
-        return;
-    }
 
     // Initialise vars.
     prec_internal = arpra_get_internal_precision();
-    mpfr_init2(&temp1, prec_internal + 8);
-    mpfr_init2(&temp2, prec_internal + 8);
-    mpfr_init2(&error, prec_internal);
-    arpra_init2(&zNew, z->precision);
-    mpfr_set_ui(&error, 0, MPFR_RNDU);
-    mpfr_set_ui(&(zNew.radius), 0, MPFR_RNDU);
+    arpra_init2(&yy, y->precision);
+    mpfr_init2(temp, prec_internal);
+    mpfr_init2(error, prec_internal);
+    mpfr_set_zero(error, 1);
+    mpfr_set_zero(&(yy.radius), 1);
 
-    // z_0 = (alpha * x_0) + gamma
-    if (mpfr_fma(&(zNew.centre), alpha, &(x->centre), gamma, MPFR_RNDN)) {
-        arpra_helper_error_half_ulp(&temp1, &(zNew.centre));
-        mpfr_add(&error, &error, &temp1, MPFR_RNDU);
-    }
+    // y[0] = (a * x1[0]) + (c)
+    arpra_helper_mpfr_f3(&mpfr_fma, &(yy.centre), a, &(x1->centre), c, MPFR_RNDN, error);
 
     // Allocate memory for all possible deviation terms.
-    zNew.nTerms = x->nTerms + 1;
-    zNew.symbols = malloc(zNew.nTerms * sizeof(arpra_uint));
-    zNew.deviations = malloc(zNew.nTerms * sizeof(arpra_mpfr));
+    yy.nTerms = x1->nTerms + 1;
+    yy.symbols = malloc(yy.nTerms * sizeof(arpra_uint));
+    yy.deviations = malloc(yy.nTerms * sizeof(arpra_mpfr));
 
-    for (xTerm = 0, zTerm = 0; xTerm < x->nTerms; xTerm++) {
-        zNew.symbols[zTerm] = x->symbols[xTerm];
-        mpfr_init2(&(zNew.deviations[zTerm]), prec_internal);
+    for (i = 0; i < x1->nTerms; i++) {
+        mpfr_init2(&(yy.deviations[i]), prec_internal);
 
-        // z_i = (alpha * x_i)
-        if (mpfr_mul(&(zNew.deviations[zTerm]), alpha, &(x->deviations[xTerm]), MPFR_RNDN)) {
-            arpra_helper_error_half_ulp(&temp1, &(zNew.deviations[zTerm]));
-            mpfr_add(&error, &error, &temp1, MPFR_RNDU);
-        }
+        // y[i] = (a * x1[i])
+        yy.symbols[i] = x1->symbols[i];
+        arpra_helper_mpfr_f2(&mpfr_mul, &(yy.deviations[i]), a, &(x1->deviations[i]), MPFR_RNDN, error);
 
-        mpfr_abs(&temp1, &(zNew.deviations[zTerm]), MPFR_RNDU);
-        mpfr_add(&(zNew.radius), &(zNew.radius), &temp1, MPFR_RNDU);
-        zTerm++;
+        // Add term to radius.
+        mpfr_abs(temp, &(yy.deviations[i]), MPFR_RNDU);
+        mpfr_add(&(yy.radius), &(yy.radius), temp, MPFR_RNDU);
     }
 
-    // Add delta error.
-    mpfr_add(&error, &error, delta, MPFR_RNDU);
+    // Add d to error.
+    mpfr_add(error, error, d, MPFR_RNDU);
 
     // Store numerical error term.
-    zNew.symbols[zTerm] = arpra_next_symbol();
-    zNew.deviations[zTerm] = error;
-    mpfr_add(&(zNew.radius), &(zNew.radius), &(zNew.deviations[zTerm]), MPFR_RNDU);
-    zNew.nTerms = zTerm + 1;
+    yy.symbols[i] = arpra_helper_next_symbol();
+    yy.deviations[i] = *error;
+    mpfr_add(&(yy.radius), &(yy.radius), &(yy.deviations[i]), MPFR_RNDU);
+    yy.nTerms = i + 1;
 
-    // Compute true_range in working precision.
-    arpra_helper_true_range(&zNew);
-
-    // Handle domain violations.
-    if (mpfr_nan_p(&(zNew.centre)) || mpfr_nan_p(&(zNew.radius))) {
-        arpra_set_nan(&zNew);
-    }
-    else if (mpfr_inf_p(&(zNew.centre)) || mpfr_inf_p(&(zNew.radius))) {
-        arpra_set_inf(&zNew);
-    }
-
-    // Clear vars, and set z.
-    mpfr_clear(&temp1);
-    mpfr_clear(&temp2);
-    arpra_clear(z);
-    *z = zNew;
+    // Clear vars, and set y.
+    mpfr_clear(temp);
+    arpra_clear(y);
+    *y = yy;
 }
