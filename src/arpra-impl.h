@@ -52,6 +52,8 @@
 //#define ARPRA_MIN_RANGE 1
 
 // Internal auxiliary functions.
+arpra_mpfr **arpra_helper_buffer_mpfr_ptr (arpra_uint n);
+arpra_mpfr *arpra_helper_buffer_mpfr (arpra_uint n);
 void arpra_helper_clear_terms (arpra_range *z);
 void arpra_helper_set_symbol_count (arpra_uint n);
 arpra_uint arpra_helper_get_symbol_count ();
@@ -61,14 +63,24 @@ void arpra_helper_error_half_ulp (arpra_mpfr *error, const arpra_mpfr *x);
 void arpra_helper_range (arpra_range *z);
 void arpra_helper_range_rounded (arpra_range *z);
 void arpra_helper_check_result (arpra_range *z);
-int arpra_helper_term (arpra_mpfr *z, const arpra_mpfr *x, const arpra_mpfr *y,
-                       const arpra_mpfr *alpha, const arpra_mpfr *beta,
-                       const arpra_mpfr *gamma);
+void arpra_helper_mpfr_f1 (int (*f) (mpfr_ptr, mpfr_srcptr, mpfr_rnd_t),
+                           mpfr_ptr y, mpfr_srcptr x1, mpfr_rnd_t rnd_mode,
+                           mpfr_ptr rnd_err);
+void arpra_helper_mpfr_f2 (int (*f) (mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mpfr_rnd_t),
+                           mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2, mpfr_rnd_t rnd_mode,
+                           mpfr_ptr rnd_err);
+void arpra_helper_mpfr_f3 (int (*f) (mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mpfr_srcptr, mpfr_rnd_t),
+                           mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2, mpfr_srcptr x3, mpfr_rnd_t rnd_mode,
+                           mpfr_ptr rnd_err);
+void arpra_helper_mpfr_fmma (mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2,
+                             mpfr_srcptr a, mpfr_srcptr b,
+                             mpfr_ptr rnd_err);
+void arpra_helper_mpfr_fmmaa (mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2,
+                              mpfr_srcptr a, mpfr_srcptr b, mpfr_srcptr c,
+                              mpfr_ptr rnd_err);
 int arpra_helper_mpfr_sum (arpra_mpfr *z, arpra_mpfr *x,
                            const arpra_uint n, const mpfr_rnd_t rnd);
 int arpra_helper_mpfr_sumabs (arpra_mpfr *z, arpra_mpfr *x,
                               const arpra_uint n, const mpfr_rnd_t rnd);
-arpra_mpfr **arpra_helper_buffer_mpfr_ptr (arpra_uint n);
-arpra_mpfr *arpra_helper_buffer_mpfr (arpra_uint n);
 
 #endif // ARPRA_IMPL_H
