@@ -120,7 +120,7 @@ void arpra_sqrt (arpra_range *z, const arpra_range *x)
                 mpfr_min(&temp1, &temp1, &temp2, MPFR_RNDD);
                 if (mpfr_greater_p(&temp1, &(z->deviations[z->nTerms - 1]))) {
                     mpfr_sub(&(z->radius), &(z->radius), &(z->deviations[z->nTerms - 1]), MPFR_RNDU);
-                    mpfr_set_ui(&(z->deviations[z->nTerms - 1]), 0, MPFR_RNDZ);
+                    mpfr_set_zero(&(z->deviations[z->nTerms - 1]), 1);
                 }
                 else {
                     mpfr_sub(&(z->radius), &(z->radius), &temp1, MPFR_RNDU);
