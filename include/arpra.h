@@ -1,7 +1,7 @@
 /*
  * arpra.h -- Arpra main public header.
  *
- * Copyright 2016-2018 James Paul Turner.
+ * Copyright 2016-2019 James Paul Turner.
  *
  * This file is part of the Arpra library.
  *
@@ -91,6 +91,12 @@ void arpra_sqrt (arpra_range *z, const arpra_range *x);
 void arpra_exp (arpra_range *z, const arpra_range *x);
 void arpra_log (arpra_range *z, const arpra_range *x);
 void arpra_inv (arpra_range *z, const arpra_range *x);
+
+// MPFR wrapper functions.
+void arpra_mpfr_f1 (int (*f) (mpfr_ptr, mpfr_srcptr, mpfr_rnd_t),
+                    arpra_range *y, mpfr_srcptr x1);
+void arpra_mpfr_f2 (int (*f) (mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mpfr_rnd_t),
+                    arpra_range *y, mpfr_srcptr x1, mpfr_srcptr x2);
 
 // Numerical precision.
 arpra_prec arpra_get_precision (const arpra_range *x);

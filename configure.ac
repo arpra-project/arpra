@@ -1,4 +1,4 @@
-# Copyright 2016-2018 James Paul Turner.
+# Copyright 2016-2019 James Paul Turner.
 #
 # This file is part of the Arpra library.
 # Process this file with autoconf to produce a configure script.

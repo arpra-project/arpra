@@ -1,4 +1,4 @@
-# Copyright 2016-2018 James Paul Turner.
+# Copyright 2016-2019 James Paul Turner.
 #
 # This file is part of the Arpra library.
 # Process this file with automake to produce a Makefile.in file.
@@ -37,8 +37,8 @@ lib_libarpra_la_SOURCES = \
 	src/ode_trapezoidal.c src/ode_bogsham32.c src/ode_dopri54.c	\
 	src/ode_dopri87.c src/helper_mpfr.c src/helper_buffer.c		\
 	src/helper_mpfr_sum.c src/get_mpfi.c src/helper_range.c		\
-	src/helper_check_result.c src/set_mpfi.c			\
-	src/helper_clear_terms.c
+	src/helper_check_result.c src/set_mpfi.c src/mpfr_f1.c		\
+	src/mpfr_f2.c src/helper_clear_terms.c
 
 # Testsuite helper library
 check_LTLIBRARIES = tests/libarpra-test.la
