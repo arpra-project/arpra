@@ -40,10 +40,9 @@ void arpra_affine_1 (arpra_range *y, const arpra_range *x1,
     // y[0] = (a * x1[0]) + (c)
     arpra_helper_mpfr_f3(&mpfr_fma, &(yy.centre), a, &(x1->centre), c, MPFR_RNDN, error);
 
-    // Allocate memory for all possible deviation terms.
-    yy.nTerms = x1->nTerms + 1;
-    yy.symbols = malloc(yy.nTerms * sizeof(arpra_uint));
-    yy.deviations = malloc(yy.nTerms * sizeof(arpra_mpfr));
+    // Allocate memory for deviation terms.
+    yy.symbols = malloc((x1->nTerms + 1) * sizeof(arpra_uint));
+    yy.deviations = malloc((x1->nTerms + 1) * sizeof(arpra_mpfr));
 
     for (i = 0; i < x1->nTerms; i++) {
         mpfr_init2(&(yy.deviations[i]), prec_internal);
