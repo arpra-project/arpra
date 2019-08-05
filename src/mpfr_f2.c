@@ -1,5 +1,5 @@
 /*
- * mpfr_function_1.c -- Compute Arpra range from univariate MPFR functions.
+ * mpfr_f2.c -- Compute Arpra ranges with bivariate MPFR functions.
  *
  * Copyright 2019 James Paul Turner.
  *
@@ -21,42 +21,40 @@
 
 #include "arpra-impl.h"
 
-void arpra_mpfr_function_1 (arpra_range *z, const arpra_mpfr *x,
-                            int (*f) (mpfr_ptr, mpfr_srcptr, mpfr_rnd_t))
+void arpra_mpfr_f2 (int (*f) (mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mpfr_rnd_t),
+                    arpra_range *y, mpfr_srcptr x1, mpfr_srcptr x2)
 {
-    arpra_mpfr error;
-    arpra_range zNew;
+    arpra_range yy;
+    mpfr_t error;
     arpra_prec prec_internal;
 
     // Initialise vars.
     prec_internal = arpra_get_internal_precision();
-    mpfr_init2(&error, prec_internal);
-    arpra_init2(&zNew, z->precision);
-    mpfr_set_zero(&error, 1);
-    mpfr_set_zero(&(zNew.radius), 1);
+    arpra_init2(&yy, y->precision);
+    mpfr_init2(error, prec_internal);
+    mpfr_set_zero(error, 1);
+    mpfr_set_zero(&(yy.radius), 1);
 
-    // z_0 = f(x)
-    if (f(&(zNew.centre), &(x->centre), MPFR_RNDN)) {
-        arpra_helper_error_half_ulp(&error, &(zNew.centre));
-    }
+    // y[0] = f(x1, x2)
+    arpra_helper_mpfr_f2(f, &(yy.centre), x1, x2, MPFR_RNDN, error);
 
-    // Allocate memory for deviation term.
-    zNew.symbols = malloc(sizeof(arpra_uint));
-    zNew.deviations = malloc(sizeof(arpra_mpfr));
+    // Allocate memory for deviation terms.
+    yy.symbols = malloc(sizeof(arpra_uint));
+    yy.deviations = malloc(sizeof(arpra_mpfr));
 
     // Store numerical error term.
-    zNew.symbols[0] = arpra_helper_next_symbol();
-    zNew.deviations[0] = error;
-    mpfr_add(&(zNew.radius), &(zNew.radius), &(zNew.deviations[0]), MPFR_RNDU);
-    zNew.nTerms = 1;
+    yy.symbols[0] = arpra_helper_next_symbol();
+    yy.deviations[0] = *error;
+    mpfr_add(&(yy.radius), &(yy.radius), &(yy.deviations[0]), MPFR_RNDU);
+    yy.nTerms = 1;
 
     // Compute true_range, and add rounding error.
-    arpra_helper_range_rounded(&zNew);
+    arpra_helper_range_rounded(&yy);
 
     // Check for NaN and Inf.
-    arpra_helper_check_result(&zNew);
+    arpra_helper_check_result(&yy);
 
-    // Clear vars, and set z.
-    arpra_clear(z);
-    *z = zNew;
+    // Clear vars, and set y.
+    arpra_clear(y);
+    *y = yy;
 }
