@@ -22,7 +22,7 @@
 #include "arpra-impl.h"
 
 void arpra_affine_1 (arpra_range *y, const arpra_range *x1,
-                     mpfr_srcptr a, mpfr_srcptr c, mpfr_srcptr d)
+                     mpfr_srcptr alpha, mpfr_srcptr gamma, mpfr_srcptr delta)
 {
     arpra_uint i;
     arpra_range yy;
@@ -37,8 +37,8 @@ void arpra_affine_1 (arpra_range *y, const arpra_range *x1,
     mpfr_set_zero(error, 1);
     mpfr_set_zero(&(yy.radius), 1);
 
-    // y[0] = (a * x1[0]) + (c)
-    arpra_helper_mpfr_f3(&mpfr_fma, &(yy.centre), a, &(x1->centre), c, MPFR_RNDN, error);
+    // y[0] = (alpha * x1[0]) + (gamma)
+    arpra_helper_mpfr_f3(&mpfr_fma, &(yy.centre), alpha, &(x1->centre), gamma, MPFR_RNDN, error);
 
     // Allocate memory for deviation terms.
     yy.symbols = malloc((x1->nTerms + 1) * sizeof(arpra_uint));
@@ -47,17 +47,17 @@ void arpra_affine_1 (arpra_range *y, const arpra_range *x1,
     for (i = 0; i < x1->nTerms; i++) {
         mpfr_init2(&(yy.deviations[i]), prec_internal);
 
-        // y[i] = (a * x1[i])
+        // y[i] = (alpha * x1[i])
         yy.symbols[i] = x1->symbols[i];
-        arpra_helper_mpfr_f2(&mpfr_mul, &(yy.deviations[i]), a, &(x1->deviations[i]), MPFR_RNDN, error);
+        arpra_helper_mpfr_f2(&mpfr_mul, &(yy.deviations[i]), alpha, &(x1->deviations[i]), MPFR_RNDN, error);
 
         // Add term to radius.
         mpfr_abs(temp, &(yy.deviations[i]), MPFR_RNDU);
         mpfr_add(&(yy.radius), &(yy.radius), temp, MPFR_RNDU);
     }
 
-    // Add d to error.
-    mpfr_add(error, error, d, MPFR_RNDU);
+    // Add delta to error.
+    mpfr_add(error, error, delta, MPFR_RNDU);
 
     // Store numerical error term.
     yy.symbols[i] = arpra_helper_next_symbol();
