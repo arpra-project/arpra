@@ -38,7 +38,7 @@ void arpra_affine_2 (arpra_range *y, const arpra_range *x1, const arpra_range *x
     mpfr_set_zero(&(yy.radius), 1);
 
     // y[0] = (alpha * x1[0]) + (beta * x2[0]) + (gamma)
-    arpra_helper_mpfr_fmmaa(&(yy.centre), &(x1->centre), &(x2->centre), alpha, beta, gamma, error);
+    arpra_helper_mpfr_fmmaa(&(yy.centre), alpha, &(x1->centre), beta, &(x2->centre), gamma, error);
 
     // Allocate memory for deviation terms.
     yy.symbols = malloc((x1->nTerms + x2->nTerms + 1) * sizeof(arpra_uint));
@@ -62,7 +62,7 @@ void arpra_affine_2 (arpra_range *y, const arpra_range *x1, const arpra_range *x
         else {
             // y[i] = (alpha * x1[i]) + (beta * x2[i])
             yy.symbols[i] = x1->symbols[ix1];
-            arpra_helper_mpfr_fmma(&(yy.deviations[i]), &(x1->deviations[ix1]), &(x2->deviations[ix2]), alpha, beta, error);
+            arpra_helper_mpfr_fmma(&(yy.deviations[i]), alpha, &(x1->deviations[ix1]), beta, &(x2->deviations[ix2]), error);
             ix1++;
             ix2++;
         }

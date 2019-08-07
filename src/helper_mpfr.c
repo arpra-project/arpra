@@ -95,53 +95,53 @@ void arpra_helper_mpfr_f3 (int (*f) (mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mpfr_sr
     }
 }
 
-void arpra_helper_mpfr_fmma (mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2,
-                             mpfr_srcptr a, mpfr_srcptr b,
-                             mpfr_ptr rnd_err)
+void arpra_helper_mpfr_fmma (mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2, mpfr_srcptr x3,
+                             mpfr_srcptr x4, mpfr_ptr rnd_err)
 {
-    mpfr_t ax1, bx2;
+    mpfr_t x1x2, x3x4;
 
-    // a * x1 needs precision prec(a) + prec(x1) to be exact.
-    mpfr_init2(ax1, (mpfr_get_prec(a) + mpfr_get_prec(x1)));
-    mpfr_mul(ax1, a, x1, MPFR_RNDN);
+    // x1 * x2 needs precision prec(x1) + prec(x2) to be exact.
+    mpfr_init2(x1x2, (mpfr_get_prec(x1) + mpfr_get_prec(x2)));
+    mpfr_mul(x1x2, x1, x2, MPFR_RNDN);
 
-    // b * x2 needs precision prec(b) + prec(x2) to be exact.
-    mpfr_init2(bx2, (mpfr_get_prec(b) + mpfr_get_prec(x2)));
-    mpfr_mul(bx2, b, x2, MPFR_RNDN);
+    // x3 * x4 needs precision prec(x3) + prec(x4) to be exact.
+    mpfr_init2(x3x4, (mpfr_get_prec(x3) + mpfr_get_prec(x4)));
+    mpfr_mul(x3x4, x3, x4, MPFR_RNDN);
 
-    // y = (a * x1) + (b * x2)
-    if (mpfr_add(y, ax1, bx2, MPFR_RNDN)) {
+    // y = (x1 * x2) + (x3 * x4)
+    if (mpfr_add(y, x1x2, x3x4, MPFR_RNDN)) {
         arpra_helper_rnd_err(y, MPFR_RNDN, rnd_err);
     }
 
     // Clear temp vars.
-    mpfr_clear(ax1);
-    mpfr_clear(bx2);
+    mpfr_clear(x1x2);
+    mpfr_clear(x3x4);
 }
 
-void arpra_helper_mpfr_fmmaa (mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2,
-                              mpfr_srcptr a, mpfr_srcptr b, mpfr_srcptr c,
-                              mpfr_ptr rnd_err)
+void arpra_helper_mpfr_fmmaa (mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2, mpfr_srcptr x3,
+                              mpfr_srcptr x4, mpfr_srcptr x5, mpfr_ptr rnd_err)
 {
-    mpfr_t ax1, bx2;
+    mpfr_t x1x2, x3x4;
 
-    // a * x1 needs precision prec(a) + prec(x1) to be exact.
-    mpfr_init2(ax1, (mpfr_get_prec(a) + mpfr_get_prec(x1)));
-    mpfr_mul(ax1, a, x1, MPFR_RNDN);
+    // x1 * x2 needs precision prec(x1) + prec(x2) to be exact.
+    mpfr_init2(x1x2, (mpfr_get_prec(x1) + mpfr_get_prec(x2)));
+    mpfr_mul(x1x2, x1, x2, MPFR_RNDN);
 
-    // b * x2 needs precision prec(b) + prec(x2) to be exact.
-    mpfr_init2(bx2, (mpfr_get_prec(b) + mpfr_get_prec(x2)));
-    mpfr_mul(bx2, b, x2, MPFR_RNDN);
+    // x3 * x4 needs precision prec(x3) + prec(x4) to be exact.
+    mpfr_init2(x3x4, (mpfr_get_prec(x3) + mpfr_get_prec(x4)));
+    mpfr_mul(x3x4, x3, x4, MPFR_RNDN);
 
-    // Newer MPFR 4 syntax
-    //if (mpfr_sum(y, (mpfr_ptr[3]) {ax1, bx2, c}, 3, MPFR_RNDN)) {
-
-    // y = (a * x1) + (b * x2) + (c)
-    if (mpfr_sum(y, (mpfr_ptr[3]) {ax1, bx2, (mpfr_ptr) c}, 3, MPFR_RNDN)) {
+    // y = (x1 * x2) + (x3 * x4) + (x5)
+    if (mpfr_sum(y, (mpfr_ptr[3]) {x1x2, x3x4, (mpfr_ptr) x5}, 3, MPFR_RNDN)) {
         arpra_helper_rnd_err(y, MPFR_RNDN, rnd_err);
     }
 
+    // Newer MPFR 4 syntax
+    //if (mpfr_sum(y, (mpfr_ptr[3]) {x1x2, x3x4, x5}, 3, MPFR_RNDN)) {
+    //    arpra_helper_rnd_err(y, MPFR_RNDN, rnd_err);
+    //}
+
     // Clear temp vars.
-    mpfr_clear(ax1);
-    mpfr_clear(bx2);
+    mpfr_clear(x1x2);
+    mpfr_clear(x3x4);
 }

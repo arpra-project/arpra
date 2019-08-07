@@ -70,12 +70,10 @@ void arpra_helper_mpfr_f2 (int (*f) (mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mpfr_rn
 void arpra_helper_mpfr_f3 (int (*f) (mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mpfr_srcptr, mpfr_rnd_t),
                            mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2, mpfr_srcptr x3, mpfr_rnd_t rnd_mode,
                            mpfr_ptr rnd_err);
-void arpra_helper_mpfr_fmma (mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2,
-                             mpfr_srcptr a, mpfr_srcptr b,
-                             mpfr_ptr rnd_err);
-void arpra_helper_mpfr_fmmaa (mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2,
-                              mpfr_srcptr a, mpfr_srcptr b, mpfr_srcptr c,
-                              mpfr_ptr rnd_err);
+void arpra_helper_mpfr_fmma (mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2, mpfr_srcptr x3,
+                             mpfr_srcptr x4, mpfr_ptr rnd_err);
+void arpra_helper_mpfr_fmmaa (mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2, mpfr_srcptr x3,
+                              mpfr_srcptr x4, mpfr_srcptr x5, mpfr_ptr rnd_err);
 int arpra_helper_mpfr_sum (arpra_mpfr *z, arpra_mpfr *x,
                            const arpra_uint n, const mpfr_rnd_t rnd);
 int arpra_helper_mpfr_sumabs (arpra_mpfr *z, arpra_mpfr *x,
