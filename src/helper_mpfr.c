@@ -137,6 +137,7 @@ void arpra_helper_mpfr_fmmaa (mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2, mpfr_s
     }
 
     // Newer MPFR 4 syntax
+    // y = (x1 * x2) + (x3 * x4) + (x5)
     //if (mpfr_sum(y, (mpfr_ptr[3]) {x1x2, x3x4, x5}, 3, MPFR_RNDN)) {
     //    arpra_helper_rnd_err(y, MPFR_RNDN, rnd_err);
     //}
