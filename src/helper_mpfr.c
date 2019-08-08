@@ -84,6 +84,14 @@ void arpra_helper_mpfr_f2 (mpfr_ptr err, int (*f) (mpfr_ptr, mpfr_srcptr, mpfr_s
     }
 }
 
+void arpra_helper_mpfr_ui_f2 (mpfr_ptr err, int (*f) (mpfr_ptr, unsigned long, mpfr_srcptr, mpfr_rnd_t),
+                              mpfr_ptr y, unsigned long x1, mpfr_srcptr x2, mpfr_rnd_t rnd)
+{
+    if (f(y, x1, x2, rnd)) {
+        arpra_helper_rnd_err(err, y, rnd);
+    }
+}
+
 void arpra_helper_mpfr_f3 (mpfr_ptr err, int (*f) (mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mpfr_srcptr, mpfr_rnd_t),
                            mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2, mpfr_srcptr x3, mpfr_rnd_t rnd)
 {
