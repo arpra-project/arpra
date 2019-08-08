@@ -29,7 +29,7 @@
  * IEEE-754 floating-point numbers, since MPFR significands are in [0.5, 1.0).
  */
 
-static void arpra_helper_rnd_err (mpfr_srcptr y, mpfr_rnd_t rnd_mode, mpfr_ptr rnd_err)
+static void arpra_helper_rnd_err (mpfr_ptr err, mpfr_srcptr y, mpfr_rnd_t rnd)
 {
     mpfr_t temp;
     mpfr_exp_t e;
@@ -51,7 +51,7 @@ static void arpra_helper_rnd_err (mpfr_srcptr y, mpfr_rnd_t rnd_mode, mpfr_ptr r
         p = mpfr_get_prec(y);
 
         // Nearest or directed rounding?
-        if ((rnd_mode == MPFR_RNDN) || (rnd_mode == MPFR_RNDNA)) {
+        if ((rnd == MPFR_RNDN) || (rnd == MPFR_RNDNA)) {
             // Rounding error is 0.5 ULP(y) = 2^(e-p-1).
             mpfr_set_si_2exp(temp, 1, (e - p - 1), MPFR_RNDU);
         }
@@ -62,41 +62,38 @@ static void arpra_helper_rnd_err (mpfr_srcptr y, mpfr_rnd_t rnd_mode, mpfr_ptr r
     }
 
     // Add rounding error to total.
-    mpfr_add(rnd_err, rnd_err, temp, MPFR_RNDU);
+    mpfr_add(err, err, temp, MPFR_RNDU);
 
     // Clear vars.
     mpfr_clear(temp);
 }
 
-void arpra_helper_mpfr_f1 (int (*f) (mpfr_ptr, mpfr_srcptr, mpfr_rnd_t),
-                           mpfr_ptr y, mpfr_srcptr x1, mpfr_rnd_t rnd_mode,
-                           mpfr_ptr rnd_err)
+void arpra_helper_mpfr_f1 (mpfr_ptr err, int (*f) (mpfr_ptr, mpfr_srcptr, mpfr_rnd_t),
+                           mpfr_ptr y, mpfr_srcptr x1, mpfr_rnd_t rnd)
 {
-    if (f(y, x1, rnd_mode)) {
-        arpra_helper_rnd_err(y, rnd_mode, rnd_err);
+    if (f(y, x1, rnd)) {
+        arpra_helper_rnd_err(err, y, rnd);
     }
 }
 
-void arpra_helper_mpfr_f2 (int (*f) (mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mpfr_rnd_t),
-                           mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2, mpfr_rnd_t rnd_mode,
-                           mpfr_ptr rnd_err)
+void arpra_helper_mpfr_f2 (mpfr_ptr err, int (*f) (mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mpfr_rnd_t),
+                           mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2, mpfr_rnd_t rnd)
 {
-    if (f(y, x1, x2, rnd_mode)) {
-        arpra_helper_rnd_err(y, rnd_mode, rnd_err);
+    if (f(y, x1, x2, rnd)) {
+        arpra_helper_rnd_err(err, y, rnd);
     }
 }
 
-void arpra_helper_mpfr_f3 (int (*f) (mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mpfr_srcptr, mpfr_rnd_t),
-                           mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2, mpfr_srcptr x3, mpfr_rnd_t rnd_mode,
-                           mpfr_ptr rnd_err)
+void arpra_helper_mpfr_f3 (mpfr_ptr err, int (*f) (mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mpfr_srcptr, mpfr_rnd_t),
+                           mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2, mpfr_srcptr x3, mpfr_rnd_t rnd)
 {
-    if (f(y, x1, x2, x3, rnd_mode)) {
-        arpra_helper_rnd_err(y, rnd_mode, rnd_err);
+    if (f(y, x1, x2, x3, rnd)) {
+        arpra_helper_rnd_err(err, y, rnd);
     }
 }
 
-void arpra_helper_mpfr_fmma (mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2, mpfr_srcptr x3,
-                             mpfr_srcptr x4, mpfr_ptr rnd_err)
+void arpra_helper_mpfr_fmma (mpfr_ptr err, mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2,
+                             mpfr_srcptr x3, mpfr_srcptr x4, mpfr_rnd_t rnd)
 {
     mpfr_t x1x2, x3x4;
 
@@ -109,8 +106,8 @@ void arpra_helper_mpfr_fmma (mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2, mpfr_sr
     mpfr_mul(x3x4, x3, x4, MPFR_RNDN);
 
     // y = (x1 * x2) + (x3 * x4)
-    if (mpfr_add(y, x1x2, x3x4, MPFR_RNDN)) {
-        arpra_helper_rnd_err(y, MPFR_RNDN, rnd_err);
+    if (mpfr_add(y, x1x2, x3x4, rnd)) {
+        arpra_helper_rnd_err(err, y, rnd);
     }
 
     // Clear temp vars.
@@ -118,8 +115,8 @@ void arpra_helper_mpfr_fmma (mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2, mpfr_sr
     mpfr_clear(x3x4);
 }
 
-void arpra_helper_mpfr_fmmaa (mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2, mpfr_srcptr x3,
-                              mpfr_srcptr x4, mpfr_srcptr x5, mpfr_ptr rnd_err)
+void arpra_helper_mpfr_fmmaa (mpfr_ptr err, mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2,
+                              mpfr_srcptr x3, mpfr_srcptr x4, mpfr_srcptr x5, mpfr_rnd_t rnd)
 {
     mpfr_t x1x2, x3x4;
 
@@ -132,14 +129,14 @@ void arpra_helper_mpfr_fmmaa (mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2, mpfr_s
     mpfr_mul(x3x4, x3, x4, MPFR_RNDN);
 
     // y = (x1 * x2) + (x3 * x4) + (x5)
-    if (mpfr_sum(y, (mpfr_ptr[3]) {x1x2, x3x4, (mpfr_ptr) x5}, 3, MPFR_RNDN)) {
-        arpra_helper_rnd_err(y, MPFR_RNDN, rnd_err);
+    if (mpfr_sum(y, (mpfr_ptr[3]) {x1x2, x3x4, (mpfr_ptr) x5}, 3, rnd)) {
+        arpra_helper_rnd_err(err, y, rnd);
     }
 
     // Newer MPFR 4 syntax
     // y = (x1 * x2) + (x3 * x4) + (x5)
-    //if (mpfr_sum(y, (mpfr_ptr[3]) {x1x2, x3x4, x5}, 3, MPFR_RNDN)) {
-    //    arpra_helper_rnd_err(y, MPFR_RNDN, rnd_err);
+    //if (mpfr_sum(y, (mpfr_ptr[3]) {x1x2, x3x4, x5}, 3, rnd)) {
+    //    arpra_helper_rnd_err(err, y, rnd);
     //}
 
     // Clear temp vars.

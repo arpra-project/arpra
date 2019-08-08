@@ -36,7 +36,7 @@ void arpra_mpfr_f2 (int (*f) (mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mpfr_rnd_t),
     mpfr_set_zero(&(yy.radius), 1);
 
     // y[0] = f(x1, x2)
-    arpra_helper_mpfr_f2(f, &(yy.centre), x1, x2, MPFR_RNDN, error);
+    arpra_helper_mpfr_f2(error, f, &(yy.centre), x1, x2, MPFR_RNDN);
 
     // Allocate memory for deviation terms.
     yy.symbols = malloc(sizeof(arpra_uint));
