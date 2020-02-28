@@ -1,7 +1,7 @@
 /*
  * sqrt.c -- Compute the square root of an Arpra range.
  *
- * Copyright 2017-2018 James Paul Turner.
+ * Copyright 2017-2020 James Paul Turner.
  *
  * This file is part of the Arpra library.
  *
@@ -25,122 +25,119 @@
  * This affine square root function uses a Chebyshev linear approximation.
  */
 
-void arpra_sqrt (arpra_range *z, const arpra_range *x)
+void arpra_sqrt (arpra_range *y, const arpra_range *x1)
 {
-    arpra_mpfr alpha, gamma, delta;
-    arpra_mpfr temp1, temp2, da, db, du;
-    arpra_mpfi ia_range, x_range;
+    mpfi_t ia_range;
+    mpfr_t alpha, gamma, delta;
+    mpfr_t diff1, diff2, diff3;
+    mpfr_t temp1, temp2;
     arpra_prec prec_internal;
+
+    // Domain violations:
+    // sqrt(NaN)   = (NaN)
+    // sqrt(Inf)   = (NaN)
+    // sqrt(x < 0) = (NaN)
+
+    // Handle domain violations.
+    if (arpra_nan_p(x1) || arpra_has_neg_p(x1)) {
+        arpra_set_nan(y);
+        return;
+    }
+
+    // Handle zero-width x1.
+    if (mpfr_equal_p(&(x1->true_range.left), &(x1->true_range.right))) {
+        arpra_mpfr_f1(mpfr_sqrt, y, &(x1->true_range.left));
+        return;
+    }
 
     // Initialise vars.
     prec_internal = arpra_get_internal_precision();
-    mpfr_init2(&alpha, prec_internal);
-    mpfr_init2(&gamma, prec_internal);
-    mpfr_init2(&delta, prec_internal);
-    mpfr_init2(&temp1, prec_internal);
-    mpfr_init2(&temp2, prec_internal);
-    mpfr_init2(&da, prec_internal);
-    mpfr_init2(&db, prec_internal);
-    mpfr_init2(&du, prec_internal);
-    mpfi_init2(&ia_range, z->precision);
-    mpfi_init2(&x_range, x->precision);
+    mpfi_init2(ia_range, y->precision);
+    mpfr_init2(alpha, prec_internal);
+    mpfr_init2(gamma, prec_internal);
+    mpfr_init2(delta, prec_internal);
+    mpfr_init2(diff1, prec_internal);
+    mpfr_init2(diff2, prec_internal);
+    mpfr_init2(diff3, prec_internal);
+    mpfr_init2(temp1, prec_internal);
+    mpfr_init2(temp2, prec_internal);
 
-    // Handle x with zero radius.
-    if (mpfr_zero_p(&(x->radius))) {
-        if (mpfr_sqrt(&temp1, &(x->centre), MPFR_RNDN)) {
-            arpra_helper_error_half_ulp(&delta, &temp1);
-            arpra_set_mpfr_rad(z, &temp1, &delta);
-        }
-        else {
-            arpra_set_mpfr(z, &temp1);
-        }
-    }
-    else {
-        // Handle domain violations.
-        if (arpra_nan_p(x) || arpra_has_neg_p(x)) {
-            arpra_set_nan(z);
-        }
-        else if (arpra_inf_p(x)) {
-            arpra_set_inf(z);
-        }
+    // compute alpha
+    mpfr_sqrt(alpha, &(x1->true_range.left), MPFR_RNDN);
+    mpfr_sqrt(temp1, &(x1->true_range.right), MPFR_RNDN);
+    mpfr_add(alpha, alpha, temp1, MPFR_RNDN);
+    mpfr_ui_div(alpha, 1, alpha, MPFR_RNDN);
 
-        // Domain is OK.
-        else {
-            // MPFI square root
-            mpfi_sqrt(&ia_range, &(x->true_range));
+    // compute difference (sqrt(a) - alpha a)
+    mpfr_mul(diff1, alpha, &(x1->true_range.left), MPFR_RNDU);
+    mpfr_sqrt(temp1, &(x1->true_range.left), MPFR_RNDD);
+    mpfr_sub(diff1, temp1, diff1, MPFR_RNDD);
 
-            mpfi_set(&x_range, &(x->true_range));
+    // compute difference (sqrt(b) - alpha b)
+    mpfr_mul(diff3, alpha, &(x1->true_range.right), MPFR_RNDU);
+    mpfr_sqrt(temp1, &(x1->true_range.right), MPFR_RNDD);
+    mpfr_sub(diff3, temp1, diff3, MPFR_RNDD);
 
-            // compute alpha
-            mpfr_sqrt(&alpha, &(x_range.left), MPFR_RNDN);
-            mpfr_sqrt(&temp1, &(x_range.right), MPFR_RNDN);
-            mpfr_add(&alpha, &alpha, &temp1, MPFR_RNDN);
-            mpfr_ui_div(&alpha, 1, &alpha, MPFR_RNDN);
+    mpfr_min(diff1, diff1, diff3, MPFR_RNDD);
 
-            // compute difference (sqrt(a) - alpha a)
-            mpfr_mul(&da, &alpha, &(x_range.left), MPFR_RNDU);
-            mpfr_sqrt(&temp1, &(x_range.left), MPFR_RNDD);
-            mpfr_sub(&da, &temp1, &da, MPFR_RNDD);
+    // compute difference (sqrt(u) - alpha u)
+    mpfr_ui_div(diff2, 1, alpha, MPFR_RNDU);
+    mpfr_div_si(diff2, diff2, 4, MPFR_RNDU);
 
-            // compute difference (sqrt(b) - alpha b)
-            mpfr_mul(&db, &alpha, &(x_range.right), MPFR_RNDU);
-            mpfr_sqrt(&temp1, &(x_range.right), MPFR_RNDD);
-            mpfr_sub(&db, &temp1, &db, MPFR_RNDD);
+    // compute gamma
+    mpfr_add(gamma, diff1, diff2, MPFR_RNDN);
+    mpfr_div_si(gamma, gamma, 2, MPFR_RNDN);
 
-            mpfr_min(&da, &da, &db, MPFR_RNDD);
+    // compute delta
+    mpfr_sub(delta, diff2, gamma, MPFR_RNDU);
+    mpfr_sub(temp1, gamma, diff1, MPFR_RNDU);
+    mpfr_max(delta, delta, temp1, MPFR_RNDU);
 
-            // compute difference (sqrt(u) - alpha u)
-            mpfr_ui_div(&du, 1, &alpha, MPFR_RNDU);
-            mpfr_div_si(&du, &du, 4, MPFR_RNDU);
+    // MPFI square root
+    mpfi_sqrt(ia_range, &(x1->true_range));
 
-            // compute gamma
-            mpfr_add(&gamma, &da, &du, MPFR_RNDN);
-            mpfr_div_si(&gamma, &gamma, 2, MPFR_RNDN);
+    // compute affine approximation
+    arpra_affine_1(y, x1, alpha, gamma, delta);
 
-            // compute delta
-            mpfr_sub(&delta, &du, &gamma, MPFR_RNDU);
-            mpfr_sub(&temp1, &gamma, &da, MPFR_RNDU);
-            mpfr_max(&delta, &delta, &temp1, MPFR_RNDU);
-
-            // compute affine approximation
-            arpra_affine_1(z, x, &alpha, &gamma, &delta);
+    // Compute true_range, and add rounding error.
+    arpra_helper_range_rounded(y);
 
 #ifdef ARPRA_MIXED_IAAA
-            // Intersect AA and IA ranges.
-            mpfi_intersect(&(z->true_range), &(z->true_range), &ia_range);
+    // Intersect AA and IA ranges.
+    mpfi_intersect(&(y->true_range), &(y->true_range), ia_range);
 
 #ifdef ARPRA_MIXED_TRIMMED_IAAA
-            // Trim error term if AA range fully encloses mixed IA/AA range.
-            mpfr_sub(&temp1, &(z->centre), &(z->radius), MPFR_RNDD);
-            mpfr_add(&temp2, &(z->centre), &(z->radius), MPFR_RNDU);
-            if (mpfr_less_p(&temp1, &(z->true_range.left))
-                && mpfr_greater_p(&temp2, &(z->true_range.right))) {
-                mpfr_sub(&temp1, &(z->true_range.left), &temp1, MPFR_RNDD);
-                mpfr_sub(&temp2, &temp2, &(z->true_range.right), MPFR_RNDD);
-                mpfr_min(&temp1, &temp1, &temp2, MPFR_RNDD);
-                if (mpfr_greater_p(&temp1, &(z->deviations[z->nTerms - 1]))) {
-                    mpfr_sub(&(z->radius), &(z->radius), &(z->deviations[z->nTerms - 1]), MPFR_RNDU);
-                    mpfr_set_zero(&(z->deviations[z->nTerms - 1]), 1);
-                }
-                else {
-                    mpfr_sub(&(z->radius), &(z->radius), &temp1, MPFR_RNDU);
-                    mpfr_sub(&(z->deviations[z->nTerms - 1]), &(z->deviations[z->nTerms - 1]), &temp1, MPFR_RNDU);
-                }
-            }
-#endif // ARPRA_MIXED_TRIMMED_IAAA
-#endif // ARPRA_MIXED_IAAA
+    // Trim error term if AA range fully encloses mixed IA/AA range.
+    mpfr_sub(temp1, &(y->centre), &(y->radius), MPFR_RNDD);
+    mpfr_add(temp2, &(y->centre), &(y->radius), MPFR_RNDU);
+    if (mpfr_less_p(temp1, &(y->true_range.left))
+        && mpfr_greater_p(temp2, &(y->true_range.right))) {
+        mpfr_sub(temp1, &(y->true_range.left), temp1, MPFR_RNDD);
+        mpfr_sub(temp2, temp2, &(y->true_range.right), MPFR_RNDD);
+        mpfr_min(temp1, temp1, temp2, MPFR_RNDD);
+        if (mpfr_greater_p(temp1, &(y->deviations[y->nTerms - 1]))) {
+            mpfr_sub(&(y->radius), &(y->radius), &(y->deviations[y->nTerms - 1]), MPFR_RNDU);
+            mpfr_set_zero(&(y->deviations[y->nTerms - 1]), 1);
+        }
+        else {
+            mpfr_sub(&(y->radius), &(y->radius), temp1, MPFR_RNDU);
+            mpfr_sub(&(y->deviations[y->nTerms - 1]), &(y->deviations[y->nTerms - 1]), temp1, MPFR_RNDU);
         }
     }
+#endif // ARPRA_MIXED_TRIMMED_IAAA
+#endif // ARPRA_MIXED_IAAA
+
+    // Check for NaN and Inf.
+    arpra_helper_check_result(y);
 
     // Clear vars.
-    mpfr_clear(&alpha);
-    mpfr_clear(&gamma);
-    mpfr_clear(&delta);
-    mpfr_clear(&temp1);
-    mpfr_clear(&temp2);
-    mpfr_clear(&da);
-    mpfr_clear(&db);
-    mpfr_clear(&du);
-    mpfi_clear(&ia_range);
-    mpfi_clear(&x_range);
+    mpfi_clear(ia_range);
+    mpfr_clear(alpha);
+    mpfr_clear(gamma);
+    mpfr_clear(delta);
+    mpfr_clear(diff1);
+    mpfr_clear(diff2);
+    mpfr_clear(diff3);
+    mpfr_clear(temp1);
+    mpfr_clear(temp2);
 }
