@@ -1,7 +1,7 @@
 /*
  * affine_2.c -- Compute a bivariate affine function of two Arpra ranges.
  *
- * Copyright 2016-2019 James Paul Turner.
+ * Copyright 2016-2020 James Paul Turner.
  *
  * This file is part of the Arpra library.
  *
@@ -24,16 +24,16 @@
 void arpra_affine_2 (arpra_range *y, const arpra_range *x1, const arpra_range *x2,
                      mpfr_srcptr alpha, mpfr_srcptr beta, mpfr_srcptr gamma, mpfr_srcptr delta)
 {
-    arpra_uint iy, ix1, ix2;
-    arpra_range yy;
     mpfr_t temp, error;
+    arpra_range yy;
     arpra_prec prec_internal;
+    arpra_uint iy, ix1, ix2;
 
     // Initialise vars.
     prec_internal = arpra_get_internal_precision();
-    arpra_init2(&yy, y->precision);
     mpfr_init2(temp, prec_internal);
     mpfr_init2(error, prec_internal);
+    arpra_init2(&yy, y->precision);
     mpfr_set_zero(error, 1);
     mpfr_set_zero(&(yy.radius), 1);
 
@@ -42,7 +42,7 @@ void arpra_affine_2 (arpra_range *y, const arpra_range *x1, const arpra_range *x
 
     // Allocate memory for deviation terms.
     yy.symbols = malloc((x1->nTerms + x2->nTerms + 1) * sizeof(arpra_uint));
-    yy.deviations = malloc((x1->nTerms + x2->nTerms + 1) * sizeof(arpra_mpfr));
+    yy.deviations = malloc((x1->nTerms + x2->nTerms + 1) * sizeof(mpfr_t));
 
     for (iy = 0, ix1 = 0, ix2 = 0; (ix1 < x1->nTerms) || (ix2 < x2->nTerms); iy++) {
         mpfr_init2(&(yy.deviations[iy]), prec_internal);

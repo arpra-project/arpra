@@ -36,16 +36,11 @@ void arpra_log (arpra_range *y, const arpra_range *x1)
     // Domain violations:
     // log(NaN)   = (NaN)
     // log(Inf)   = (NaN)
-    // log(x < 0) = (NaN)
-    // log(0)     = (Inf)
+    // log(R < 0) = (NaN)
 
     // Handle domain violations.
     if (arpra_nan_p(x1) || arpra_has_neg_p(x1)) {
         arpra_set_nan(y);
-        return;
-    }
-    if (arpra_has_zero_p(x1)) {
-        arpra_set_inf(y);
         return;
     }
 

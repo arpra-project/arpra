@@ -36,7 +36,7 @@ void arpra_sqrt (arpra_range *y, const arpra_range *x1)
     // Domain violations:
     // sqrt(NaN)   = (NaN)
     // sqrt(Inf)   = (NaN)
-    // sqrt(x < 0) = (NaN)
+    // sqrt(R < 0) = (NaN)
 
     // Handle domain violations.
     if (arpra_nan_p(x1) || arpra_has_neg_p(x1)) {
