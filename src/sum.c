@@ -23,14 +23,28 @@
 
 void arpra_sum_exact (arpra_range *y, arpra_range *x, const arpra_uint n)
 {
-    arpra_uint i, j;
-    arpra_uint xSymbol, yTerm;
-    arpra_uint *xTerm;
-    arpra_int xHasNext;
-    arpra_mpfr **summands;
-    arpra_mpfr temp1, temp2, error;
+    mpfr_t temp1, temp2, error;
+    mpfr_ptr *summands;
     arpra_range yy;
     arpra_prec prec_internal;
+    arpra_uint i, n_sum;
+    arpra_uint iy, *ix;
+    arpra_uint symbol;
+    arpra_int xHasNext;
+
+    // Handle n <= 2 cases.
+    if (n <= 2) {
+        if (n == 2) {
+            arpra_add(y, &x[0], &x[1]);
+        }
+        else if (n == 1) {
+            arpra_set(y, &x[0]);
+        }
+        else {
+            arpra_set_nan(y);
+        }
+        return;
+    }
 
     // Domain violations:
     // (NaN) + ... + (NaN) = (NaN)
@@ -58,44 +72,28 @@ void arpra_sum_exact (arpra_range *y, arpra_range *x, const arpra_uint n)
         }
     }
 
-    // Handle trivial cases.
-    if (n <= 2) {
-        if (n == 2) {
-            arpra_add(y, &x[0], &x[1]);
-            return;
-        }
-        else if (n == 1) {
-            arpra_set(y, &x[0]);
-            return;
-        }
-        else {
-            arpra_set_zero(y);
-            return;
-        }
-    }
-
     // Initialise vars.
     prec_internal = arpra_get_internal_precision();
-    mpfr_init2(&temp1, prec_internal + 8);
-    mpfr_init2(&temp2, prec_internal + 8);
-    mpfr_init2(&error, prec_internal);
+    mpfr_init2(temp1, prec_internal + 8);
+    mpfr_init2(temp2, prec_internal + 8);
+    mpfr_init2(error, prec_internal);
     arpra_init2(&yy, y->precision);
-    mpfr_set_zero(&error, 1);
+    summands = malloc(n * sizeof(mpfr_ptr));
+    ix = malloc(n * sizeof(arpra_uint));
+    mpfr_set_zero(error, 1);
     mpfr_set_zero(&(yy.radius), 1);
-    xTerm = malloc(n * sizeof(arpra_uint));
-    summands = malloc(n * sizeof(arpra_mpfr *));
 
     // Zero term indexes, and fill summand array with centre values.
-    yTerm = 0;
+    iy = 0;
     for (i = 0; i < n; i++) {
-        xTerm[i] = 0;
+        ix[i] = 0;
         summands[i] = &(x[i].centre);
     }
 
     // y[0] = x1[0] + ... + xn[0]
     if (mpfr_sum(&(yy.centre), summands, n, MPFR_RNDN)) {
-        arpra_helper_error_half_ulp(&temp1, &(yy.centre));
-        mpfr_add(&error, &error, &temp1, MPFR_RNDU);
+        arpra_helper_error_half_ulp(temp1, &(yy.centre));
+        mpfr_add(error, error, temp1, MPFR_RNDU);
     }
 
     // Allocate memory for all possible deviation terms.
@@ -104,54 +102,51 @@ void arpra_sum_exact (arpra_range *y, arpra_range *x, const arpra_uint n)
         yy.nTerms += x[i].nTerms;
     }
     yy.symbols = malloc(yy.nTerms * sizeof(arpra_uint));
-    yy.deviations = malloc(yy.nTerms * sizeof(arpra_mpfr));
+    yy.deviations = malloc(yy.nTerms * sizeof(mpfr_t));
 
     // For all unique symbols in x.
     xHasNext = yy.nTerms > 1;
     while (xHasNext) {
         xHasNext = 0;
-        xSymbol = -1;
+        symbol = -1;
 
-        // Find and set the next symbol in y.
+        // Find and set the next lowest symbol in y.
         for (i = 0; i < n; i++) {
-            if (xTerm[i] < x[i].nTerms) {
-                if (x[i].symbols[xTerm[i]] < xSymbol) {
-                    xSymbol = x[i].symbols[xTerm[i]];
+            if (ix[i] < x[i].nTerms) {
+                if (x[i].symbols[ix[i]] < symbol) {
+                    symbol = x[i].symbols[ix[i]];
                 }
             }
         }
-        yy.symbols[yTerm] = xSymbol;
-        mpfr_init2(&(yy.deviations[yTerm]), prec_internal);
+        yy.symbols[iy] = symbol;
+        mpfr_init2(&(yy.deviations[iy]), prec_internal);
 
         // For all x with the next symbol:
-        for (i = 0, j = 0; i < n; i++) {
-            if (x[i].symbols[xTerm[i]] == xSymbol) {
+        for (n_sum = 0, i = 0; i < n; i++) {
+            if (x[i].symbols[ix[i]] == symbol) {
                 // Get next deviation pointer of x[i].
-                summands[j++] = &(x[i].deviations[xTerm[i]]);
+                summands[n_sum++] = &(x[i].deviations[ix[i]]);
 
-                // Check for more symbols in x[i].
-                if (++xTerm[i] < x[i].nTerms) {
-                    xHasNext = 1;
-                }
+                xHasNext += ++ix[i] < x[i].nTerms;
             }
         }
 
         // y[i] = x1[i] + ... + xn[i]
-        if (mpfr_sum(&(yy.deviations[yTerm]), summands, j, MPFR_RNDN)) {
-            arpra_helper_error_half_ulp(&temp1, &(yy.deviations[yTerm]));
-            mpfr_add(&error, &error, &temp1, MPFR_RNDU);
+        if (mpfr_sum(&(yy.deviations[iy]), summands, n_sum, MPFR_RNDN)) {
+            arpra_helper_error_half_ulp(temp1, &(yy.deviations[iy]));
+            mpfr_add(error, error, temp1, MPFR_RNDU);
         }
 
-        mpfr_abs(&temp1, &(yy.deviations[yTerm]), MPFR_RNDU);
-        mpfr_add(&(yy.radius), &(yy.radius), &temp1, MPFR_RNDU);
-        yTerm++;
+        mpfr_abs(temp1, &(yy.deviations[iy]), MPFR_RNDU);
+        mpfr_add(&(yy.radius), &(yy.radius), temp1, MPFR_RNDU);
+        iy++;
     }
 
     // Store numerical error term.
-    yy.symbols[yTerm] = arpra_helper_next_symbol();
-    yy.deviations[yTerm] = error;
-    mpfr_add(&(yy.radius), &(yy.radius), &(yy.deviations[yTerm]), MPFR_RNDU);
-    yy.nTerms = yTerm + 1;
+    yy.symbols[iy] = arpra_helper_next_symbol();
+    yy.deviations[iy] = *error;
+    mpfr_add(&(yy.radius), &(yy.radius), &(yy.deviations[iy]), MPFR_RNDU);
+    yy.nTerms = iy + 1;
 
     // Compute true_range, and add rounding error.
     arpra_helper_range_rounded(&yy);
@@ -160,24 +155,38 @@ void arpra_sum_exact (arpra_range *y, arpra_range *x, const arpra_uint n)
     arpra_helper_check_result(&yy);
 
     // Clear vars, and set y.
-    mpfr_clear(&temp1);
-    mpfr_clear(&temp2);
+    mpfr_clear(temp1);
+    mpfr_clear(temp2);
     arpra_clear(y);
     *y = yy;
-    free(xTerm);
     free(summands);
+    free(ix);
 }
 
 void arpra_sum_recursive (arpra_range *y, arpra_range *x, const arpra_uint n)
 {
-    arpra_uint i, j;
-    arpra_uint xSymbol, yTerm;
-    arpra_uint *xTerm;
-    arpra_int xHasNext;
-    arpra_mpfr **summands;
-    arpra_mpfr temp1, temp2, error;
+    mpfr_t temp1, temp2, error;
+    mpfr_ptr *summands;
     arpra_range yy;
     arpra_prec prec_internal;
+    arpra_uint i, n_sum;
+    arpra_uint iy, *ix;
+    arpra_uint symbol;
+    arpra_int xHasNext;
+
+    // Handle n <= 2 cases.
+    if (n <= 2) {
+        if (n == 2) {
+            arpra_add(y, &x[0], &x[1]);
+        }
+        else if (n == 1) {
+            arpra_set(y, &x[0]);
+        }
+        else {
+            arpra_set_nan(y);
+        }
+        return;
+    }
 
     // Domain violations:
     // (NaN) + ... + (NaN) = (NaN)
@@ -205,44 +214,28 @@ void arpra_sum_recursive (arpra_range *y, arpra_range *x, const arpra_uint n)
         }
     }
 
-    // Handle trivial cases.
-    if (n <= 2) {
-        if (n == 2) {
-            arpra_add(y, &x[0], &x[1]);
-            return;
-        }
-        else if (n == 1) {
-            arpra_set(y, &x[0]);
-            return;
-        }
-        else {
-            arpra_set_zero(y);
-            return;
-        }
-    }
-
     // Initialise vars.
     prec_internal = arpra_get_internal_precision();
-    mpfr_init2(&temp1, prec_internal + 8);
-    mpfr_init2(&temp2, prec_internal + 8);
-    mpfr_init2(&error, prec_internal);
+    mpfr_init2(temp1, prec_internal + 8);
+    mpfr_init2(temp2, prec_internal + 8);
+    mpfr_init2(error, prec_internal);
     arpra_init2(&yy, y->precision);
-    mpfr_set_zero(&error, 1);
+    summands = malloc(n * sizeof(mpfr_ptr));
+    ix = malloc(n * sizeof(arpra_uint));
+    mpfr_set_zero(error, 1);
     mpfr_set_zero(&(yy.radius), 1);
-    xTerm = malloc(n * sizeof(arpra_uint));
-    summands = malloc(n * sizeof(arpra_mpfr *));
 
     // Zero term indexes, and fill summand array with centre values.
-    yTerm = 0;
+    iy = 0;
     for (i = 0; i < n; i++) {
-        xTerm[i] = 0;
+        ix[i] = 0;
         summands[i] = &(x[i].centre);
     }
 
     // y[0] = x1[0] + ... + xn[0]
     if (mpfr_sum(&(yy.centre), summands, n, MPFR_RNDN)) {
-        arpra_helper_error_half_ulp(&temp1, &(yy.centre));
-        mpfr_add(&error, &error, &temp1, MPFR_RNDU);
+        arpra_helper_error_half_ulp(temp1, &(yy.centre));
+        mpfr_add(error, error, temp1, MPFR_RNDU);
     }
 
     // Allocate memory for all possible deviation terms.
@@ -251,47 +244,44 @@ void arpra_sum_recursive (arpra_range *y, arpra_range *x, const arpra_uint n)
         yy.nTerms += x[i].nTerms;
     }
     yy.symbols = malloc(yy.nTerms * sizeof(arpra_uint));
-    yy.deviations = malloc(yy.nTerms * sizeof(arpra_mpfr));
+    yy.deviations = malloc(yy.nTerms * sizeof(mpfr_t));
 
     // For all unique symbols in x.
     xHasNext = yy.nTerms > 1;
     while (xHasNext) {
         xHasNext = 0;
-        xSymbol = -1;
+        symbol = -1;
 
-        // Find and set the next symbol in y.
+        // Find and set the next lowest symbol in y.
         for (i = 0; i < n; i++) {
-            if (xTerm[i] < x[i].nTerms) {
-                if (x[i].symbols[xTerm[i]] < xSymbol) {
-                    xSymbol = x[i].symbols[xTerm[i]];
+            if (ix[i] < x[i].nTerms) {
+                if (x[i].symbols[ix[i]] < symbol) {
+                    symbol = x[i].symbols[ix[i]];
                 }
             }
         }
-        yy.symbols[yTerm] = xSymbol;
-        mpfr_init2(&(yy.deviations[yTerm]), prec_internal);
+        yy.symbols[iy] = symbol;
+        mpfr_init2(&(yy.deviations[iy]), prec_internal);
 
         // For all x with the next symbol:
-        for (i = 0, j = 0; i < n; i++) {
-            if (x[i].symbols[xTerm[i]] == xSymbol) {
+        for (n_sum = 0, i = 0; i < n; i++) {
+            if (x[i].symbols[ix[i]] == symbol) {
                 // Get next deviation pointer of x[i].
-                summands[j++] = &(x[i].deviations[xTerm[i]]);
+                summands[n_sum++] = &(x[i].deviations[ix[i]]);
 
-                // Check for more symbols in x[i].
-                if (++xTerm[i] < x[i].nTerms) {
-                    xHasNext = 1;
-                }
+                xHasNext += ++ix[i] < x[i].nTerms;
             }
         }
 
         // y[i] = x1[i] + ... + xn[i]
-        if (mpfr_sum(&(yy.deviations[yTerm]), summands, j, MPFR_RNDN)) {
-            arpra_helper_error_half_ulp(&temp1, &(yy.deviations[yTerm]));
-            mpfr_add(&error, &error, &temp1, MPFR_RNDU);
+        if (mpfr_sum(&(yy.deviations[iy]), summands, n_sum, MPFR_RNDN)) {
+            arpra_helper_error_half_ulp(temp1, &(yy.deviations[iy]));
+            mpfr_add(error, error, temp1, MPFR_RNDU);
         }
 
-        mpfr_abs(&temp1, &(yy.deviations[yTerm]), MPFR_RNDU);
-        mpfr_add(&(yy.radius), &(yy.radius), &temp1, MPFR_RNDU);
-        yTerm++;
+        mpfr_abs(temp1, &(yy.deviations[iy]), MPFR_RNDU);
+        mpfr_add(&(yy.radius), &(yy.radius), temp1, MPFR_RNDU);
+        iy++;
     }
 
     /*
@@ -302,29 +292,29 @@ void arpra_sum_recursive (arpra_range *y, arpra_range *x, const arpra_uint n)
      */
 
     // Compute |x|.
-    arpra_mpfr *sum_error;
-    sum_error = arpra_helper_buffer_mpfr(n);
+    mpfr_ptr summands_magnitude;
+    summands_magnitude = arpra_helper_buffer_mpfr(n);
     for (i = 0; i < n; i++) {
-        mpfr_init2(&(sum_error[i]), prec_internal);
+        mpfr_init2(&(summands_magnitude[i]), prec_internal);
 
         if (mpfr_sgn(&(x[i].centre)) >= 0) {
-            mpfr_add(&(sum_error[i]), &(x[i].centre), &(x[i].radius), MPFR_RNDU);
+            mpfr_add(&(summands_magnitude[i]), &(x[i].centre), &(x[i].radius), MPFR_RNDU);
         }
         else {
-            mpfr_sub(&(sum_error[i]), &(x[i].centre), &(x[i].radius), MPFR_RNDD);
-            mpfr_abs(&(sum_error[i]), &(sum_error[i]), MPFR_RNDU);
+            mpfr_sub(&(summands_magnitude[i]), &(x[i].centre), &(x[i].radius), MPFR_RNDD);
+            mpfr_abs(&(summands_magnitude[i]), &(summands_magnitude[i]), MPFR_RNDU);
         }
     }
 
     // Compute error(sum(x)) = (n - 1) u sum(|x|).
-    mpfr_set_si_2exp(&temp1, 1, -yy.precision, MPFR_RNDU);
-    mpfr_mul_ui(&temp1, &temp1, (n - 1), MPFR_RNDU);
-    arpra_helper_mpfr_sum(&(sum_error[0]), sum_error, n, MPFR_RNDU);
-    mpfr_mul(&(sum_error[0]), &(sum_error[0]), &temp1, MPFR_RNDU);
-    mpfr_add(&error, &error, &(sum_error[0]), MPFR_RNDU);
+    mpfr_set_si_2exp(temp1, 1, -yy.precision, MPFR_RNDU);
+    mpfr_mul_ui(temp1, temp1, (n - 1), MPFR_RNDU);
+    arpra_helper_mpfr_sum(&(summands_magnitude[0]), summands_magnitude, n, MPFR_RNDU);
+    mpfr_mul(&(summands_magnitude[0]), &(summands_magnitude[0]), temp1, MPFR_RNDU);
+    mpfr_add(error, error, &(summands_magnitude[0]), MPFR_RNDU);
 
     for (i = 0; i < n; i++) {
-        mpfr_clear(&(sum_error[i]));
+        mpfr_clear(&(summands_magnitude[i]));
     }
 
     /*
@@ -332,10 +322,10 @@ void arpra_sum_recursive (arpra_range *y, arpra_range *x, const arpra_uint n)
      */
 
     // Store numerical error term.
-    yy.symbols[yTerm] = arpra_helper_next_symbol();
-    yy.deviations[yTerm] = error;
-    mpfr_add(&(yy.radius), &(yy.radius), &(yy.deviations[yTerm]), MPFR_RNDU);
-    yy.nTerms = yTerm + 1;
+    yy.symbols[iy] = arpra_helper_next_symbol();
+    yy.deviations[iy] = *error;
+    mpfr_add(&(yy.radius), &(yy.radius), &(yy.deviations[iy]), MPFR_RNDU);
+    yy.nTerms = iy + 1;
 
     // Compute true_range, and add rounding error.
     arpra_helper_range_rounded(&yy);
@@ -344,10 +334,10 @@ void arpra_sum_recursive (arpra_range *y, arpra_range *x, const arpra_uint n)
     arpra_helper_check_result(&yy);
 
     // Clear vars, and set y.
-    mpfr_clear(&temp1);
-    mpfr_clear(&temp2);
+    mpfr_clear(temp1);
+    mpfr_clear(temp2);
     arpra_clear(y);
     *y = yy;
-    free(xTerm);
     free(summands);
+    free(ix);
 }
