@@ -78,15 +78,11 @@ void arpra_mul (arpra_range *y, const arpra_range *x1, const arpra_range *x2)
     mpfi_mul(ia_range, &(x1->true_range), &(x2->true_range));
 
     // y[0] = x1[0] * x2[0]
-    if (mpfr_mul(&(yy.centre), &(x1->centre), &(x2->centre), MPFR_RNDN)) {
-        arpra_helper_error_half_ulp(temp1, &(yy.centre));
-        mpfr_add(error, error, temp1, MPFR_RNDU);
-    }
+    arpra_helper_mpfr_rnd_err_f2(error, &mpfr_mul, &(yy.centre), &(x1->centre), &(x2->centre), MPFR_RNDN);
 
     // Allocate memory for all possible deviation terms.
-    yy.nTerms = x1->nTerms + x2->nTerms + 1;
-    yy.symbols = malloc(yy.nTerms * sizeof(arpra_uint));
-    yy.deviations = malloc(yy.nTerms * sizeof(mpfr_t));
+    yy.symbols = malloc((x1->nTerms + x2->nTerms + 1) * sizeof(arpra_uint));
+    yy.deviations = malloc((x1->nTerms + x2->nTerms + 1) * sizeof(mpfr_t));
 
     iy = 0;
     ix1 = 0;
@@ -94,40 +90,24 @@ void arpra_mul (arpra_range *y, const arpra_range *x1, const arpra_range *x2)
     x1HasNext = x1->nTerms > 0;
     x2HasNext = x2->nTerms > 0;
     while (x1HasNext || x2HasNext) {
+        mpfr_init2(&(yy.deviations[iy]), prec_internal);
+
         if ((!x2HasNext) || (x1HasNext && (x1->symbols[ix1] < x2->symbols[ix2]))) {
-            yy.symbols[iy] = x1->symbols[ix1];
-            mpfr_init2(&(yy.deviations[iy]), prec_internal);
-
             // y[i] = (x2[0] * x1[i])
-            if (mpfr_mul(&(yy.deviations[iy]), &(x2->centre), &(x1->deviations[ix1]), MPFR_RNDN)) {
-                arpra_helper_error_half_ulp(temp1, &(yy.deviations[iy]));
-                mpfr_add(error, error, temp1, MPFR_RNDU);
-            }
-
+            yy.symbols[iy] = x1->symbols[ix1];
+            arpra_helper_mpfr_rnd_err_f2(error, &mpfr_mul, &(yy.deviations[iy]), &(x2->centre), &(x1->deviations[ix1]), MPFR_RNDN);
             x1HasNext = ++ix1 < x1->nTerms;
         }
         else if ((!x1HasNext) || (x2HasNext && (x2->symbols[ix2] < x1->symbols[ix1]))) {
-            yy.symbols[iy] = x2->symbols[ix2];
-            mpfr_init2(&(yy.deviations[iy]), prec_internal);
-
             // y[i] = (x1[0] * x2[i])
-            if (mpfr_mul(&(yy.deviations[iy]), &(x1->centre), &(x2->deviations[ix2]), MPFR_RNDN)) {
-                arpra_helper_error_half_ulp(temp1, &(yy.deviations[iy]));
-                mpfr_add(error, error, temp1, MPFR_RNDU);
-            }
-
+            yy.symbols[iy] = x2->symbols[ix2];
+            arpra_helper+mpfr_rnd_err_f2(error, &mpfr_mul, &(yy.deviations[iy]), &(x1->centre), &(x2->deviations[ix2]), MPFR_RNDN);
             x2HasNext = ++ix2 < x2->nTerms;
         }
         else {
-            yy.symbols[iy] = x1->symbols[ix1];
-            mpfr_init2(&(yy.deviations[iy]), prec_internal);
-
             // y[i] = (x2[0] * x1[i]) + (x1[0] * x2[i])
-            if (arpra_helper_term(&(yy.deviations[iy]), &(x1->deviations[ix1]), &(x2->deviations[ix2]), &(x2->centre), &(x1->centre), NULL)) {
-                arpra_helper_error_half_ulp(temp1, &(yy.deviations[iy]));
-                mpfr_add(error, error, temp1, MPFR_RNDU);
-            }
-
+            yy.symbols[iy] = x1->symbols[ix1];
+            arpra_helper_mpfr_rnd_err_fmma(error, &(yy.deviations[iy]), &(x2->centre), &(x1->deviations[ix1]), &(x1->centre), &(x2->deviations[ix2]), MPFR_RNDN));
             x1HasNext = ++ix1 < x1->nTerms;
             x2HasNext = ++ix2 < x2->nTerms;
         }
@@ -195,7 +175,6 @@ void arpra_mul (arpra_range *y, const arpra_range *x1, const arpra_range *x2)
                     mpfr_mul(x1jx2i, &(x1->deviations[x1j_idx]), &(x2->deviations[x2i_idx]), MPFR_RNDA);
                     mpfr_abs(x1jx2i, x1jx2i, MPFR_RNDU);
                     mpfr_add(error, error, x1jx2i, MPFR_RNDU);
-
                     x1HasNext = ++x1j_idx < x1->nTerms;
                 }
                 else if ((!x1HasNext) || (x2HasNext && (x2->symbols[x2i_idx] < x1->symbols[x1i_idx]))) {
@@ -203,7 +182,6 @@ void arpra_mul (arpra_range *y, const arpra_range *x1, const arpra_range *x2)
                     mpfr_mul(x1ix2j, &(x1->deviations[x1i_idx]), &(x2->deviations[x2j_idx]), MPFR_RNDA);
                     mpfr_abs(x1ix2j, x1ix2j, MPFR_RNDU);
                     mpfr_add(error, error, x1ix2j, MPFR_RNDU);
-
                     x2HasNext = ++x2j_idx < x2->nTerms;
                 }
                 else {
@@ -218,7 +196,6 @@ void arpra_mul (arpra_range *y, const arpra_range *x1, const arpra_range *x2)
                     }
                     mpfr_abs(temp1, temp1, MPFR_RNDU);
                     mpfr_add(error, error, temp1, MPFR_RNDU);
-
                     x1HasNext = ++x1j_idx < x1->nTerms;
                     x2HasNext = ++x2j_idx < x2->nTerms;
                 }

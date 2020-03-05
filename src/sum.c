@@ -107,6 +107,7 @@ void arpra_sum_exact (arpra_range *y, arpra_range *x, const arpra_uint n)
     // For all unique symbols in x.
     xHasNext = yy.nTerms > 1;
     while (xHasNext) {
+        mpfr_init2(&(yy.deviations[iy]), prec_internal);
         xHasNext = 0;
         symbol = -1;
 
@@ -119,7 +120,6 @@ void arpra_sum_exact (arpra_range *y, arpra_range *x, const arpra_uint n)
             }
         }
         yy.symbols[iy] = symbol;
-        mpfr_init2(&(yy.deviations[iy]), prec_internal);
 
         // For all x with the next symbol:
         for (n_sum = 0, i = 0; i < n; i++) {
@@ -249,6 +249,7 @@ void arpra_sum_recursive (arpra_range *y, arpra_range *x, const arpra_uint n)
     // For all unique symbols in x.
     xHasNext = yy.nTerms > 1;
     while (xHasNext) {
+        mpfr_init2(&(yy.deviations[iy]), prec_internal);
         xHasNext = 0;
         symbol = -1;
 
@@ -261,7 +262,6 @@ void arpra_sum_recursive (arpra_range *y, arpra_range *x, const arpra_uint n)
             }
         }
         yy.symbols[iy] = symbol;
-        mpfr_init2(&(yy.deviations[iy]), prec_internal);
 
         // For all x with the next symbol:
         for (n_sum = 0, i = 0; i < n; i++) {
