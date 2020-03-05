@@ -61,16 +61,16 @@ arpra_uint arpra_helper_next_symbol ();
 void arpra_helper_range (arpra_range *z);
 void arpra_helper_range_rounded (arpra_range *z);
 void arpra_helper_check_result (arpra_range *z);
-void arpra_helper_rnd_err_f1 (mpfr_ptr err, int (*f) (mpfr_ptr, mpfr_srcptr, mpfr_rnd_t),
-                              mpfr_ptr y, mpfr_srcptr x1, mpfr_rnd_t rnd);
-void arpra_helper_rnd_err_f2 (mpfr_ptr err, int (*f) (mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mpfr_rnd_t),
-                              mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2, mpfr_rnd_t rnd);
-void arpra_helper_rnd_err_f3 (mpfr_ptr err, int (*f) (mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mpfr_srcptr, mpfr_rnd_t),
-                              mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2, mpfr_srcptr x3, mpfr_rnd_t rnd);
-void arpra_helper_rnd_err_fmma (mpfr_ptr err, mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2,
-                                mpfr_srcptr x3, mpfr_srcptr x4, mpfr_rnd_t rnd);
-void arpra_helper_rnd_err_fmmaa (mpfr_ptr err, mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2,
-                                 mpfr_srcptr x3, mpfr_srcptr x4, mpfr_srcptr x5, mpfr_rnd_t rnd);
+void arpra_helper_mpfr_rnd_err_f1 (mpfr_ptr err, int (*f) (mpfr_ptr, mpfr_srcptr, mpfr_rnd_t),
+                                   mpfr_ptr y, mpfr_srcptr x1, mpfr_rnd_t rnd);
+void arpra_helper_mpfr_rnd_err_f2 (mpfr_ptr err, int (*f) (mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mpfr_rnd_t),
+                                   mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2, mpfr_rnd_t rnd);
+void arpra_helper_mpfr_rnd_err_f3 (mpfr_ptr err, int (*f) (mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mpfr_srcptr, mpfr_rnd_t),
+                                   mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2, mpfr_srcptr x3, mpfr_rnd_t rnd);
+void arpra_helper_mpfr_rnd_err_fmma (mpfr_ptr err, mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2,
+                                     mpfr_srcptr x3, mpfr_srcptr x4, mpfr_rnd_t rnd);
+void arpra_helper_mpfr_rnd_err_fmmaa (mpfr_ptr err, mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2,
+                                      mpfr_srcptr x3, mpfr_srcptr x4, mpfr_srcptr x5, mpfr_rnd_t rnd);
 int arpra_helper_mpfr_sum (arpra_mpfr *z, arpra_mpfr *x,
                            const arpra_uint n, const mpfr_rnd_t rnd);
 int arpra_helper_mpfr_sumabs (arpra_mpfr *z, arpra_mpfr *x,

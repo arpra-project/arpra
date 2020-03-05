@@ -1,5 +1,5 @@
 /*
- * helper_rnd_err.c -- Compute MPFR functions with rounding error.
+ * helper_mpfr_rnd_err.c -- Compute MPFR functions with rounding error.
  *
  * Copyright 2017-2020 James Paul Turner.
  *
@@ -29,7 +29,7 @@
  * IEEE-754 floating-point numbers, since MPFR significands are in [0.5, 1.0).
  */
 
-static void arpra_helper_rnd_err (mpfr_ptr err, mpfr_srcptr y, mpfr_rnd_t rnd)
+static void arpra_helper_mpfr_rnd_err (mpfr_ptr err, mpfr_srcptr y, mpfr_rnd_t rnd)
 {
     mpfr_t temp;
     mpfr_exp_t e;
@@ -68,32 +68,32 @@ static void arpra_helper_rnd_err (mpfr_ptr err, mpfr_srcptr y, mpfr_rnd_t rnd)
     mpfr_clear(temp);
 }
 
-void arpra_helper_rnd_err_f1 (mpfr_ptr err, int (*f) (mpfr_ptr, mpfr_srcptr, mpfr_rnd_t),
-                              mpfr_ptr y, mpfr_srcptr x1, mpfr_rnd_t rnd)
+void arpra_helper_mpfr_rnd_err_f1 (mpfr_ptr err, int (*f) (mpfr_ptr, mpfr_srcptr, mpfr_rnd_t),
+                                   mpfr_ptr y, mpfr_srcptr x1, mpfr_rnd_t rnd)
 {
     if (f(y, x1, rnd)) {
-        arpra_helper_rnd_err(err, y, rnd);
+        arpra_helper_mpfr_rnd_err(err, y, rnd);
     }
 }
 
-void arpra_helper_rnd_err_f2 (mpfr_ptr err, int (*f) (mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mpfr_rnd_t),
-                              mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2, mpfr_rnd_t rnd)
+void arpra_helper_mpfr_rnd_err_f2 (mpfr_ptr err, int (*f) (mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mpfr_rnd_t),
+                                   mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2, mpfr_rnd_t rnd)
 {
     if (f(y, x1, x2, rnd)) {
-        arpra_helper_rnd_err(err, y, rnd);
+        arpra_helper_mpfr_rnd_err(err, y, rnd);
     }
 }
 
-void arpra_helper_rnd_err_f3 (mpfr_ptr err, int (*f) (mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mpfr_srcptr, mpfr_rnd_t),
-                              mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2, mpfr_srcptr x3, mpfr_rnd_t rnd)
+void arpra_helper_mpfr_rnd_err_f3 (mpfr_ptr err, int (*f) (mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mpfr_srcptr, mpfr_rnd_t),
+                                   mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2, mpfr_srcptr x3, mpfr_rnd_t rnd)
 {
     if (f(y, x1, x2, x3, rnd)) {
-        arpra_helper_rnd_err(err, y, rnd);
+        arpra_helper_mpfr_rnd_err(err, y, rnd);
     }
 }
 
-void arpra_helper_rnd_err_fmma (mpfr_ptr err, mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2,
-                                mpfr_srcptr x3, mpfr_srcptr x4, mpfr_rnd_t rnd)
+void arpra_helper_mpfr_rnd_err_fmma (mpfr_ptr err, mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2,
+                                     mpfr_srcptr x3, mpfr_srcptr x4, mpfr_rnd_t rnd)
 {
     mpfr_t x1x2, x3x4;
 
@@ -107,7 +107,7 @@ void arpra_helper_rnd_err_fmma (mpfr_ptr err, mpfr_ptr y, mpfr_srcptr x1, mpfr_s
 
     // y = (x1 * x2) + (x3 * x4)
     if (mpfr_add(y, x1x2, x3x4, rnd)) {
-        arpra_helper_rnd_err(err, y, rnd);
+        arpra_helper_mpfr_rnd_err(err, y, rnd);
     }
 
     // Clear temp vars.
@@ -115,8 +115,8 @@ void arpra_helper_rnd_err_fmma (mpfr_ptr err, mpfr_ptr y, mpfr_srcptr x1, mpfr_s
     mpfr_clear(x3x4);
 }
 
-void arpra_helper_rnd_err_fmmaa (mpfr_ptr err, mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2,
-                                 mpfr_srcptr x3, mpfr_srcptr x4, mpfr_srcptr x5, mpfr_rnd_t rnd)
+void arpra_helper_mpfr_rnd_err_fmmaa (mpfr_ptr err, mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2,
+                                      mpfr_srcptr x3, mpfr_srcptr x4, mpfr_srcptr x5, mpfr_rnd_t rnd)
 {
     mpfr_t x1x2, x3x4;
 
@@ -129,15 +129,9 @@ void arpra_helper_rnd_err_fmmaa (mpfr_ptr err, mpfr_ptr y, mpfr_srcptr x1, mpfr_
     mpfr_mul(x3x4, x3, x4, MPFR_RNDN);
 
     // y = (x1 * x2) + (x3 * x4) + (x5)
-    if (mpfr_sum(y, (mpfr_ptr[3]) {x1x2, x3x4, (mpfr_ptr) x5}, 3, rnd)) {
-        arpra_helper_rnd_err(err, y, rnd);
+    if (mpfr_sum(y, (mpfr_ptr[3]) {x1x2, x3x4, x5}, 3, rnd)) {
+       arpra_helper_mpfr_rnd_err(err, y, rnd);
     }
-
-    // Newer MPFR 4 syntax
-    // y = (x1 * x2) + (x3 * x4) + (x5)
-    //if (mpfr_sum(y, (mpfr_ptr[3]) {x1x2, x3x4, x5}, 3, rnd)) {
-    //    arpra_helper_rnd_err(err, y, rnd);
-    //}
 
     // Clear temp vars.
     mpfr_clear(x1x2);

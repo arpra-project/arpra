@@ -35,7 +35,7 @@ lib_libarpra_la_SOURCES = \
 	src/set_special.c src/sqrt.c src/sub.c src/sum.c		\
 	src/get_bounds.c src/ode_stepper.c src/ode_euler.c		\
 	src/ode_trapezoidal.c src/ode_bogsham32.c src/ode_dopri54.c	\
-	src/ode_dopri87.c src/helper_rnd_err.c src/helper_buffer.c	\
+	src/ode_dopri87.c src/helper_mpfr_rnd_err.c src/helper_buffer.c	\
 	src/helper_mpfr_sum.c src/get_mpfi.c src/helper_range.c		\
 	src/helper_check_result.c src/set_mpfi.c src/mpfr_f1.c		\
 	src/mpfr_f2.c src/helper_clear_terms.c
