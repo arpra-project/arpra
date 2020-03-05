@@ -1,7 +1,7 @@
 /*
  * mpfr_f2.c -- Compute Arpra ranges with bivariate MPFR functions.
  *
- * Copyright 2019 James Paul Turner.
+ * Copyright 2019-2020 James Paul Turner.
  *
  * This file is part of the Arpra library.
  *
@@ -21,11 +21,29 @@
 
 #include "arpra-impl.h"
 
+
+
+// SET_MPFR.C: DO SET_MPFR AND USE THIS FOR UINT, INT, FLOAT, ETC IN SET_OTHER.C
+
+// WIDEN_MPFR.C, AND USE THIS ALSO FOR UINT INT FLOAT IN WIDEN_OTHER.C
+
+
+// REPLACE ALL _MPFR WITH _FR, LIKE MPFI DOES
+
+// SET.C SHOULD BE SET_RANGE.C, SET SHOULD BE SET_RANGE
+// OTHER SCALAR TYPES SHOULD BE IN SET_NUMBER
+
+
+// ARPRA_MPFR_F* SHOULD BE HELPER FUNCTIONS - EXPOSE REAL FUNCTIONS INSTEAD
+
+// MUL AND OTHERS SHOULD USE ARPRA_HELPER_RND_ERR_F2
+
+
 void arpra_mpfr_f2 (int (*f) (mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mpfr_rnd_t),
                     arpra_range *y, mpfr_srcptr x1, mpfr_srcptr x2)
 {
-    arpra_range yy;
     mpfr_t error;
+    arpra_range yy;
     arpra_prec prec_internal;
 
     // Initialise vars.
@@ -40,7 +58,7 @@ void arpra_mpfr_f2 (int (*f) (mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mpfr_rnd_t),
 
     // Allocate memory for deviation terms.
     yy.symbols = malloc(sizeof(arpra_uint));
-    yy.deviations = malloc(sizeof(arpra_mpfr));
+    yy.deviations = malloc(sizeof(mpfr_t));
 
     // Store numerical error term.
     yy.symbols[0] = arpra_helper_next_symbol();

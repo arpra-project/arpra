@@ -1,7 +1,7 @@
 /*
- * helper_mpfr.c -- Compute MPFR functions with rounding error.
+ * helper_rnd_err.c -- Compute MPFR functions with rounding error.
  *
- * Copyright 2017-2019 James Paul Turner.
+ * Copyright 2017-2020 James Paul Turner.
  *
  * This file is part of the Arpra library.
  *
@@ -68,40 +68,32 @@ static void arpra_helper_rnd_err (mpfr_ptr err, mpfr_srcptr y, mpfr_rnd_t rnd)
     mpfr_clear(temp);
 }
 
-void arpra_helper_mpfr_f1 (mpfr_ptr err, int (*f) (mpfr_ptr, mpfr_srcptr, mpfr_rnd_t),
-                           mpfr_ptr y, mpfr_srcptr x1, mpfr_rnd_t rnd)
+void arpra_helper_rnd_err_f1 (mpfr_ptr err, int (*f) (mpfr_ptr, mpfr_srcptr, mpfr_rnd_t),
+                              mpfr_ptr y, mpfr_srcptr x1, mpfr_rnd_t rnd)
 {
     if (f(y, x1, rnd)) {
         arpra_helper_rnd_err(err, y, rnd);
     }
 }
 
-void arpra_helper_mpfr_f2 (mpfr_ptr err, int (*f) (mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mpfr_rnd_t),
-                           mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2, mpfr_rnd_t rnd)
+void arpra_helper_rnd_err_f2 (mpfr_ptr err, int (*f) (mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mpfr_rnd_t),
+                              mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2, mpfr_rnd_t rnd)
 {
     if (f(y, x1, x2, rnd)) {
         arpra_helper_rnd_err(err, y, rnd);
     }
 }
 
-void arpra_helper_mpfr_ui_f2 (mpfr_ptr err, int (*f) (mpfr_ptr, unsigned long, mpfr_srcptr, mpfr_rnd_t),
-                              mpfr_ptr y, unsigned long x1, mpfr_srcptr x2, mpfr_rnd_t rnd)
-{
-    if (f(y, x1, x2, rnd)) {
-        arpra_helper_rnd_err(err, y, rnd);
-    }
-}
-
-void arpra_helper_mpfr_f3 (mpfr_ptr err, int (*f) (mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mpfr_srcptr, mpfr_rnd_t),
-                           mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2, mpfr_srcptr x3, mpfr_rnd_t rnd)
+void arpra_helper_rnd_err_f3 (mpfr_ptr err, int (*f) (mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mpfr_srcptr, mpfr_rnd_t),
+                              mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2, mpfr_srcptr x3, mpfr_rnd_t rnd)
 {
     if (f(y, x1, x2, x3, rnd)) {
         arpra_helper_rnd_err(err, y, rnd);
     }
 }
 
-void arpra_helper_mpfr_fmma (mpfr_ptr err, mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2,
-                             mpfr_srcptr x3, mpfr_srcptr x4, mpfr_rnd_t rnd)
+void arpra_helper_rnd_err_fmma (mpfr_ptr err, mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2,
+                                mpfr_srcptr x3, mpfr_srcptr x4, mpfr_rnd_t rnd)
 {
     mpfr_t x1x2, x3x4;
 
@@ -123,8 +115,8 @@ void arpra_helper_mpfr_fmma (mpfr_ptr err, mpfr_ptr y, mpfr_srcptr x1, mpfr_srcp
     mpfr_clear(x3x4);
 }
 
-void arpra_helper_mpfr_fmmaa (mpfr_ptr err, mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2,
-                              mpfr_srcptr x3, mpfr_srcptr x4, mpfr_srcptr x5, mpfr_rnd_t rnd)
+void arpra_helper_rnd_err_fmmaa (mpfr_ptr err, mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2,
+                                 mpfr_srcptr x3, mpfr_srcptr x4, mpfr_srcptr x5, mpfr_rnd_t rnd)
 {
     mpfr_t x1x2, x3x4;
 

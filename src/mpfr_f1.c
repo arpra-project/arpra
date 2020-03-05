@@ -1,7 +1,7 @@
 /*
  * mpfr_f1.c -- Compute Arpra ranges with univariate MPFR functions.
  *
- * Copyright 2019 James Paul Turner.
+ * Copyright 2019-2020 James Paul Turner.
  *
  * This file is part of the Arpra library.
  *
@@ -24,8 +24,8 @@
 void arpra_mpfr_f1 (int (*f) (mpfr_ptr, mpfr_srcptr, mpfr_rnd_t),
                     arpra_range *y, mpfr_srcptr x1)
 {
-    arpra_range yy;
     mpfr_t error;
+    arpra_range yy;
     arpra_prec prec_internal;
 
     // Initialise vars.
@@ -40,7 +40,7 @@ void arpra_mpfr_f1 (int (*f) (mpfr_ptr, mpfr_srcptr, mpfr_rnd_t),
 
     // Allocate memory for deviation terms.
     yy.symbols = malloc(sizeof(arpra_uint));
-    yy.deviations = malloc(sizeof(arpra_mpfr));
+    yy.deviations = malloc(sizeof(mpfr_t));
 
     // Store numerical error term.
     yy.symbols[0] = arpra_helper_next_symbol();
