@@ -75,7 +75,7 @@ static void dopri87_compute_constants (arpra_ode_stepper *stepper, const arpra_p
     arpra_set_d(&numerator, 1.);
     arpra_set_d(&denominator, 18.);
     arpra_div(&(scratch->c[1]), &numerator, &denominator);
-    arpra_set(&(scratch->a[1][0]), &(scratch->c[1]));
+    arpra_set_range(&(scratch->a[1][0]), &(scratch->c[1]));
 
     // k[2] = f(t + 1/12 h,
     //          x(t) + 1/48 h k[0]
@@ -109,7 +109,7 @@ static void dopri87_compute_constants (arpra_ode_stepper *stepper, const arpra_p
     arpra_set_d(&numerator, 5.);
     arpra_set_d(&denominator, 16.);
     arpra_div(&(scratch->c[4]), &numerator, &denominator);
-    arpra_set(&(scratch->a[4][0]), &(scratch->c[4]));
+    arpra_set_range(&(scratch->a[4][0]), &(scratch->c[4]));
     arpra_set_zero(&(scratch->a[4][1]));
     arpra_set_d(&numerator, -75.);
     arpra_set_d(&denominator, 64.);
@@ -692,7 +692,7 @@ static void dopri87_step (arpra_ode_stepper *stepper, const arpra_range *h)
     arpra_add(system->t, system->t, h);
     for (x_grp = 0; x_grp < system->grps; x_grp++) {
         for (x_dim = 0; x_dim < system->dims[x_grp]; x_dim++) {
-            arpra_set(&(system->x[x_grp][x_dim]), &(scratch->x_new_8[x_grp][x_dim]));
+            arpra_set_range(&(system->x[x_grp][x_dim]), &(scratch->x_new_8[x_grp][x_dim]));
         }
     }
 }

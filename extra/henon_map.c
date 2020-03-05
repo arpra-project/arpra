@@ -87,8 +87,8 @@ int main (int argc, char *argv[])
         arpra_mul(&y_new, &b, &x);
 
         // Update x and y
-        arpra_set(&x, &x_new);
-        arpra_set(&y, &y_new);
+        arpra_set_range(&x, &x_new);
+        arpra_set_range(&y, &y_new);
 
         // Reduce independent terms
         //arpra_reduce_last_n(&x, (x.nTerms - old_x_nTerms));

@@ -36,8 +36,6 @@
 
 // ARPRA_MPFR_F* SHOULD BE HELPER FUNCTIONS - EXPOSE REAL FUNCTIONS INSTEAD
 
-// MUL AND OTHERS SHOULD USE ARPRA_HELPER_RND_ERR_F2
-
 
 void arpra_mpfr_f2 (int (*f) (mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mpfr_rnd_t),
                     arpra_range *y, mpfr_srcptr x1, mpfr_srcptr x2)

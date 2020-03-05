@@ -1,5 +1,5 @@
 /*
- * set.c -- Set one Arpra range with the values of another.
+ * set_range.c -- Set one Arpra range with the value of another.
  *
  * Copyright 2016-2020 James Paul Turner.
  *
@@ -21,10 +21,10 @@
 
 #include "arpra-impl.h"
 
-void arpra_set (arpra_range *y, const arpra_range *x1)
+void arpra_set_range (arpra_range *y, const arpra_range *x1)
 {
-    arpra_mpfi ia_range;
-    arpra_mpfr temp1, temp2, error;
+    mpfi_t ia_range;
+    mpfr_t temp1, temp2, error;
     arpra_prec prec_internal;
     arpra_uint iy, ix1;
 
@@ -55,32 +55,24 @@ void arpra_set (arpra_range *y, const arpra_range *x1)
     mpfr_set_prec(&(y->radius), prec_internal);
     mpfr_set_zero(error, 1);
     mpfr_set_zero(&(y->radius), 1);
+    arpra_clear_terms(y);
 
     // MPFI set
     mpfi_set(ia_range, &(x1->true_range));
 
     // y[0] = x1[0]
-    if (mpfr_set(&(y->centre), &(x1->centre), MPFR_RNDN)) {
-        arpra_helper_error_half_ulp(temp1, &(y->centre));
-        mpfr_add(error, error, temp1, MPFR_RNDU);
-    }
+    arpra_helper_mpfr_rnd_err_f1(error, &mpfr_set, &(y->centre), &(x1->centre), MPFR_RNDN);
 
-    // Replace existing deviation term memory.
-    arpra_clear_terms(y);
-    y->nTerms = x1->nTerms + 1;
-    y->symbols = malloc(y->nTerms * sizeof(arpra_uint));
-    y->deviations = malloc(y->nTerms * sizeof(arpra_mpfr));
+    // Allocate memory for all possible deviation terms.
+    y->symbols = malloc((x1->nTerms + 1) * sizeof(arpra_uint));
+    y->deviations = malloc((x1->nTerms + 1) * sizeof(mpfr_t));
 
-    // Copy deviation terms over.
     for (iy = 0, ix1 = 0; ix1 < x1->nTerms; ix1++) {
-        y->symbols[iy] = x1->symbols[iy];
         mpfr_init2(&(y->deviations[iy]), prec_internal);
 
         // y[i] = x1[i]
-        if (mpfr_set(&(y->deviations[iy]), &(x1->deviations[ix1]), MPFR_RNDN)) {
-            arpra_helper_error_half_ulp(temp1, &(y->deviations[iy]));
-            mpfr_add(error, error, temp1, MPFR_RNDU);
-        }
+        y->symbols[iy] = x1->symbols[iy];
+        arpra_helper_mpfr_rnd_err_f1(error, &mpfr_set, &(y->deviations[iy]), &(x1->deviations[ix1]), MPFR_RNDN);
 
         mpfr_abs(temp1, &(y->deviations[iy]), MPFR_RNDU);
         mpfr_add(&(y->radius), &(y->radius), temp1, MPFR_RNDU);

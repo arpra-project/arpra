@@ -139,7 +139,7 @@ static void euler_step (arpra_ode_stepper *stepper, const arpra_range *h)
     arpra_add(system->t, system->t, h);
     for (x_grp = 0; x_grp < system->grps; x_grp++) {
         for (x_dim = 0; x_dim < system->dims[x_grp]; x_dim++) {
-            arpra_set(&(system->x[x_grp][x_dim]), &(scratch->x_new[x_grp][x_dim]));
+            arpra_set_range(&(system->x[x_grp][x_dim]), &(scratch->x_new[x_grp][x_dim]));
         }
     }
 }

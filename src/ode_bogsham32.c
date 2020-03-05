@@ -75,7 +75,7 @@ static void bogsham32_compute_constants (arpra_ode_stepper *stepper, const arpra
     arpra_set_d(&numerator, 1.);
     arpra_set_d(&denominator, 2.);
     arpra_div(&(scratch->c[1]), &numerator, &denominator);
-    arpra_set(&(scratch->a[1][0]), &(scratch->c[1]));
+    arpra_set_range(&(scratch->a[1][0]), &(scratch->c[1]));
 
     // k[2] = f(t + 3/4 h,
     //          x(t) + 0   h k[0]
@@ -84,7 +84,7 @@ static void bogsham32_compute_constants (arpra_ode_stepper *stepper, const arpra
     arpra_set_d(&denominator, 4.);
     arpra_div(&(scratch->c[2]), &numerator, &denominator);
     arpra_set_zero(&(scratch->a[2][0]));
-    arpra_set(&(scratch->a[2][1]), &(scratch->c[2]));
+    arpra_set_range(&(scratch->a[2][1]), &(scratch->c[2]));
 
     // k[3] = f(t + h,
     //          x(t) + 2/9 h k[0]
@@ -106,9 +106,9 @@ static void bogsham32_compute_constants (arpra_ode_stepper *stepper, const arpra
     //                   + 1/3 h k[1]
     //                   + 4/9 h k[2]
     //                   + 0   h k[3]
-    arpra_set(&(scratch->b_3[0]), &(scratch->a[3][0]));
-    arpra_set(&(scratch->b_3[1]), &(scratch->a[3][1]));
-    arpra_set(&(scratch->b_3[2]), &(scratch->a[3][2]));
+    arpra_set_range(&(scratch->b_3[0]), &(scratch->a[3][0]));
+    arpra_set_range(&(scratch->b_3[1]), &(scratch->a[3][1]));
+    arpra_set_range(&(scratch->b_3[2]), &(scratch->a[3][2]));
     arpra_set_zero(&(scratch->b_3[3]));
 
     // x_2(t + h) = x(t) + 7/24 h k[0]
@@ -331,7 +331,7 @@ static void bogsham32_step (arpra_ode_stepper *stepper, const arpra_range *h)
     arpra_add(system->t, system->t, h);
     for (x_grp = 0; x_grp < system->grps; x_grp++) {
         for (x_dim = 0; x_dim < system->dims[x_grp]; x_dim++) {
-            arpra_set(&(system->x[x_grp][x_dim]), &(scratch->x_new_3[x_grp][x_dim]));
+            arpra_set_range(&(system->x[x_grp][x_dim]), &(scratch->x_new_3[x_grp][x_dim]));
         }
     }
 }

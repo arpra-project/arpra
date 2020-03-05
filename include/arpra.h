@@ -59,7 +59,7 @@ void arpra_get_bounds (arpra_mpfr *lo, arpra_mpfr *hi, const arpra_range *x);
 void arpra_get_mpfi (arpra_mpfi *z, const arpra_range *x);
 
 // Set to an Arpra range.
-void arpra_set (arpra_range *z, const arpra_range *x);
+void arpra_set_range (arpra_range *z, const arpra_range *x);
 void arpra_set_d (arpra_range *z, const double centre);
 void arpra_set_d_rad (arpra_range *z, const double centre, const double radius);
 void arpra_set_str (arpra_range *z, const char *centre, const arpra_int base);
