@@ -55,15 +55,15 @@ void arpra_set_range (arpra_range *y, const arpra_range *x1)
     mpfr_set_prec(&(y->radius), prec_internal);
     mpfr_set_zero(error, 1);
     mpfr_set_zero(&(y->radius), 1);
-    arpra_clear_terms(y);
+    arpra_helper_clear_terms(y);
 
     // MPFI set
     mpfi_set(ia_range, &(x1->true_range));
 
     // y[0] = x1[0]
-    arpra_helper_mpfr_rnd_err_f1(error, &mpfr_set, &(y->centre), &(x1->centre), MPFR_RNDN);
+    ARPRA_MPFR_RNDERR_SET(error, MPFR_RNDN, &(y->centre), &(x1->centre));
 
-    // Allocate memory for all possible deviation terms.
+    // Allocate memory for deviation terms.
     y->symbols = malloc((x1->nTerms + 1) * sizeof(arpra_uint));
     y->deviations = malloc((x1->nTerms + 1) * sizeof(mpfr_t));
 
@@ -72,20 +72,20 @@ void arpra_set_range (arpra_range *y, const arpra_range *x1)
 
         // y[i] = x1[i]
         y->symbols[iy] = x1->symbols[iy];
-        arpra_helper_mpfr_rnd_err_f1(error, &mpfr_set, &(y->deviations[iy]), &(x1->deviations[ix1]), MPFR_RNDN);
+        ARPRA_MPFR_RNDERR_SET(error, MPFR_RNDN, &(y->deviations[iy]), &(x1->deviations[ix1]));
 
         mpfr_abs(temp1, &(y->deviations[iy]), MPFR_RNDU);
         mpfr_add(&(y->radius), &(y->radius), temp1, MPFR_RNDU);
         iy++;
     }
 
-    // Store numerical error term.
+    // Store new deviation term.
     y->symbols[iy] = arpra_helper_next_symbol();
     y->deviations[iy] = *error;
     mpfr_add(&(y->radius), &(y->radius), &(y->deviations[iy]), MPFR_RNDU);
     y->nTerms = iy + 1;
 
-    // Compute true_range, and add rounding error.
+    // Compute true_range.
     arpra_helper_range_rounded(y);
 
 #ifdef ARPRA_MIXED_IAAA

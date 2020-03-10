@@ -60,7 +60,7 @@ void arpra_neg (arpra_range *y, const arpra_range *x1)
     // y = - x1
     arpra_affine_1(y, x1, alpha, gamma, delta);
 
-    // Compute true_range, and add rounding error.
+    // Compute true_range.
     arpra_helper_range_rounded(y);
 
 #ifdef ARPRA_MIXED_IAAA

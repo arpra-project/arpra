@@ -46,7 +46,7 @@ void arpra_log (arpra_range *y, const arpra_range *x1)
 
     // Handle zero-width x1.
     if (mpfr_equal_p(&(x1->true_range.left), &(x1->true_range.right))) {
-        arpra_mpfr_f1(mpfr_log, y, &(x1->true_range.left));
+        arpra_mpfr_fn1(mpfr_log, y, &(x1->true_range.left));
         return;
     }
 
@@ -101,7 +101,7 @@ void arpra_log (arpra_range *y, const arpra_range *x1)
     // compute affine approximation
     arpra_affine_1(y, x1, alpha, gamma, delta);
 
-    // Compute true_range, and add rounding error.
+    // Compute true_range.
     arpra_helper_range_rounded(y);
 
 #ifdef ARPRA_MIXED_IAAA

@@ -49,7 +49,7 @@ void arpra_helper_range_rounded (arpra_range *z)
     mpfr_init2(&temp2, prec_internal + 8);
     zTerm = z->nTerms - 1;
 
-    // Compute true_range and rounding error.
+    // Compute true_range.
     mpfr_sub(&temp1, &(z->centre), &(z->radius), MPFR_RNDD);
     mpfr_add(&temp2, &(z->centre), &(z->radius), MPFR_RNDU);
     mpfr_set(&(z->true_range.left), &temp1, MPFR_RNDD);

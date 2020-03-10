@@ -35,7 +35,7 @@
 #include "../src/arpra-impl.h"
 
 // RNG output mode enumeration.
-typedef enum test_rand_mode
+typedef enum test_rand_mode_enum
 {
     TEST_RAND_MIXED = 0,  // (-oo <  z  < +oo)
     TEST_RAND_SMALL_POS,  // (+0 <=  z  <  +1)

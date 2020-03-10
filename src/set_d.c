@@ -54,7 +54,7 @@ void arpra_set_d (arpra_range *z, const double centre)
     mpfr_max(&(z->radius), &(z->radius), &temp, MPFR_RNDU);
 
     // Clear existing deviation terms.
-    arpra_clear_terms(z);
+    arpra_helper_clear_terms(z);
 
     // Store nonzero rounding error term.
     if (!mpfr_zero_p(&(z->radius))) {

@@ -30,15 +30,15 @@ lib_libarpra_la_SOURCES = \
 	src/default_precision.c src/div.c src/exp.c src/predicates.c	\
 	src/init.c src/internal_precision.c src/inv.c src/log.c		\
 	src/mul.c src/neg.c src/helper_symbol.c src/precision.c		\
-	src/set_d.c src/set.c src/set_d_rad.c src/set_str.c		\
+	src/set_d.c src/set_range.c src/set_d_rad.c src/set_str.c	\
 	src/set_str_rad.c src/set_mpfr.c src/set_mpfr_rad.c		\
 	src/set_special.c src/sqrt.c src/sub.c src/sum.c		\
 	src/get_bounds.c src/ode_stepper.c src/ode_euler.c		\
 	src/ode_trapezoidal.c src/ode_bogsham32.c src/ode_dopri54.c	\
-	src/ode_dopri87.c src/helper_mpfr_rnd_err.c src/helper_buffer.c	\
-	src/helper_mpfr_sum.c src/get_mpfi.c src/helper_range.c		\
-	src/helper_check_result.c src/set_mpfi.c src/mpfr_f1.c		\
-	src/mpfr_f2.c src/helper_clear_terms.c
+	src/ode_dopri87.c src/helper_mpfr_rnderr.c src/helper_buffer.c	\
+	src/ext_mpfr.c src/get_mpfi.c src/helper_range.c		\
+	src/helper_check_result.c src/set_mpfi.c src/mpfr_fn.c		\
+	src/helper_clear_terms.c
 
 # Testsuite helper library
 check_LTLIBRARIES = tests/libarpra-test.la

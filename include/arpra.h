@@ -25,7 +25,7 @@
 #include <mpfr.h>
 #include <mpfi.h>
 
-// Arpra range typedefs.
+// Arpra type definitions.
 typedef long int arpra_int;
 typedef unsigned long int arpra_uint;
 typedef mpfr_prec_t arpra_prec;
@@ -93,10 +93,28 @@ void arpra_log (arpra_range *z, const arpra_range *x);
 void arpra_inv (arpra_range *z, const arpra_range *x);
 
 // MPFR wrapper functions.
-void arpra_mpfr_f1 (int (*f) (mpfr_ptr, mpfr_srcptr, mpfr_rnd_t),
-                    arpra_range *y, mpfr_srcptr x1);
-void arpra_mpfr_f2 (int (*f) (mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mpfr_rnd_t),
-                    arpra_range *y, mpfr_srcptr x1, mpfr_srcptr x2);
+void arpra_mpfr_fn1 (int (*fn) (mpfr_ptr y, mpfr_srcptr x1, mpfr_rnd_t),
+                     arpra_range *y, mpfr_srcptr x1);
+void arpra_mpfr_fn1_ui (int (*fn) (mpfr_ptr y, const unsigned long int x1, mpfr_rnd_t),
+                        arpra_range *y, const unsigned long int x1);
+void arpra_mpfr_fn1_si (int (*fn) (mpfr_ptr y, const long int x1, mpfr_rnd_t),
+                        arpra_range *y, const long int x1);
+void arpra_mpfr_fn1_f (int (*fn) (mpfr_ptr y, const double x1, mpfr_rnd_t),
+                       arpra_range *y, const double x1);
+void arpra_mpfr_fn2 (int (*fn) (mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2, mpfr_rnd_t),
+                     arpra_range *y, mpfr_srcptr x1, mpfr_srcptr x2);
+void arpra_mpfr_ui_fn2 (int (*fn) (mpfr_ptr y, const unsigned long int x1, mpfr_srcptr x2, mpfr_rnd_t),
+                        arpra_range *y, const unsigned long int x1, mpfr_srcptr x2);
+void arpra_mpfr_fn2_ui (int (*fn) (mpfr_ptr y, mpfr_srcptr x1, const unsigned long int x2, mpfr_rnd_t),
+                        arpra_range *y, mpfr_srcptr x1, const unsigned long int x2);
+void arpra_mpfr_si_fn2 (int (*fn) (mpfr_ptr y, const long int x1, mpfr_srcptr x2, mpfr_rnd_t),
+                        arpra_range *y, const long int x1, mpfr_srcptr x2);
+void arpra_mpfr_fn2_si (int (*fn) (mpfr_ptr y, mpfr_srcptr x1, const long int x2, mpfr_rnd_t),
+                        arpra_range *y, mpfr_srcptr x1, const long int x2);
+void arpra_mpfr_d_fn2 (int (*fn) (mpfr_ptr y, const double x1, mpfr_srcptr x2, mpfr_rnd_t),
+                       arpra_range *y, const double x1, mpfr_srcptr x2);
+void arpra_mpfr_fn2_d (int (*fn) (mpfr_ptr y, mpfr_srcptr x1, const double x2, mpfr_rnd_t),
+                       arpra_range *y, mpfr_srcptr x1, const double x2);
 
 // Numerical precision.
 arpra_prec arpra_get_precision (const arpra_range *x);

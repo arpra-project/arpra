@@ -1,7 +1,7 @@
 /*
- * arpra-impl.h -- Private header file, used in compilation.
+ * arpra-impl.h -- Private header file, used during compilation.
  *
- * Copyright 2016-2019 James Paul Turner.
+ * Copyright 2016-2020 James Paul Turner.
  *
  * This file is part of the Arpra library.
  *
@@ -61,19 +61,38 @@ arpra_uint arpra_helper_next_symbol ();
 void arpra_helper_range (arpra_range *z);
 void arpra_helper_range_rounded (arpra_range *z);
 void arpra_helper_check_result (arpra_range *z);
-void arpra_helper_mpfr_rnd_err_f1 (mpfr_ptr err, int (*f) (mpfr_ptr, mpfr_srcptr, mpfr_rnd_t),
-                                   mpfr_ptr y, mpfr_srcptr x1, mpfr_rnd_t rnd);
-void arpra_helper_mpfr_rnd_err_f2 (mpfr_ptr err, int (*f) (mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mpfr_rnd_t),
-                                   mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2, mpfr_rnd_t rnd);
-void arpra_helper_mpfr_rnd_err_f3 (mpfr_ptr err, int (*f) (mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mpfr_srcptr, mpfr_rnd_t),
-                                   mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2, mpfr_srcptr x3, mpfr_rnd_t rnd);
-void arpra_helper_mpfr_rnd_err_fmma (mpfr_ptr err, mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2,
-                                     mpfr_srcptr x3, mpfr_srcptr x4, mpfr_rnd_t rnd);
-void arpra_helper_mpfr_rnd_err_fmmaa (mpfr_ptr err, mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2,
-                                      mpfr_srcptr x3, mpfr_srcptr x4, mpfr_srcptr x5, mpfr_rnd_t rnd);
-int arpra_helper_mpfr_sum (arpra_mpfr *z, arpra_mpfr *x,
+void arpra_helper_mpfr_rnderr (mpfr_ptr err, mpfr_rnd_t rnd, mpfr_srcptr y);
+
+// Arpra extensions to the MPFR library.
+int arpra_ext_mpfr_fmma (mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2,
+                         mpfr_srcptr x3, mpfr_srcptr x4, mpfr_rnd_t rnd);
+int arpra_ext_mpfr_fmmaa (mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2,
+                          mpfr_srcptr x3, mpfr_srcptr x4, mpfr_srcptr x5, mpfr_rnd_t rnd);
+int arpra_ext_mpfr_sum (arpra_mpfr *z, arpra_mpfr *x,
+                        const arpra_uint n, const mpfr_rnd_t rnd);
+int arpra_ext_mpfr_sumabs (arpra_mpfr *z, arpra_mpfr *x,
                            const arpra_uint n, const mpfr_rnd_t rnd);
-int arpra_helper_mpfr_sumabs (arpra_mpfr *z, arpra_mpfr *x,
-                              const arpra_uint n, const mpfr_rnd_t rnd);
+
+// arpra_helper_mpfr_rnderr function wrapper macros.
+#define ARPRA_MPFR_RNDERR(err, rnd, fn, y, ...)                         \
+    if (fn(y, __VA_ARGS__, rnd)) arpra_helper_mpfr_rnderr(err, rnd, y)
+
+#define ARPRA_MPFR_RNDERR_SET(err, rnd, y, x1)                          \
+    if (mpfr_set(y, x1, rnd)) arpra_helper_mpfr_rnderr(err, rnd, y)
+
+#define ARPRA_MPFR_RNDERR_MUL(err, rnd, y, x1, x2)                      \
+    if (mpfr_mul(y, x1, x2, rnd)) arpra_helper_mpfr_rnderr(err, rnd, y)
+
+#define ARPRA_MPFR_RNDERR_FMA(err, rnd, y, x1, x2, x3)                  \
+    if (mpfr_fma(y, x1, x2, x3, rnd)) arpra_helper_mpfr_rnderr(err, rnd, y)
+
+#define ARPRA_MPFR_RNDERR_FMMA(err, rnd, y, x1, x2, x3, x4)             \
+    if (arpra_ext_mpfr_fmma(y, x1, x2, x3, x4, rnd)) arpra_helper_mpfr_rnderr(err, rnd, y)
+
+#define ARPRA_MPFR_RNDERR_FMMAA(err, rnd, y, x1, x2, x3, x4, x5)        \
+    if (arpra_ext_mpfr_fmmaa(y, x1, x2, x3, x4, x5, rnd)) arpra_helper_mpfr_rnderr(err, rnd, y)
+
+#define ARPRA_MPFR_RNDERR_SUM(err, rnd, y, x, n)                        \
+    if (mpfr_sum(y, x, n, rnd)) arpra_helper_mpfr_rnderr(err, rnd, y)
 
 #endif // ARPRA_IMPL_H

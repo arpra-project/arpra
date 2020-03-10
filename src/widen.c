@@ -1,7 +1,7 @@
 /*
- * precision.c -- Get and set the precision of an Arpra range.
+ * widen.c -- Add to the numerical error term of an Arpra range.
  *
- * Copyright 2016-2018 James Paul Turner.
+ * Copyright 2020 James Paul Turner.
  *
  * This file is part of the Arpra library.
  *
@@ -21,19 +21,7 @@
 
 #include "arpra-impl.h"
 
-arpra_prec arpra_get_precision (const arpra_range *x)
-{
-    return x->precision;
-}
 
-void arpra_set_precision (arpra_range *z, const arpra_prec prec)
-{
-    arpra_prec prec_internal;
-
-    prec_internal = arpra_get_internal_precision();
-    mpfr_set_prec(&(z->centre), prec_internal);
-    mpfr_set_prec(&(z->radius), prec_internal);
-    mpfi_set_prec(&(z->true_range), prec);
-    arpra_helper_clear_terms(z);
-    z->precision = prec;
-}
+// WIDEN.C: ARPRA_WIDEN_MPFR, ALIAS ARPRA_WIDEN
+// SHOULD BE NON-NEGATIVE
+// AND USE THIS ALSO FOR UINT INT FLOAT (SHOULD ROUND UPWARDS DURING CONVERSION)

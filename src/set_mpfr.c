@@ -21,6 +21,13 @@
 
 #include "arpra-impl.h"
 
+
+
+// THIS WILL EVENTUALLY BE REPLACED BY HELPER_MPFR_F1 -> HELPER_MPFR_RND_ERR_F1 MECHANISM
+// AS WITH ALL OTHER RANGE FROM MPFR FUNCTIONS IN ARPRA
+
+
+
 void arpra_set_mpfr (arpra_range *z, const arpra_mpfr *centre)
 {
     arpra_mpfr temp;
@@ -54,7 +61,7 @@ void arpra_set_mpfr (arpra_range *z, const arpra_mpfr *centre)
     mpfr_max(&(z->radius), &(z->radius), &temp, MPFR_RNDU);
 
     // Clear existing deviation terms.
-    arpra_clear_terms(z);
+    arpra_helper_clear_terms(z);
 
     // Store nonzero rounding error term.
     if (!mpfr_zero_p(&(z->radius))) {

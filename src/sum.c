@@ -91,12 +91,9 @@ void arpra_sum_exact (arpra_range *y, arpra_range *x, const arpra_uint n)
     }
 
     // y[0] = x1[0] + ... + xn[0]
-    if (mpfr_sum(&(yy.centre), summands, n, MPFR_RNDN)) {
-        arpra_helper_error_half_ulp(temp1, &(yy.centre));
-        mpfr_add(error, error, temp1, MPFR_RNDU);
-    }
+    ARPRA_MPFR_RNDERR_SUM(error, MPFR_RNDN, &(yy.centre), summands, n);
 
-    // Allocate memory for all possible deviation terms.
+    // Allocate memory for deviation terms.
     yy.nTerms = 1;
     for (i = 0; i < n; i++) {
         yy.nTerms += x[i].nTerms;
@@ -132,23 +129,20 @@ void arpra_sum_exact (arpra_range *y, arpra_range *x, const arpra_uint n)
         }
 
         // y[i] = x1[i] + ... + xn[i]
-        if (mpfr_sum(&(yy.deviations[iy]), summands, n_sum, MPFR_RNDN)) {
-            arpra_helper_error_half_ulp(temp1, &(yy.deviations[iy]));
-            mpfr_add(error, error, temp1, MPFR_RNDU);
-        }
+        ARPRA_MPFR_RNDERR_SUM(error, MPFR_RNDN, &(yy.deviations[iy]), summands, n_sum);
 
         mpfr_abs(temp1, &(yy.deviations[iy]), MPFR_RNDU);
         mpfr_add(&(yy.radius), &(yy.radius), temp1, MPFR_RNDU);
         iy++;
     }
 
-    // Store numerical error term.
+    // Store new deviation term.
     yy.symbols[iy] = arpra_helper_next_symbol();
     yy.deviations[iy] = *error;
     mpfr_add(&(yy.radius), &(yy.radius), &(yy.deviations[iy]), MPFR_RNDU);
     yy.nTerms = iy + 1;
 
-    // Compute true_range, and add rounding error.
+    // Compute true_range.
     arpra_helper_range_rounded(&yy);
 
     // Check for NaN and Inf.
@@ -233,12 +227,9 @@ void arpra_sum_recursive (arpra_range *y, arpra_range *x, const arpra_uint n)
     }
 
     // y[0] = x1[0] + ... + xn[0]
-    if (mpfr_sum(&(yy.centre), summands, n, MPFR_RNDN)) {
-        arpra_helper_error_half_ulp(temp1, &(yy.centre));
-        mpfr_add(error, error, temp1, MPFR_RNDU);
-    }
+    ARPRA_MPFR_RNDERR_SUM(error, MPFR_RNDN, &(yy.centre), summands, n);
 
-    // Allocate memory for all possible deviation terms.
+    // Allocate memory for deviation terms.
     yy.nTerms = 1;
     for (i = 0; i < n; i++) {
         yy.nTerms += x[i].nTerms;
@@ -274,10 +265,7 @@ void arpra_sum_recursive (arpra_range *y, arpra_range *x, const arpra_uint n)
         }
 
         // y[i] = x1[i] + ... + xn[i]
-        if (mpfr_sum(&(yy.deviations[iy]), summands, n_sum, MPFR_RNDN)) {
-            arpra_helper_error_half_ulp(temp1, &(yy.deviations[iy]));
-            mpfr_add(error, error, temp1, MPFR_RNDU);
-        }
+        ARPRA_MPFR_RNDERR_SUM(error, MPFR_RNDN, &(yy.deviations[iy]), summands, n_sum);
 
         mpfr_abs(temp1, &(yy.deviations[iy]), MPFR_RNDU);
         mpfr_add(&(yy.radius), &(yy.radius), temp1, MPFR_RNDU);
@@ -309,7 +297,7 @@ void arpra_sum_recursive (arpra_range *y, arpra_range *x, const arpra_uint n)
     // Compute error(sum(x)) = (n - 1) u sum(|x|).
     mpfr_set_si_2exp(temp1, 1, -yy.precision, MPFR_RNDU);
     mpfr_mul_ui(temp1, temp1, (n - 1), MPFR_RNDU);
-    arpra_helper_mpfr_sum(&(summands_magnitude[0]), summands_magnitude, n, MPFR_RNDU);
+    arpra_ext_mpfr_sum(&(summands_magnitude[0]), summands_magnitude, n, MPFR_RNDU);
     mpfr_mul(&(summands_magnitude[0]), &(summands_magnitude[0]), temp1, MPFR_RNDU);
     mpfr_add(error, error, &(summands_magnitude[0]), MPFR_RNDU);
 
@@ -321,13 +309,13 @@ void arpra_sum_recursive (arpra_range *y, arpra_range *x, const arpra_uint n)
      * END: Error bound for recursive summation.
      */
 
-    // Store numerical error term.
+    // Store new deviation term.
     yy.symbols[iy] = arpra_helper_next_symbol();
     yy.deviations[iy] = *error;
     mpfr_add(&(yy.radius), &(yy.radius), &(yy.deviations[iy]), MPFR_RNDU);
     yy.nTerms = iy + 1;
 
-    // Compute true_range, and add rounding error.
+    // Compute true_range.
     arpra_helper_range_rounded(&yy);
 
     // Check for NaN and Inf.
