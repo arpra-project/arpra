@@ -86,7 +86,7 @@ void arpra_set_range (arpra_range *y, const arpra_range *x1)
     y->nTerms = iy + 1;
 
     // Compute true_range.
-    arpra_helper_range(y);
+    arpra_helper_compute_range(y);
 
 #ifdef ARPRA_MIXED_IAAA
     // Intersect AA and IA ranges.

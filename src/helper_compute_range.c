@@ -1,5 +1,5 @@
 /*
- * helper_range.c -- Compute the true_range field of an Arpra range.
+ * helper_compute_range.c -- Compute the true_range field of an Arpra range.
  *
  * Copyright 2019-2020 James Paul Turner.
  *
@@ -26,7 +26,7 @@
  * new deviation term.
  */
 
-void arpra_helper_range (arpra_range *z)
+void arpra_helper_compute_range (arpra_range *z)
 {
     arpra_uint zTerm;
     arpra_mpfr temp1, temp2;

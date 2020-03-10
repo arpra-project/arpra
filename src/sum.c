@@ -143,7 +143,7 @@ void arpra_sum_exact (arpra_range *y, arpra_range *x, const arpra_uint n)
     yy.nTerms = iy + 1;
 
     // Compute true_range.
-    arpra_helper_range(&yy);
+    arpra_helper_compute_range(&yy);
 
     // Check for NaN and Inf.
     arpra_helper_check_result(&yy);
@@ -316,7 +316,7 @@ void arpra_sum_recursive (arpra_range *y, arpra_range *x, const arpra_uint n)
     yy.nTerms = iy + 1;
 
     // Compute true_range.
-    arpra_helper_range(&yy);
+    arpra_helper_compute_range(&yy);
 
     // Check for NaN and Inf.
     arpra_helper_check_result(&yy);

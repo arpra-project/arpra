@@ -49,7 +49,7 @@
         yy.nTerms = 1;                                                  \
                                                                         \
         /* Compute true_range. */                                       \
-        arpra_helper_range(&yy);                                        \
+        arpra_helper_compute_range(&yy);                                \
                                                                         \
         /* Check for NaN and Inf. */                                    \
         arpra_helper_check_result(&yy);                                 \

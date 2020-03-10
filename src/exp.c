@@ -132,7 +132,7 @@ void arpra_exp (arpra_range *y, const arpra_range *x1)
     arpra_affine_1(y, x1, alpha, gamma, delta);
 
     // Compute true_range.
-    arpra_helper_range(y);
+    arpra_helper_compute_range(y);
 
 #ifdef ARPRA_MIXED_IAAA
     // Intersect AA and IA ranges.
