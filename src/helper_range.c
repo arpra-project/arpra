@@ -1,7 +1,7 @@
 /*
  * helper_range.c -- Compute the true_range field of an Arpra range.
  *
- * Copyright 2019 James Paul Turner.
+ * Copyright 2019-2020 James Paul Turner.
  *
  * This file is part of the Arpra library.
  *
@@ -22,22 +22,11 @@
 #include "arpra-impl.h"
 
 /*
- * Only compute the true_range from centre and radius.
- */
-
-void arpra_helper_range (arpra_range *z)
-{
-    // Compute true_range.
-    mpfr_sub(&(z->true_range.left), &(z->centre), &(z->radius), MPFR_RNDD);
-    mpfr_add(&(z->true_range.right), &(z->centre), &(z->radius), MPFR_RNDU);
-}
-
-/*
  * Compute true_range from centre and radius, adding rounding error to the
  * new deviation term.
  */
 
-void arpra_helper_range_rounded (arpra_range *z)
+void arpra_helper_range (arpra_range *z)
 {
     arpra_uint zTerm;
     arpra_mpfr temp1, temp2;

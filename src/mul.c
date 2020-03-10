@@ -226,7 +226,7 @@ void arpra_mul (arpra_range *y, const arpra_range *x1, const arpra_range *x2)
     yy.nTerms = iy + 1;
 
     // Compute true_range.
-    arpra_helper_range_rounded(&yy);
+    arpra_helper_range(&yy);
 
 #ifdef ARPRA_MIXED_IAAA
     // Intersect AA and IA ranges.
