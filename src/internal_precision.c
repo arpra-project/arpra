@@ -1,7 +1,7 @@
 /*
  * internal_precision.c -- Get and set the precision used internally by Arpra.
  *
- * Copyright 2016-2018 James Paul Turner.
+ * Copyright 2016-2020 James Paul Turner.
  *
  * This file is part of the Arpra library.
  *
@@ -28,7 +28,7 @@ arpra_prec arpra_get_internal_precision ()
     return internal_precision;
 }
 
-void arpra_set_internal_precision (const arpra_prec prec)
+void arpra_set_internal_precision (arpra_prec prec)
 {
     internal_precision = prec;
 }

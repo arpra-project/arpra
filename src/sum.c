@@ -21,7 +21,7 @@
 
 #include "arpra-impl.h"
 
-void arpra_sum_exact (arpra_range *y, arpra_range *x, const arpra_uint n)
+void arpra_sum (arpra_range *y, arpra_range *x, arpra_uint n)
 {
     mpfr_t temp1, temp2, error;
     mpfr_ptr *summands;
@@ -157,7 +157,7 @@ void arpra_sum_exact (arpra_range *y, arpra_range *x, const arpra_uint n)
     free(ix);
 }
 
-void arpra_sum_recursive (arpra_range *y, arpra_range *x, const arpra_uint n)
+void arpra_sum_recursive (arpra_range *y, arpra_range *x, arpra_uint n)
 {
     mpfr_t temp1, temp2, error;
     mpfr_ptr *summands;

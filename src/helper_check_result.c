@@ -1,7 +1,7 @@
 /*
  * helper_check_result.c -- Check an Arpra range reuslt for NaN and infinity.
  *
- * Copyright 2019 James Paul Turner.
+ * Copyright 2019-2020 James Paul Turner.
  *
  * This file is part of the Arpra library.
  *
@@ -21,15 +21,15 @@
 
 #include "arpra-impl.h"
 
-void arpra_helper_check_result (arpra_range *z)
+void arpra_helper_check_result (arpra_range *y)
 {
     // Check for NaN range.
-    if (mpfr_nan_p(&(z->true_range.left)) || mpfr_nan_p(&(z->true_range.right))) {
-        arpra_set_nan(z);
+    if (mpfr_nan_p(&(y->true_range.left)) || mpfr_nan_p(&(y->true_range.right))) {
+        arpra_set_nan(y);
     }
 
     // Check for Inf range.
-    else if (mpfr_inf_p(&(z->true_range.left)) || mpfr_inf_p(&(z->true_range.right))) {
-        arpra_set_inf(z);
+    else if (mpfr_inf_p(&(y->true_range.left)) || mpfr_inf_p(&(y->true_range.right))) {
+        arpra_set_inf(y);
     }
 }

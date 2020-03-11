@@ -1,7 +1,7 @@
 /*
  * precision.c -- Get and set the precision of an Arpra range.
  *
- * Copyright 2016-2018 James Paul Turner.
+ * Copyright 2016-2020 James Paul Turner.
  *
  * This file is part of the Arpra library.
  *
@@ -21,19 +21,19 @@
 
 #include "arpra-impl.h"
 
-arpra_prec arpra_get_precision (const arpra_range *x)
+arpra_prec arpra_get_precision (const arpra_range *x1)
 {
-    return x->precision;
+    return x1->precision;
 }
 
-void arpra_set_precision (arpra_range *z, const arpra_prec prec)
+void arpra_set_precision (arpra_range *y, arpra_prec prec)
 {
     arpra_prec prec_internal;
 
     prec_internal = arpra_get_internal_precision();
-    mpfr_set_prec(&(z->centre), prec_internal);
-    mpfr_set_prec(&(z->radius), prec_internal);
-    mpfi_set_prec(&(z->true_range), prec);
-    arpra_helper_clear_terms(z);
-    z->precision = prec;
+    mpfr_set_prec(&(y->centre), prec_internal);
+    mpfr_set_prec(&(y->radius), prec_internal);
+    mpfi_set_prec(&(y->true_range), prec);
+    arpra_helper_clear_terms(y);
+    y->precision = prec;
 }

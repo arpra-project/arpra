@@ -1,7 +1,7 @@
 /*
  * helper_clear_terms.c -- Clear and free deviation term arrays.
  *
- * Copyright 2019 James Paul Turner.
+ * Copyright 2019-2020 James Paul Turner.
  *
  * This file is part of the Arpra library.
  *
@@ -21,15 +21,15 @@
 
 #include "arpra-impl.h"
 
-void arpra_helper_clear_terms (arpra_range *z)
+void arpra_helper_clear_terms (arpra_range *y)
 {
-    arpra_uint zTerm;
+    arpra_uint iy;
 
-    if (z->nTerms > 0) {
-        for (zTerm = 0; zTerm < z->nTerms; zTerm++) {
-            mpfr_clear(&(z->deviations[zTerm]));
+    if (y->nTerms > 0) {
+        for (iy = 0; iy < y->nTerms; iy++) {
+            mpfr_clear(&(y->deviations[iy]));
         }
-        free(z->symbols);
-        free(z->deviations);
+        free(y->symbols);
+        free(y->deviations);
     }
 }

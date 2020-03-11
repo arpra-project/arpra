@@ -52,14 +52,14 @@
 //#define ARPRA_MIN_RANGE 1
 
 // Internal auxiliary functions.
-arpra_mpfr **arpra_helper_buffer_mpfr_ptr (arpra_uint n);
-arpra_mpfr *arpra_helper_buffer_mpfr (arpra_uint n);
-void arpra_helper_clear_terms (arpra_range *z);
+mpfr_ptr *arpra_helper_buffer_mpfr_ptr (arpra_uint n);
+mpfr_ptr arpra_helper_buffer_mpfr (arpra_uint n);
+void arpra_helper_clear_terms (arpra_range *y);
 void arpra_helper_set_symbol_count (arpra_uint n);
 arpra_uint arpra_helper_get_symbol_count ();
 arpra_uint arpra_helper_next_symbol ();
-void arpra_helper_compute_range (arpra_range *z);
-void arpra_helper_check_result (arpra_range *z);
+void arpra_helper_compute_range (arpra_range *y);
+void arpra_helper_check_result (arpra_range *y);
 void arpra_helper_mpfr_rnderr (mpfr_ptr err, mpfr_rnd_t rnd, mpfr_srcptr y);
 
 // Arpra extensions to the MPFR library.
@@ -67,9 +67,9 @@ int arpra_ext_mpfr_fmma (mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2,
                          mpfr_srcptr x3, mpfr_srcptr x4, mpfr_rnd_t rnd);
 int arpra_ext_mpfr_fmmaa (mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2,
                           mpfr_srcptr x3, mpfr_srcptr x4, mpfr_srcptr x5, mpfr_rnd_t rnd);
-int arpra_ext_mpfr_sum (arpra_mpfr *y, arpra_mpfr *x,
+int arpra_ext_mpfr_sum (mpfr_ptr y, mpfr_ptr x,
                         const arpra_uint n, const mpfr_rnd_t rnd);
-int arpra_ext_mpfr_sumabs (arpra_mpfr *y, arpra_mpfr *x,
+int arpra_ext_mpfr_sumabs (mpfr_ptr y, mpfr_ptr x,
                            const arpra_uint n, const mpfr_rnd_t rnd);
 
 // arpra_helper_mpfr_rnderr function wrapper macros.

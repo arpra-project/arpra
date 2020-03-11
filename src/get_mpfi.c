@@ -1,7 +1,7 @@
 /*
  * get_mpfi.c -- Get an MPFI interval from an Arpra range.
  *
- * Copyright 2017-2018 James Paul Turner.
+ * Copyright 2017-2020 James Paul Turner.
  *
  * This file is part of the Arpra library.
  *
@@ -21,7 +21,7 @@
 
 #include "arpra-impl.h"
 
-void arpra_get_mpfi (arpra_mpfi *z, const arpra_range *x)
+void arpra_get_mpfi (mpfi_ptr y, const arpra_range *x)
 {
-    mpfi_set(z, &(x->true_range));
+    mpfi_set(y, &(x->true_range));
 }

@@ -26,30 +26,30 @@
  * new deviation term.
  */
 
-void arpra_helper_compute_range (arpra_range *z)
+void arpra_helper_compute_range (arpra_range *y)
 {
-    arpra_uint zTerm;
-    arpra_mpfr temp1, temp2;
+    mpfr_t temp1, temp2;
     arpra_prec prec_internal;
+    arpra_uint iy;
 
     // Initialise vars.
     prec_internal = arpra_get_internal_precision();
-    mpfr_init2(&temp1, prec_internal + 8);
-    mpfr_init2(&temp2, prec_internal + 8);
-    zTerm = z->nTerms - 1;
+    mpfr_init2(temp1, prec_internal + 8);
+    mpfr_init2(temp2, prec_internal + 8);
+    iy = y->nTerms - 1;
 
     // Compute true_range.
-    mpfr_sub(&temp1, &(z->centre), &(z->radius), MPFR_RNDD);
-    mpfr_add(&temp2, &(z->centre), &(z->radius), MPFR_RNDU);
-    mpfr_set(&(z->true_range.left), &temp1, MPFR_RNDD);
-    mpfr_set(&(z->true_range.right), &temp2, MPFR_RNDU);
-    mpfr_sub(&temp1, &temp1, &(z->true_range.left), MPFR_RNDU);
-    mpfr_sub(&temp2, &(z->true_range.right), &temp2, MPFR_RNDU);
-    mpfr_max(&temp1, &temp1, &temp2, MPFR_RNDU);
-    mpfr_add(&(z->deviations[zTerm]), &(z->deviations[zTerm]), &temp1, MPFR_RNDU);
-    mpfr_add(&(z->radius), &(z->radius), &temp1, MPFR_RNDU);
+    mpfr_sub(temp1, &(y->centre), &(y->radius), MPFR_RNDD);
+    mpfr_add(temp2, &(y->centre), &(y->radius), MPFR_RNDU);
+    mpfr_set(&(y->true_range.left), temp1, MPFR_RNDD);
+    mpfr_set(&(y->true_range.right), temp2, MPFR_RNDU);
+    mpfr_sub(temp1, temp1, &(y->true_range.left), MPFR_RNDU);
+    mpfr_sub(temp2, &(y->true_range.right), temp2, MPFR_RNDU);
+    mpfr_max(temp1, temp1, temp2, MPFR_RNDU);
+    mpfr_add(&(y->deviations[iy]), &(y->deviations[iy]), temp1, MPFR_RNDU);
+    mpfr_add(&(y->radius), &(y->radius), temp1, MPFR_RNDU);
 
     // Clear vars.
-    mpfr_clear(&temp1);
-    mpfr_clear(&temp2);
+    mpfr_clear(temp1);
+    mpfr_clear(temp2);
 }
