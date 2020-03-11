@@ -38,7 +38,7 @@ void arpra_sum (arpra_range *y, arpra_range *x, arpra_uint n)
             arpra_add(y, &x[0], &x[1]);
         }
         else if (n == 1) {
-            arpra_set_range(y, &x[0]);
+            arpra_set(y, &x[0]);
         }
         else {
             arpra_set_nan(y);
@@ -174,7 +174,7 @@ void arpra_sum_recursive (arpra_range *y, arpra_range *x, arpra_uint n)
             arpra_add(y, &x[0], &x[1]);
         }
         else if (n == 1) {
-            arpra_set_range(y, &x[0]);
+            arpra_set(y, &x[0]);
         }
         else {
             arpra_set_nan(y);

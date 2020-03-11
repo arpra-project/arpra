@@ -1,5 +1,5 @@
 /*
- * set_range.c -- Set one Arpra range with the value of another.
+ * set.c -- Set one Arpra range with the value of another.
  *
  * Copyright 2016-2020 James Paul Turner.
  *
@@ -21,7 +21,7 @@
 
 #include "arpra-impl.h"
 
-void arpra_set_range (arpra_range *y, const arpra_range *x1)
+void arpra_set (arpra_range *y, const arpra_range *x1)
 {
     mpfi_t ia_range;
     mpfr_t temp1, temp2, error;

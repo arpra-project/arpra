@@ -25,3 +25,16 @@
 // WIDEN.C: ARPRA_WIDEN_MPFR, ALIAS ARPRA_WIDEN
 // SHOULD BE NON-NEGATIVE
 // AND USE THIS ALSO FOR UINT INT FLOAT (SHOULD ROUND UPWARDS DURING CONVERSION)
+
+#define ARPRA_WIDEN_FN(SIGNATURE)               \
+    void SIGNATURE                              \
+    {                                           \
+                                                \
+    }
+
+
+#define FN_SIGNATURE(FN_TYPE, ...)                                      \
+    arpra_mpfr_##FN_TYPE (int (*fn) (mpfr_ptr y, __VA_ARGS__, mpfr_rnd_t rnd), arpra_range *y, __VA_ARGS__)
+
+#define FN_MPFR_CALL(...)                                               \
+    ARPRA_MPFR_RNDERR(error, MPFR_RNDN, fn, &(yy.centre), __VA_ARGS__)

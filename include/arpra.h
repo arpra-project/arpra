@@ -59,19 +59,13 @@ void arpra_get_bounds (mpfr_ptr y_lo, mpfr_ptr y_hi, const arpra_range *x);
 void arpra_get_mpfi (mpfi_ptr y, const arpra_range *x);
 
 // Set to an Arpra range.
-void arpra_set_range (arpra_range *z, const arpra_range *x);
+void arpra_set (arpra_range *z, const arpra_range *x);
 void arpra_set_mpfi (arpra_range *y, mpfi_srcptr x1);
 #define arpra_set_mpfr(y, x1) arpra_mpfr_fn1(mpfr_set, y, x1)
 #define arpra_set_ui(y, x1) arpra_mpfr_fn1_ui(mpfr_set_ui, y, x1)
 #define arpra_set_si(y, x1) arpra_mpfr_fn1_si(mpfr_set_si, y, x1)
 #define arpra_set_d(y, x1) arpra_mpfr_fn1_d(mpfr_set_d, y, x1)
 #define arpra_set_str(y, x1, base) arpra_mpfr_set_str(y, x1, base)
-
-
-void arpra_set_d_rad (arpra_range *z, const double centre, const double radius);
-void arpra_set_str_rad (arpra_range *z, const char *centre, const char *radius, const arpra_int base);
-void arpra_set_mpfr_rad (arpra_range *z, const arpra_mpfr *centre, const arpra_mpfr *radius);
-
 
 // Set special values.
 void arpra_set_nan (arpra_range *y);
