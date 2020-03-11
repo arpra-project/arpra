@@ -1,5 +1,5 @@
 /*
- * rand_arpra.c -- Generate a random arpra variable.
+ * rand_arpra.c -- Generate a random arpra range.
  *
  * Copyright 2017-2020 James Paul Turner.
  *
@@ -27,8 +27,6 @@ void test_rand_arpra (arpra_range *y, test_rand_mode mode_c, test_rand_mode mode
     arpra_range yy;
     arpra_prec prec_internal;
     arpra_uint iy;
-    mpfr_ptr lo_sum, hi_sum;
-    mpfr_ptr *lo_sum_ptr, *hi_sum_ptr;
 
     // Initialise vars.
     prec_internal = arpra_get_internal_precision();
@@ -46,10 +44,6 @@ void test_rand_arpra (arpra_range *y, test_rand_mode mode_c, test_rand_mode mode
     yy.nTerms = gmp_urandomm_ui(test_randstate, 5) + 5;
     yy.symbols = malloc((yy.nTerms + 1) * sizeof(arpra_uint));
     yy.deviations = malloc((yy.nTerms + 1) * sizeof(mpfr_t));
-    lo_sum = malloc(yy.nTerms * sizeof(mpfr_t));
-    hi_sum = malloc(yy.nTerms * sizeof(mpfr_t));
-    lo_sum_ptr = malloc((yy.nTerms + 1) * sizeof(mpfr_ptr));
-    hi_sum_ptr = malloc((yy.nTerms + 1) * sizeof(mpfr_ptr));
 
     for (iy = 0; iy < yy.nTerms; iy++) {
         mpfr_init2(&(yy.deviations[iy]), prec_internal);
@@ -61,32 +55,16 @@ void test_rand_arpra (arpra_range *y, test_rand_mode mode_c, test_rand_mode mode
         // Add term to radius.
         mpfr_abs(temp1, &(yy.deviations[iy]), MPFR_RNDU);
         mpfr_add(&(yy.radius), &(yy.radius), temp1, MPFR_RNDU);
-
-        // Set up true_range bound sums.
-        lo_sum[iy] = yy.deviations[iy];
-        lo_sum[iy]._mpfr_sign = -1;
-        lo_sum_ptr[iy] = &(lo_sum[iy]);
-        hi_sum[iy] = yy.deviations[iy];
-        hi_sum[iy]._mpfr_sign = 1;
-        hi_sum_ptr[iy] = &(hi_sum[iy]);
     }
-
-    // Set up true_range bound sums.
-    lo_sum_ptr[iy] = &(yy.centre);
-    hi_sum_ptr[iy] = &(yy.centre);
-
-    // Compute true_range in working precision.
-    mpfr_set_zero(temp1, -1);
-    ARPRA_MPFR_RNDERR_SUM(temp1, MPFR_RNDD, &(yy.true_range.left), lo_sum_ptr, (iy + 1));
-    mpfr_set_zero(temp2,  1);
-    ARPRA_MPFR_RNDERR_SUM(temp2, MPFR_RNDU, &(yy.true_range.right), hi_sum_ptr, (iy + 1));
-    mpfr_max(error, temp1, temp2, MPFR_RNDU);
 
     // Store new deviation term.
     yy.symbols[iy] = arpra_helper_next_symbol();
     yy.deviations[iy] = *error;
     mpfr_add(&(yy.radius), &(yy.radius), &(yy.deviations[iy]), MPFR_RNDU);
     yy.nTerms = iy + 1;
+
+    // Compute true_range.
+    arpra_helper_compute_range(&yy);
 
     // Check for NaN and Inf.
     arpra_helper_check_result(&yy);
@@ -96,8 +74,4 @@ void test_rand_arpra (arpra_range *y, test_rand_mode mode_c, test_rand_mode mode
     mpfr_clear(temp2);
     arpra_clear(y);
     *y = yy;
-    free(lo_sum);
-    free(hi_sum);
-    free(lo_sum_ptr);
-    free(hi_sum_ptr);
 }

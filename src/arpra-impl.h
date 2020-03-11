@@ -67,9 +67,9 @@ int arpra_ext_mpfr_fmma (mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2,
                          mpfr_srcptr x3, mpfr_srcptr x4, mpfr_rnd_t rnd);
 int arpra_ext_mpfr_fmmaa (mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2,
                           mpfr_srcptr x3, mpfr_srcptr x4, mpfr_srcptr x5, mpfr_rnd_t rnd);
-int arpra_ext_mpfr_sum (arpra_mpfr *z, arpra_mpfr *x,
+int arpra_ext_mpfr_sum (arpra_mpfr *y, arpra_mpfr *x,
                         const arpra_uint n, const mpfr_rnd_t rnd);
-int arpra_ext_mpfr_sumabs (arpra_mpfr *z, arpra_mpfr *x,
+int arpra_ext_mpfr_sumabs (arpra_mpfr *y, arpra_mpfr *x,
                            const arpra_uint n, const mpfr_rnd_t rnd);
 
 // arpra_helper_mpfr_rnderr function wrapper macros.

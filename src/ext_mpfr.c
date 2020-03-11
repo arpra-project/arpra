@@ -72,7 +72,7 @@ int arpra_ext_mpfr_fmmaa (mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2,
     return ternary;
 }
 
-int arpra_ext_mpfr_sum (arpra_mpfr *z, arpra_mpfr *x,
+int arpra_ext_mpfr_sum (arpra_mpfr *y, arpra_mpfr *x,
                         const arpra_uint n, const mpfr_rnd_t rnd)
 {
     arpra_mpfr **buffer_mpfr_ptr;
@@ -85,10 +85,10 @@ int arpra_ext_mpfr_sum (arpra_mpfr *z, arpra_mpfr *x,
     }
 
     // Sum the numbers.
-    return mpfr_sum(z, buffer_mpfr_ptr, n, rnd);
+    return mpfr_sum(y, buffer_mpfr_ptr, n, rnd);
 }
 
-int arpra_ext_mpfr_sumabs (arpra_mpfr *z, arpra_mpfr *x,
+int arpra_ext_mpfr_sumabs (arpra_mpfr *y, arpra_mpfr *x,
                            const arpra_uint n, const mpfr_rnd_t rnd)
 {
     arpra_mpfr *buffer_mpfr;
@@ -102,5 +102,5 @@ int arpra_ext_mpfr_sumabs (arpra_mpfr *z, arpra_mpfr *x,
     }
 
     // Sum the absolute value numbers.
-    return arpra_ext_mpfr_sum(z, buffer_mpfr, n, rnd);
+    return arpra_ext_mpfr_sum(y, buffer_mpfr, n, rnd);
 }
