@@ -1,7 +1,7 @@
 /*
  * predicates.c -- Predicates on Arpra ranges.
  *
- * Copyright 2017-2018 James Paul Turner.
+ * Copyright 2017-2020 James Paul Turner.
  *
  * This file is part of the Arpra library.
  *
@@ -21,38 +21,38 @@
 
 #include "arpra-impl.h"
 
-int arpra_nan_p (const arpra_range *x)
+int arpra_nan_p (const arpra_range *x1)
 {
-    return mpfi_nan_p(&(x->true_range));
+    return mpfi_nan_p(&(x1->true_range));
 }
 
-int arpra_inf_p (const arpra_range *x)
+int arpra_inf_p (const arpra_range *x1)
 {
-    return mpfi_inf_p(&(x->true_range));
+    return mpfi_inf_p(&(x1->true_range));
 }
 
-int arpra_bounded_p (const arpra_range *x)
+int arpra_bounded_p (const arpra_range *x1)
 {
-    return mpfi_bounded_p(&(x->true_range));
+    return mpfi_bounded_p(&(x1->true_range));
 }
 
-int arpra_zero_p (const arpra_range *x)
+int arpra_zero_p (const arpra_range *x1)
 {
-    return mpfr_zero_p(&(x->true_range.left)) && mpfr_zero_p(&(x->true_range.right));
+    return mpfr_zero_p(&(x1->true_range.left)) && mpfr_zero_p(&(x1->true_range.right));
 }
 
-int arpra_has_zero_p (const arpra_range *x)
+int arpra_has_zero_p (const arpra_range *x1)
 {
-    return !mpfi_nan_p(&(x->true_range))
-           && (mpfr_sgn(&(x->true_range.left)) <= 0) && (mpfr_sgn(&(x->true_range.right)) >= 0);
+    return !mpfi_nan_p(&(x1->true_range))
+           && (mpfr_sgn(&(x1->true_range.left)) <= 0) && (mpfr_sgn(&(x1->true_range.right)) >= 0);
 }
 
-int arpra_has_pos_p (const arpra_range *x)
+int arpra_has_pos_p (const arpra_range *x1)
 {
-    return mpfr_sgn(&(x->true_range.right)) > 0;
+    return mpfr_sgn(&(x1->true_range.right)) > 0;
 }
 
-int arpra_has_neg_p (const arpra_range *x)
+int arpra_has_neg_p (const arpra_range *x1)
 {
-    return mpfr_sgn(&(x->true_range.left)) < 0;
+    return mpfr_sgn(&(x1->true_range.left)) < 0;
 }

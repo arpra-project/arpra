@@ -1,7 +1,7 @@
 /*
- * set.c -- Set one Arpra range with the values of another.
+ * set.c -- Set one Arpra range with the value of another.
  *
- * Copyright 2016-2018 James Paul Turner.
+ * Copyright 2016-2020 James Paul Turner.
  *
  * This file is part of the Arpra library.
  *
@@ -21,117 +21,103 @@
 
 #include "arpra-impl.h"
 
-void arpra_set (arpra_range *z, const arpra_range *x)
+void arpra_set (arpra_range *y, const arpra_range *x1)
 {
-    arpra_uint xTerm, zTerm;
-    arpra_mpfr temp1, temp2, error;
-    arpra_mpfi ia_range;
+    mpfi_t ia_range;
+    mpfr_t temp1, temp2, error;
     arpra_prec prec_internal;
+    arpra_uint iy, ix1;
 
-    // Handle trivial cases.
-    if (z == x) return;
+    // Handle the y = x1 case.
+    if (y == x1) return;
 
     // Domain violations:
-    // NaN  =  NaN
-    // Inf  =  Inf
+    // (NaN) = (NaN)
+    // (Inf) = (Inf)
 
     // Handle domain violations.
-    if (arpra_nan_p(x)) {
-        arpra_set_nan(z);
+    if (arpra_nan_p(x1)) {
+        arpra_set_nan(y);
         return;
     }
-    if (arpra_inf_p(x)) {
-        arpra_set_inf(z);
+    if (arpra_inf_p(x1)) {
+        arpra_set_inf(y);
         return;
     }
 
     // Initialise vars.
     prec_internal = arpra_get_internal_precision();
-    mpfr_init2(&temp1, prec_internal + 8);
-    mpfr_init2(&temp2, prec_internal + 8);
-    mpfr_init2(&error, prec_internal);
-    mpfi_init2(&ia_range, z->precision);
-    mpfr_set_prec(&(z->centre), prec_internal);
-    mpfr_set_prec(&(z->radius), prec_internal);
-    mpfr_set_ui(&error, 0, MPFR_RNDU);
-    mpfr_set_ui(&(z->radius), 0, MPFR_RNDU);
+    mpfi_init2(ia_range, y->precision);
+    mpfr_init2(temp1, prec_internal + 8);
+    mpfr_init2(temp2, prec_internal + 8);
+    mpfr_init2(error, prec_internal);
+    mpfr_set_prec(&(y->centre), prec_internal);
+    mpfr_set_prec(&(y->radius), prec_internal);
+    mpfr_set_zero(error, 1);
+    mpfr_set_zero(&(y->radius), 1);
+    arpra_helper_clear_terms(y);
 
     // MPFI set
-    mpfi_set(&ia_range, &(x->true_range));
+    mpfi_set(ia_range, &(x1->true_range));
 
-    // z_0 = x_0
-    if (mpfr_set(&(z->centre), &(x->centre), MPFR_RNDN)) {
-        arpra_helper_error_half_ulp(&temp1, &(z->centre));
-        mpfr_add(&error, &error, &temp1, MPFR_RNDU);
+    // y[0] = x1[0]
+    ARPRA_MPFR_RNDERR_SET(error, MPFR_RNDN, &(y->centre), &(x1->centre));
+
+    // Allocate memory for deviation terms.
+    y->symbols = malloc((x1->nTerms + 1) * sizeof(arpra_uint));
+    y->deviations = malloc((x1->nTerms + 1) * sizeof(mpfr_t));
+
+    for (iy = 0, ix1 = 0; ix1 < x1->nTerms; ix1++) {
+        mpfr_init2(&(y->deviations[iy]), prec_internal);
+
+        // y[i] = x1[i]
+        y->symbols[iy] = x1->symbols[iy];
+        ARPRA_MPFR_RNDERR_SET(error, MPFR_RNDN, &(y->deviations[iy]), &(x1->deviations[ix1]));
+
+        mpfr_abs(temp1, &(y->deviations[iy]), MPFR_RNDU);
+        mpfr_add(&(y->radius), &(y->radius), temp1, MPFR_RNDU);
+        iy++;
     }
 
-    // Replace existing deviation term memory.
-    arpra_clear_terms(z);
-    z->nTerms = x->nTerms + 1;
-    z->symbols = malloc(z->nTerms * sizeof(arpra_uint));
-    z->deviations = malloc(z->nTerms * sizeof(arpra_mpfr));
+    // Store new deviation term.
+    y->symbols[iy] = arpra_helper_next_symbol();
+    y->deviations[iy] = *error;
+    mpfr_add(&(y->radius), &(y->radius), &(y->deviations[iy]), MPFR_RNDU);
+    y->nTerms = iy + 1;
 
-    // Copy deviation terms over.
-    for (xTerm = 0, zTerm = 0; xTerm < x->nTerms; xTerm++) {
-        z->symbols[zTerm] = x->symbols[zTerm];
-        mpfr_init2(&(z->deviations[zTerm]), prec_internal);
-
-        // z_i = x_i
-        if (mpfr_set(&(z->deviations[zTerm]), &(x->deviations[xTerm]), MPFR_RNDN)) {
-            arpra_helper_error_half_ulp(&temp1, &(z->deviations[zTerm]));
-            mpfr_add(&error, &error, &temp1, MPFR_RNDU);
-        }
-
-        mpfr_abs(&temp1, &(z->deviations[zTerm]), MPFR_RNDU);
-        mpfr_add(&(z->radius), &(z->radius), &temp1, MPFR_RNDU);
-        zTerm++;
-    }
-
-    // Round range to target precision.
-    mpfr_sub(&temp1, &(z->centre), &(z->radius), MPFR_RNDD);
-    mpfr_sub(&temp1, &temp1, &error, MPFR_RNDD);
-    mpfr_set(&(z->true_range.left), &temp1, MPFR_RNDD);
-    mpfr_sub(&temp1, &temp1, &(z->true_range.left), MPFR_RNDU);
-    mpfr_add(&temp2, &(z->centre), &(z->radius), MPFR_RNDU);
-    mpfr_add(&temp2, &temp2, &error, MPFR_RNDU);
-    mpfr_set(&(z->true_range.right), &temp2, MPFR_RNDU);
-    mpfr_sub(&temp2, &(z->true_range.right), &temp2, MPFR_RNDU);
-    mpfr_max(&temp1, &temp1, &temp2, MPFR_RNDU);
-    mpfr_add(&error, &error, &temp1, MPFR_RNDU);
-
-    // Store numerical error term.
-    z->symbols[zTerm] = arpra_next_symbol();
-    z->deviations[zTerm] = error;
-    mpfr_add(&(z->radius), &(z->radius), &(z->deviations[zTerm]), MPFR_RNDU);
-    z->nTerms = zTerm + 1;
+    // Compute true_range.
+    arpra_helper_compute_range(y);
 
 #ifdef ARPRA_MIXED_IAAA
+    // Intersect AA and IA ranges.
+    mpfi_intersect(&(y->true_range), &(y->true_range), ia_range);
+
 #ifdef ARPRA_MIXED_TRIMMED_IAAA
-    // Trim error term if Arpra range fully contains IA range.
-    if (mpfr_less_p(&(z->true_range.left), &(ia_range.left))
-        && mpfr_greater_p(&(z->true_range.right), &(ia_range.right))) {
-        mpfr_sub(&temp1, &(ia_range.left), &(z->true_range.left), MPFR_RNDD);
-        mpfr_sub(&temp2, &(z->true_range.right), &(ia_range.right), MPFR_RNDD);
-        mpfr_min(&temp1, &temp1, &temp2, MPFR_RNDD);
-        mpfr_sub(&(z->deviations[zTerm]), &(z->deviations[zTerm]), &temp1, MPFR_RNDU);
-        if (mpfr_cmp_ui(&(z->deviations[zTerm]), 0) < 0) {
-            mpfr_set_ui(&(z->deviations[zTerm]), 0, MPFR_RNDN);
+    // Trim error term if AA range fully encloses mixed IA/AA range.
+    mpfr_sub(temp1, &(y->centre), &(y->radius), MPFR_RNDD);
+    mpfr_add(temp2, &(y->centre), &(y->radius), MPFR_RNDU);
+    if (mpfr_less_p(temp1, &(y->true_range.left))
+        && mpfr_greater_p(temp2, &(y->true_range.right))) {
+        mpfr_sub(temp1, &(y->true_range.left), temp1, MPFR_RNDD);
+        mpfr_sub(temp2, temp2, &(y->true_range.right), MPFR_RNDD);
+        mpfr_min(temp1, temp1, temp2, MPFR_RNDD);
+        if (mpfr_greater_p(temp1, &(y->deviations[y->nTerms - 1]))) {
+            mpfr_sub(&(y->radius), &(y->radius), &(y->deviations[y->nTerms - 1]), MPFR_RNDU);
+            mpfr_set_zero(&(y->deviations[y->nTerms - 1]), 1);
+        }
+        else {
+            mpfr_sub(&(y->radius), &(y->radius), temp1, MPFR_RNDU);
+            mpfr_sub(&(y->deviations[y->nTerms - 1]), &(y->deviations[y->nTerms - 1]), temp1, MPFR_RNDU);
         }
     }
 #endif // ARPRA_MIXED_TRIMMED_IAAA
-    mpfi_intersect(&(z->true_range), &(z->true_range), &ia_range);
 #endif // ARPRA_MIXED_IAAA
 
-    // Handle domain violations.
-    if (mpfr_nan_p(&(z->centre)) || mpfr_nan_p(&(z->radius))) {
-        arpra_set_nan(z);
-    }
-    else if (mpfr_inf_p(&(z->centre)) || mpfr_inf_p(&(z->radius))) {
-        arpra_set_inf(z);
-    }
+    // Check for NaN and Inf.
+    arpra_helper_check_result(y);
 
     // Clear vars.
-    mpfr_clear(&temp1);
-    mpfr_clear(&temp2);
-    mpfi_clear(&ia_range);
+    mpfi_clear(ia_range);
+    mpfr_clear(temp1);
+    mpfr_clear(temp2);
 }

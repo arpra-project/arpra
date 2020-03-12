@@ -1,7 +1,7 @@
 /*
- * rand_arpra.c -- Generate a random arpra variable.
+ * rand_arpra.c -- Generate a random arpra range.
  *
- * Copyright 2017-2018 James Paul Turner.
+ * Copyright 2017-2020 James Paul Turner.
  *
  * This file is part of the Arpra library.
  *
@@ -21,103 +21,57 @@
 
 #include "arpra-test.h"
 
-void test_rand_arpra (arpra_range *z, test_rand_mode mode_c, test_rand_mode mode_d)
+void test_rand_arpra (arpra_range *y, test_rand_mode mode_c, test_rand_mode mode_d)
 {
-    arpra_uint zTerm;
-    arpra_prec prec, prec_internal;
-    arpra_mpfr temp1, temp2, error;
-    arpra_mpfr *lo_sum, **lo_sum_ptr;
-    arpra_mpfr *hi_sum, **hi_sum_ptr;
+    mpfr_t temp1, temp2, error;
+    arpra_range yy;
+    arpra_prec prec_internal;
+    arpra_uint iy;
 
     // Initialise vars.
     prec_internal = arpra_get_internal_precision();
-    mpfr_init2(&temp1, prec_internal);
-    mpfr_init2(&temp2, prec_internal);
-    mpfr_init2(&error, prec_internal);
-    mpfr_set_prec(&(z->centre), prec_internal);
-    mpfr_set_prec(&(z->radius), prec_internal);
-    mpfr_set_ui(&error, 0, MPFR_RNDU);
-    mpfr_set_ui(&(z->radius), 0, MPFR_RNDU);
+    mpfr_init2(temp1, prec_internal);
+    mpfr_init2(temp2, prec_internal);
+    mpfr_init2(error, prec_internal);
+    arpra_init2(&yy, y->precision);
+    mpfr_set_zero(error, 1);
+    mpfr_set_zero(&(yy.radius), 1);
 
-    // Set random centre.
-    test_rand_mpfr(&(z->centre), z->precision, mode_c);
+    // y[0] = rand()
+    test_rand_mpfr(&(yy.centre), yy.precision, mode_c);
 
     // Allocate 5 to 9 terms.
-    arpra_clear_terms(z);
-    z->nTerms = gmp_urandomm_ui(test_randstate, 5) + 5;
-    z->symbols = malloc((z->nTerms + 1) * sizeof(arpra_uint));
-    z->deviations = malloc((z->nTerms + 1) * sizeof(arpra_mpfr));
-    lo_sum = malloc(z->nTerms * sizeof(arpra_mpfr));
-    hi_sum = malloc(z->nTerms * sizeof(arpra_mpfr));
-    lo_sum_ptr = malloc((z->nTerms + 1) * sizeof(arpra_mpfr *));
-    hi_sum_ptr = malloc((z->nTerms + 1) * sizeof(arpra_mpfr *));
+    yy.nTerms = gmp_urandomm_ui(test_randstate, 5) + 5;
+    yy.symbols = malloc((yy.nTerms + 1) * sizeof(arpra_uint));
+    yy.deviations = malloc((yy.nTerms + 1) * sizeof(mpfr_t));
 
-    // Set random deviation terms.
-    for (zTerm = 0; zTerm < z->nTerms; zTerm++) {
-        z->symbols[zTerm] = arpra_next_symbol();
-        mpfr_init2(&(z->deviations[zTerm]), prec_internal);
-        test_rand_mpfr(&(z->deviations[zTerm]), z->precision, mode_d);
-        mpfr_abs(&temp1, &(z->deviations[zTerm]), MPFR_RNDU);
-        mpfr_add(&(z->radius), &(z->radius), &temp1, MPFR_RNDU);
+    for (iy = 0; iy < yy.nTerms; iy++) {
+        mpfr_init2(&(yy.deviations[iy]), prec_internal);
 
-        // Set up true_range bound sums.
-        lo_sum[zTerm] = z->deviations[zTerm];
-        lo_sum[zTerm]._mpfr_sign = -1;
-        lo_sum_ptr[zTerm] = &(lo_sum[zTerm]);
-        hi_sum[zTerm] = z->deviations[zTerm];
-        hi_sum[zTerm]._mpfr_sign = 1;
-        hi_sum_ptr[zTerm] = &(hi_sum[zTerm]);
+        // y[i] = rand()
+        yy.symbols[iy] = arpra_helper_next_symbol();
+        test_rand_mpfr(&(yy.deviations[iy]), yy.precision, mode_d);
+
+        // Add term to radius.
+        mpfr_abs(temp1, &(yy.deviations[iy]), MPFR_RNDU);
+        mpfr_add(&(yy.radius), &(yy.radius), temp1, MPFR_RNDU);
     }
 
-    // Set up true_range bound sums.
-    lo_sum_ptr[zTerm] = &(z->centre);
-    hi_sum_ptr[zTerm] = &(z->centre);
+    // Store new deviation term.
+    yy.symbols[iy] = arpra_helper_next_symbol();
+    yy.deviations[iy] = *error;
+    mpfr_add(&(yy.radius), &(yy.radius), &(yy.deviations[iy]), MPFR_RNDU);
+    yy.nTerms = iy + 1;
 
-    // Round range to target precision.
-    if (mpfr_sum(&(z->true_range.left), lo_sum_ptr, (z->nTerms + 1), MPFR_RNDD)) {
-        arpra_helper_error_ulp(&temp1, &(z->true_range.left));
-    }
-    else {
-        mpfr_set_ui(&temp1, 0, MPFR_RNDN);
-    }
-    if (mpfr_sum(&(z->true_range.right), hi_sum_ptr, (z->nTerms + 1), MPFR_RNDU)) {
-        arpra_helper_error_ulp(&temp2, &(z->true_range.right));
-    }
-    else {
-        mpfr_set_ui(&temp2, 0, MPFR_RNDN);
-    }
-    mpfr_max(&error, &temp1, &temp2, MPFR_RNDU);
-    mpfr_add(&(z->radius), &(z->radius), &error, MPFR_RNDU);
+    // Compute true_range.
+    arpra_helper_compute_range(&yy);
 
-    // Store nonzero rounding error term.
-    if (!mpfr_zero_p(&error) && mpfr_number_p(&error)) {
-        z->symbols[zTerm] = arpra_next_symbol();
-        z->deviations[zTerm] = error;
-        z->nTerms++;
-    }
-    else {
-        mpfr_clear(&error);
-    }
-
-    // Clear unused memory
-    if (z->nTerms == 0) {
-        free(z->symbols);
-        free(z->deviations);
-    }
-
-    // Handle domain violations.
-    if (mpfr_nan_p(&(z->centre)) || mpfr_nan_p(&(z->radius))) {
-        arpra_set_nan(z);
-    }
-    else if (mpfr_inf_p(&(z->centre)) || mpfr_inf_p(&(z->radius))) {
-        arpra_set_inf(z);
-    }
+    // Check for NaN and Inf.
+    arpra_helper_check_result(&yy);
 
     // Clear vars.
-    mpfr_clear(&temp1);
-    mpfr_clear(&temp2);
-    free(lo_sum);
-    free(hi_sum);
-    free(lo_sum_ptr);
-    free(hi_sum_ptr);
+    mpfr_clear(temp1);
+    mpfr_clear(temp2);
+    arpra_clear(y);
+    *y = yy;
 }

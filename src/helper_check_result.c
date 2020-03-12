@@ -1,7 +1,7 @@
 /*
- * symbol.c -- Noise symbol functions.
+ * helper_check_result.c -- Check an Arpra range reuslt for NaN and infinity.
  *
- * Copyright 2016-2018 James Paul Turner.
+ * Copyright 2019-2020 James Paul Turner.
  *
  * This file is part of the Arpra library.
  *
@@ -21,9 +21,15 @@
 
 #include "arpra-impl.h"
 
-static arpra_uint symbol_count = 0;
-
-arpra_uint arpra_next_symbol ()
+void arpra_helper_check_result (arpra_range *y)
 {
-    return symbol_count++;
+    // Check for NaN range.
+    if (mpfr_nan_p(&(y->true_range.left)) || mpfr_nan_p(&(y->true_range.right))) {
+        arpra_set_nan(y);
+    }
+
+    // Check for Inf range.
+    else if (mpfr_inf_p(&(y->true_range.left)) || mpfr_inf_p(&(y->true_range.right))) {
+        arpra_set_inf(y);
+    }
 }

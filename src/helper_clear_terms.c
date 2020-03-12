@@ -1,7 +1,7 @@
 /*
- * init2.c -- Initialise one or more Arpra ranges, and set their precision.
+ * helper_clear_terms.c -- Clear and free deviation term arrays.
  *
- * Copyright 2016-2018 James Paul Turner.
+ * Copyright 2019-2020 James Paul Turner.
  *
  * This file is part of the Arpra library.
  *
@@ -21,26 +21,15 @@
 
 #include "arpra-impl.h"
 
-void arpra_init2 (arpra_range *z, const arpra_prec prec)
+void arpra_helper_clear_terms (arpra_range *y)
 {
-    arpra_prec prec_internal;
+    arpra_uint iy;
 
-    prec_internal = arpra_get_internal_precision();
-    mpfr_init2(&(z->centre), prec_internal);
-    mpfr_init2(&(z->radius), prec_internal);
-    mpfi_init2(&(z->true_range), prec);
-    z->nTerms = 0;
-    z->precision = prec;
-}
-
-void arpra_inits2 (const arpra_prec prec, arpra_range *z, ...)
-{
-    va_list arg;
-
-    va_start(arg, z);
-    while (z != NULL) {
-        arpra_init2(z, prec);
-        z = (arpra_range *) va_arg(arg, arpra_range *);
+    if (y->nTerms > 0) {
+        for (iy = 0; iy < y->nTerms; iy++) {
+            mpfr_clear(&(y->deviations[iy]));
+        }
+        free(y->symbols);
+        free(y->deviations);
     }
-    va_end(arg);
 }

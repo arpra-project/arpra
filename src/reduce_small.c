@@ -39,7 +39,7 @@ void arpra_reduce_small (arpra_range *z, double min_fraction)
     mpfr_init2(&threshold, prec_internal);
     mpfr_mul_d(&threshold, &(z->radius), min_fraction, MPFR_RNDN);
 
-    // Move small deviation terms to back.
+    // Move small deviation terms to the back.
     for (zNext = 0, zTerm = 0; zNext < z->nTerms; zNext++) {
         if (mpfr_cmpabs(&(z->deviations[zNext]), &threshold) >= 0) {
             if (zTerm < zNext) {
@@ -79,7 +79,7 @@ void arpra_reduce_small_abs (arpra_range *z, const arpra_mpfr *abs_threshold)
         }
     }
 
-    // Reduce small deviation terms.
+    // Merge the small deviation terms.
     arpra_reduce_last_n(z, (z->nTerms - zTerm));
 }
 

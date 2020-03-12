@@ -1,7 +1,7 @@
 /*
  * exp.c -- Compute the exponent of an Arpra range.
  *
- * Copyright 2017-2018 James Paul Turner.
+ * Copyright 2017-2020 James Paul Turner.
  *
  * This file is part of the Arpra library.
  *
@@ -25,143 +25,151 @@
  * This affine exponential function uses a Chebyshev linear approximation.
  */
 
-void arpra_exp (arpra_range *z, const arpra_range *x)
+void arpra_exp (arpra_range *y, const arpra_range *x1)
 {
-    arpra_mpfr alpha, gamma, delta;
-    arpra_mpfr temp1, temp2, da, db, du;
-    arpra_mpfi ia_range, x_range;
+    mpfi_t ia_range;
+    mpfr_t alpha, gamma, delta;
+    mpfr_t diff1, diff2, diff3;
+    mpfr_t temp1, temp2;
     arpra_prec prec_internal;
+
+    // Domain violations:
+    // exp(NaN) = (NaN)
+    // exp(Inf) = (Inf)
+
+    // Handle domain violations.
+    if (arpra_nan_p(x1)) {
+        arpra_set_nan(y);
+        return;
+    }
+    if (arpra_inf_p(x1)) {
+        arpra_set_inf(y);
+        return;
+    }
+
+    // Handle zero-width x1.
+    if (mpfr_equal_p(&(x1->true_range.left), &(x1->true_range.right))) {
+        arpra_mpfr_fn1(mpfr_exp, y, &(x1->true_range.left));
+        return;
+    }
 
     // Initialise vars.
     prec_internal = arpra_get_internal_precision();
-    mpfr_init2(&alpha, prec_internal);
-    mpfr_init2(&gamma, prec_internal);
-    mpfr_init2(&delta, prec_internal);
-    mpfr_init2(&temp1, prec_internal);
-    mpfr_init2(&temp2, prec_internal);
-    mpfr_init2(&da, prec_internal);
-    mpfr_init2(&db, prec_internal);
-    mpfr_init2(&du, prec_internal);
-    mpfi_init2(&ia_range, z->precision);
-    mpfi_init2(&x_range, x->precision);
-
-    // Handle x with zero radius.
-    if (mpfr_zero_p(&(x->radius))) {
-        if (mpfr_exp(&temp1, &(x->centre), MPFR_RNDN)) {
-            arpra_helper_error_half_ulp(&delta, &temp1);
-            arpra_set_mpfr_rad(z, &temp1, &delta);
-        }
-        else {
-            arpra_set_mpfr(z, &temp1);
-        }
-    }
-    else {
-        // Handle domain violations.
-        if (arpra_nan_p(x)) {
-            arpra_set_nan(z);
-        }
-        else if (arpra_inf_p(x)) {
-            arpra_set_inf(z);
-        }
-
-        // Domain is OK.
-        else {
-            // MPFI exponential
-            mpfi_exp(&ia_range, &(x->true_range));
-
-            mpfi_set(&x_range, &(x->true_range));
+    mpfi_init2(ia_range, y->precision);
+    mpfr_init2(alpha, prec_internal);
+    mpfr_init2(gamma, prec_internal);
+    mpfr_init2(delta, prec_internal);
+    mpfr_init2(diff1, prec_internal);
+    mpfr_init2(diff2, prec_internal);
+    mpfr_init2(diff3, prec_internal);
+    mpfr_init2(temp1, prec_internal);
+    mpfr_init2(temp2, prec_internal);
 
 #if ARPRA_MIN_RANGE
-            // compute alpha
-            mpfr_exp(&alpha, &(x_range.left), MPFR_RNDN);
+    // compute alpha
+    mpfr_exp(alpha, &(x1->true_range.left), MPFR_RNDN);
 
-            // compute difference (exp(a) - alpha a)
-            mpfr_mul(&da, &alpha, &(x_range.left), MPFR_RNDU);
-            mpfr_exp(&temp1, &(x_range.left), MPFR_RNDD);
-            mpfr_sub(&da, &temp1, &da, MPFR_RNDD);
+    // compute difference (exp(a) - alpha a)
+    mpfr_mul(diff1, alpha, &(x1->true_range.left), MPFR_RNDU);
+    mpfr_exp(temp1, &(x1->true_range.left), MPFR_RNDD);
+    mpfr_sub(diff1, temp1, diff1, MPFR_RNDD);
 
-            // compute difference (exp(b) - alpha b)
-            mpfr_mul(&db, &alpha, &(x_range.right), MPFR_RNDD);
-            mpfr_exp(&temp1, &(x_range.right), MPFR_RNDU);
-            mpfr_sub(&db, &temp1, &db, MPFR_RNDU);
+    // compute difference (exp(b) - alpha b)
+    mpfr_mul(diff3, alpha, &(x1->true_range.right), MPFR_RNDD);
+    mpfr_exp(temp1, &(x1->true_range.right), MPFR_RNDU);
+    mpfr_sub(diff3, temp1, diff3, MPFR_RNDU);
 
-            // compute gamma
-            mpfr_add(&gamma, &da, &db, MPFR_RNDN);
-            mpfr_div_si(&gamma, &gamma, 2, MPFR_RNDN);
+    // compute gamma
+    mpfr_add(gamma, diff1, diff3, MPFR_RNDN);
+    mpfr_div_si(gamma, gamma, 2, MPFR_RNDN);
 
-            // compute delta
-            mpfr_sub(&delta, &gamma, &da, MPFR_RNDU);
-            mpfr_sub(&temp1, &db, &gamma, MPFR_RNDU);
-            mpfr_max(&delta, &delta, &temp1, MPFR_RNDU);
+    // compute delta
+    mpfr_sub(delta, gamma, diff1, MPFR_RNDU);
+    mpfr_sub(temp1, diff3, gamma, MPFR_RNDU);
+    mpfr_max(delta, delta, temp1, MPFR_RNDU);
 
 #else
-            // compute alpha
-            mpfr_exp(&alpha, &(x_range.right), MPFR_RNDN);
-            mpfr_exp(&temp1, &(x_range.left), MPFR_RNDN);
-            mpfr_sub(&alpha, &alpha, &temp1, MPFR_RNDN);
-            mpfr_sub(&temp1, &(x_range.right), &(x_range.left), MPFR_RNDN);
-            mpfr_div(&alpha, &alpha, &temp1, MPFR_RNDN);
+    // compute alpha
+    mpfr_exp(alpha, &(x1->true_range.right), MPFR_RNDN);
+    mpfr_exp(temp1, &(x1->true_range.left), MPFR_RNDN);
+    mpfr_sub(alpha, alpha, temp1, MPFR_RNDN);
+    mpfr_sub(temp1, &(x1->true_range.right), &(x1->true_range.left), MPFR_RNDN);
+    mpfr_div(alpha, alpha, temp1, MPFR_RNDN);
 
-            // compute difference (exp(a) - alpha a)
-            mpfr_mul(&da, &alpha, &(x_range.left), MPFR_RNDD);
-            mpfr_exp(&temp1, &(x_range.left), MPFR_RNDU);
-            mpfr_sub(&da, &temp1, &da, MPFR_RNDU);
+    // compute difference (exp(a) - alpha a)
+    mpfr_mul(diff1, alpha, &(x1->true_range.left), MPFR_RNDD);
+    mpfr_exp(temp1, &(x1->true_range.left), MPFR_RNDU);
+    mpfr_sub(diff1, temp1, diff1, MPFR_RNDU);
 
-            // compute difference (exp(b) - alpha b)
-            mpfr_mul(&db, &alpha, &(x_range.right), MPFR_RNDD);
-            mpfr_exp(&temp1, &(x_range.right), MPFR_RNDU);
-            mpfr_sub(&db, &temp1, &db, MPFR_RNDU);
+    // compute difference (exp(b) - alpha b)
+    mpfr_mul(diff3, alpha, &(x1->true_range.right), MPFR_RNDD);
+    mpfr_exp(temp1, &(x1->true_range.right), MPFR_RNDU);
+    mpfr_sub(diff3, temp1, diff3, MPFR_RNDU);
 
-            mpfr_max(&db, &da, &db, MPFR_RNDU);
+    mpfr_max(diff3, diff1, diff3, MPFR_RNDU);
 
-            // compute difference (exp(u) - alpha u)
-            mpfr_log(&du, &alpha, MPFR_RNDU);
-            mpfr_sub_si(&du, &du, 1, MPFR_RNDU);
-            mpfr_mul(&du, &alpha, &du, MPFR_RNDU);
-            mpfr_neg(&du, &du, MPFR_RNDD);
+    // compute difference (exp(u) - alpha u)
+    mpfr_log(diff2, alpha, MPFR_RNDU);
+    mpfr_sub_si(diff2, diff2, 1, MPFR_RNDU);
+    mpfr_mul(diff2, alpha, diff2, MPFR_RNDU);
+    mpfr_neg(diff2, diff2, MPFR_RNDD);
 
-            // compute gamma
-            mpfr_add(&gamma, &db, &du, MPFR_RNDN);
-            mpfr_div_si(&gamma, &gamma, 2, MPFR_RNDN);
+    // compute gamma
+    mpfr_add(gamma, diff3, diff2, MPFR_RNDN);
+    mpfr_div_si(gamma, gamma, 2, MPFR_RNDN);
 
-            // compute delta
-            mpfr_sub(&delta, &gamma, &du, MPFR_RNDU);
-            mpfr_sub(&temp1, &db, &gamma, MPFR_RNDU);
-            mpfr_max(&delta, &delta, &temp1, MPFR_RNDU);
+    // compute delta
+    mpfr_sub(delta, gamma, diff2, MPFR_RNDU);
+    mpfr_sub(temp1, diff3, gamma, MPFR_RNDU);
+    mpfr_max(delta, delta, temp1, MPFR_RNDU);
 
 #endif // ARPRA_MIN_RANGE
 
-            // compute affine approximation
-            arpra_affine_1(z, x, &alpha, &gamma, &delta);
+    // MPFI exponential
+    mpfi_exp(ia_range, &(x1->true_range));
+
+    // compute affine approximation
+    arpra_affine_1(y, x1, alpha, gamma, delta);
+
+    // Compute true_range.
+    arpra_helper_compute_range(y);
 
 #ifdef ARPRA_MIXED_IAAA
+    // Intersect AA and IA ranges.
+    mpfi_intersect(&(y->true_range), &(y->true_range), ia_range);
+
 #ifdef ARPRA_MIXED_TRIMMED_IAAA
-            // Trim error term if Arpra range fully contains IA range.
-            if (mpfr_less_p(&(z->true_range.left), &(ia_range.left))
-                && mpfr_greater_p(&(z->true_range.right), &(ia_range.right))) {
-                mpfr_sub(&temp1, &(ia_range.left), &(z->true_range.left), MPFR_RNDD);
-                mpfr_sub(&temp2, &(z->true_range.right), &(ia_range.right), MPFR_RNDD);
-                mpfr_min(&temp1, &temp1, &temp2, MPFR_RNDD);
-                mpfr_sub(&(z->deviations[z->nTerms - 1]), &(z->deviations[z->nTerms - 1]), &temp1, MPFR_RNDU);
-                if (mpfr_cmp_ui(&(z->deviations[z->nTerms - 1]), 0) < 0) {
-                    mpfr_set_ui(&(z->deviations[z->nTerms - 1]), 0, MPFR_RNDN);
-                }
-            }
-#endif // ARPRA_MIXED_TRIMMED_IAAA
-            mpfi_intersect(&(z->true_range), &(z->true_range), &ia_range);
-#endif // ARPRA_MIXED_IAAA
+    // Trim error term if AA range fully encloses mixed IA/AA range.
+    mpfr_sub(temp1, &(y->centre), &(y->radius), MPFR_RNDD);
+    mpfr_add(temp2, &(y->centre), &(y->radius), MPFR_RNDU);
+    if (mpfr_less_p(temp1, &(y->true_range.left))
+        && mpfr_greater_p(temp2, &(y->true_range.right))) {
+        mpfr_sub(temp1, &(y->true_range.left), temp1, MPFR_RNDD);
+        mpfr_sub(temp2, temp2, &(y->true_range.right), MPFR_RNDD);
+        mpfr_min(temp1, temp1, temp2, MPFR_RNDD);
+        if (mpfr_greater_p(temp1, &(y->deviations[y->nTerms - 1]))) {
+            mpfr_sub(&(y->radius), &(y->radius), &(y->deviations[y->nTerms - 1]), MPFR_RNDU);
+            mpfr_set_zero(&(y->deviations[y->nTerms - 1]), 1);
+        }
+        else {
+            mpfr_sub(&(y->radius), &(y->radius), temp1, MPFR_RNDU);
+            mpfr_sub(&(y->deviations[y->nTerms - 1]), &(y->deviations[y->nTerms - 1]), temp1, MPFR_RNDU);
         }
     }
+#endif // ARPRA_MIXED_TRIMMED_IAAA
+#endif // ARPRA_MIXED_IAAA
+
+    // Check for NaN and Inf.
+    arpra_helper_check_result(y);
 
     // Clear vars.
-    mpfr_clear(&alpha);
-    mpfr_clear(&gamma);
-    mpfr_clear(&delta);
-    mpfr_clear(&temp1);
-    mpfr_clear(&temp2);
-    mpfr_clear(&da);
-    mpfr_clear(&db);
-    mpfr_clear(&du);
-    mpfi_clear(&ia_range);
-    mpfi_clear(&x_range);
+    mpfi_clear(ia_range);
+    mpfr_clear(alpha);
+    mpfr_clear(gamma);
+    mpfr_clear(delta);
+    mpfr_clear(diff1);
+    mpfr_clear(diff2);
+    mpfr_clear(diff3);
+    mpfr_clear(temp1);
+    mpfr_clear(temp2);
 }

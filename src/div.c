@@ -1,7 +1,7 @@
 /*
  * div.c -- Divide one Arpra range by another.
  *
- * Copyright 2016-2018 James Paul Turner.
+ * Copyright 2016-2020 James Paul Turner.
  *
  * This file is part of the Arpra library.
  *
@@ -21,51 +21,83 @@
 
 #include "arpra-impl.h"
 
-/*
- * For now we just multiply the numerator with the reciprocal of the denominator.
- */
-
-void arpra_div (arpra_range *z, const arpra_range *x, const arpra_range *y)
+void arpra_div (arpra_range *y, const arpra_range *x1, const arpra_range *x2)
 {
-    arpra_mpfr temp1, temp2;
-    arpra_mpfi ia_range;
-    arpra_range z_temp;
+    mpfi_t ia_range;
+    mpfr_t temp1, temp2;
+    arpra_range yy;
     arpra_prec prec_internal;
+
+    // Domain violations:
+    // (NaN) / (NaN) = (NaN)
+    // (NaN) / (R)   = (NaN)
+    // (R)   / (NaN) = (NaN)
+    // (Inf) / (Inf) = (NaN)
+    // (Inf) / (0)   = (NaN)
+    // (0)   / (Inf) = (NaN)
+    // (0)   / (0)   = (NaN)
+    // (Inf) / (R)   = (Inf)
+    // (R)   / (Inf) = (Inf)
+
+    // Handle domain violations.
+    if (arpra_nan_p(x1) || arpra_nan_p(x2)) {
+        arpra_set_nan(y);
+        return;
+    }
+    if (arpra_has_zero_p(x1) && arpra_has_zero_p(x2)) {
+        arpra_set_nan(y);
+        return;
+    }
+    if (arpra_inf_p(x1) || arpra_inf_p(x2)) {
+        arpra_set_inf(y);
+        return;
+    }
 
     // Initialise vars.
     prec_internal = arpra_get_internal_precision();
-    mpfr_init2(&temp1, prec_internal);
-    mpfr_init2(&temp2, prec_internal);
-    mpfi_init2(&ia_range, z->precision);
-    arpra_init2(&z_temp, z->precision);
+    mpfi_init2(ia_range, y->precision);
+    mpfr_init2(temp1, prec_internal);
+    mpfr_init2(temp2, prec_internal);
+    arpra_init2(&yy, y->precision);
 
     // MPFI division
-    mpfi_div(&ia_range, &(x->true_range), &(y->true_range));
+    mpfi_div(ia_range, &(x1->true_range), &(x2->true_range));
 
-    // z = x * (1 / y)
-    arpra_inv(&z_temp, y);
-    arpra_mul(z, x, &z_temp);
+    // y = x1 * (1 / x2)
+    arpra_inv(&yy, x2);
+    arpra_mul(y, x1, &yy);
 
 #ifdef ARPRA_MIXED_IAAA
+    // Intersect AA and IA ranges.
+    mpfi_intersect(&(y->true_range), &(y->true_range), ia_range);
+
 #ifdef ARPRA_MIXED_TRIMMED_IAAA
-    // Trim error term if Arpra range fully contains IA range.
-    if (mpfr_less_p(&(z->true_range.left), &(ia_range.left))
-        && mpfr_greater_p(&(z->true_range.right), &(ia_range.right))) {
-        mpfr_sub(&temp1, &(ia_range.left), &(z->true_range.left), MPFR_RNDD);
-        mpfr_sub(&temp2, &(z->true_range.right), &(ia_range.right), MPFR_RNDD);
-        mpfr_min(&temp1, &temp1, &temp2, MPFR_RNDD);
-        mpfr_sub(&(z->deviations[z->nTerms - 1]), &(z->deviations[z->nTerms - 1]), &temp1, MPFR_RNDU);
-        if (mpfr_cmp_ui(&(z->deviations[z->nTerms - 1]), 0) < 0) {
-            mpfr_set_ui(&(z->deviations[z->nTerms - 1]), 0, MPFR_RNDN);
+    // Trim error term if AA range fully encloses mixed IA/AA range.
+    mpfr_sub(temp1, &(y->centre), &(y->radius), MPFR_RNDD);
+    mpfr_add(temp2, &(y->centre), &(y->radius), MPFR_RNDU);
+    if (mpfr_less_p(temp1, &(y->true_range.left))
+        && mpfr_greater_p(temp2, &(y->true_range.right))) {
+        mpfr_sub(temp1, &(y->true_range.left), temp1, MPFR_RNDD);
+        mpfr_sub(temp2, temp2, &(y->true_range.right), MPFR_RNDD);
+        mpfr_min(temp1, temp1, temp2, MPFR_RNDD);
+        if (mpfr_greater_p(temp1, &(y->deviations[y->nTerms - 1]))) {
+            mpfr_sub(&(y->radius), &(y->radius), &(y->deviations[y->nTerms - 1]), MPFR_RNDU);
+            mpfr_set_zero(&(y->deviations[y->nTerms - 1]), 1);
+        }
+        else {
+            mpfr_sub(&(y->radius), &(y->radius), temp1, MPFR_RNDU);
+            mpfr_sub(&(y->deviations[y->nTerms - 1]), &(y->deviations[y->nTerms - 1]), temp1, MPFR_RNDU);
         }
     }
 #endif // ARPRA_MIXED_TRIMMED_IAAA
-    mpfi_intersect(&(z->true_range), &(z->true_range), &ia_range);
 #endif // ARPRA_MIXED_IAAA
 
+    // Check for NaN and Inf.
+    arpra_helper_check_result(y);
+
     // Clear vars.
-    mpfr_clear(&temp1);
-    mpfr_clear(&temp2);
-    mpfi_clear(&ia_range);
-    arpra_clear(&z_temp);
+    mpfi_clear(ia_range);
+    mpfr_clear(temp1);
+    mpfr_clear(temp2);
+    arpra_clear(&yy);
 }

@@ -26,7 +26,6 @@ void arpra_reduce_last_n (arpra_range *z, arpra_uint n)
     arpra_uint zTerm, zNext;
     arpra_mpfr **summands;
     arpra_mpfr temp1, temp2;
-    arpra_mpfi temp_range;
     arpra_prec prec_internal;
 
     // Handle trivial cases.
@@ -41,8 +40,7 @@ void arpra_reduce_last_n (arpra_range *z, arpra_uint n)
     prec_internal = arpra_get_internal_precision();
     mpfr_init2(&temp1, prec_internal + 8);
     mpfr_init2(&temp2, prec_internal + 8);
-    mpfi_init2(&temp_range, z->precision + 8);
-    mpfr_set_ui(&(z->radius), 0, MPFR_RNDU);
+    mpfr_set_zero(&(z->radius), 1);
     zTerm = z->nTerms - n;
     summands = malloc(n * sizeof(arpra_mpfr *));
 
@@ -51,14 +49,13 @@ void arpra_reduce_last_n (arpra_range *z, arpra_uint n)
         mpfr_abs(&(z->deviations[zNext]), &(z->deviations[zNext]), MPFR_RNDN);
         summands[zNext - zTerm] = &(z->deviations[zNext]);
     }
-    z->symbols[zTerm] = arpra_next_symbol();
+    z->symbols[zTerm] = arpra_helper_next_symbol();
     mpfr_sum(&(z->deviations[zTerm]), summands, n, MPFR_RNDU);
 
     // Clear the unused deviation terms.
     for (zNext = zTerm + 1; zNext < z->nTerms; zNext++) {
         mpfr_clear(&(z->deviations[zNext]));
     }
-    z->nTerms = zTerm + 1;
 
     // Add the remaining deviation terms to radius.
     for (zNext = 0; zNext < zTerm; zNext++) {
@@ -66,34 +63,33 @@ void arpra_reduce_last_n (arpra_range *z, arpra_uint n)
         mpfr_add(&(z->radius), &(z->radius), &temp1, MPFR_RNDU);
     }
     mpfr_add(&(z->radius), &(z->radius), &(z->deviations[zTerm]), MPFR_RNDU);
+    z->nTerms = zTerm + 1;
 
 #ifdef ARPRA_MIXED_TRIMMED_IAAA
-    // Trim reduced term if temp_range fully contains true_range.
-    mpfr_sub(&(temp_range.left), &(z->centre), &(z->radius), MPFR_RNDD);
-    mpfr_add(&(temp_range.right), &(z->centre), &(z->radius), MPFR_RNDU);
-    if (mpfr_less_p(&(temp_range.left), &(z->true_range.left))
-        && mpfr_greater_p(&(temp_range.right), &(z->true_range.right))) {
-        mpfr_sub(&temp1, &(z->true_range.left), &(temp_range.left), MPFR_RNDD);
-        mpfr_sub(&temp2, &(temp_range.right), &(z->true_range.right), MPFR_RNDD);
+    // Trim error term if AA range fully encloses mixed IA/AA range.
+    mpfr_sub(&temp1, &(z->centre), &(z->radius), MPFR_RNDD);
+    mpfr_add(&temp2, &(z->centre), &(z->radius), MPFR_RNDU);
+    if (mpfr_less_p(&temp1, &(z->true_range.left))
+        && mpfr_greater_p(&temp2, &(z->true_range.right))) {
+        mpfr_sub(&temp1, &(z->true_range.left), &temp1, MPFR_RNDD);
+        mpfr_sub(&temp2, &temp2, &(z->true_range.right), MPFR_RNDD);
         mpfr_min(&temp1, &temp1, &temp2, MPFR_RNDD);
-        mpfr_sub(&(z->deviations[zTerm]), &(z->deviations[zTerm]), &temp1, MPFR_RNDU);
-        if (mpfr_cmp_ui(&(z->deviations[zTerm]), 0) < 0) {
-            mpfr_set_ui(&(z->deviations[zTerm]), 0, MPFR_RNDN);
+        if (mpfr_greater_p(&temp1, &(z->deviations[z->nTerms - 1]))) {
+            mpfr_sub(&(z->radius), &(z->radius), &(z->deviations[z->nTerms - 1]), MPFR_RNDU);
+            mpfr_set_zero(&(z->deviations[z->nTerms - 1]), 1);
+        }
+        else {
+            mpfr_sub(&(z->radius), &(z->radius), &temp1, MPFR_RNDU);
+            mpfr_sub(&(z->deviations[z->nTerms - 1]), &(z->deviations[z->nTerms - 1]), &temp1, MPFR_RNDU);
         }
     }
 #endif // ARPRA_MIXED_TRIMMED_IAAA
 
-    // Handle domain violations.
-    if (mpfr_nan_p(&(z->radius))) {
-        arpra_set_nan(z);
-    }
-    else if (mpfr_inf_p(&(z->radius))) {
-        arpra_set_inf(z);
-    }
+    // Check for NaN and Inf.
+    arpra_helper_check_result(z);
 
     // Clear vars.
     mpfr_clear(&temp1);
     mpfr_clear(&temp2);
-    mpfi_clear(&temp_range);
     free(summands);
 }

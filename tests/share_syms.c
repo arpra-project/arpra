@@ -31,7 +31,7 @@ void test_share_all_syms (arpra_range *x, arpra_range *y)
     x_has_next = x->nTerms > 0;
     y_has_next = y->nTerms > 0;
     while (x_has_next || y_has_next) {
-        symbol = arpra_next_symbol();
+        symbol = arpra_helper_next_symbol();
 
         // Set x and y symbol if they exist.
         if (x_has_next) {
@@ -57,7 +57,7 @@ void test_share_rand_syms (arpra_range *x, arpra_range *y)
     y_has_next = y->nTerms > 0;
 
     while (x_has_next || y_has_next) {
-        symbol = arpra_next_symbol();
+        symbol = arpra_helper_next_symbol();
 
         // Set x and y symbol if they exist.
         if (!y_has_next) {
@@ -75,7 +75,7 @@ void test_share_rand_syms (arpra_range *x, arpra_range *y)
             }
             else {
                 x->symbols[term] = symbol;
-                y->symbols[term] = arpra_next_symbol();
+                y->symbols[term] = arpra_helper_next_symbol();
             }
         }
 
@@ -95,7 +95,7 @@ void test_share_n_syms (arpra_range *x, arpra_range *y, arpra_uint n)
     y_has_next = y->nTerms > 0;
 
     while (x_has_next || y_has_next) {
-        symbol = arpra_next_symbol();
+        symbol = arpra_helper_next_symbol();
 
         // Set x and y symbol if they exist.
         if (!y_has_next) {
@@ -114,7 +114,7 @@ void test_share_n_syms (arpra_range *x, arpra_range *y, arpra_uint n)
             }
             else {
                 x->symbols[term] = symbol;
-                y->symbols[term] = arpra_next_symbol();
+                y->symbols[term] = arpra_helper_next_symbol();
             }
         }
 

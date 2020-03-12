@@ -55,25 +55,20 @@ void arpra_set_str_rad (arpra_range *z, const char *centre, const char *radius, 
     mpfr_max(&(z->radius), &(z->radius), &temp, MPFR_RNDU);
 
     // Clear existing deviation terms.
-    arpra_clear_terms(z);
+    arpra_helper_clear_terms(z);
 
     // Store nonzero rounding error term.
     if (!mpfr_zero_p(&(z->radius))) {
         z->nTerms = 1;
         z->symbols = malloc(sizeof(arpra_uint));
         z->deviations = malloc(sizeof(arpra_mpfr));
-        z->symbols[0] = arpra_next_symbol();
+        z->symbols[0] = arpra_helper_next_symbol();
         mpfr_init2(&(z->deviations[0]), prec_internal);
         mpfr_set(&(z->deviations[0]), &(z->radius), MPFR_RNDU);
     }
 
-    // Handle domain violations.
-    if (mpfr_nan_p(&(z->centre)) || mpfr_nan_p(&(z->radius))) {
-        arpra_set_nan(z);
-    }
-    else if (mpfr_inf_p(&(z->centre)) || mpfr_inf_p(&(z->radius))) {
-        arpra_set_inf(z);
-    }
+    // Check for NaN and Inf.
+    arpra_helper_check_result(z);
 
     // Clear vars.
     mpfr_clear(&temp);

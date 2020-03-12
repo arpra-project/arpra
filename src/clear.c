@@ -1,7 +1,7 @@
 /*
- * clear.c -- Free the memory of one or more Arpra ranges.
+ * clear.c -- Clear the memory of Arpra ranges.
  *
- * Copyright 2016-2018 James Paul Turner.
+ * Copyright 2016-2020 James Paul Turner.
  *
  * This file is part of the Arpra library.
  *
@@ -21,36 +21,10 @@
 
 #include "arpra-impl.h"
 
-void arpra_clear (arpra_range *z)
+void arpra_clear (arpra_range *y)
 {
-    mpfr_clear(&(z->centre));
-    mpfr_clear(&(z->radius));
-    mpfi_clear(&(z->true_range));
-    arpra_clear_terms(z);
-}
-
-void arpra_clears (arpra_range *z, ...)
-{
-    va_list arg;
-
-    va_start(arg, z);
-    while (z != NULL) {
-        arpra_clear(z);
-        z = (arpra_range *) va_arg(arg, arpra_range *);
-    }
-    va_end(arg);
-}
-
-void arpra_clear_terms (arpra_range *z)
-{
-    arpra_uint zTerm;
-
-    if (z->nTerms > 0) {
-        for (zTerm = 0; zTerm < z->nTerms; zTerm++) {
-            mpfr_clear(&(z->deviations[zTerm]));
-        }
-        free(z->symbols);
-        free(z->deviations);
-        z->nTerms = 0;
-    }
+    mpfr_clear(&(y->centre));
+    mpfr_clear(&(y->radius));
+    mpfi_clear(&(y->true_range));
+    arpra_helper_clear_terms(y);
 }

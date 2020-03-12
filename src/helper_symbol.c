@@ -1,7 +1,7 @@
 /*
- * internal_precision.c -- Get and set the precision used internally by Arpra.
+ * helper_symbol.c -- Noise symbol functions.
  *
- * Copyright 2016-2020 James Paul Turner.
+ * Copyright 2016-2018 James Paul Turner.
  *
  * This file is part of the Arpra library.
  *
@@ -21,14 +21,19 @@
 
 #include "arpra-impl.h"
 
-static arpra_prec internal_precision = ARPRA_DEFAULT_INTERNAL_PRECISION;
+static arpra_uint symbol_count = 0;
 
-arpra_prec arpra_get_internal_precision ()
+arpra_uint arpra_helper_next_symbol ()
 {
-    return internal_precision;
+    return symbol_count++;
 }
 
-void arpra_set_internal_precision (arpra_prec prec)
+arpra_uint arpra_helper_get_symbol_count ()
 {
-    internal_precision = prec;
+    return symbol_count;
+}
+
+void arpra_helper_set_symbol_count (arpra_uint n)
+{
+    symbol_count = n;
 }

@@ -1,7 +1,7 @@
 /*
  * helper_buffer.c -- Access and manage global buffers.
  *
- * Copyright 2018 James Paul Turner.
+ * Copyright 2018-2020 James Paul Turner.
  *
  * This file is part of the Arpra library.
  *
@@ -22,32 +22,32 @@
 #include "arpra-impl.h"
 
 // MPFR pointer buffer.
-static arpra_mpfr **buffer_mpfr_ptr = NULL;
+static mpfr_ptr *buffer_mpfr_ptr = NULL;
 static arpra_uint buffer_mpfr_ptr_size = 0;
 
-arpra_mpfr **arpra_helper_buffer_mpfr_ptr (arpra_uint n)
+mpfr_ptr *arpra_helper_buffer_mpfr_ptr (arpra_uint n)
 {
     // Allocate or resize, as required.
     if (buffer_mpfr_ptr_size < n) {
         buffer_mpfr_ptr_size = ceil((double) n / (double) ARPRA_BUFFER_RESIZE_FACTOR);
         buffer_mpfr_ptr_size *= ARPRA_BUFFER_RESIZE_FACTOR;
-        buffer_mpfr_ptr = realloc(buffer_mpfr_ptr, buffer_mpfr_ptr_size * sizeof(arpra_mpfr *));
+        buffer_mpfr_ptr = realloc(buffer_mpfr_ptr, buffer_mpfr_ptr_size * sizeof(mpfr_ptr));
     }
 
     return buffer_mpfr_ptr;
 }
 
 // MPFR buffer.
-static arpra_mpfr *buffer_mpfr = NULL;
+static mpfr_ptr buffer_mpfr = NULL;
 static arpra_uint buffer_mpfr_size = 0;
 
-arpra_mpfr *arpra_helper_buffer_mpfr (arpra_uint n)
+mpfr_ptr arpra_helper_buffer_mpfr (arpra_uint n)
 {
     // Allocate or resize, as required.
     if (buffer_mpfr_size < n) {
         buffer_mpfr_size = ceil((double) n / (double) ARPRA_BUFFER_RESIZE_FACTOR);
         buffer_mpfr_size *= ARPRA_BUFFER_RESIZE_FACTOR;
-        buffer_mpfr = realloc(buffer_mpfr, buffer_mpfr_size * sizeof(arpra_mpfr));
+        buffer_mpfr = realloc(buffer_mpfr, buffer_mpfr_size * sizeof(mpfr_t));
     }
 
     return buffer_mpfr;

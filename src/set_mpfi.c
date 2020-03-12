@@ -1,7 +1,7 @@
 /*
  * set_mpfi.c -- Set an Arpra range with an MPFI interval.
  *
- * Copyright 2017-2018 James Paul Turner.
+ * Copyright 2017-2020 James Paul Turner.
  *
  * This file is part of the Arpra library.
  *
@@ -21,59 +21,58 @@
 
 #include "arpra-impl.h"
 
-void arpra_set_mpfi (arpra_range *z, const arpra_mpfi *x)
+void arpra_set_mpfi (arpra_range *y, mpfi_srcptr x1)
 {
-    arpra_mpfr temp;
+    mpfr_t temp1, temp2;
     arpra_prec prec_internal;
 
+    // Domain violations:
+    // (NaN) = (NaN)
+    // (Inf) = (Inf)
+
     // Handle domain violations.
-    if (mpfi_nan_p(x)) {
-        arpra_set_nan(z);
+    if (mpfi_nan_p(x1)) {
+        arpra_set_nan(y);
         return;
     }
-    if (mpfi_inf_p(x)) {
-        arpra_set_inf(z);
+    if (mpfi_inf_p(x1)) {
+        arpra_set_inf(y);
         return;
     }
 
     // Initialise vars.
     prec_internal = arpra_get_internal_precision();
-    mpfr_init2(&temp, prec_internal);
-    mpfr_set_prec(&(z->centre), prec_internal);
-    mpfr_set_prec(&(z->radius), prec_internal);
+    mpfr_init2(temp1, prec_internal);
+    mpfr_init2(temp2, prec_internal);
+    mpfr_set_prec(&(y->centre), prec_internal);
+    mpfr_set_prec(&(y->radius), prec_internal);
+    arpra_helper_clear_terms(y);
 
     // MPFI set
-    mpfi_set(&(z->true_range), x);
+    mpfi_set(&(y->true_range), x1);
 
-    // z_0 = (x_lo + x_hi) / 2
-    mpfi_mid(&(z->centre), &(z->true_range));
+    // y[0] = (x1[lo] + x1[hi]) / 2
+    mpfi_mid(&(y->centre), &(y->true_range));
 
-    // rad(z) = max{(z_0 - x_lo), (x_hi - z_0)}
-    mpfr_sub(&(z->radius), &(z->centre), &(z->true_range.left), MPFR_RNDU);
-    mpfr_sub(&temp, &(z->true_range.right), &(z->centre), MPFR_RNDU);
-    mpfr_max(&(z->radius), &(z->radius), &temp, MPFR_RNDU);
+    // Allocate memory for deviation terms.
+    y->symbols = malloc(sizeof(arpra_uint));
+    y->deviations = malloc(sizeof(mpfr_t));
 
-    // Clear existing deviation terms.
-    arpra_clear_terms(z);
+    // rad(y) = max{(y[0] - x1[lo]), (x1[hi] - y[0])}
+    mpfr_sub(temp1, &(y->centre), &(y->true_range.left), MPFR_RNDU);
+    mpfr_sub(temp2, &(y->true_range.right), &(y->centre), MPFR_RNDU);
+    mpfr_max(&(y->radius), temp1, temp2, MPFR_RNDU);
 
-    // Store nonzero rounding error term.
-    if (!mpfr_zero_p(&(z->radius))) {
-        z->nTerms = 1;
-        z->symbols = malloc(sizeof(arpra_uint));
-        z->deviations = malloc(sizeof(arpra_mpfr));
-        z->symbols[0] = arpra_next_symbol();
-        mpfr_init2(&(z->deviations[0]), prec_internal);
-        mpfr_set(&(z->deviations[0]), &(z->radius), MPFR_RNDU);
-    }
+    // Store new deviation term.
+    y->symbols[0] = arpra_helper_next_symbol();
+    mpfr_init2(&(y->deviations[0]), prec_internal);
+    mpfr_set(&(y->deviations[0]), &(y->radius), MPFR_RNDU);
+    y->nTerms = 1;
 
-    // Handle domain violations.
-    if (mpfr_nan_p(&(z->centre)) || mpfr_nan_p(&(z->radius))) {
-        arpra_set_nan(z);
-    }
-    else if (mpfr_inf_p(&(z->centre)) || mpfr_inf_p(&(z->radius))) {
-        arpra_set_inf(z);
-    }
+    // Check for NaN and Inf.
+    arpra_helper_check_result(y);
 
     // Clear vars.
-    mpfr_clear(&temp);
+    mpfr_clear(temp1);
+    mpfr_clear(temp2);
 }
