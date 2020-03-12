@@ -59,45 +59,55 @@
         *y = yy;                                                        \
     }
 
-#define FN_SIGNATURE(FN_TYPE, ...)                                      \
-    arpra_mpfr_##FN_TYPE (int (*fn) (mpfr_ptr y, __VA_ARGS__, mpfr_rnd_t rnd), arpra_range *y, __VA_ARGS__)
 
+// Univariate MPFR functions.
+#define FN1_SIGNATURE(FN1_TYPE, X1)                                     \
+    arpra_mpfr_##FN1_TYPE (int (*fn) (mpfr_ptr y, X1, mpfr_rnd_t rnd), arpra_range *y, X1)
 #define FN1_MPFR_CALL ARPRA_MPFR_RNDERR(error, MPFR_RNDN, fn, &(yy.centre), x1)
-#define FN2_MPFR_CALL ARPRA_MPFR_RNDERR(error, MPFR_RNDN, fn, &(yy.centre), x1, x2)
 
 // void arpra_mpfr_fn1 (fn, arpra_range *y, mpfr_srcptr x1)
-ARPRA_MPFR_FN(FN_SIGNATURE(fn1, mpfr_srcptr x1), FN1_MPFR_CALL)
+ARPRA_MPFR_FN(FN1_SIGNATURE(fn1, mpfr_srcptr x1), FN1_MPFR_CALL)
 
 // void arpra_mpfr_fn1_ui (fn, arpra_range *y, unsigned long int x1)
-ARPRA_MPFR_FN(FN_SIGNATURE(fn1_ui, unsigned long int x1), FN1_MPFR_CALL)
+ARPRA_MPFR_FN(FN1_SIGNATURE(fn1_ui, unsigned long int x1), FN1_MPFR_CALL)
 
 // void arpra_mpfr_fn1_si (fn, arpra_range *y, long int x1)
-ARPRA_MPFR_FN(FN_SIGNATURE(fn1_si, long int x1), FN1_MPFR_CALL)
+ARPRA_MPFR_FN(FN1_SIGNATURE(fn1_si, long int x1), FN1_MPFR_CALL)
 
 // void arpra_mpfr_fn1_d (fn, arpra_range *y, double x1)
-ARPRA_MPFR_FN(FN_SIGNATURE(fn1_d, double x1), FN1_MPFR_CALL)
+ARPRA_MPFR_FN(FN1_SIGNATURE(fn1_d, double x1), FN1_MPFR_CALL)
+
+
+// Bivariate MPFR functions.
+#define FN2_SIGNATURE(FN2_TYPE, X1, X2)                                 \
+    arpra_mpfr_##FN2_TYPE (int (*fn) (mpfr_ptr y, X1, X2, mpfr_rnd_t rnd), arpra_range *y, X1, X2)
+#define FN2_MPFR_CALL ARPRA_MPFR_RNDERR(error, MPFR_RNDN, fn, &(yy.centre), x1, x2)
 
 // void arpra_mpfr_fn2 (fn, arpra_range *y, mpfr_srcptr x1, mpfr_srcptr x2)
-ARPRA_MPFR_FN(FN_SIGNATURE(fn2, mpfr_srcptr x1, mpfr_srcptr x2), FN2_MPFR_CALL)
+ARPRA_MPFR_FN(FN2_SIGNATURE(fn2, mpfr_srcptr x1, mpfr_srcptr x2), FN2_MPFR_CALL)
 
 // void arpra_mpfr_ui_fn2 (fn, arpra_range *y, unsigned long int x1, mpfr_srcptr x2)
-ARPRA_MPFR_FN(FN_SIGNATURE(ui_fn2, unsigned long int x1, mpfr_srcptr x2), FN2_MPFR_CALL)
+ARPRA_MPFR_FN(FN2_SIGNATURE(ui_fn2, unsigned long int x1, mpfr_srcptr x2), FN2_MPFR_CALL)
 
 // void arpra_mpfr_fn2_ui (fn, arpra_range *y, mpfr_srcptr x1, unsigned long int x2)
-ARPRA_MPFR_FN(FN_SIGNATURE(fn2_ui, mpfr_srcptr x1, unsigned long int x2), FN2_MPFR_CALL)
+ARPRA_MPFR_FN(FN2_SIGNATURE(fn2_ui, mpfr_srcptr x1, unsigned long int x2), FN2_MPFR_CALL)
 
 // void arpra_mpfr_si_fn2 (fn, arpra_range *y, long int x1, mpfr_srcptr x2)
-ARPRA_MPFR_FN(FN_SIGNATURE(si_fn2, long int x1, mpfr_srcptr x2), FN2_MPFR_CALL)
+ARPRA_MPFR_FN(FN2_SIGNATURE(si_fn2, long int x1, mpfr_srcptr x2), FN2_MPFR_CALL)
 
 // void arpra_mpfr_fn2_si (fn, arpra_range *y, mpfr_srcptr x1, long int x2)
-ARPRA_MPFR_FN(FN_SIGNATURE(fn2_si, mpfr_srcptr x1, long int x2), FN2_MPFR_CALL)
+ARPRA_MPFR_FN(FN2_SIGNATURE(fn2_si, mpfr_srcptr x1, long int x2), FN2_MPFR_CALL)
 
 // void arpra_mpfr_d_fn2 (fn, arpra_range *y, double x1, mpfr_srcptr x2)
-ARPRA_MPFR_FN(FN_SIGNATURE(d_fn2, double x1, mpfr_srcptr x2), FN2_MPFR_CALL)
+ARPRA_MPFR_FN(FN2_SIGNATURE(d_fn2, double x1, mpfr_srcptr x2), FN2_MPFR_CALL)
 
 // void arpra_mpfr_fn2_d (fn, arpra_range *y, mpfr_srcptr x1, double x2)
-ARPRA_MPFR_FN(FN_SIGNATURE(fn2_d, mpfr_srcptr x1, double x2), FN2_MPFR_CALL)
+ARPRA_MPFR_FN(FN2_SIGNATURE(fn2_d, mpfr_srcptr x1, double x2), FN2_MPFR_CALL)
+
+
+// MPFR set string function.
+#define SET_STR_SIGNATURE arpra_mpfr_set_str (arpra_range *y, const char *x1, int base)
+#define SET_STR_MPFR_CALL ARPRA_MPFR_RNDERR(error, MPFR_RNDN, mpfr_set_str, &(yy.centre), x1, base)
 
 // void arpra_mpfr_set_str (arpra_range *y, char *x1, int base)
-#define SET_STR_MPFR_CALL ARPRA_MPFR_RNDERR(error, MPFR_RNDN, mpfr_set_str, &(yy.centre), x1, base)
-ARPRA_MPFR_FN(FN_SIGNATURE(set_str, const char *x1, int base), SET_STR_MPFR_CALL)
+ARPRA_MPFR_FN(SET_STR_SIGNATURE, SET_STR_MPFR_CALL)

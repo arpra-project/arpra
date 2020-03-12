@@ -121,27 +121,27 @@ int arpra_has_neg_p (const arpra_range *x1);
 void arpra_clear_buffers ();
 
 // MPFR wrapper functions.
-void arpra_mpfr_fn1 (int (*fn) (mpfr_ptr y, mpfr_srcptr x1, mpfr_rnd_t),
+void arpra_mpfr_fn1 (int (*fn) (mpfr_ptr y, mpfr_srcptr x1, mpfr_rnd_t rnd),
                      arpra_range *y, mpfr_srcptr x1);
-void arpra_mpfr_fn1_ui (int (*fn) (mpfr_ptr y, unsigned long int x1, mpfr_rnd_t),
+void arpra_mpfr_fn1_ui (int (*fn) (mpfr_ptr y, unsigned long int x1, mpfr_rnd_t rnd),
                         arpra_range *y, unsigned long int x1);
-void arpra_mpfr_fn1_si (int (*fn) (mpfr_ptr y, long int x1, mpfr_rnd_t),
+void arpra_mpfr_fn1_si (int (*fn) (mpfr_ptr y, long int x1, mpfr_rnd_t rnd),
                         arpra_range *y, long int x1);
-void arpra_mpfr_fn1_d (int (*fn) (mpfr_ptr y, double x1, mpfr_rnd_t),
+void arpra_mpfr_fn1_d (int (*fn) (mpfr_ptr y, double x1, mpfr_rnd_t rnd),
                        arpra_range *y, double x1);
-void arpra_mpfr_fn2 (int (*fn) (mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2, mpfr_rnd_t),
+void arpra_mpfr_fn2 (int (*fn) (mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2, mpfr_rnd_t rnd),
                      arpra_range *y, mpfr_srcptr x1, mpfr_srcptr x2);
-void arpra_mpfr_ui_fn2 (int (*fn) (mpfr_ptr y, unsigned long int x1, mpfr_srcptr x2, mpfr_rnd_t),
+void arpra_mpfr_ui_fn2 (int (*fn) (mpfr_ptr y, unsigned long int x1, mpfr_srcptr x2, mpfr_rnd_t rnd),
                         arpra_range *y, unsigned long int x1, mpfr_srcptr x2);
-void arpra_mpfr_fn2_ui (int (*fn) (mpfr_ptr y, mpfr_srcptr x1, unsigned long int x2, mpfr_rnd_t),
+void arpra_mpfr_fn2_ui (int (*fn) (mpfr_ptr y, mpfr_srcptr x1, unsigned long int x2, mpfr_rnd_t rnd),
                         arpra_range *y, mpfr_srcptr x1, unsigned long int x2);
-void arpra_mpfr_si_fn2 (int (*fn) (mpfr_ptr y, long int x1, mpfr_srcptr x2, mpfr_rnd_t),
+void arpra_mpfr_si_fn2 (int (*fn) (mpfr_ptr y, long int x1, mpfr_srcptr x2, mpfr_rnd_t rnd),
                         arpra_range *y, long int x1, mpfr_srcptr x2);
-void arpra_mpfr_fn2_si (int (*fn) (mpfr_ptr y, mpfr_srcptr x1, long int x2, mpfr_rnd_t),
+void arpra_mpfr_fn2_si (int (*fn) (mpfr_ptr y, mpfr_srcptr x1, long int x2, mpfr_rnd_t rnd),
                         arpra_range *y, mpfr_srcptr x1, long int x2);
-void arpra_mpfr_d_fn2 (int (*fn) (mpfr_ptr y, double x1, mpfr_srcptr x2, mpfr_rnd_t),
+void arpra_mpfr_d_fn2 (int (*fn) (mpfr_ptr y, double x1, mpfr_srcptr x2, mpfr_rnd_t rnd),
                        arpra_range *y, double x1, mpfr_srcptr x2);
-void arpra_mpfr_fn2_d (int (*fn) (mpfr_ptr y, mpfr_srcptr x1, double x2, mpfr_rnd_t),
+void arpra_mpfr_fn2_d (int (*fn) (mpfr_ptr y, mpfr_srcptr x1, double x2, mpfr_rnd_t rnd),
                        arpra_range *y, mpfr_srcptr x1, double x2);
 void arpra_mpfr_set_str (arpra_range *y, const char *x1, int base);
 
