@@ -72,6 +72,9 @@ void arpra_set_nan (arpra_range *y);
 void arpra_set_inf (arpra_range *y);
 void arpra_set_zero (arpra_range *y);
 
+// Modify an Arpra range.
+void arpra_increase (arpra_range *y, const arpra_range *x1, mpfr_srcptr delta);
+
 // Affine operations.
 void arpra_affine_1 (arpra_range *y, const arpra_range *x1,
                      mpfr_srcptr alpha, mpfr_srcptr gamma, mpfr_srcptr delta);

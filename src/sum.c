@@ -32,7 +32,7 @@ void arpra_sum (arpra_range *y, arpra_range *x, arpra_uint n)
     arpra_uint symbol;
     arpra_int xHasNext;
 
-    // Handle n <= 2 cases.
+    // Handle n <= 2 case.
     if (n <= 2) {
         if (n == 2) {
             arpra_add(y, &x[0], &x[1]);
@@ -168,7 +168,7 @@ void arpra_sum_recursive (arpra_range *y, arpra_range *x, arpra_uint n)
     arpra_uint symbol;
     arpra_int xHasNext;
 
-    // Handle n <= 2 cases.
+    // Handle n <= 2 case.
     if (n <= 2) {
         if (n == 2) {
             arpra_add(y, &x[0], &x[1]);
