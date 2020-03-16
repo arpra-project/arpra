@@ -27,7 +27,7 @@ void arpra_affine_2 (arpra_range *y, const arpra_range *x1, const arpra_range *x
     mpfr_t temp, error;
     arpra_range yy;
     arpra_prec prec_internal;
-    arpra_uint iy, ix1, ix2;
+    arpra_uint i_y, i_x1, i_x2;
 
     // Initialise vars.
     prec_internal = arpra_get_internal_precision();
@@ -44,31 +44,31 @@ void arpra_affine_2 (arpra_range *y, const arpra_range *x1, const arpra_range *x
     yy.symbols = malloc((x1->nTerms + x2->nTerms + 1) * sizeof(arpra_uint));
     yy.deviations = malloc((x1->nTerms + x2->nTerms + 1) * sizeof(mpfr_t));
 
-    for (iy = 0, ix1 = 0, ix2 = 0; (ix1 < x1->nTerms) || (ix2 < x2->nTerms); iy++) {
-        mpfr_init2(&(yy.deviations[iy]), prec_internal);
+    for (i_y = 0, i_x1 = 0, i_x2 = 0; (i_x1 < x1->nTerms) || (i_x2 < x2->nTerms); i_y++) {
+        mpfr_init2(&(yy.deviations[i_y]), prec_internal);
 
-        if ((ix2 == x2->nTerms) || ((ix1 < x1->nTerms) && (x1->symbols[ix1] < x2->symbols[ix2]))) {
+        if ((i_x2 == x2->nTerms) || ((i_x1 < x1->nTerms) && (x1->symbols[i_x1] < x2->symbols[i_x2]))) {
             // y[i] = (alpha * x1[i])
-            yy.symbols[iy] = x1->symbols[ix1];
-            ARPRA_MPFR_RNDERR_MUL(error, MPFR_RNDN, &(yy.deviations[iy]), alpha, &(x1->deviations[ix1]));
-            ix1++;
+            yy.symbols[i_y] = x1->symbols[i_x1];
+            ARPRA_MPFR_RNDERR_MUL(error, MPFR_RNDN, &(yy.deviations[i_y]), alpha, &(x1->deviations[i_x1]));
+            i_x1++;
         }
-        else if ((ix1 == x1->nTerms) || ((ix2 < x2->nTerms) && (x2->symbols[ix2] < x1->symbols[ix1]))) {
+        else if ((i_x1 == x1->nTerms) || ((i_x2 < x2->nTerms) && (x2->symbols[i_x2] < x1->symbols[i_x1]))) {
             // y[i] = (beta * x2[i])
-            yy.symbols[iy] = x2->symbols[ix2];
-            ARPRA_MPFR_RNDERR_MUL(error, MPFR_RNDN, &(yy.deviations[iy]), beta, &(x2->deviations[ix2]));
-            ix2++;
+            yy.symbols[i_y] = x2->symbols[i_x2];
+            ARPRA_MPFR_RNDERR_MUL(error, MPFR_RNDN, &(yy.deviations[i_y]), beta, &(x2->deviations[i_x2]));
+            i_x2++;
         }
         else {
             // y[i] = (alpha * x1[i]) + (beta * x2[i])
-            yy.symbols[iy] = x1->symbols[ix1];
-            ARPRA_MPFR_RNDERR_FMMA(error, MPFR_RNDN, &(yy.deviations[iy]), alpha, &(x1->deviations[ix1]), beta, &(x2->deviations[ix2]));
-            ix1++;
-            ix2++;
+            yy.symbols[i_y] = x1->symbols[i_x1];
+            ARPRA_MPFR_RNDERR_FMMA(error, MPFR_RNDN, &(yy.deviations[i_y]), alpha, &(x1->deviations[i_x1]), beta, &(x2->deviations[i_x2]));
+            i_x1++;
+            i_x2++;
         }
 
         // Add term to radius.
-        mpfr_abs(temp, &(yy.deviations[iy]), MPFR_RNDU);
+        mpfr_abs(temp, &(yy.deviations[i_y]), MPFR_RNDU);
         mpfr_add(&(yy.radius), &(yy.radius), temp, MPFR_RNDU);
     }
 
@@ -76,10 +76,10 @@ void arpra_affine_2 (arpra_range *y, const arpra_range *x1, const arpra_range *x
     mpfr_add(error, error, delta, MPFR_RNDU);
 
     // Store new deviation term.
-    yy.symbols[iy] = arpra_helper_next_symbol();
-    yy.deviations[iy] = *error;
-    mpfr_add(&(yy.radius), &(yy.radius), &(yy.deviations[iy]), MPFR_RNDU);
-    yy.nTerms = iy + 1;
+    yy.symbols[i_y] = arpra_helper_next_symbol();
+    yy.deviations[i_y] = *error;
+    mpfr_add(&(yy.radius), &(yy.radius), &(yy.deviations[i_y]), MPFR_RNDU);
+    yy.nTerms = i_y + 1;
 
     // Clear vars, and set y.
     mpfr_clear(temp);

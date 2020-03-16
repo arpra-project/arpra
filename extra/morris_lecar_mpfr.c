@@ -1,7 +1,7 @@
 /*
  * morris_lecar_mpfr.c -- Test Morris-Lecar model using MPFR.
  *
- * Copyright 2016-2018 James Paul Turner.
+ * Copyright 2016-2020 James Paul Turner.
  *
  * This file is part of the Arpra library.
  *

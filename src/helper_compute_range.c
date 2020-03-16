@@ -30,13 +30,13 @@ void arpra_helper_compute_range (arpra_range *y)
 {
     mpfr_t temp1, temp2;
     arpra_prec prec_internal;
-    arpra_uint iy;
+    arpra_uint i_y;
 
     // Initialise vars.
     prec_internal = arpra_get_internal_precision();
     mpfr_init2(temp1, prec_internal + 8);
     mpfr_init2(temp2, prec_internal + 8);
-    iy = y->nTerms - 1;
+    i_y = y->nTerms - 1;
 
     // Compute true_range.
     mpfr_sub(temp1, &(y->centre), &(y->radius), MPFR_RNDD);
@@ -46,7 +46,7 @@ void arpra_helper_compute_range (arpra_range *y)
     mpfr_sub(temp1, temp1, &(y->true_range.left), MPFR_RNDU);
     mpfr_sub(temp2, &(y->true_range.right), temp2, MPFR_RNDU);
     mpfr_max(temp1, temp1, temp2, MPFR_RNDU);
-    mpfr_add(&(y->deviations[iy]), &(y->deviations[iy]), temp1, MPFR_RNDU);
+    mpfr_add(&(y->deviations[i_y]), &(y->deviations[i_y]), temp1, MPFR_RNDU);
     mpfr_add(&(y->radius), &(y->radius), temp1, MPFR_RNDU);
 
     // Clear vars.

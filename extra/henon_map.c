@@ -1,7 +1,7 @@
 /*
  * henon_map.c -- Test Henon map model.
  *
- * Copyright 2018 James Paul Turner.
+ * Copyright 2018-2020 James Paul Turner.
  *
  * This file is part of the Arpra library.
  *
@@ -27,6 +27,7 @@ int main (int argc, char *argv[])
 {
     arpra_range one, x_new, y_new;
     arpra_range a, b, x, y;
+    mpfr_t uncertainty;
     FILE *x_out, *y_out;
     arpra_prec prec, prec_internal;
     arpra_uint n, i;
@@ -39,8 +40,8 @@ int main (int argc, char *argv[])
 
     n = 500;
     prec = 53;
-    //prec_internal = prec;
-    prec_internal = atol(argv[1]);
+    prec_internal = 128;
+    //prec_internal = atol(argv[1]);
     arpra_set_default_precision(prec);
     arpra_set_internal_precision(prec_internal);
 
@@ -52,15 +53,21 @@ int main (int argc, char *argv[])
     arpra_init(&b);
     arpra_init(&x);
     arpra_init(&y);
+
+    // Initialise MPFR vars
+    mpfr_init(uncertainty);
     mpfr_init(&rt);
 
     // Set Arpra ranges (almost chaotic)
     arpra_set_d(&one, 1.0);
-    //arpra_set_str(&a, "1.057", 10);
-    arpra_set_str(&a, argv[2], 10);
+    arpra_set_str(&a, "1.057", 10);
+    //arpra_set_str(&a, argv[2], 10);
     arpra_set_str(&b, "0.3", 10);
-    arpra_set_str_rad(&x, "0", "1e-5", 10);
-    arpra_set_str_rad(&y, "0", "1e-5", 10);
+    arpra_set_zero(&x);
+    arpra_set_zero(&y);
+    mpfr_set_str(uncertainty, "1e-5", 10, MPFR_RNDU);
+    arpra_increase(&x, &x, uncertainty);
+    arpra_increase(&y, &y, uncertainty);
     mpfr_set_d(&rt, rel_threshold, MPFR_RNDN);
 
     // Open output files
@@ -91,13 +98,13 @@ int main (int argc, char *argv[])
         arpra_set(&y, &y_new);
 
         // Reduce independent terms
-        //arpra_reduce_last_n(&x, (x.nTerms - old_x_nTerms));
-        //arpra_reduce_last_n(&y, (y.nTerms - old_y_nTerms));
+        //arpra_reduce_last_n(&x, &x, (x.nTerms - old_x_nTerms));
+        //arpra_reduce_last_n(&y, &y, (y.nTerms - old_y_nTerms));
 
         // Reduce small terms
         if (i % reduce_epoch == 0) {
-            arpra_reduce_small_rel(&x, &rt);
-            arpra_reduce_small_rel(&y, &rt);
+            arpra_reduce_small_rel(&x, &x, &rt);
+            arpra_reduce_small_rel(&y, &y, &rt);
         }
 
         printf("x.n: %u  y.n: %u\n", x.nTerms, y.nTerms);
@@ -121,6 +128,9 @@ int main (int argc, char *argv[])
     arpra_clear(&b);
     arpra_clear(&x);
     arpra_clear(&y);
+
+    // Clear MPFR vars
+    mpfr_clear(uncertainty);
     mpfr_clear(&rt);
 
     // Close output files

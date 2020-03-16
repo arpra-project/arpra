@@ -34,6 +34,9 @@ AM_PROG_AR
 LT_PREREQ([2.2])
 LT_INIT([])
 
+# Math lib
+AC_SEARCH_LIBS([sqrt], [m])
+
 # GNU GMP
 AC_CHECK_HEADER([gmp.h], [],
   [AC_MSG_ERROR([GMP header is missing or unusable - see README])])

@@ -23,13 +23,14 @@
 
 void arpra_helper_clear_terms (arpra_range *y)
 {
-    arpra_uint iy;
+    arpra_uint i_y;
 
     if (y->nTerms > 0) {
-        for (iy = 0; iy < y->nTerms; iy++) {
-            mpfr_clear(&(y->deviations[iy]));
+        for (i_y = 0; i_y < y->nTerms; i_y++) {
+            mpfr_clear(&(y->deviations[i_y]));
         }
         free(y->symbols);
         free(y->deviations);
+        y->nTerms = 0;
     }
 }

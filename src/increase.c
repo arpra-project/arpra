@@ -53,6 +53,7 @@ void arpra_increase (arpra_range *y, const arpra_range *x1, mpfr_srcptr delta)
     mpfr_set_zero(gamma, 1);
 
     // MPFI increase
+    mpfi_set(ia_range, &(x1->true_range));
     mpfi_increase(ia_range, delta);
 
     // y = increase(x1, delta)

@@ -28,7 +28,7 @@ void arpra_sum (arpra_range *y, arpra_range *x, arpra_uint n)
     arpra_range yy;
     arpra_prec prec_internal;
     arpra_uint i, n_sum;
-    arpra_uint iy, *ix;
+    arpra_uint i_y, *i_x;
     arpra_uint symbol;
     arpra_int xHasNext;
 
@@ -79,14 +79,14 @@ void arpra_sum (arpra_range *y, arpra_range *x, arpra_uint n)
     mpfr_init2(error, prec_internal);
     arpra_init2(&yy, y->precision);
     summands = malloc(n * sizeof(mpfr_ptr));
-    ix = malloc(n * sizeof(arpra_uint));
+    i_x = malloc(n * sizeof(arpra_uint));
     mpfr_set_zero(error, 1);
     mpfr_set_zero(&(yy.radius), 1);
 
     // Zero term indexes, and fill summand array with centre values.
-    iy = 0;
+    i_y = 0;
     for (i = 0; i < n; i++) {
-        ix[i] = 0;
+        i_x[i] = 0;
         summands[i] = &(x[i].centre);
     }
 
@@ -104,43 +104,43 @@ void arpra_sum (arpra_range *y, arpra_range *x, arpra_uint n)
     // For all unique symbols in x.
     xHasNext = yy.nTerms > 1;
     while (xHasNext) {
-        mpfr_init2(&(yy.deviations[iy]), prec_internal);
+        mpfr_init2(&(yy.deviations[i_y]), prec_internal);
         xHasNext = 0;
         symbol = -1;
 
         // Find and set the next lowest symbol in y.
         for (i = 0; i < n; i++) {
-            if (ix[i] < x[i].nTerms) {
-                if (x[i].symbols[ix[i]] < symbol) {
-                    symbol = x[i].symbols[ix[i]];
+            if (i_x[i] < x[i].nTerms) {
+                if (x[i].symbols[i_x[i]] < symbol) {
+                    symbol = x[i].symbols[i_x[i]];
                 }
             }
         }
-        yy.symbols[iy] = symbol;
+        yy.symbols[i_y] = symbol;
 
         // For all x with the next symbol:
         for (n_sum = 0, i = 0; i < n; i++) {
-            if (x[i].symbols[ix[i]] == symbol) {
+            if (x[i].symbols[i_x[i]] == symbol) {
                 // Get next deviation pointer of x[i].
-                summands[n_sum++] = &(x[i].deviations[ix[i]]);
+                summands[n_sum++] = &(x[i].deviations[i_x[i]]);
 
-                xHasNext += ++ix[i] < x[i].nTerms;
+                xHasNext += ++i_x[i] < x[i].nTerms;
             }
         }
 
         // y[i] = x1[i] + ... + xn[i]
-        ARPRA_MPFR_RNDERR_SUM(error, MPFR_RNDN, &(yy.deviations[iy]), summands, n_sum);
+        ARPRA_MPFR_RNDERR_SUM(error, MPFR_RNDN, &(yy.deviations[i_y]), summands, n_sum);
 
-        mpfr_abs(temp1, &(yy.deviations[iy]), MPFR_RNDU);
+        mpfr_abs(temp1, &(yy.deviations[i_y]), MPFR_RNDU);
         mpfr_add(&(yy.radius), &(yy.radius), temp1, MPFR_RNDU);
-        iy++;
+        i_y++;
     }
 
     // Store new deviation term.
-    yy.symbols[iy] = arpra_helper_next_symbol();
-    yy.deviations[iy] = *error;
-    mpfr_add(&(yy.radius), &(yy.radius), &(yy.deviations[iy]), MPFR_RNDU);
-    yy.nTerms = iy + 1;
+    yy.symbols[i_y] = arpra_helper_next_symbol();
+    yy.deviations[i_y] = *error;
+    mpfr_add(&(yy.radius), &(yy.radius), &(yy.deviations[i_y]), MPFR_RNDU);
+    yy.nTerms = i_y + 1;
 
     // Compute true_range.
     arpra_helper_compute_range(&yy);
@@ -154,7 +154,7 @@ void arpra_sum (arpra_range *y, arpra_range *x, arpra_uint n)
     arpra_clear(y);
     *y = yy;
     free(summands);
-    free(ix);
+    free(i_x);
 }
 
 void arpra_sum_recursive (arpra_range *y, arpra_range *x, arpra_uint n)
@@ -164,7 +164,7 @@ void arpra_sum_recursive (arpra_range *y, arpra_range *x, arpra_uint n)
     arpra_range yy;
     arpra_prec prec_internal;
     arpra_uint i, n_sum;
-    arpra_uint iy, *ix;
+    arpra_uint i_y, *i_x;
     arpra_uint symbol;
     arpra_int xHasNext;
 
@@ -215,14 +215,14 @@ void arpra_sum_recursive (arpra_range *y, arpra_range *x, arpra_uint n)
     mpfr_init2(error, prec_internal);
     arpra_init2(&yy, y->precision);
     summands = malloc(n * sizeof(mpfr_ptr));
-    ix = malloc(n * sizeof(arpra_uint));
+    i_x = malloc(n * sizeof(arpra_uint));
     mpfr_set_zero(error, 1);
     mpfr_set_zero(&(yy.radius), 1);
 
     // Zero term indexes, and fill summand array with centre values.
-    iy = 0;
+    i_y = 0;
     for (i = 0; i < n; i++) {
-        ix[i] = 0;
+        i_x[i] = 0;
         summands[i] = &(x[i].centre);
     }
 
@@ -240,36 +240,36 @@ void arpra_sum_recursive (arpra_range *y, arpra_range *x, arpra_uint n)
     // For all unique symbols in x.
     xHasNext = yy.nTerms > 1;
     while (xHasNext) {
-        mpfr_init2(&(yy.deviations[iy]), prec_internal);
+        mpfr_init2(&(yy.deviations[i_y]), prec_internal);
         xHasNext = 0;
         symbol = -1;
 
         // Find and set the next lowest symbol in y.
         for (i = 0; i < n; i++) {
-            if (ix[i] < x[i].nTerms) {
-                if (x[i].symbols[ix[i]] < symbol) {
-                    symbol = x[i].symbols[ix[i]];
+            if (i_x[i] < x[i].nTerms) {
+                if (x[i].symbols[i_x[i]] < symbol) {
+                    symbol = x[i].symbols[i_x[i]];
                 }
             }
         }
-        yy.symbols[iy] = symbol;
+        yy.symbols[i_y] = symbol;
 
         // For all x with the next symbol:
         for (n_sum = 0, i = 0; i < n; i++) {
-            if (x[i].symbols[ix[i]] == symbol) {
+            if (x[i].symbols[i_x[i]] == symbol) {
                 // Get next deviation pointer of x[i].
-                summands[n_sum++] = &(x[i].deviations[ix[i]]);
+                summands[n_sum++] = &(x[i].deviations[i_x[i]]);
 
-                xHasNext += ++ix[i] < x[i].nTerms;
+                xHasNext += ++i_x[i] < x[i].nTerms;
             }
         }
 
         // y[i] = x1[i] + ... + xn[i]
-        ARPRA_MPFR_RNDERR_SUM(error, MPFR_RNDN, &(yy.deviations[iy]), summands, n_sum);
+        ARPRA_MPFR_RNDERR_SUM(error, MPFR_RNDN, &(yy.deviations[i_y]), summands, n_sum);
 
-        mpfr_abs(temp1, &(yy.deviations[iy]), MPFR_RNDU);
+        mpfr_abs(temp1, &(yy.deviations[i_y]), MPFR_RNDU);
         mpfr_add(&(yy.radius), &(yy.radius), temp1, MPFR_RNDU);
-        iy++;
+        i_y++;
     }
 
     /*
@@ -281,7 +281,7 @@ void arpra_sum_recursive (arpra_range *y, arpra_range *x, arpra_uint n)
 
     // Compute |x|.
     mpfr_ptr summands_magnitude;
-    summands_magnitude = arpra_helper_buffer_mpfr(n);
+    summands_magnitude = malloc(n * sizeof(mpfr_t));
     for (i = 0; i < n; i++) {
         mpfr_init2(&(summands_magnitude[i]), prec_internal);
 
@@ -304,16 +304,17 @@ void arpra_sum_recursive (arpra_range *y, arpra_range *x, arpra_uint n)
     for (i = 0; i < n; i++) {
         mpfr_clear(&(summands_magnitude[i]));
     }
+    free(summands_magnitude);
 
     /*
      * END: Error bound for recursive summation.
      */
 
     // Store new deviation term.
-    yy.symbols[iy] = arpra_helper_next_symbol();
-    yy.deviations[iy] = *error;
-    mpfr_add(&(yy.radius), &(yy.radius), &(yy.deviations[iy]), MPFR_RNDU);
-    yy.nTerms = iy + 1;
+    yy.symbols[i_y] = arpra_helper_next_symbol();
+    yy.deviations[i_y] = *error;
+    mpfr_add(&(yy.radius), &(yy.radius), &(yy.deviations[i_y]), MPFR_RNDU);
+    yy.nTerms = i_y + 1;
 
     // Compute true_range.
     arpra_helper_compute_range(&yy);
@@ -327,5 +328,5 @@ void arpra_sum_recursive (arpra_range *y, arpra_range *x, arpra_uint n)
     arpra_clear(y);
     *y = yy;
     free(summands);
-    free(ix);
+    free(i_x);
 }

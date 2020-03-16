@@ -27,7 +27,7 @@ void arpra_mul (arpra_range *y, const arpra_range *x1, const arpra_range *x2)
     mpfr_t temp1, temp2, error;
     arpra_range yy;
     arpra_prec prec_internal;
-    arpra_uint iy, ix1, ix2;
+    arpra_uint i_y, i_x1, i_x2;
     arpra_int x1HasNext, x2HasNext;
 
     // Domain violations:
@@ -84,37 +84,37 @@ void arpra_mul (arpra_range *y, const arpra_range *x1, const arpra_range *x2)
     yy.symbols = malloc((x1->nTerms + x2->nTerms + 1) * sizeof(arpra_uint));
     yy.deviations = malloc((x1->nTerms + x2->nTerms + 1) * sizeof(mpfr_t));
 
-    iy = 0;
-    ix1 = 0;
-    ix2 = 0;
+    i_y = 0;
+    i_x1 = 0;
+    i_x2 = 0;
     x1HasNext = x1->nTerms > 0;
     x2HasNext = x2->nTerms > 0;
     while (x1HasNext || x2HasNext) {
-        mpfr_init2(&(yy.deviations[iy]), prec_internal);
+        mpfr_init2(&(yy.deviations[i_y]), prec_internal);
 
-        if ((!x2HasNext) || (x1HasNext && (x1->symbols[ix1] < x2->symbols[ix2]))) {
+        if ((!x2HasNext) || (x1HasNext && (x1->symbols[i_x1] < x2->symbols[i_x2]))) {
             // y[i] = (x2[0] * x1[i])
-            yy.symbols[iy] = x1->symbols[ix1];
-            ARPRA_MPFR_RNDERR_MUL(error, MPFR_RNDN, &(yy.deviations[iy]), &(x2->centre), &(x1->deviations[ix1]));
-            x1HasNext = ++ix1 < x1->nTerms;
+            yy.symbols[i_y] = x1->symbols[i_x1];
+            ARPRA_MPFR_RNDERR_MUL(error, MPFR_RNDN, &(yy.deviations[i_y]), &(x2->centre), &(x1->deviations[i_x1]));
+            x1HasNext = ++i_x1 < x1->nTerms;
         }
-        else if ((!x1HasNext) || (x2HasNext && (x2->symbols[ix2] < x1->symbols[ix1]))) {
+        else if ((!x1HasNext) || (x2HasNext && (x2->symbols[i_x2] < x1->symbols[i_x1]))) {
             // y[i] = (x1[0] * x2[i])
-            yy.symbols[iy] = x2->symbols[ix2];
-            ARPRA_MPFR_RNDERR_MUL(error, MPFR_RNDN, &(yy.deviations[iy]), &(x1->centre), &(x2->deviations[ix2]));
-            x2HasNext = ++ix2 < x2->nTerms;
+            yy.symbols[i_y] = x2->symbols[i_x2];
+            ARPRA_MPFR_RNDERR_MUL(error, MPFR_RNDN, &(yy.deviations[i_y]), &(x1->centre), &(x2->deviations[i_x2]));
+            x2HasNext = ++i_x2 < x2->nTerms;
         }
         else {
             // y[i] = (x2[0] * x1[i]) + (x1[0] * x2[i])
-            yy.symbols[iy] = x1->symbols[ix1];
-            ARPRA_MPFR_RNDERR_FMMA(error, MPFR_RNDN, &(yy.deviations[iy]), &(x2->centre), &(x1->deviations[ix1]), &(x1->centre), &(x2->deviations[ix2]));
-            x1HasNext = ++ix1 < x1->nTerms;
-            x2HasNext = ++ix2 < x2->nTerms;
+            yy.symbols[i_y] = x1->symbols[i_x1];
+            ARPRA_MPFR_RNDERR_FMMA(error, MPFR_RNDN, &(yy.deviations[i_y]), &(x2->centre), &(x1->deviations[i_x1]), &(x1->centre), &(x2->deviations[i_x2]));
+            x1HasNext = ++i_x1 < x1->nTerms;
+            x2HasNext = ++i_x2 < x2->nTerms;
         }
 
-        mpfr_abs(temp1, &(yy.deviations[iy]), MPFR_RNDU);
+        mpfr_abs(temp1, &(yy.deviations[i_y]), MPFR_RNDU);
         mpfr_add(&(yy.radius), &(yy.radius), temp1, MPFR_RNDU);
-        iy++;
+        i_y++;
     }
 
 #ifdef ARPRA_TIGHT_MUL
@@ -220,10 +220,10 @@ void arpra_mul (arpra_range *y, const arpra_range *x1, const arpra_range *x2)
 #endif
 
     // Store new deviation term.
-    yy.symbols[iy] = arpra_helper_next_symbol();
-    yy.deviations[iy] = *error;
-    mpfr_add(&(yy.radius), &(yy.radius), &(yy.deviations[iy]), MPFR_RNDU);
-    yy.nTerms = iy + 1;
+    yy.symbols[i_y] = arpra_helper_next_symbol();
+    yy.deviations[i_y] = *error;
+    mpfr_add(&(yy.radius), &(yy.radius), &(yy.deviations[i_y]), MPFR_RNDU);
+    yy.nTerms = i_y + 1;
 
     // Compute true_range.
     arpra_helper_compute_range(&yy);

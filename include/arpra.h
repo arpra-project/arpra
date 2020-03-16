@@ -40,8 +40,8 @@ struct arpra_range_struct
     __mpfr_struct centre;
     __mpfr_struct radius;
     __mpfi_struct true_range;
-    __mpfr_struct *deviations;
     arpra_uint *symbols;
+    __mpfr_struct *deviations;
     arpra_uint nTerms;
 };
 
@@ -106,10 +106,9 @@ void arpra_set_default_precision (arpra_prec prec);
 void arpra_set_internal_precision (arpra_prec prec);
 
 // Deviation term reduction.
-void arpra_reduce_last_n (arpra_range *z, arpra_uint n);
-void arpra_reduce_small (arpra_range *z, double min_fraction);
-void arpra_reduce_small_abs (arpra_range *z, const arpra_mpfr *abs_threshold);
-void arpra_reduce_small_rel (arpra_range *z, const arpra_mpfr *rel_threshold);
+void arpra_reduce_last_n (arpra_range *y, const arpra_range *x1, arpra_uint n);
+void arpra_reduce_small_abs (arpra_range *y, const arpra_range *x1, mpfr_srcptr abs_threshold);
+void arpra_reduce_small_rel (arpra_range *y, const arpra_range *x1, mpfr_srcptr rel_threshold);
 
 // Predicates on Arpra ranges.
 int arpra_nan_p (const arpra_range *x1);

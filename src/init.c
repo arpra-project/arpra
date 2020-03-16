@@ -33,10 +33,10 @@ void arpra_init2 (arpra_range *y, arpra_prec prec)
 {
     arpra_prec prec_internal;
 
+    y->precision = prec;
     prec_internal = arpra_get_internal_precision();
     mpfr_init2(&(y->centre), prec_internal);
     mpfr_init2(&(y->radius), prec_internal);
     mpfi_init2(&(y->true_range), prec);
     y->nTerms = 0;
-    y->precision = prec;
 }

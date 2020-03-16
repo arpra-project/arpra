@@ -1,7 +1,7 @@
 /*
  * morris_lecar.c -- Test Morris-Lecar model.
  *
- * Copyright 2016-2018 James Paul Turner.
+ * Copyright 2016-2020 James Paul Turner.
  *
  * This file is part of the Arpra library.
  *
@@ -75,7 +75,7 @@ unsigned long prec_internal_arg;
 #define p_sim_steps 1000
 #define p_report_step 20
 #define p_reduce_step 50
-#define p_reduce_ratio 0.3
+#define p_reduce_rel 0.3
 
 // RNG parameters
 // Seeds are random if not #defined
@@ -476,6 +476,11 @@ int main (int argc, char *argv[])
     in1_freq_arg = atoi(argv[4]);
 
     arpra_set_internal_precision(p_prec_internal);
+
+    // Initialise arpra_reduce_small_rel threshold.
+    mpfr_t reduce_rel;
+    mpfr_init2(reduce_rel, 53);
+    mpfr_set_d(reduce_rel, p_reduce_rel, MPFR_RNDN);
 
     // Allocate system state
     arpra_range *nrn1_N = malloc(p_nrn1_size * sizeof(arpra_range));
@@ -955,45 +960,45 @@ int main (int argc, char *argv[])
         arpra_uint reduce_n;
         for (j = 0; j < p_nrn1_size; j++) {
             reduce_n = ode_system.x[grp_nrn1_N][j].nTerms - nrn1_N_reduce_epoch[j];
-            arpra_reduce_last_n(&(ode_system.x[grp_nrn1_N][j]), reduce_n);
+            arpra_reduce_last_n(&(ode_system.x[grp_nrn1_N][j]), &(ode_system.x[grp_nrn1_N][j]), reduce_n);
             reduce_n = ode_system.x[grp_nrn1_V][j].nTerms - nrn1_V_reduce_epoch[j];
-            arpra_reduce_last_n(&(ode_system.x[grp_nrn1_V][j]), reduce_n);
+            arpra_reduce_last_n(&(ode_system.x[grp_nrn1_V][j]), &(ode_system.x[grp_nrn1_V][j]), reduce_n);
         }
         for (j = 0; j < p_nrn2_size; j++) {
             reduce_n = ode_system.x[grp_nrn2_N][j].nTerms - nrn2_N_reduce_epoch[j];
-            arpra_reduce_last_n(&(ode_system.x[grp_nrn2_N][j]), reduce_n);
+            arpra_reduce_last_n(&(ode_system.x[grp_nrn2_N][j]), &(ode_system.x[grp_nrn2_N][j]), reduce_n);
             reduce_n = ode_system.x[grp_nrn2_V][j].nTerms - nrn2_V_reduce_epoch[j];
-            arpra_reduce_last_n(&(ode_system.x[grp_nrn2_V][j]), reduce_n);
+            arpra_reduce_last_n(&(ode_system.x[grp_nrn2_V][j]), &(ode_system.x[grp_nrn2_V][j]), reduce_n);
         }
         for (j = 0; j < p_syn_exc_size; j++) {
             reduce_n = ode_system.x[grp_syn_exc_R][j].nTerms - syn_exc_R_reduce_epoch[j];
-            arpra_reduce_last_n(&(ode_system.x[grp_syn_exc_R][j]), reduce_n);
+            arpra_reduce_last_n(&(ode_system.x[grp_syn_exc_R][j]), &(ode_system.x[grp_syn_exc_R][j]), reduce_n);
             reduce_n = ode_system.x[grp_syn_exc_S][j].nTerms - syn_exc_S_reduce_epoch[j];
-            arpra_reduce_last_n(&(ode_system.x[grp_syn_exc_S][j]), reduce_n);
+            arpra_reduce_last_n(&(ode_system.x[grp_syn_exc_S][j]), &(ode_system.x[grp_syn_exc_S][j]), reduce_n);
         }
         for (j = 0; j < p_syn_inh_size; j++) {
             reduce_n = ode_system.x[grp_syn_inh_R][j].nTerms - syn_inh_R_reduce_epoch[j];
-            arpra_reduce_last_n(&(ode_system.x[grp_syn_inh_R][j]), reduce_n);
+            arpra_reduce_last_n(&(ode_system.x[grp_syn_inh_R][j]), &(ode_system.x[grp_syn_inh_R][j]), reduce_n);
             reduce_n = ode_system.x[grp_syn_inh_S][j].nTerms - syn_inh_S_reduce_epoch[j];
-            arpra_reduce_last_n(&(ode_system.x[grp_syn_inh_S][j]), reduce_n);
+            arpra_reduce_last_n(&(ode_system.x[grp_syn_inh_S][j]), &(ode_system.x[grp_syn_inh_S][j]), reduce_n);
         }
 
         if (i % p_reduce_step == 0) {
             for (j = 0; j < p_nrn1_size; j++) {
-                arpra_reduce_small(&(ode_system.x[grp_nrn1_N][j]), p_reduce_ratio);
-                arpra_reduce_small(&(ode_system.x[grp_nrn1_V][j]), p_reduce_ratio);
+                arpra_reduce_small_rel(&(ode_system.x[grp_nrn1_N][j]), &(ode_system.x[grp_nrn1_N][j]), reduce_rel);
+                arpra_reduce_small_rel(&(ode_system.x[grp_nrn1_V][j]), &(ode_system.x[grp_nrn1_V][j]), reduce_rel);
             }
             for (j = 0; j < p_nrn2_size; j++) {
-                arpra_reduce_small(&(ode_system.x[grp_nrn2_N][j]), p_reduce_ratio);
-                arpra_reduce_small(&(ode_system.x[grp_nrn2_V][j]), p_reduce_ratio);
+                arpra_reduce_small_rel(&(ode_system.x[grp_nrn2_N][j]), &(ode_system.x[grp_nrn2_N][j]), reduce_rel);
+                arpra_reduce_small_rel(&(ode_system.x[grp_nrn2_V][j]), &(ode_system.x[grp_nrn2_V][j]), reduce_rel);
             }
             for (j = 0; j < p_syn_exc_size; j++) {
-                arpra_reduce_small(&(ode_system.x[grp_syn_exc_R][j]), p_reduce_ratio);
-                arpra_reduce_small(&(ode_system.x[grp_syn_exc_S][j]), p_reduce_ratio);
+                arpra_reduce_small_rel(&(ode_system.x[grp_syn_exc_R][j]), &(ode_system.x[grp_syn_exc_R][j]), reduce_rel);
+                arpra_reduce_small_rel(&(ode_system.x[grp_syn_exc_S][j]), &(ode_system.x[grp_syn_exc_S][j]), reduce_rel);
             }
             for (j = 0; j < p_syn_inh_size; j++) {
-                arpra_reduce_small(&(ode_system.x[grp_syn_inh_R][j]), p_reduce_ratio);
-                arpra_reduce_small(&(ode_system.x[grp_syn_inh_S][j]), p_reduce_ratio);
+                arpra_reduce_small_rel(&(ode_system.x[grp_syn_inh_R][j]), &(ode_system.x[grp_syn_inh_R][j]), reduce_rel);
+                arpra_reduce_small_rel(&(ode_system.x[grp_syn_inh_S][j]), &(ode_system.x[grp_syn_inh_S][j]), reduce_rel);
             }
         }
 
@@ -1018,6 +1023,9 @@ int main (int argc, char *argv[])
     // End simulation loop
     // ===================
 
+
+    // Clear arpra_reduce_small_rel threshold.
+    mpfr_clear(reduce_rel);
 
     // Clear system state
     arpra_clear(&h);

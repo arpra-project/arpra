@@ -30,10 +30,10 @@ void arpra_set_precision (arpra_range *y, arpra_prec prec)
 {
     arpra_prec prec_internal;
 
+    y->precision = prec;
     prec_internal = arpra_get_internal_precision();
     mpfr_set_prec(&(y->centre), prec_internal);
     mpfr_set_prec(&(y->radius), prec_internal);
     mpfi_set_prec(&(y->true_range), prec);
     arpra_helper_clear_terms(y);
-    y->precision = prec;
 }

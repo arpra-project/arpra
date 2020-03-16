@@ -1,7 +1,7 @@
 /*
  * reduce_last_n.c -- Reduce the last n deviation terms.
  *
- * Copyright 2017-2018 James Paul Turner.
+ * Copyright 2017-2020 James Paul Turner.
  *
  * This file is part of the Arpra library.
  *
@@ -21,75 +21,108 @@
 
 #include "arpra-impl.h"
 
-void arpra_reduce_last_n (arpra_range *z, arpra_uint n)
+void arpra_reduce_last_n (arpra_range *y, const arpra_range *x1, arpra_uint n)
 {
-    arpra_uint zTerm, zNext;
-    arpra_mpfr **summands;
-    arpra_mpfr temp1, temp2;
+    mpfr_t temp1, temp2, error;
+    mpfr_ptr sum_x, *sum_x_ptr;
+    arpra_range yy;
     arpra_prec prec_internal;
+    arpra_uint i_y, i_reduce;
 
     // Handle trivial cases.
-    if ((z->nTerms == 0) || (n == 0)) return;
-    if (n > z->nTerms) n = z->nTerms;
+    if (n == 0) return;
+    if (n > x1->nTerms) n = x1->nTerms;
+
+    // Domain violations:
+    // reduce(NaN) = (NaN)
+    // reduce(Inf) = (Inf)
 
     // Handle domain violations.
-    if (arpra_nan_p(z)) return;
-    if (arpra_inf_p(z)) return;
+    if (arpra_nan_p(x1)) {
+        arpra_set_nan(y);
+        return;
+    }
+    if (arpra_inf_p(x1)) {
+        arpra_set_inf(y);
+        return;
+    }
 
     // Initialise vars.
     prec_internal = arpra_get_internal_precision();
-    mpfr_init2(&temp1, prec_internal + 8);
-    mpfr_init2(&temp2, prec_internal + 8);
-    mpfr_set_zero(&(z->radius), 1);
-    zTerm = z->nTerms - n;
-    summands = malloc(n * sizeof(arpra_mpfr *));
+    mpfr_init2(temp1, prec_internal + 8);
+    mpfr_init2(temp2, prec_internal + 8);
+    mpfr_init2(error, prec_internal);
+    arpra_init2(&yy, y->precision);
+    sum_x = malloc((n + 1) * sizeof(mpfr_t));
+    sum_x_ptr = malloc((n + 1) * sizeof(mpfr_ptr));
+    mpfr_set_zero(error, 1);
+    mpfr_set_zero(&(yy.radius), 1);
 
-    // Merge the last n deviation terms.
-    for (zNext = zTerm; zNext < z->nTerms; zNext++) {
-        mpfr_abs(&(z->deviations[zNext]), &(z->deviations[zNext]), MPFR_RNDN);
-        summands[zNext - zTerm] = &(z->deviations[zNext]);
-    }
-    z->symbols[zTerm] = arpra_helper_next_symbol();
-    mpfr_sum(&(z->deviations[zTerm]), summands, n, MPFR_RNDU);
+    // y[0] = x1[0]
+    ARPRA_MPFR_RNDERR_SET(error, MPFR_RNDN, &(yy.centre), &(x1->centre));
 
-    // Clear the unused deviation terms.
-    for (zNext = zTerm + 1; zNext < z->nTerms; zNext++) {
-        mpfr_clear(&(z->deviations[zNext]));
+    // Allocate memory for deviation terms.
+    yy.symbols = malloc((x1->nTerms - n + 1) * sizeof(arpra_uint));
+    yy.deviations = malloc((x1->nTerms - n + 1) * sizeof(mpfr_t));
+
+    for (i_y = 0; i_y < (x1->nTerms - n); i_y++) {
+        mpfr_init2(&(yy.deviations[i_y]), prec_internal);
+
+        // y[i] = x1[i]
+        yy.symbols[i_y] = x1->symbols[i_y];
+        ARPRA_MPFR_RNDERR_SET(error, MPFR_RNDN, &(yy.deviations[i_y]), &(x1->deviations[i_y]));
+
+        // Add term to radius.
+        mpfr_abs(temp1, &(yy.deviations[i_y]), MPFR_RNDU);
+        mpfr_add(&(yy.radius), &(yy.radius), temp1, MPFR_RNDU);
     }
 
-    // Add the remaining deviation terms to radius.
-    for (zNext = 0; zNext < zTerm; zNext++) {
-        mpfr_abs(&temp1, &(z->deviations[zNext]), MPFR_RNDU);
-        mpfr_add(&(z->radius), &(z->radius), &temp1, MPFR_RNDU);
+    // Abs sum the last n deviation terms.
+    for (i_reduce = i_y; i_reduce < x1->nTerms; i_reduce++) {
+        sum_x[i_reduce - i_y] = x1->deviations[i_reduce];
+        sum_x[i_reduce - i_y]._mpfr_sign = 1;
+        sum_x_ptr[i_reduce - i_y] = &(sum_x[i_reduce - i_y]);
     }
-    mpfr_add(&(z->radius), &(z->radius), &(z->deviations[zTerm]), MPFR_RNDU);
-    z->nTerms = zTerm + 1;
+    sum_x_ptr[i_reduce - i_y] = error;
+    mpfr_sum(error, sum_x_ptr, (n + 1), MPFR_RNDU);
+
+    // Store new deviation term.
+    yy.symbols[i_y] = arpra_helper_next_symbol();
+    yy.deviations[i_y] = *error;
+    mpfr_add(&(yy.radius), &(yy.radius), &(yy.deviations[i_y]), MPFR_RNDU);
+    yy.nTerms = i_y + 1;
+
+    // Copy true_range.
+    mpfi_set(&(yy.true_range), &(x1->true_range));
 
 #ifdef ARPRA_MIXED_TRIMMED_IAAA
     // Trim error term if AA range fully encloses mixed IA/AA range.
-    mpfr_sub(&temp1, &(z->centre), &(z->radius), MPFR_RNDD);
-    mpfr_add(&temp2, &(z->centre), &(z->radius), MPFR_RNDU);
-    if (mpfr_less_p(&temp1, &(z->true_range.left))
-        && mpfr_greater_p(&temp2, &(z->true_range.right))) {
-        mpfr_sub(&temp1, &(z->true_range.left), &temp1, MPFR_RNDD);
-        mpfr_sub(&temp2, &temp2, &(z->true_range.right), MPFR_RNDD);
-        mpfr_min(&temp1, &temp1, &temp2, MPFR_RNDD);
-        if (mpfr_greater_p(&temp1, &(z->deviations[z->nTerms - 1]))) {
-            mpfr_sub(&(z->radius), &(z->radius), &(z->deviations[z->nTerms - 1]), MPFR_RNDU);
-            mpfr_set_zero(&(z->deviations[z->nTerms - 1]), 1);
+    mpfr_sub(temp1, &(yy.centre), &(yy.radius), MPFR_RNDD);
+    mpfr_add(temp2, &(yy.centre), &(yy.radius), MPFR_RNDU);
+    if (mpfr_less_p(temp1, &(yy.true_range.left))
+        && mpfr_greater_p(temp2, &(yy.true_range.right))) {
+        mpfr_sub(temp1, &(yy.true_range.left), temp1, MPFR_RNDD);
+        mpfr_sub(temp2, temp2, &(yy.true_range.right), MPFR_RNDD);
+        mpfr_min(temp1, temp1, temp2, MPFR_RNDD);
+        if (mpfr_greater_p(temp1, &(yy.deviations[yy.nTerms - 1]))) {
+            mpfr_sub(&(yy.radius), &(yy.radius), &(yy.deviations[yy.nTerms - 1]), MPFR_RNDU);
+            mpfr_set_zero(&(yy.deviations[yy.nTerms - 1]), 1);
         }
         else {
-            mpfr_sub(&(z->radius), &(z->radius), &temp1, MPFR_RNDU);
-            mpfr_sub(&(z->deviations[z->nTerms - 1]), &(z->deviations[z->nTerms - 1]), &temp1, MPFR_RNDU);
+            mpfr_sub(&(yy.radius), &(yy.radius), temp1, MPFR_RNDU);
+            mpfr_sub(&(yy.deviations[yy.nTerms - 1]), &(yy.deviations[yy.nTerms - 1]), temp1, MPFR_RNDU);
         }
     }
 #endif // ARPRA_MIXED_TRIMMED_IAAA
 
     // Check for NaN and Inf.
-    arpra_helper_check_result(z);
+    arpra_helper_check_result(&yy);
 
     // Clear vars.
-    mpfr_clear(&temp1);
-    mpfr_clear(&temp2);
-    free(summands);
+    mpfr_clear(temp1);
+    mpfr_clear(temp2);
+    arpra_clear(y);
+    *y = yy;
+    free(sum_x);
+    free(sum_x_ptr);
 }
