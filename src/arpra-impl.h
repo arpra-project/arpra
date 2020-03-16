@@ -59,6 +59,7 @@ void arpra_helper_set_symbol_count (arpra_uint n);
 arpra_uint arpra_helper_get_symbol_count ();
 arpra_uint arpra_helper_next_symbol ();
 void arpra_helper_compute_range (arpra_range *y);
+void arpra_helper_mix_trim (arpra_range *y, mpfi_srcptr ia_range);
 void arpra_helper_check_result (arpra_range *y);
 void arpra_helper_mpfr_rnderr (mpfr_ptr err, mpfr_rnd_t rnd, mpfr_srcptr y);
 

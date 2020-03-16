@@ -92,28 +92,11 @@ void arpra_reduce_last_n (arpra_range *y, const arpra_range *x1, arpra_uint n)
     mpfr_add(&(yy.radius), &(yy.radius), &(yy.deviations[i_y]), MPFR_RNDU);
     yy.nTerms = i_y + 1;
 
-    // Copy true_range.
+    // Compute true_range.
     mpfi_set(&(yy.true_range), &(x1->true_range));
 
-#ifdef ARPRA_MIXED_TRIMMED_IAAA
-    // Trim error term if AA range fully encloses mixed IA/AA range.
-    mpfr_sub(temp1, &(yy.centre), &(yy.radius), MPFR_RNDD);
-    mpfr_add(temp2, &(yy.centre), &(yy.radius), MPFR_RNDU);
-    if (mpfr_less_p(temp1, &(yy.true_range.left))
-        && mpfr_greater_p(temp2, &(yy.true_range.right))) {
-        mpfr_sub(temp1, &(yy.true_range.left), temp1, MPFR_RNDD);
-        mpfr_sub(temp2, temp2, &(yy.true_range.right), MPFR_RNDD);
-        mpfr_min(temp1, temp1, temp2, MPFR_RNDD);
-        if (mpfr_greater_p(temp1, &(yy.deviations[yy.nTerms - 1]))) {
-            mpfr_sub(&(yy.radius), &(yy.radius), &(yy.deviations[yy.nTerms - 1]), MPFR_RNDU);
-            mpfr_set_zero(&(yy.deviations[yy.nTerms - 1]), 1);
-        }
-        else {
-            mpfr_sub(&(yy.radius), &(yy.radius), temp1, MPFR_RNDU);
-            mpfr_sub(&(yy.deviations[yy.nTerms - 1]), &(yy.deviations[yy.nTerms - 1]), temp1, MPFR_RNDU);
-        }
-    }
-#endif // ARPRA_MIXED_TRIMMED_IAAA
+    // Mix with IA range, and trim error term.
+    arpra_helper_mix_trim(&yy, NULL);
 
     // Check for NaN and Inf.
     arpra_helper_check_result(&yy);

@@ -147,30 +147,8 @@ void arpra_inv (arpra_range *y, const arpra_range *x1)
     // Compute true_range.
     arpra_helper_compute_range(y);
 
-#ifdef ARPRA_MIXED_IAAA
-    // Intersect AA and IA ranges.
-    mpfi_intersect(&(y->true_range), &(y->true_range), ia_range);
-
-#ifdef ARPRA_MIXED_TRIMMED_IAAA
-    // Trim error term if AA range fully encloses mixed IA/AA range.
-    mpfr_sub(temp1, &(y->centre), &(y->radius), MPFR_RNDD);
-    mpfr_add(temp2, &(y->centre), &(y->radius), MPFR_RNDU);
-    if (mpfr_less_p(temp1, &(y->true_range.left))
-        && mpfr_greater_p(temp2, &(y->true_range.right))) {
-        mpfr_sub(temp1, &(y->true_range.left), temp1, MPFR_RNDD);
-        mpfr_sub(temp2, temp2, &(y->true_range.right), MPFR_RNDD);
-        mpfr_min(temp1, temp1, temp2, MPFR_RNDD);
-        if (mpfr_greater_p(temp1, &(y->deviations[y->nTerms - 1]))) {
-            mpfr_sub(&(y->radius), &(y->radius), &(y->deviations[y->nTerms - 1]), MPFR_RNDU);
-            mpfr_set_zero(&(y->deviations[y->nTerms - 1]), 1);
-        }
-        else {
-            mpfr_sub(&(y->radius), &(y->radius), temp1, MPFR_RNDU);
-            mpfr_sub(&(y->deviations[y->nTerms - 1]), &(y->deviations[y->nTerms - 1]), temp1, MPFR_RNDU);
-        }
-    }
-#endif // ARPRA_MIXED_TRIMMED_IAAA
-#endif // ARPRA_MIXED_IAAA
+    // Mix with IA range, and trim error term.
+    arpra_helper_mix_trim(y, ia_range);
 
     // Check for NaN and Inf.
     arpra_helper_check_result(y);

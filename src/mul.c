@@ -74,9 +74,6 @@ void arpra_mul (arpra_range *y, const arpra_range *x1, const arpra_range *x2)
     mpfr_set_zero(error, 1);
     mpfr_set_zero(&(yy.radius), 1);
 
-    // MPFI multiplication
-    mpfi_mul(ia_range, &(x1->true_range), &(x2->true_range));
-
     // y[0] = x1[0] * x2[0]
     ARPRA_MPFR_RNDERR_MUL(error, MPFR_RNDN, &(yy.centre), &(x1->centre), &(x2->centre));
 
@@ -225,33 +222,14 @@ void arpra_mul (arpra_range *y, const arpra_range *x1, const arpra_range *x2)
     mpfr_add(&(yy.radius), &(yy.radius), &(yy.deviations[i_y]), MPFR_RNDU);
     yy.nTerms = i_y + 1;
 
+    // MPFI multiplication
+    mpfi_mul(ia_range, &(x1->true_range), &(x2->true_range));
+
     // Compute true_range.
     arpra_helper_compute_range(&yy);
 
-#ifdef ARPRA_MIXED_IAAA
-    // Intersect AA and IA ranges.
-    mpfi_intersect(&(yy.true_range), &(yy.true_range), ia_range);
-
-#ifdef ARPRA_MIXED_TRIMMED_IAAA
-    // Trim error term if AA range fully encloses mixed IA/AA range.
-    mpfr_sub(temp1, &(yy.centre), &(yy.radius), MPFR_RNDD);
-    mpfr_add(temp2, &(yy.centre), &(yy.radius), MPFR_RNDU);
-    if (mpfr_less_p(temp1, &(yy.true_range.left))
-        && mpfr_greater_p(temp2, &(yy.true_range.right))) {
-        mpfr_sub(temp1, &(yy.true_range.left), temp1, MPFR_RNDD);
-        mpfr_sub(temp2, temp2, &(yy.true_range.right), MPFR_RNDD);
-        mpfr_min(temp1, temp1, temp2, MPFR_RNDD);
-        if (mpfr_greater_p(temp1, &(yy.deviations[yy.nTerms - 1]))) {
-            mpfr_sub(&(yy.radius), &(yy.radius), &(yy.deviations[yy.nTerms - 1]), MPFR_RNDU);
-            mpfr_set_zero(&(yy.deviations[yy.nTerms - 1]), 1);
-        }
-        else {
-            mpfr_sub(&(yy.radius), &(yy.radius), temp1, MPFR_RNDU);
-            mpfr_sub(&(yy.deviations[yy.nTerms - 1]), &(yy.deviations[yy.nTerms - 1]), temp1, MPFR_RNDU);
-        }
-    }
-#endif // ARPRA_MIXED_TRIMMED_IAAA
-#endif // ARPRA_MIXED_IAAA
+    // Mix with IA range, and trim error term.
+    arpra_helper_mix_trim(&yy, ia_range);
 
     // Check for NaN and Inf.
     arpra_helper_check_result(&yy);
