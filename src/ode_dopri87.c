@@ -1,7 +1,7 @@
 /*
  * ode_dopri87.c -- Dormand-Prince 8(7) ODE stepper.
  *
- * Copyright 2018 James Paul Turner.
+ * Copyright 2018-2020 James Paul Turner.
  *
  * This file is part of the Arpra library.
  *

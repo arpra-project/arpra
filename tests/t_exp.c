@@ -1,7 +1,7 @@
 /*
  * t_exp.c -- Test the arpra_exp function.
  *
- * Copyright 2017-2018 James Paul Turner.
+ * Copyright 2017-2020 James Paul Turner.
  *
  * This file is part of the Arpra library.
  *
@@ -39,13 +39,13 @@ int main (int argc, char *argv[])
 
     // Run test.
     for (i = 0; i < test_n; i++) {
-        test_rand_arpra(&x_A, TEST_RAND_MIXED, TEST_RAND_SMALL);
+        test_rand_arpra(&x1_A, TEST_RAND_MIXED, TEST_RAND_SMALL);
 
         // Pass criteria:
-        // 1) Arpra z contains MPFI z.
+        // 1) Arpra y contains MPFI y.
         test_univariate(arpra_exp, mpfi_exp);
-        if (mpfr_greaterequal_p(&(z_I.left), &(z_A.true_range.left))
-                && mpfr_lessequal_p(&(z_I.right), &(z_A.true_range.right))) {
+        if (mpfr_greaterequal_p(&(y_I->left), &(y_A.true_range.left))
+                && mpfr_lessequal_p(&(y_I->right), &(y_A.true_range.right))) {
             test_log_printf("Result: PASS\n\n");
         }
         else {
@@ -53,7 +53,7 @@ int main (int argc, char *argv[])
             fail_n++;
         }
 
-        mpfr_out_str(unshared_log, 10, 40, &z_A_diam_rel, MPFR_RNDN);
+        mpfr_out_str(unshared_log, 10, 40, y_A_diam_rel, MPFR_RNDN);
         fputs("\n", unshared_log);
 
     }

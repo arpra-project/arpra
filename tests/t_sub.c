@@ -1,7 +1,7 @@
 /*
  * t_sub.c -- Test the arpra_sub function.
  *
- * Copyright 2017-2018 James Paul Turner.
+ * Copyright 2017-2020 James Paul Turner.
  *
  * This file is part of the Arpra library.
  *
@@ -42,18 +42,18 @@ int main (int argc, char *argv[])
     // Run test.
     for (i = 0; i < test_n; i++) {
         fail = 0;
-        test_rand_arpra(&x_A, TEST_RAND_MIXED, TEST_RAND_SMALL);
-        test_rand_arpra(&y_A, TEST_RAND_MIXED, TEST_RAND_SMALL);
+        test_rand_arpra(&x1_A, TEST_RAND_MIXED, TEST_RAND_SMALL);
+        test_rand_arpra(&x2_A, TEST_RAND_MIXED, TEST_RAND_SMALL);
 
         // Pass criteria (unshared symbols):
-        // 1) Arpra z contains MPFI z.
-        // 2) Arpra z unbounded and MPFI z unbounded.
+        // 1) Arpra y contains MPFI y.
+        // 2) Arpra y unbounded and MPFI y unbounded.
         test_bivariate(arpra_sub, mpfi_sub);
-        if (mpfr_greaterequal_p(&(z_I.left), &(z_A.true_range.left))
-                && mpfr_lessequal_p(&(z_I.right), &(z_A.true_range.right))) {
+        if (mpfr_greaterequal_p(&(y_I->left), &(y_A.true_range.left))
+                && mpfr_lessequal_p(&(y_I->right), &(y_A.true_range.right))) {
             test_log_printf("Result (unshared symbols): PASS\n\n");
         }
-        else if (!arpra_bounded_p(&z_A) && !mpfi_bounded_p(&z_I)) {
+        else if (!arpra_bounded_p(&y_A) && !mpfi_bounded_p(y_I)) {
             test_log_printf("Result (unshared symbols): PASS\n\n");
         }
         else {
@@ -61,14 +61,14 @@ int main (int argc, char *argv[])
             fail = 1;
         }
 
-        mpfr_out_str(unshared_log, 10, 40, &z_A_diam_rel, MPFR_RNDN);
+        mpfr_out_str(unshared_log, 10, 40, y_A_diam_rel, MPFR_RNDN);
         fputs("\n", unshared_log);
 
         // Pass criteria (random shared symbols):
-        // 1) bounded(Arpra z) = bounded(MPFI z).
-        test_share_n_syms(&x_A, &y_A, 3);
+        // 1) bounded(Arpra y) = bounded(MPFI y).
+        test_share_n_syms(&x1_A, &x2_A, 3);
         test_bivariate(arpra_sub, mpfi_sub);
-        if (arpra_bounded_p(&z_A) == mpfi_bounded_p(&z_I)) {
+        if (arpra_bounded_p(&y_A) == mpfi_bounded_p(y_I)) {
             test_log_printf("Result (random shared symbols): PASS\n\n");
         }
         else {
@@ -76,14 +76,14 @@ int main (int argc, char *argv[])
             fail = 1;
         }
 
-        mpfr_out_str(partshared_log, 10, 40, &z_A_diam_rel, MPFR_RNDN);
+        mpfr_out_str(partshared_log, 10, 40, y_A_diam_rel, MPFR_RNDN);
         fputs("\n", partshared_log);
 
         // Pass criteria (all shared symbols):
-        // 1) bounded(Arpra z) = bounded(MPFI z).
-        test_share_all_syms(&x_A, &y_A);
+        // 1) bounded(Arpra y) = bounded(MPFI y).
+        test_share_all_syms(&x1_A, &x2_A);
         test_bivariate(arpra_sub, mpfi_sub);
-        if (arpra_bounded_p(&z_A) == mpfi_bounded_p(&z_I)) {
+        if (arpra_bounded_p(&y_A) == mpfi_bounded_p(y_I)) {
             test_log_printf("Result (all shared symbols): PASS\n\n");
         }
         else {
@@ -91,7 +91,7 @@ int main (int argc, char *argv[])
             fail = 1;
         }
 
-        mpfr_out_str(shared_log, 10, 40, &z_A_diam_rel, MPFR_RNDN);
+        mpfr_out_str(shared_log, 10, 40, y_A_diam_rel, MPFR_RNDN);
         fputs("\n", shared_log);
 
         if (fail) fail_n++;

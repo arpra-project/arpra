@@ -1,7 +1,7 @@
 /*
  * logfile_mpfr.c -- Record an MPFR result in the logfile.
  *
- * Copyright 2017-2018 James Paul Turner.
+ * Copyright 2017-2020 James Paul Turner.
  *
  * This file is part of the Arpra library.
  *
@@ -21,12 +21,12 @@
 
 #include "arpra-test.h"
 
-void test_log_mpfr (const arpra_mpfr *x, const char *var_name)
+void test_log_mpfr (mpfr_srcptr x1, const char *var_name)
 {
     if (test_log_ready) {
         // Write variable name and value to logfile.
         fprintf(test_log, "%s: ", var_name);
-        mpfr_out_str(test_log, 10, 40, x, MPFR_RNDN);
+        mpfr_out_str(test_log, 10, 40, x1, MPFR_RNDN);
         fputs("\n", test_log);
     }
     else {

@@ -1,7 +1,7 @@
 /*
  * fixture.c -- Initialise and clear the test fixture.
  *
- * Copyright 2017-2018 James Paul Turner.
+ * Copyright 2017-2020 James Paul Turner.
  *
  * This file is part of the Arpra library.
  *
@@ -22,9 +22,9 @@
 #include "arpra-test.h"
 
 int test_fixture_ready = 0;
-arpra_range x_A, y_A, z_A;
-arpra_mpfi z_I;
-arpra_mpfr z_I_diam, z_A_diam, z_A_diam_rel;
+arpra_range y_A, x1_A, x2_A;
+mpfi_t y_I;
+mpfr_t y_I_diam, y_A_diam, y_A_diam_rel;
 
 void test_fixture_init (arpra_prec prec, arpra_prec prec_internal)
 {
@@ -36,17 +36,17 @@ void test_fixture_init (arpra_prec prec, arpra_prec prec_internal)
         arpra_set_internal_precision(prec_internal);
 
         // Initialise Arpra variables.
-        arpra_init2(&x_A, prec);
+        arpra_init2(&x1_A, prec);
+        arpra_init2(&x2_A, prec);
         arpra_init2(&y_A, prec);
-        arpra_init2(&z_A, prec);
 
         // Initialise MPFI variables.
-        mpfi_init2(&z_I, prec);
+        mpfi_init2(y_I, prec);
 
         // Initialise relative diameter variables.
-        mpfr_init2(&z_I_diam, prec_internal);
-        mpfr_init2(&z_A_diam, prec_internal);
-        mpfr_init2(&z_A_diam_rel, prec_internal);
+        mpfr_init2(y_I_diam, prec_internal);
+        mpfr_init2(y_A_diam, prec_internal);
+        mpfr_init2(y_A_diam_rel, prec_internal);
     }
     else {
         fprintf(stderr, "Error: test fixture is alreay initialised.\n");
@@ -61,17 +61,17 @@ void test_fixture_clear ()
         test_fixture_ready = 0;
 
         // Clear Arpra variables.
-        arpra_clear(&x_A);
+        arpra_clear(&x1_A);
+        arpra_clear(&x2_A);
         arpra_clear(&y_A);
-        arpra_clear(&z_A);
 
         // Clear MPFI variables.
-        mpfi_clear(&z_I);
+        mpfi_clear(y_I);
 
         // Clear relative diameter variables.
-        mpfr_clear(&z_I_diam);
-        mpfr_clear(&z_A_diam);
-        mpfr_clear(&z_A_diam_rel);
+        mpfr_clear(y_I_diam);
+        mpfr_clear(y_A_diam);
+        mpfr_clear(y_A_diam_rel);
 
         // All else.
         mpfr_free_cache();

@@ -1,7 +1,7 @@
 /*
  * share_syms.c -- Share noise symbols between two affine forms.
  *
- * Copyright 2017-2018 James Paul Turner.
+ * Copyright 2017-2020 James Paul Turner.
  *
  * This file is part of the Arpra library.
  *
@@ -21,105 +21,105 @@
 
 #include "arpra-test.h"
 
-void test_share_all_syms (arpra_range *x, arpra_range *y)
+void test_share_all_syms (arpra_range *x1, arpra_range *x2)
 {
 
-    arpra_uint symbol, term;
-    arpra_int x_has_next, y_has_next;
+    arpra_uint symbol, i;
+    arpra_int x1_has_next, x2_has_next;
 
-    term = 0;
-    x_has_next = x->nTerms > 0;
-    y_has_next = y->nTerms > 0;
-    while (x_has_next || y_has_next) {
+    i = 0;
+    x1_has_next = x1->nTerms > 0;
+    x2_has_next = x2->nTerms > 0;
+    while (x1_has_next || x2_has_next) {
         symbol = arpra_helper_next_symbol();
 
-        // Set x and y symbol if they exist.
-        if (x_has_next) {
-            x->symbols[term] = symbol;
+        // Set x1 and x2 symbol if they exist.
+        if (x1_has_next) {
+            x1->symbols[i] = symbol;
         }
-        if (y_has_next) {
-            y->symbols[term] = symbol;
+        if (x2_has_next) {
+            x2->symbols[i] = symbol;
         }
 
-        term++;
-        x_has_next = term < x->nTerms;
-        y_has_next = term < y->nTerms;
+        i++;
+        x1_has_next = i < x1->nTerms;
+        x2_has_next = i < x2->nTerms;
     }
 }
 
-void test_share_rand_syms (arpra_range *x, arpra_range *y)
+void test_share_rand_syms (arpra_range *x1, arpra_range *x2)
 {
-    arpra_uint symbol, term;
-    arpra_int x_has_next, y_has_next;
+    arpra_uint symbol, i;
+    arpra_int x1_has_next, x2_has_next;
 
-    term = 0;
-    x_has_next = x->nTerms > 0;
-    y_has_next = y->nTerms > 0;
+    i = 0;
+    x1_has_next = x1->nTerms > 0;
+    x2_has_next = x2->nTerms > 0;
 
-    while (x_has_next || y_has_next) {
+    while (x1_has_next || x2_has_next) {
         symbol = arpra_helper_next_symbol();
 
-        // Set x and y symbol if they exist.
-        if (!y_has_next) {
-            x->symbols[term] = symbol;
+        // Set x1 and x2 symbol if they exist.
+        if (!x2_has_next) {
+            x1->symbols[i] = symbol;
         }
-        else if (!x_has_next) {
-            y->symbols[term] = symbol;
+        else if (!x1_has_next) {
+            x2->symbols[i] = symbol;
         }
 
-        // Else randomly share x and y symbols.
+        // Else randomly share x1 and x2 symbols.
         else {
             if (gmp_urandomb_ui(test_randstate, 1)) {
-                x->symbols[term] = symbol;
-                y->symbols[term] = symbol;
+                x1->symbols[i] = symbol;
+                x2->symbols[i] = symbol;
             }
             else {
-                x->symbols[term] = symbol;
-                y->symbols[term] = arpra_helper_next_symbol();
+                x1->symbols[i] = symbol;
+                x2->symbols[i] = arpra_helper_next_symbol();
             }
         }
 
-        term++;
-        x_has_next = term < x->nTerms;
-        y_has_next = term < y->nTerms;
+        i++;
+        x1_has_next = i < x1->nTerms;
+        x2_has_next = i < x2->nTerms;
     }
 }
 
-void test_share_n_syms (arpra_range *x, arpra_range *y, arpra_uint n)
+void test_share_n_syms (arpra_range *x1, arpra_range *x2, arpra_uint n)
 {
-    arpra_uint symbol, term;
-    arpra_int x_has_next, y_has_next;
+    arpra_uint symbol, i;
+    arpra_int x1_has_next, x2_has_next;
 
-    term = 0;
-    x_has_next = x->nTerms > 0;
-    y_has_next = y->nTerms > 0;
+    i = 0;
+    x1_has_next = x1->nTerms > 0;
+    x2_has_next = x2->nTerms > 0;
 
-    while (x_has_next || y_has_next) {
+    while (x1_has_next || x2_has_next) {
         symbol = arpra_helper_next_symbol();
 
-        // Set x and y symbol if they exist.
-        if (!y_has_next) {
-            x->symbols[term] = symbol;
+        // Set x1 and x2 symbol if they exist.
+        if (!x2_has_next) {
+            x1->symbols[i] = symbol;
         }
-        else if (!x_has_next) {
-            y->symbols[term] = symbol;
+        else if (!x1_has_next) {
+            x2->symbols[i] = symbol;
         }
 
-        // Else share the first n symbols in x and y.
+        // Else share the first n symbols in x1 and x2.
         else {
             if (n > 0) {
-                x->symbols[term] = symbol;
-                y->symbols[term] = symbol;
+                x1->symbols[i] = symbol;
+                x2->symbols[i] = symbol;
                 n--;
             }
             else {
-                x->symbols[term] = symbol;
-                y->symbols[term] = arpra_helper_next_symbol();
+                x1->symbols[i] = symbol;
+                x2->symbols[i] = arpra_helper_next_symbol();
             }
         }
 
-        term++;
-        x_has_next = term < x->nTerms;
-        y_has_next = term < y->nTerms;
+        i++;
+        x1_has_next = i < x1->nTerms;
+        x2_has_next = i < x2->nTerms;
     }
 }

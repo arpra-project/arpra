@@ -1,7 +1,7 @@
 /*
  * compare_arpra.c -- Check the number of differences in two arpra variables.
  *
- * Copyright 2017-2018 James Paul Turner.
+ * Copyright 2017-2020 James Paul Turner.
  *
  * This file is part of the  library.
  *
@@ -21,18 +21,18 @@
 
 #include "arpra-test.h"
 
-int test_compare_arpra (const arpra_range *x, const arpra_range *y)
+int test_compare_arpra (const arpra_range *x1, const arpra_range *x2)
 {
     int fail = 0;
-    arpra_uint term;
+    arpra_uint i;
 
-    // Return the number of differences in x and y.
-    if (!mpfr_equal_p(&(x->centre), &(y->centre))) fail++;
-    if (!mpfr_equal_p(&(x->radius), &(y->radius))) fail++;
-    if (x->nTerms != y->nTerms) fail++;
-    for (term = 0; term < x->nTerms; term++) {
-        if (x->symbols[term] != y->symbols[term]) fail++;
-        if (!mpfr_equal_p(&(x->deviations[term]), &(y->deviations[term]))) fail++;
+    // Return the number of differences in x1 and x2.
+    if (!mpfr_equal_p(&(x1->centre), &(x2->centre))) fail++;
+    if (!mpfr_equal_p(&(x1->radius), &(x2->radius))) fail++;
+    if (x1->nTerms != x2->nTerms) fail++;
+    for (i = 0; i < x1->nTerms; i++) {
+        if (x1->symbols[i] != x2->symbols[i]) fail++;
+        if (!mpfr_equal_p(&(x1->deviations[i]), &(x2->deviations[i]))) fail++;
     }
 
     return fail;

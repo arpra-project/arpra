@@ -1,7 +1,7 @@
 /*
  * logfile_mpfi.c -- Record an MPFI result in the logfile.
  *
- * Copyright 2017-2018 James Paul Turner.
+ * Copyright 2017-2020 James Paul Turner.
  *
  * This file is part of the Arpra library.
  *
@@ -21,14 +21,14 @@
 
 #include "arpra-test.h"
 
-void test_log_mpfi (mpfi_srcptr x, const char *var_name)
+void test_log_mpfi (mpfi_srcptr x1, const char *var_name)
 {
     if (test_log_ready) {
         // Write variable name and bounds to logfile.
         fprintf(test_log, "%s: ", var_name);
-        mpfr_out_str(test_log, 10, 40, &(x->left), MPFR_RNDN);
+        mpfr_out_str(test_log, 10, 40, &(x1->left), MPFR_RNDN);
         fputs(" ", test_log);
-        mpfr_out_str(test_log, 10, 40, &(x->right), MPFR_RNDN);
+        mpfr_out_str(test_log, 10, 40, &(x1->right), MPFR_RNDN);
         fputs("\n", test_log);
     }
     else {

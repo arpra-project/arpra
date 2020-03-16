@@ -29,8 +29,6 @@
 typedef long int arpra_int;
 typedef unsigned long int arpra_uint;
 typedef mpfr_prec_t arpra_prec;
-typedef __mpfr_struct arpra_mpfr;
-typedef __mpfi_struct arpra_mpfi;
 typedef struct arpra_range_struct arpra_range;
 
 // The Arpra range struct.

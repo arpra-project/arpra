@@ -1,7 +1,7 @@
 /*
  * t_log.c -- Test the arpra_log function.
  *
- * Copyright 2017-2018 James Paul Turner.
+ * Copyright 2017-2020 James Paul Turner.
  *
  * This file is part of the Arpra library.
  *
@@ -39,21 +39,21 @@ int main (int argc, char *argv[])
 
     // Run test.
     for (i = 0; i < test_n; i++) {
-        test_rand_arpra(&x_A, TEST_RAND_POS, TEST_RAND_SMALL);
+        test_rand_arpra(&x1_A, TEST_RAND_POS, TEST_RAND_SMALL);
 
         // Pass criteria:
-        // 1) Arpra x has negative and Arpra z = NaN.
-        // 2) Arpra x contains 0 and Arpra z = Inf.
-        // 3) Arpra z contains MPFI z.
+        // 1) Arpra x1 has negative and Arpra y = NaN.
+        // 2) Arpra x1 contains 0 and Arpra y = Inf.
+        // 3) Arpra y contains MPFI y.
         test_univariate(arpra_log, mpfi_log);
-        if (arpra_has_neg_p(&x_A) && arpra_nan_p(&z_A)) {
+        if (arpra_has_neg_p(&x1_A) && arpra_nan_p(&y_A)) {
             test_log_printf("Result: PASS\n\n");
         }
-        else if (arpra_has_zero_p(&x_A) && arpra_inf_p(&z_A)) {
+        else if (arpra_has_zero_p(&x1_A) && arpra_inf_p(&y_A)) {
             test_log_printf("Result: PASS\n\n");
         }
-        else if (mpfr_greaterequal_p(&(z_I.left), &(z_A.true_range.left))
-                 && mpfr_lessequal_p(&(z_I.right), &(z_A.true_range.right))) {
+        else if (mpfr_greaterequal_p(&(y_I->left), &(y_A.true_range.left))
+                 && mpfr_lessequal_p(&(y_I->right), &(y_A.true_range.right))) {
             test_log_printf("Result: PASS\n\n");
         }
         else {
@@ -61,7 +61,7 @@ int main (int argc, char *argv[])
             fail_n++;
         }
 
-        mpfr_out_str(unshared_log, 10, 40, &z_A_diam_rel, MPFR_RNDN);
+        mpfr_out_str(unshared_log, 10, 40, y_A_diam_rel, MPFR_RNDN);
         fputs("\n", unshared_log);
 
     }

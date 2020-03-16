@@ -36,7 +36,7 @@ int main (int argc, char *argv[])
     //arpra_uint reduce_epoch = 1;
     arpra_uint reduce_epoch = 50;
     double rel_threshold = 0.3; // try 0.1, 0.2, 0.3
-    arpra_mpfr rt;
+    mpfr_t rt;
 
     n = 500;
     prec = 53;
@@ -56,7 +56,7 @@ int main (int argc, char *argv[])
 
     // Initialise MPFR vars
     mpfr_init(uncertainty);
-    mpfr_init(&rt);
+    mpfr_init(rt);
 
     // Set Arpra ranges (almost chaotic)
     arpra_set_d(&one, 1.0);
@@ -68,7 +68,7 @@ int main (int argc, char *argv[])
     mpfr_set_str(uncertainty, "1e-5", 10, MPFR_RNDU);
     arpra_increase(&x, &x, uncertainty);
     arpra_increase(&y, &y, uncertainty);
-    mpfr_set_d(&rt, rel_threshold, MPFR_RNDN);
+    mpfr_set_d(rt, rel_threshold, MPFR_RNDN);
 
     // Open output files
     x_out = fopen("henon_x.dat", "w");
@@ -103,8 +103,8 @@ int main (int argc, char *argv[])
 
         // Reduce small terms
         if (i % reduce_epoch == 0) {
-            arpra_reduce_small_rel(&x, &x, &rt);
-            arpra_reduce_small_rel(&y, &y, &rt);
+            arpra_reduce_small_rel(&x, &x, rt);
+            arpra_reduce_small_rel(&y, &y, rt);
         }
 
         printf("x.n: %u  y.n: %u\n", x.nTerms, y.nTerms);
@@ -131,7 +131,7 @@ int main (int argc, char *argv[])
 
     // Clear MPFR vars
     mpfr_clear(uncertainty);
-    mpfr_clear(&rt);
+    mpfr_clear(rt);
 
     // Close output files
     fclose(x_out);

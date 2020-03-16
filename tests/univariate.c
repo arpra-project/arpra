@@ -1,7 +1,7 @@
 /*
  * univariate.c -- Compare univariate Arpra and MPFI functions.
  *
- * Copyright 2017-2018 James Paul Turner.
+ * Copyright 2017-2020 James Paul Turner.
  *
  * This file is part of the Arpra library.
  *
@@ -22,25 +22,25 @@
 #include "arpra-test.h"
 
 void test_univariate (
-    void (*f_arpra) (arpra_range *z, const arpra_range *x),
-    int  (*f_mpfi) (mpfi_ptr z, mpfi_srcptr x))
+    void (*f_arpra) (arpra_range *y, const arpra_range *x1),
+    int  (*f_mpfi) (mpfi_ptr y, mpfi_srcptr x1))
 {
     // Convert arguments.
-    test_log_mpfi(&(x_A.true_range), "x  ");
+    test_log_mpfi(&(x1_A.true_range), "x1  ");
 
-    // Compute z with MPFI.
-    f_mpfi(&z_I, &(x_A.true_range));
-    test_log_mpfi(&z_I, "z_I");
+    // Compute y with MPFI.
+    f_mpfi(y_I, &(x1_A.true_range));
+    test_log_mpfi(y_I, "y_I");
 
-    // Compute z with Arpra.
-    f_arpra(&z_A, &x_A);
-    test_log_mpfi(&(z_A.true_range), "z_A");
+    // Compute y with Arpra.
+    f_arpra(&y_A, &x1_A);
+    test_log_mpfi(&(y_A.true_range), "y_A");
 
     // Compute Arpra diameter relative to MPFI diameter.
-    mpfr_sub(&z_I_diam, &(z_I.right), &(z_I.left), MPFR_RNDN);
-    test_log_mpfr(&z_I_diam, "z_I_diam    ");
-    mpfr_sub(&z_A_diam, &(z_A.true_range.right), &(z_A.true_range.left), MPFR_RNDN);
-    test_log_mpfr(&z_A_diam, "z_A_diam    ");
-    mpfr_div(&z_A_diam_rel, &z_A_diam, &z_I_diam, MPFR_RNDN);
-    test_log_mpfr(&z_A_diam_rel, "z_A_diam_rel");
+    mpfr_sub(y_I_diam, &(y_I->right), &(y_I->left), MPFR_RNDN);
+    test_log_mpfr(y_I_diam, "y_I_diam    ");
+    mpfr_sub(y_A_diam, &(y_A.true_range.right), &(y_A.true_range.left), MPFR_RNDN);
+    test_log_mpfr(y_A_diam, "y_A_diam    ");
+    mpfr_div(y_A_diam_rel, y_A_diam, y_I_diam, MPFR_RNDN);
+    test_log_mpfr(y_A_diam_rel, "y_A_diam_rel");
 }

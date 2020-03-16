@@ -1,7 +1,7 @@
 /*
  * logfile_printf.c -- Record formatted text in the logfile.
  *
- * Copyright 2017-2018 James Paul Turner.
+ * Copyright 2017-2020 James Paul Turner.
  *
  * This file is part of the Arpra library.
  *

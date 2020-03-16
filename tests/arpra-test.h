@@ -1,7 +1,7 @@
 /*
  * arpra-test.h -- Header file for common testing routines.
  *
- * Copyright 2017-2018 James Paul Turner.
+ * Copyright 2017-2020 James Paul Turner.
  *
  * This file is part of the Arpra library.
  *
@@ -54,9 +54,9 @@ extern "C" {
 
 // Global test variables.
 extern int test_fixture_ready;
-extern arpra_range x_A, y_A, z_A;
-extern arpra_mpfi z_I;
-extern arpra_mpfr z_I_diam, z_A_diam, z_A_diam_rel;
+extern arpra_range y_A, x1_A, x2_A;
+extern mpfi_t y_I;
+extern mpfr_t y_I_diam, y_A_diam, y_A_diam_rel;
 
 // Global RNG variables.
 extern int test_rand_ready;
@@ -73,29 +73,29 @@ void test_fixture_clear ();
 // RNG functions.
 void test_rand_init ();
 void test_rand_clear ();
-void test_rand_mpfr (arpra_mpfr *z, arpra_prec prec, test_rand_mode mode);
-void test_rand_arpra (arpra_range *z, test_rand_mode mode_c, test_rand_mode mode_d);
+void test_rand_mpfr (mpfr_ptr y, arpra_prec prec, test_rand_mode mode);
+void test_rand_arpra (arpra_range *y, test_rand_mode mode_c, test_rand_mode mode_d);
 
 // Logfile functions.
 void test_log_init (const char *test_name);
 void test_log_clear ();
 void test_log_printf (const char *format, ...);
-void test_log_mpfr (const arpra_mpfr *x, const char *var_name);
-void test_log_mpfi (mpfi_srcptr x, const char *var_name);
+void test_log_mpfr (mpfr_srcptr x1, const char *var_name);
+void test_log_mpfi (mpfi_srcptr x1, const char *var_name);
 
 // Symbol adjustments.
-void test_share_all_syms (arpra_range *x, arpra_range *y);
-void test_share_rand_syms (arpra_range *x, arpra_range *y);
-void test_share_n_syms (arpra_range *x, arpra_range *y, arpra_uint n);
+void test_share_all_syms (arpra_range *x1, arpra_range *x2);
+void test_share_rand_syms (arpra_range *x1, arpra_range *x2);
+void test_share_n_syms (arpra_range *x1, arpra_range *x2, arpra_uint n);
 
 // Test functions.
-int test_compare_arpra (const arpra_range *x, const arpra_range *y);
+int test_compare_arpra (const arpra_range *x1, const arpra_range *x2);
 void test_univariate (
-    void (*f_arpra) (arpra_range *z, const arpra_range *x),
-    int  (*f_mpfi) (mpfi_ptr z, mpfi_srcptr x));
+    void (*f_arpra) (arpra_range *y, const arpra_range *x1),
+    int  (*f_mpfi) (mpfi_ptr y, mpfi_srcptr x1));
 void test_bivariate (
-    void (*f_arpra) (arpra_range *z, const arpra_range *x, const arpra_range *y),
-    int  (*f_mpfi) (mpfi_ptr z, mpfi_srcptr x, mpfi_srcptr y));
+    void (*f_arpra) (arpra_range *y, const arpra_range *x1, const arpra_range *x2),
+    int  (*f_mpfi) (mpfi_ptr y, mpfi_srcptr x1, mpfi_srcptr x2));
 
 #ifdef __cplusplus
 }

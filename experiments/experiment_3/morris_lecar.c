@@ -126,8 +126,8 @@
 
 
 // DEBUG: print MPFR numbers to stderr
-void debug (const arpra_mpfr x) {
-    mpfr_out_str(stderr, 10, 80, &x, MPFR_RNDN);
+void debug (mpfr_srcptr x) {
+    mpfr_out_str(stderr, 10, 80, x, MPFR_RNDN);
     fputs("\n", stderr);
 }
 
@@ -498,7 +498,7 @@ int main (int argc, char *argv[])
     arpra_uint *syn_exc_R_reduce_epoch = malloc(p_syn_exc_size * sizeof(arpra_uint));
     arpra_uint *syn_exc_S_reduce_epoch = malloc(p_syn_exc_size * sizeof(arpra_uint));
 
-    arpra_mpfr in1_p0, rand_uf, rand_nf;
+    mpfr_t in1_p0, rand_uf, rand_nf;
     arpra_range GL, VL, GCa, VCa, GK, VK, V1, V2, V3, V4, phi, C,
                 syn_exc_VSyn, syn_exc_thr, syn_exc_a, syn_exc_b, syn_exc_k,
                 syn_VSyn, syn_thr, syn_a, syn_b, syn_k, one, two, neg_two,
@@ -543,7 +543,7 @@ int main (int argc, char *argv[])
     }
 
     // Initialise Poisson input parameters (group 1)
-    mpfr_init2(&in1_p0, p_prec);
+    mpfr_init2(in1_p0, p_prec);
     arpra_init2(&in1_V_lo, p_prec);
     arpra_init2(&in1_V_hi, p_prec);
 
@@ -577,8 +577,8 @@ int main (int argc, char *argv[])
     arpra_init2(&neg_two, p_prec);
 
     // Initialise scratch space
-    mpfr_init2(&rand_uf, p_rand_prec);
-    mpfr_init2(&rand_nf, p_rand_prec);
+    mpfr_init2(rand_uf, p_rand_prec);
+    mpfr_init2(rand_nf, p_rand_prec);
     arpra_init2(&temp1, p_prec);
     arpra_init2(&temp2, p_prec);
     arpra_init2(&M_ss, p_prec);
@@ -600,8 +600,8 @@ int main (int argc, char *argv[])
     }
 
     // Set Poisson input parameters (group 1)
-    mpfr_set_d(&in1_p0, -(p_in1_freq / 1000) * p_h, MPFR_RNDN);
-    mpfr_exp(&in1_p0, &in1_p0, MPFR_RNDN);
+    mpfr_set_d(in1_p0, -(p_in1_freq / 1000) * p_h, MPFR_RNDN);
+    mpfr_exp(in1_p0, in1_p0, MPFR_RNDN);
     arpra_set_d(&in1_V_lo, p_in1_V_lo);
     arpra_set_d(&in1_V_hi, p_in1_V_hi);
 
@@ -621,11 +621,11 @@ int main (int argc, char *argv[])
 
     // Set excitatory synapse parameters
     for (i = 0; i < p_syn_exc_size; i++) {
-        //mpfr_nrandom(&rand_nf, rng_nf, MPFR_RNDN);
-        mpfr_grandom(&rand_nf, NULL, rng_nf, MPFR_RNDN);
-        mpfr_mul_d(&rand_nf, &rand_nf, p_syn_exc_GSyn_std, MPFR_RNDN);
-        mpfr_add_d(&rand_nf, &rand_nf, p_syn_exc_GSyn_mean, MPFR_RNDN);
-        arpra_set_mpfr(&(syn_exc_GSyn[i]), &rand_nf);
+        //mpfr_nrandom(rand_nf, rng_nf, MPFR_RNDN);
+        mpfr_grandom(rand_nf, NULL, rng_nf, MPFR_RNDN);
+        mpfr_mul_d(rand_nf, rand_nf, p_syn_exc_GSyn_std, MPFR_RNDN);
+        mpfr_add_d(rand_nf, rand_nf, p_syn_exc_GSyn_mean, MPFR_RNDN);
+        arpra_set_mpfr(&(syn_exc_GSyn[i]), rand_nf);
     }
     arpra_set_d(&syn_exc_VSyn, p_syn_exc_VSyn);
     arpra_set_d(&syn_exc_thr, p_syn_exc_thr);
@@ -798,8 +798,8 @@ int main (int argc, char *argv[])
 
         // Event(s) occur if urandom >= e^-rate
         for (j = 0; j < p_in1_size; j++) {
-            mpfr_urandom(&rand_uf, rng_uf, MPFR_RNDN);
-            in1[j] = mpfr_greaterequal_p(&rand_uf, &in1_p0);
+            mpfr_urandom(rand_uf, rng_uf, MPFR_RNDN);
+            in1[j] = mpfr_greaterequal_p(rand_uf, in1_p0);
             //fprintf(stderr, "%s", (in1[j] ? "\x1B[31m\xE2\x96\xA3\x1B[0m" : "\xE2\x96\xA3"));
             fprintf(in_file, "%d ", in1[j]);
         }
@@ -871,7 +871,7 @@ int main (int argc, char *argv[])
     }
 
     // Clear Poisson input parameters (group 1)
-    mpfr_clear(&in1_p0);
+    mpfr_clear(in1_p0);
     arpra_clear(&in1_V_lo);
     arpra_clear(&in1_V_hi);
 
@@ -905,8 +905,8 @@ int main (int argc, char *argv[])
     arpra_clear(&neg_two);
 
     // Clear scratch space
-    mpfr_clear(&rand_uf);
-    mpfr_clear(&rand_nf);
+    mpfr_clear(rand_uf);
+    mpfr_clear(rand_nf);
     arpra_clear(&temp1);
     arpra_clear(&temp2);
     arpra_clear(&M_ss);
