@@ -345,7 +345,7 @@ void dVdt (arpra_range *out, const void *params,
         arpra_add(out, out, &(I[i]));
     }
     //arpra_sum_recursive(out, I, p->pre_syn_size);
-    //arpra_sum_exact(out, I, p->pre_syn_size);
+    //arpra_sum(out, I, p->pre_syn_size);
 
 
 

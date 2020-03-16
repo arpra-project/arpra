@@ -85,7 +85,6 @@ void arpra_neg (arpra_range *y, const arpra_range *x1);
 // Summation operations.
 void arpra_sum (arpra_range *y, arpra_range *x, arpra_uint n);
 void arpra_sum_recursive (arpra_range *y, arpra_range *x, arpra_uint n);
-#define arpra_sum_exact arpra_sum
 
 // Non-affine operations.
 void arpra_mul (arpra_range *y, const arpra_range *x1, const arpra_range *x2);
