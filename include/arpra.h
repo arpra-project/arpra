@@ -29,9 +29,9 @@
 typedef long int arpra_int;
 typedef unsigned long int arpra_uint;
 typedef mpfr_prec_t arpra_prec;
-typedef struct arpra_range_struct arpra_range;
 
 // The Arpra range struct.
+typedef struct arpra_range_struct arpra_range;
 struct arpra_range_struct
 {
     arpra_prec precision;
@@ -41,6 +41,15 @@ struct arpra_range_struct
     arpra_uint *symbols;
     __mpfr_struct *deviations;
     arpra_uint nTerms;
+};
+
+// Range analysis method enum.
+typedef enum arpra_method_enum arpra_method;
+enum arpra_method_enum
+{
+    ARPRA_AA,
+    ARPRA_MIXED_IAAA,
+    ARPRA_MIXED_TRIMMED_IAAA,
 };
 
 #ifdef __cplusplus
@@ -94,14 +103,6 @@ void arpra_exp (arpra_range *y, const arpra_range *x1);
 void arpra_log (arpra_range *y, const arpra_range *x1);
 void arpra_inv (arpra_range *y, const arpra_range *x1);
 
-// Floating-point precision.
-arpra_prec arpra_get_precision (const arpra_range *x1);
-arpra_prec arpra_get_default_precision ();
-arpra_prec arpra_get_internal_precision ();
-void arpra_set_precision (arpra_range *y, arpra_prec prec);
-void arpra_set_default_precision (arpra_prec prec);
-void arpra_set_internal_precision (arpra_prec prec);
-
 // Deviation term reduction.
 void arpra_reduce_last_n (arpra_range *y, const arpra_range *x1, arpra_uint n);
 void arpra_reduce_small_abs (arpra_range *y, const arpra_range *x1, mpfr_srcptr abs_threshold);
@@ -115,9 +116,6 @@ int arpra_zero_p (const arpra_range *x1);
 int arpra_has_zero_p (const arpra_range *x1);
 int arpra_has_pos_p (const arpra_range *x1);
 int arpra_has_neg_p (const arpra_range *x1);
-
-// Clear temporary data.
-void arpra_clear_buffers ();
 
 // MPFR wrapper functions.
 void arpra_mpfr_fn1 (int (*fn) (mpfr_ptr y, mpfr_srcptr x1, mpfr_rnd_t rnd),
@@ -143,6 +141,21 @@ void arpra_mpfr_d_fn2 (int (*fn) (mpfr_ptr y, double x1, mpfr_srcptr x2, mpfr_rn
 void arpra_mpfr_fn2_d (int (*fn) (mpfr_ptr y, mpfr_srcptr x1, double x2, mpfr_rnd_t rnd),
                        arpra_range *y, mpfr_srcptr x1, double x2);
 void arpra_mpfr_set_str (arpra_range *y, const char *x1, int base);
+
+// Floating-point precision.
+arpra_prec arpra_get_precision (const arpra_range *x1);
+void arpra_set_precision (arpra_range *y, arpra_prec prec);
+
+// Arpra configuration.
+arpra_method arpra_get_method ();
+void arpra_set_method (arpra_method new_method);
+arpra_prec arpra_get_default_precision ();
+void arpra_set_default_precision (arpra_prec prec);
+arpra_prec arpra_get_internal_precision ();
+void arpra_set_internal_precision (arpra_prec prec);
+
+// Clear temporary data.
+void arpra_clear_buffers ();
 
 #ifdef __cplusplus
 }

@@ -26,37 +26,42 @@ void arpra_helper_mix_trim (arpra_range *y, mpfi_srcptr ia_range)
     mpfr_t temp1, temp2;
     arpra_uint prec_internal;
 
-#ifdef ARPRA_MIXED_IAAA
-    // Intersect AA and IA ranges.
-    mpfi_intersect(&(y->true_range), &(y->true_range), ia_range);
-
-#ifdef ARPRA_MIXED_TRIMMED_IAAA
-    // Initialise vars.
-    prec_internal = arpra_get_internal_precision();
-    mpfr_init2(temp1, prec_internal * 2);
-    mpfr_init2(temp2, prec_internal * 2);
-
-    // Trim error term if AA range fully encloses mixed IA/AA range.
-    mpfr_sub(temp1, &(y->centre), &(y->radius), MPFR_RNDD);
-    mpfr_add(temp2, &(y->centre), &(y->radius), MPFR_RNDU);
-    if (mpfr_less_p(temp1, &(y->true_range.left))
-        && mpfr_greater_p(temp2, &(y->true_range.right))) {
-        mpfr_sub(temp1, &(y->true_range.left), temp1, MPFR_RNDD);
-        mpfr_sub(temp2, temp2, &(y->true_range.right), MPFR_RNDD);
-        mpfr_min(temp1, temp1, temp2, MPFR_RNDD);
-        if (mpfr_greater_p(temp1, &(y->deviations[y->nTerms - 1]))) {
-            mpfr_sub(&(y->radius), &(y->radius), &(y->deviations[y->nTerms - 1]), MPFR_RNDU);
-            mpfr_set_zero(&(y->deviations[y->nTerms - 1]), 1);
-        }
-        else {
-            mpfr_sub(&(y->radius), &(y->radius), temp1, MPFR_RNDU);
-            mpfr_sub(&(y->deviations[y->nTerms - 1]), &(y->deviations[y->nTerms - 1]), temp1, MPFR_RNDU);
-        }
+    // Mixed IA/AA method.
+    if (arpra_get_method() == ARPRA_MIXED_IAAA) {
+        // Intersect AA and IA ranges.
+        mpfi_intersect(&(y->true_range), &(y->true_range), ia_range);
     }
 
-    // Clear vars.
-    mpfr_clear(temp1);
-    mpfr_clear(temp2);
-#endif // ARPRA_MIXED_TRIMMED_IAAA
-#endif // ARPRA_MIXED_IAAA
+    // Mixed trimmed IA/AA method.
+    else if (arpra_get_method() == ARPRA_MIXED_TRIMMED_IAAA) {
+        // Intersect AA and IA ranges.
+        mpfi_intersect(&(y->true_range), &(y->true_range), ia_range);
+
+        // Initialise vars.
+        prec_internal = arpra_get_internal_precision();
+        mpfr_init2(temp1, prec_internal * 2);
+        mpfr_init2(temp2, prec_internal * 2);
+
+        // Trim error term if AA range fully encloses mixed IA/AA range.
+        mpfr_sub(temp1, &(y->centre), &(y->radius), MPFR_RNDD);
+        mpfr_add(temp2, &(y->centre), &(y->radius), MPFR_RNDU);
+        if (mpfr_less_p(temp1, &(y->true_range.left))
+            && mpfr_greater_p(temp2, &(y->true_range.right))) {
+            mpfr_sub(temp1, &(y->true_range.left), temp1, MPFR_RNDD);
+            mpfr_sub(temp2, temp2, &(y->true_range.right), MPFR_RNDD);
+            mpfr_min(temp1, temp1, temp2, MPFR_RNDD);
+            if (mpfr_greater_p(temp1, &(y->deviations[y->nTerms - 1]))) {
+                mpfr_sub(&(y->radius), &(y->radius), &(y->deviations[y->nTerms - 1]), MPFR_RNDU);
+                mpfr_set_zero(&(y->deviations[y->nTerms - 1]), 1);
+            }
+            else {
+                mpfr_sub(&(y->radius), &(y->radius), temp1, MPFR_RNDU);
+                mpfr_sub(&(y->deviations[y->nTerms - 1]), &(y->deviations[y->nTerms - 1]), temp1, MPFR_RNDU);
+            }
+        }
+
+        // Clear vars.
+        mpfr_clear(temp1);
+        mpfr_clear(temp2);
+    }
 }

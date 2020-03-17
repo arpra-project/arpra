@@ -34,22 +34,21 @@
 #include <arpra.h>
 #include <arpra_ode.h>
 
-// Temp buffers.
-#define ARPRA_BUFFER_RESIZE_FACTOR 256
+// Default range analysis method.
+#define ARPRA_DEFAULT_METHOD ARPRA_MIXED_TRIMMED_IAAA
 
 // Default precisions.
 #define ARPRA_DEFAULT_PRECISION 53
 #define ARPRA_DEFAULT_INTERNAL_PRECISION 256
-
-// Mixed IA/AA.
-#define ARPRA_MIXED_IAAA 1
-#define ARPRA_MIXED_TRIMMED_IAAA 1
 
 // Multiplication.
 #define ARPRA_TIGHT_MUL 1
 
 // Min-Range approximation.
 //#define ARPRA_MIN_RANGE 1
+
+// Temp buffers.
+#define ARPRA_BUFFER_RESIZE_FACTOR 256
 
 // Internal auxiliary functions.
 mpfr_ptr *arpra_helper_buffer_mpfr_ptr (arpra_uint n);
