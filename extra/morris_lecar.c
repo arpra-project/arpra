@@ -83,13 +83,13 @@
 
 // Poisson input parameters (group 1)
 #define p_in1_size 50
-#define p_in1_freq 40.0
+#define p_in1_freq 42.0
 #define p_in1_V_lo -60.0
 #define p_in1_V_hi 20.0
 
 // Poisson input parameters (group 2)
 #define p_in2_size 0
-#define p_in2_freq 40.0
+#define p_in2_freq 42.0
 #define p_in2_V_lo -60.0
 #define p_in2_V_hi 20.0
 

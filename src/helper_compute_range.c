@@ -22,13 +22,14 @@
 #include "arpra-impl.h"
 
 /*
- * Compute true_range from centre and radius, adding rounding error to the
- * new deviation term.
+ * Compute radius and true_range, adding rounding error to the new
+ * numerical error deviation term.
  */
 
 void arpra_helper_compute_range (arpra_range *y)
 {
     mpfr_t temp1, temp2;
+    mpfr_ptr sum_y, *sum_y_ptr;
     arpra_prec prec_internal;
     arpra_uint i_y;
 
@@ -36,16 +37,23 @@ void arpra_helper_compute_range (arpra_range *y)
     prec_internal = arpra_get_internal_precision();
     mpfr_init2(temp1, prec_internal * 2);
     mpfr_init2(temp2, prec_internal * 2);
+    sum_y = malloc(y->nTerms * sizeof(mpfr_t));
+    sum_y_ptr = malloc(y->nTerms * sizeof(mpfr_ptr));
 
     // Compute radius.
-    mpfr_set_zero(&(y->radius), 1);
     for (i_y = 0; i_y < y->nTerms; i_y++) {
-        mpfr_abs(temp1, &(y->deviations[i_y]), MPFR_RNDU);
-        mpfr_add(&(y->radius), &(y->radius), temp1, MPFR_RNDU);
+        sum_y[i_y] = y->deviations[i_y];
+        sum_y[i_y]._mpfr_sign = 1;
+        sum_y_ptr[i_y] = &(sum_y[i_y]);
     }
+    mpfr_sum(&(y->radius), sum_y_ptr, y->nTerms, MPFR_RNDU);
 
-    // Compute radius with MPFR summation.
-    //arpra_ext_mpfr_sumabs(&(y->radius), y->deviations, y->nTerms, MPFR_RNDU);
+    /* // Compute radius without mpfr_sum. */
+    /* mpfr_set_zero(&(y->radius), 1); */
+    /* for (i_y = 0; i_y < y->nTerms; i_y++) { */
+    /*     mpfr_abs(temp1, &(y->deviations[i_y]), MPFR_RNDU); */
+    /*     mpfr_add(&(y->radius), &(y->radius), temp1, MPFR_RNDU); */
+    /* } */
 
     // Compute true_range.
     mpfr_sub(temp1, &(y->centre), &(y->radius), MPFR_RNDD);
@@ -64,4 +72,6 @@ void arpra_helper_compute_range (arpra_range *y)
     // Clear vars.
     mpfr_clear(temp1);
     mpfr_clear(temp2);
+    free(sum_y);
+    free(sum_y_ptr);
 }
