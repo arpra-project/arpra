@@ -27,16 +27,14 @@ void arpra_helper_mix_trim (arpra_range *y, mpfi_srcptr ia_range)
     arpra_uint prec_internal;
 
 #ifdef ARPRA_MIXED_IAAA
-    if (ia_range) {
-        // Intersect AA and IA ranges.
-        mpfi_intersect(&(y->true_range), &(y->true_range), ia_range);
-    }
+    // Intersect AA and IA ranges.
+    mpfi_intersect(&(y->true_range), &(y->true_range), ia_range);
 
 #ifdef ARPRA_MIXED_TRIMMED_IAAA
     // Initialise vars.
     prec_internal = arpra_get_internal_precision();
-    mpfr_init2(temp1, prec_internal + 8);
-    mpfr_init2(temp2, prec_internal + 8);
+    mpfr_init2(temp1, prec_internal * 2);
+    mpfr_init2(temp2, prec_internal * 2);
 
     // Trim error term if AA range fully encloses mixed IA/AA range.
     mpfr_sub(temp1, &(y->centre), &(y->radius), MPFR_RNDD);

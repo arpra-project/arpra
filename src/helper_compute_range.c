@@ -34,15 +34,27 @@ void arpra_helper_compute_range (arpra_range *y)
 
     // Initialise vars.
     prec_internal = arpra_get_internal_precision();
-    mpfr_init2(temp1, prec_internal + 8);
-    mpfr_init2(temp2, prec_internal + 8);
-    i_y = y->nTerms - 1;
+    mpfr_init2(temp1, prec_internal * 2);
+    mpfr_init2(temp2, prec_internal * 2);
+
+    // Compute radius.
+    mpfr_set_zero(&(y->radius), 1);
+    for (i_y = 0; i_y < y->nTerms; i_y++) {
+        mpfr_abs(temp1, &(y->deviations[i_y]), MPFR_RNDU);
+        mpfr_add(&(y->radius), &(y->radius), temp1, MPFR_RNDU);
+    }
+
+    // Compute radius with MPFR summation.
+    //arpra_ext_mpfr_sumabs(&(y->radius), y->deviations, y->nTerms, MPFR_RNDU);
 
     // Compute true_range.
     mpfr_sub(temp1, &(y->centre), &(y->radius), MPFR_RNDD);
     mpfr_add(temp2, &(y->centre), &(y->radius), MPFR_RNDU);
     mpfr_set(&(y->true_range.left), temp1, MPFR_RNDD);
     mpfr_set(&(y->true_range.right), temp2, MPFR_RNDU);
+
+    // Add rounding error to last deviation term.
+    i_y = y->nTerms - 1;
     mpfr_sub(temp1, temp1, &(y->true_range.left), MPFR_RNDU);
     mpfr_sub(temp2, &(y->true_range.right), temp2, MPFR_RNDU);
     mpfr_max(temp1, temp1, temp2, MPFR_RNDU);

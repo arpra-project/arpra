@@ -81,7 +81,6 @@ void arpra_sum (arpra_range *y, arpra_range *x, arpra_uint n)
     summands = malloc(n * sizeof(mpfr_ptr));
     i_x = malloc(n * sizeof(arpra_uint));
     mpfr_set_zero(error, 1);
-    mpfr_set_zero(&(yy.radius), 1);
 
     // Zero term indexes, and fill summand array with centre values.
     i_y = 0;
@@ -123,23 +122,18 @@ void arpra_sum (arpra_range *y, arpra_range *x, arpra_uint n)
             if (x[i].symbols[i_x[i]] == symbol) {
                 // Get next deviation pointer of x[i].
                 summands[n_sum++] = &(x[i].deviations[i_x[i]]);
-
                 xHasNext += ++i_x[i] < x[i].nTerms;
             }
         }
 
         // y[i] = x1[i] + ... + xn[i]
         ARPRA_MPFR_RNDERR_SUM(error, MPFR_RNDN, &(yy.deviations[i_y]), summands, n_sum);
-
-        mpfr_abs(temp1, &(yy.deviations[i_y]), MPFR_RNDU);
-        mpfr_add(&(yy.radius), &(yy.radius), temp1, MPFR_RNDU);
         i_y++;
     }
 
     // Store new deviation term.
     yy.symbols[i_y] = arpra_helper_next_symbol();
     yy.deviations[i_y] = *error;
-    mpfr_add(&(yy.radius), &(yy.radius), &(yy.deviations[i_y]), MPFR_RNDU);
     yy.nTerms = i_y + 1;
 
     // Compute true_range.

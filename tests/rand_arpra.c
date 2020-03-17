@@ -35,7 +35,6 @@ void test_rand_arpra (arpra_range *y, test_rand_mode mode_c, test_rand_mode mode
     mpfr_init2(error, prec_internal);
     arpra_init2(&yy, y->precision);
     mpfr_set_zero(error, 1);
-    mpfr_set_zero(&(yy.radius), 1);
 
     // y[0] = rand()
     test_rand_mpfr(&(yy.centre), yy.precision, mode_c);
@@ -51,16 +50,11 @@ void test_rand_arpra (arpra_range *y, test_rand_mode mode_c, test_rand_mode mode
         // y[i] = rand()
         yy.symbols[iy] = arpra_helper_next_symbol();
         test_rand_mpfr(&(yy.deviations[iy]), yy.precision, mode_d);
-
-        // Add term to radius.
-        mpfr_abs(temp1, &(yy.deviations[iy]), MPFR_RNDU);
-        mpfr_add(&(yy.radius), &(yy.radius), temp1, MPFR_RNDU);
     }
 
     // Store new deviation term.
     yy.symbols[iy] = arpra_helper_next_symbol();
     yy.deviations[iy] = *error;
-    mpfr_add(&(yy.radius), &(yy.radius), &(yy.deviations[iy]), MPFR_RNDU);
     yy.nTerms = iy + 1;
 
     // Compute true_range.

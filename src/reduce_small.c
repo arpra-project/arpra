@@ -23,7 +23,7 @@
 
 void arpra_reduce_small_abs (arpra_range *y, const arpra_range *x1, mpfr_srcptr abs_threshold)
 {
-    mpfr_t temp1, temp2, error;
+    mpfr_t error;
     mpfr_ptr sum_x, *sum_x_ptr;
     arpra_range yy;
     arpra_prec prec_internal;
@@ -48,14 +48,11 @@ void arpra_reduce_small_abs (arpra_range *y, const arpra_range *x1, mpfr_srcptr 
 
     // Initialise vars.
     prec_internal = arpra_get_internal_precision();
-    mpfr_init2(temp1, prec_internal + 8);
-    mpfr_init2(temp2, prec_internal + 8);
     mpfr_init2(error, prec_internal);
     arpra_init2(&yy, y->precision);
     sum_x = malloc((x1->nTerms + 1) * sizeof(mpfr_t));
     sum_x_ptr = malloc((x1->nTerms + 1) * sizeof(mpfr_ptr));
     mpfr_set_zero(error, 1);
-    mpfr_set_zero(&(yy.radius), 1);
 
     // y[0] = x1[0]
     ARPRA_MPFR_RNDERR_SET(error, MPFR_RNDN, &(yy.centre), &(x1->centre));
@@ -71,10 +68,6 @@ void arpra_reduce_small_abs (arpra_range *y, const arpra_range *x1, mpfr_srcptr 
             // y[i] = x1[i]
             yy.symbols[i_y] = x1->symbols[i_x1];
             ARPRA_MPFR_RNDERR_SET(error, MPFR_RNDN, &(yy.deviations[i_y]), &(x1->deviations[i_x1]));
-
-            // Add term to radius.
-            mpfr_abs(temp1, &(yy.deviations[i_y]), MPFR_RNDU);
-            mpfr_add(&(yy.radius), &(yy.radius), temp1, MPFR_RNDU);
 
             i_y++;
         }
@@ -93,21 +86,18 @@ void arpra_reduce_small_abs (arpra_range *y, const arpra_range *x1, mpfr_srcptr 
     // Store new deviation term.
     yy.symbols[i_y] = arpra_helper_next_symbol();
     yy.deviations[i_y] = *error;
-    mpfr_add(&(yy.radius), &(yy.radius), &(yy.deviations[i_y]), MPFR_RNDU);
     yy.nTerms = i_y + 1;
 
     // Compute true_range.
-    mpfi_set(&(yy.true_range), &(x1->true_range));
+    arpra_helper_compute_range(&yy);
 
     // Mix with IA range, and trim error term.
-    arpra_helper_mix_trim(&yy, NULL);
+    arpra_helper_mix_trim(&yy, &(x1->true_range));
 
     // Check for NaN and Inf.
     arpra_helper_check_result(&yy);
 
     // Clear vars.
-    mpfr_clear(temp1);
-    mpfr_clear(temp2);
     arpra_clear(y);
     *y = yy;
     free(sum_x);

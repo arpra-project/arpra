@@ -69,7 +69,7 @@
 #define p_h 0.5
 #define p_t0 0.0
 #define p_prec 53
-#define p_prec_internal 2048
+#define p_prec_internal 128
 #define p_sim_steps 1000
 #define p_report_step 20
 #define p_reduce_step 50
@@ -83,13 +83,13 @@
 
 // Poisson input parameters (group 1)
 #define p_in1_size 50
-#define p_in1_freq 10.0
+#define p_in1_freq 40.0
 #define p_in1_V_lo -60.0
 #define p_in1_V_hi 20.0
 
 // Poisson input parameters (group 2)
 #define p_in2_size 0
-#define p_in2_freq 10.0
+#define p_in2_freq 40.0
 #define p_in2_V_lo -60.0
 #define p_in2_V_hi 20.0
 

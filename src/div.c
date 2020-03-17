@@ -24,9 +24,7 @@
 void arpra_div (arpra_range *y, const arpra_range *x1, const arpra_range *x2)
 {
     mpfi_t ia_range;
-    mpfr_t temp1, temp2;
     arpra_range yy;
-    arpra_prec prec_internal;
 
     // Domain violations:
     // (NaN) / (NaN) = (NaN)
@@ -54,10 +52,7 @@ void arpra_div (arpra_range *y, const arpra_range *x1, const arpra_range *x2)
     }
 
     // Initialise vars.
-    prec_internal = arpra_get_internal_precision();
     mpfi_init2(ia_range, y->precision);
-    mpfr_init2(temp1, prec_internal);
-    mpfr_init2(temp2, prec_internal);
     arpra_init2(&yy, y->precision);
 
     // MPFI division
@@ -67,6 +62,9 @@ void arpra_div (arpra_range *y, const arpra_range *x1, const arpra_range *x2)
     arpra_inv(&yy, x2);
     arpra_mul(y, x1, &yy);
 
+    // Compute true_range.
+    arpra_helper_compute_range(y);
+
     // Mix with IA range, and trim error term.
     arpra_helper_mix_trim(y, ia_range);
 
@@ -75,7 +73,5 @@ void arpra_div (arpra_range *y, const arpra_range *x1, const arpra_range *x2)
 
     // Clear vars.
     mpfi_clear(ia_range);
-    mpfr_clear(temp1);
-    mpfr_clear(temp2);
     arpra_clear(&yy);
 }

@@ -35,7 +35,6 @@ void arpra_affine_1 (arpra_range *y, const arpra_range *x1,
     mpfr_init2(error, prec_internal);
     arpra_init2(&yy, y->precision);
     mpfr_set_zero(error, 1);
-    mpfr_set_zero(&(yy.radius), 1);
 
     // y[0] = (alpha * x1[0]) + (gamma)
     ARPRA_MPFR_RNDERR_FMA(error, MPFR_RNDN, &(yy.centre), alpha, &(x1->centre), gamma);
@@ -50,10 +49,6 @@ void arpra_affine_1 (arpra_range *y, const arpra_range *x1,
         // y[i] = (alpha * x1[i])
         yy.symbols[i_y] = x1->symbols[i_y];
         ARPRA_MPFR_RNDERR_MUL(error, MPFR_RNDN, &(yy.deviations[i_y]), alpha, &(x1->deviations[i_y]));
-
-        // Add term to radius.
-        mpfr_abs(temp, &(yy.deviations[i_y]), MPFR_RNDU);
-        mpfr_add(&(yy.radius), &(yy.radius), temp, MPFR_RNDU);
     }
 
     // Add delta to error.
@@ -62,7 +57,6 @@ void arpra_affine_1 (arpra_range *y, const arpra_range *x1,
     // Store new deviation term.
     yy.symbols[i_y] = arpra_helper_next_symbol();
     yy.deviations[i_y] = *error;
-    mpfr_add(&(yy.radius), &(yy.radius), &(yy.deviations[i_y]), MPFR_RNDU);
     yy.nTerms = i_y + 1;
 
     // Clear vars, and set y.

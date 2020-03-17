@@ -72,7 +72,6 @@ void arpra_mul (arpra_range *y, const arpra_range *x1, const arpra_range *x2)
     mpfr_init2(error, prec_internal);
     arpra_init2(&yy, y->precision);
     mpfr_set_zero(error, 1);
-    mpfr_set_zero(&(yy.radius), 1);
 
     // y[0] = x1[0] * x2[0]
     ARPRA_MPFR_RNDERR_MUL(error, MPFR_RNDN, &(yy.centre), &(x1->centre), &(x2->centre));
@@ -108,9 +107,6 @@ void arpra_mul (arpra_range *y, const arpra_range *x1, const arpra_range *x2)
             x1HasNext = ++i_x1 < x1->nTerms;
             x2HasNext = ++i_x2 < x2->nTerms;
         }
-
-        mpfr_abs(temp1, &(yy.deviations[i_y]), MPFR_RNDU);
-        mpfr_add(&(yy.radius), &(yy.radius), temp1, MPFR_RNDU);
         i_y++;
     }
 
@@ -219,7 +215,6 @@ void arpra_mul (arpra_range *y, const arpra_range *x1, const arpra_range *x2)
     // Store new deviation term.
     yy.symbols[i_y] = arpra_helper_next_symbol();
     yy.deviations[i_y] = *error;
-    mpfr_add(&(yy.radius), &(yy.radius), &(yy.deviations[i_y]), MPFR_RNDU);
     yy.nTerms = i_y + 1;
 
     // MPFI multiplication

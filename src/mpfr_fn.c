@@ -33,7 +33,6 @@
         mpfr_init2(error, prec_internal);                               \
         arpra_init2(&yy, y->precision);                                 \
         mpfr_set_zero(error, 1);                                        \
-        mpfr_set_zero(&(yy.radius), 1);                                 \
                                                                         \
         /* y[0] = fn(x) */                                              \
         MPFR_CALL;                                                      \
@@ -45,7 +44,6 @@
         /* Store new deviation term. */                                 \
         yy.symbols[0] = arpra_helper_next_symbol();                     \
         yy.deviations[0] = *error;                                      \
-        mpfr_add(&(yy.radius), &(yy.radius), &(yy.deviations[0]), MPFR_RNDU); \
         yy.nTerms = 1;                                                  \
                                                                         \
         /* Compute true_range. */                                       \
