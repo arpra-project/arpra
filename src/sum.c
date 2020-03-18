@@ -165,6 +165,46 @@ void arpra_sum_recursive (arpra_range *y, arpra_range *x, arpra_uint n)
     arpra_prec prec_internal;
     arpra_uint i;
 
+    // Handle n <= 2 case.
+    if (n <= 2) {
+        if (n == 2) {
+            arpra_add(y, &x[0], &x[1]);
+        }
+        else if (n == 1) {
+            arpra_set(y, &x[0]);
+        }
+        else {
+            arpra_set_nan(y);
+        }
+        return;
+    }
+
+    // Domain violations:
+    // (NaN) + ... + (NaN) = (NaN)
+    // (NaN) + ... + (R)   = (NaN)
+    // (Inf) + ... + (Inf) = (NaN)
+    // (Inf) + ... + (R)   = (Inf)
+
+    // Handle domain violations.
+    for (i = 0; i < n; i++) {
+        if (arpra_nan_p(&x[i])) {
+            arpra_set_nan(y);
+            return;
+        }
+    }
+    for (i = 0; i < n; i++) {
+        if (arpra_inf_p(&x[i])) {
+            for (++i; i < n; i++) {
+                if (arpra_inf_p(&x[i])) {
+                    arpra_set_nan(y);
+                    return;
+                }
+            }
+            arpra_set_inf(y);
+            return;
+        }
+    }
+
     // Initialise vars.
     prec_internal = arpra_get_internal_precision();
     mpfr_init2(temp1, prec_internal);
