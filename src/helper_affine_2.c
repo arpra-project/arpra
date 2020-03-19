@@ -1,5 +1,5 @@
 /*
- * affine_2.c -- Compute a bivariate affine function of two Arpra ranges.
+ * helper_affine_2.c -- Compute a bivariate affine function.
  *
  * Copyright 2016-2020 James Paul Turner.
  *
@@ -21,8 +21,8 @@
 
 #include "arpra-impl.h"
 
-void arpra_affine_2 (arpra_range *y, const arpra_range *x1, const arpra_range *x2,
-                     mpfr_srcptr alpha, mpfr_srcptr beta, mpfr_srcptr gamma, mpfr_srcptr delta)
+void arpra_helper_affine_2 (arpra_range *y, const arpra_range *x1, const arpra_range *x2,
+                            mpfr_srcptr alpha, mpfr_srcptr beta, mpfr_srcptr gamma, mpfr_srcptr delta)
 {
     mpfr_t temp, error;
     arpra_range yy;

@@ -129,7 +129,7 @@ void arpra_exp (arpra_range *y, const arpra_range *x1)
     mpfi_exp(ia_range, &(x1->true_range));
 
     // compute affine approximation
-    arpra_affine_1(y, x1, alpha, gamma, delta);
+    arpra_helper_affine_1(y, x1, alpha, gamma, delta);
 
     // Compute true_range.
     arpra_helper_compute_range(y);

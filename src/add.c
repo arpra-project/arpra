@@ -73,7 +73,7 @@ void arpra_add (arpra_range *y, const arpra_range *x1, const arpra_range *x2)
     mpfi_add(ia_range, &(x1->true_range), &(x2->true_range));
 
     // y = x1 + x2
-    arpra_affine_2(y, x1, x2, alpha, beta, gamma, delta);
+    arpra_helper_affine_2(y, x1, x2, alpha, beta, gamma, delta);
 
     // Compute true_range.
     arpra_helper_compute_range(y);

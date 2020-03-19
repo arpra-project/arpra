@@ -52,7 +52,7 @@ void arpra_increase (arpra_range *y, const arpra_range *x1, mpfr_srcptr delta)
     mpfi_increase(ia_range, delta);
 
     // y = increase(x1, delta)
-    arpra_affine_1(y, x1, alpha, gamma, delta);
+    arpra_helper_affine_1(y, x1, alpha, gamma, delta);
 
     // Compute true_range.
     arpra_helper_compute_range(y);

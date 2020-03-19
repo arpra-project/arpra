@@ -1,5 +1,5 @@
 /*
- * affine_1.c -- Compute a univariate affine function of an Arpra range.
+ * helper_affine_1.c -- Compute a univariate affine function.
  *
  * Copyright 2016-2020 James Paul Turner.
  *
@@ -21,8 +21,8 @@
 
 #include "arpra-impl.h"
 
-void arpra_affine_1 (arpra_range *y, const arpra_range *x1,
-                     mpfr_srcptr alpha, mpfr_srcptr gamma, mpfr_srcptr delta)
+void arpra_helper_affine_1 (arpra_range *y, const arpra_range *x1,
+                            mpfr_srcptr alpha, mpfr_srcptr gamma, mpfr_srcptr delta)
 {
     mpfr_t temp, error;
     arpra_range yy;

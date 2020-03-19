@@ -51,16 +51,20 @@
 #define ARPRA_BUFFER_RESIZE_FACTOR 256
 
 // Internal auxiliary functions.
-mpfr_ptr *arpra_helper_buffer_mpfr_ptr (arpra_uint n);
-mpfr_ptr arpra_helper_buffer_mpfr (arpra_uint n);
-void arpra_helper_clear_terms (arpra_range *y);
-void arpra_helper_set_symbol_count (arpra_uint n);
-arpra_uint arpra_helper_get_symbol_count ();
-arpra_uint arpra_helper_next_symbol ();
+void arpra_helper_affine_1 (arpra_range *y, const arpra_range *x1,
+                            mpfr_srcptr alpha, mpfr_srcptr gamma, mpfr_srcptr delta);
+void arpra_helper_affine_2 (arpra_range *y, const arpra_range *x1, const arpra_range *x2,
+                             mpfr_srcptr alpha, mpfr_srcptr beta, mpfr_srcptr gamma, mpfr_srcptr delta);
+void arpra_helper_mpfr_rnderr (mpfr_ptr err, mpfr_rnd_t rnd, mpfr_srcptr y);
 void arpra_helper_compute_range (arpra_range *y);
 void arpra_helper_mix_trim (arpra_range *y, mpfi_srcptr ia_range);
 void arpra_helper_check_result (arpra_range *y);
-void arpra_helper_mpfr_rnderr (mpfr_ptr err, mpfr_rnd_t rnd, mpfr_srcptr y);
+void arpra_helper_set_symbol_count (arpra_uint n);
+arpra_uint arpra_helper_get_symbol_count ();
+arpra_uint arpra_helper_next_symbol ();
+mpfr_ptr *arpra_helper_buffer_mpfr_ptr (arpra_uint n);
+mpfr_ptr arpra_helper_buffer_mpfr (arpra_uint n);
+void arpra_helper_clear_terms (arpra_range *y);
 
 // Arpra extensions to the MPFR library.
 int arpra_ext_mpfr_fmma (mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2,

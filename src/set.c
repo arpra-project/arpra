@@ -56,7 +56,7 @@ void arpra_set (arpra_range *y, const arpra_range *x1)
     mpfi_set(ia_range, &(x1->true_range));
 
     // y = x1
-    arpra_affine_1(y, x1, alpha, gamma, delta);
+    arpra_helper_affine_1(y, x1, alpha, gamma, delta);
 
     // Compute true_range.
     arpra_helper_compute_range(y);
