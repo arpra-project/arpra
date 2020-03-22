@@ -50,13 +50,15 @@ void arpra_helper_mix_trim (arpra_range *y, mpfi_srcptr ia_range)
             mpfr_sub(temp1, &(y->true_range.left), temp1, MPFR_RNDD);
             mpfr_sub(temp2, temp2, &(y->true_range.right), MPFR_RNDD);
             mpfr_min(temp1, temp1, temp2, MPFR_RNDD);
-            if (mpfr_greater_p(temp1, &(y->deviations[y->nTerms - 1]))) {
-                mpfr_sub(&(y->radius), &(y->radius), &(y->deviations[y->nTerms - 1]), MPFR_RNDU);
+
+            mpfr_sub(&(y->deviations[y->nTerms - 1]), &(y->deviations[y->nTerms - 1]), temp1, MPFR_RNDU);
+            if (mpfr_sgn(&(y->deviations[y->nTerms - 1])) < 0) {
                 mpfr_set_zero(&(y->deviations[y->nTerms - 1]), 1);
             }
-            else {
-                mpfr_sub(&(y->radius), &(y->radius), temp1, MPFR_RNDU);
-                mpfr_sub(&(y->deviations[y->nTerms - 1]), &(y->deviations[y->nTerms - 1]), temp1, MPFR_RNDU);
+
+            mpfr_sub(&(y->radius), &(y->radius), temp1, MPFR_RNDU);
+            if (mpfr_sgn(&(y->radius)) < 0) {
+                mpfr_set_zero(&(y->radius), 1);
             }
         }
 
