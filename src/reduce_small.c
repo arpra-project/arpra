@@ -30,7 +30,9 @@ void arpra_reduce_small_abs (arpra_range *y, const arpra_range *x1, mpfr_srcptr 
     arpra_uint i_y, i_x1;
 
     // Handle trivial cases.
-    if (mpfr_sgn(abs_threshold) < 0) return;
+    if (mpfr_sgn(abs_threshold) < 0) {
+        arpra_set(y, x1);
+    }
 
     // Domain violations:
     // reduce(NaN) = (NaN)

@@ -30,8 +30,12 @@ void arpra_reduce_last_n (arpra_range *y, const arpra_range *x1, arpra_uint n)
     arpra_uint i_y, i_reduce;
 
     // Handle trivial cases.
-    if (n == 0) return;
-    if (n > x1->nTerms) n = x1->nTerms;
+    if (n == 0) {
+        arpra_set(y, x1);
+    }
+    if (n > x1->nTerms) {
+        n = x1->nTerms;
+    }
 
     // Domain violations:
     // reduce(NaN) = (NaN)
