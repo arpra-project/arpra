@@ -32,6 +32,7 @@ void arpra_reduce_small_abs (arpra_range *y, const arpra_range *x1, mpfr_srcptr 
     // Handle trivial cases.
     if (mpfr_sgn(abs_threshold) < 0) {
         arpra_set(y, x1);
+        return;
     }
 
     // Domain violations:

@@ -32,6 +32,7 @@ void arpra_reduce_last_n (arpra_range *y, const arpra_range *x1, arpra_uint n)
     // Handle trivial cases.
     if (n == 0) {
         arpra_set(y, x1);
+        return;
     }
     if (n > x1->nTerms) {
         n = x1->nTerms;
