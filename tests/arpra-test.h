@@ -74,6 +74,7 @@ void test_fixture_clear ();
 // RNG functions.
 void test_rand_init ();
 void test_rand_clear ();
+void test_rand_uniform_mpfr (mpfr_ptr y, const long int a, const long int b);
 void test_rand_mpfr (mpfr_ptr y, arpra_prec prec, test_rand_mode mode);
 void test_rand_arpra (arpra_range *y, test_rand_mode mode_c, test_rand_mode mode_d);
 
