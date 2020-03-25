@@ -1,5 +1,5 @@
 /*
- * method.c -- Get and set the range analysis method used by Arpra.
+ * range_method.c -- Get and set the range analysis method used by Arpra.
  *
  * Copyright 2020 James Paul Turner.
  *
@@ -21,14 +21,14 @@
 
 #include "arpra-impl.h"
 
-static arpra_method method = ARPRA_DEFAULT_METHOD;
+static arpra_range_method range_method = ARPRA_DEFAULT_RANGE_METHOD;
 
-arpra_method arpra_get_method ()
+arpra_range_method arpra_get_range_method ()
 {
-    return method;
+    return range_method;
 }
 
-void arpra_set_method (arpra_method new_method)
+void arpra_set_range_method (arpra_range_method new_range_method)
 {
-    method = new_method;
+    range_method = new_range_method;
 }

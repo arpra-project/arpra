@@ -42,7 +42,7 @@ int main (int argc, char *argv[])
     prec = 53;
     prec_internal = 128;
     //prec_internal = atol(argv[1]);
-    //arpra_set_method(ARPRA_MIXED_TRIMMED_IAAA);
+    //arpra_set_range_method(ARPRA_MIXED_TRIMMED_IAAA);
     arpra_set_default_precision(prec);
     arpra_set_internal_precision(prec_internal);
 

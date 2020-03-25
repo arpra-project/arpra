@@ -91,10 +91,11 @@ void test_rand_mpfr (mpfr_ptr y, arpra_prec prec, test_rand_mode mode)
     }
 }
 
-void test_rand_uniform_mpfr (mpfr_ptr y, const long int a, const long int b)
+void test_rand_uniform_mpfr (mpfr_ptr y, long int y_a, long int y_b)
 {
     mpfr_t temp;
 
+    // Check RNG readiness.
     if (!test_rand_ready) {
         fprintf(stderr, "Error: RNG is not initialised.\n");
         exit(EXIT_FAILURE);
@@ -103,8 +104,8 @@ void test_rand_uniform_mpfr (mpfr_ptr y, const long int a, const long int b)
     // Generate random number.
     mpfr_urandom(y, test_randstate, MPFR_RNDN);
     mpfr_init2(temp, (mpfr_get_prec(y) * 2));
-    mpfr_set_si(temp, (b - a), MPFR_RNDN);
+    mpfr_set_si(temp, (y_b - y_a), MPFR_RNDN);
     mpfr_mul(temp, temp, y, MPFR_RNDN);
-    mpfr_add_si(y, temp, a, MPFR_RNDN);
+    mpfr_add_si(y, temp, y_a, MPFR_RNDN);
     mpfr_clear(temp);
 }

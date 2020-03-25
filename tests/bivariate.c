@@ -38,9 +38,9 @@ void test_bivariate (
     test_log_mpfi(&(y_A.true_range), "y_A");
 
     // Compute Arpra diameter relative to MPFI diameter.
-    mpfr_sub(y_I_diam, &(y_I->right), &(y_I->left), MPFR_RNDN);
+    mpfr_sub(y_I_diam, &(y_I->right), &(y_I->left), MPFR_RNDU);
     test_log_mpfr(y_I_diam, "y_I_diam    ");
-    mpfr_sub(y_A_diam, &(y_A.true_range.right), &(y_A.true_range.left), MPFR_RNDN);
+    mpfr_sub(y_A_diam, &(y_A.true_range.right), &(y_A.true_range.left), MPFR_RNDU);
     test_log_mpfr(y_A_diam, "y_A_diam    ");
     mpfr_div(y_A_diam_rel, y_A_diam, y_I_diam, MPFR_RNDN);
     test_log_mpfr(y_A_diam_rel, "y_A_diam_rel");

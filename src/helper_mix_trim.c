@@ -27,13 +27,13 @@ void arpra_helper_mix_trim (arpra_range *y, mpfi_srcptr ia_range)
     arpra_uint prec_internal;
 
     // Mixed IA/AA method.
-    if (arpra_get_method() == ARPRA_MIXED_IAAA) {
+    if (arpra_get_range_method() == ARPRA_MIXED_IAAA) {
         // Intersect AA and IA ranges.
         mpfi_intersect(&(y->true_range), &(y->true_range), ia_range);
     }
 
     // Mixed trimmed IA/AA method.
-    else if (arpra_get_method() == ARPRA_MIXED_TRIMMED_IAAA) {
+    else if (arpra_get_range_method() == ARPRA_MIXED_TRIMMED_IAAA) {
         // Intersect AA and IA ranges.
         mpfi_intersect(&(y->true_range), &(y->true_range), ia_range);
 

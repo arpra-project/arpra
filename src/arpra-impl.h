@@ -35,14 +35,14 @@
 #include <arpra_ode.h>
 
 // Default range analysis method.
-#define ARPRA_DEFAULT_METHOD ARPRA_MIXED_TRIMMED_IAAA
+#define ARPRA_DEFAULT_RANGE_METHOD ARPRA_MIXED_TRIMMED_IAAA
+
+// Default multiplication method.
+#define ARPRA_DEFAULT_MUL_METHOD ARPRA_MUL_RUMP_KASHIWAGI
 
 // Default precisions.
 #define ARPRA_DEFAULT_PRECISION 53
 #define ARPRA_DEFAULT_INTERNAL_PRECISION 256
-
-// Multiplication.
-#define ARPRA_TIGHT_MUL 1
 
 // Min-Range approximation.
 //#define ARPRA_MIN_RANGE 1

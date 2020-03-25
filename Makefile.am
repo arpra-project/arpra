@@ -25,19 +25,19 @@ include_HEADERS = include/arpra.h include/arpra_ode.h
 # Arpra library
 lib_LTLIBRARIES = lib/libarpra.la
 lib_libarpra_la_SOURCES = \
-	src/arpra-impl.h src/add.c src/method.c src/helper_affine_1.c	\
+	src/arpra-impl.h src/add.c src/sub.c src/helper_affine_1.c	\
 	src/helper_affine_2.c src/clear.c src/reduce_last_n.c		\
 	src/reduce_small.c src/default_precision.c src/div.c src/exp.c	\
 	src/predicates.c src/init.c src/internal_precision.c src/inv.c	\
 	src/log.c src/mul.c src/neg.c src/helper_symbol.c		\
 	src/precision.c src/set.c src/set_special.c src/sqrt.c		\
-	src/sub.c src/sum.c src/get_bounds.c src/ode_stepper.c		\
+	src/sum.c src/get_bounds.c src/ode_stepper.c src/increase.c	\
 	src/ode_euler.c src/ode_trapezoidal.c src/ode_bogsham32.c	\
 	src/ode_dopri54.c src/ode_dopri87.c src/helper_mpfr_rnderr.c	\
 	src/helper_buffer.c src/ext_mpfr.c src/get_mpfi.c		\
 	src/helper_compute_range.c src/helper_check_result.c		\
 	src/set_mpfi.c src/mpfr_fn.c src/helper_clear_terms.c		\
-	src/increase.c src/helper_mix_trim.c
+	src/helper_mix_trim.c src/range_method.c
 
 # Testsuite helper library
 check_LTLIBRARIES = tests/libarpra-test.la

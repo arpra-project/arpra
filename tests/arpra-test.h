@@ -74,9 +74,12 @@ void test_fixture_clear ();
 // RNG functions.
 void test_rand_init ();
 void test_rand_clear ();
-void test_rand_uniform_mpfr (mpfr_ptr y, const long int a, const long int b);
 void test_rand_mpfr (mpfr_ptr y, arpra_prec prec, test_rand_mode mode);
 void test_rand_arpra (arpra_range *y, test_rand_mode mode_c, test_rand_mode mode_d);
+void test_rand_uniform_mpfr (mpfr_ptr y, long int y_a, long int y_b);
+void test_rand_uniform_arpra (arpra_range *y,
+                              long int yc_a, long int yc_b,
+                              long int yd_a, long int yd_b);
 
 // Logfile functions.
 void test_log_init (const char *test_name);

@@ -23,7 +23,6 @@
 
 void test_share_all_syms (arpra_range *x1, arpra_range *x2)
 {
-
     arpra_uint symbol, i;
     arpra_int x1_has_next, x2_has_next;
 

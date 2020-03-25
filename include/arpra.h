@@ -44,12 +44,20 @@ struct arpra_range_struct
 };
 
 // Range analysis method enum.
-typedef enum arpra_method_enum arpra_method;
-enum arpra_method_enum
+typedef enum arpra_range_method_enum arpra_range_method;
+enum arpra_range_method_enum
 {
     ARPRA_AA,
     ARPRA_MIXED_IAAA,
     ARPRA_MIXED_TRIMMED_IAAA,
+};
+
+// Multiplication method enum.
+typedef enum arpra_mul_method_enum arpra_mul_method;
+enum arpra_mul_method_enum
+{
+    ARPRA_MUL_TRIVIAL,
+    ARPRA_MUL_RUMP_KASHIWAGI,
 };
 
 #ifdef __cplusplus
@@ -141,8 +149,10 @@ arpra_prec arpra_get_precision (const arpra_range *x1);
 void arpra_set_precision (arpra_range *y, arpra_prec prec);
 
 // Arpra configuration.
-arpra_method arpra_get_method ();
-void arpra_set_method (arpra_method new_method);
+arpra_range_method arpra_get_range_method ();
+void arpra_set_range_method (arpra_range_method new_range_method);
+arpra_mul_method arpra_get_mul_method ();
+void arpra_set_mul_method (arpra_mul_method new_mul_method);
 arpra_prec arpra_get_default_precision ();
 void arpra_set_default_precision (arpra_prec prec);
 arpra_prec arpra_get_internal_precision ();

@@ -23,24 +23,22 @@
 
 void test_rand_arpra (arpra_range *y, test_rand_mode mode_c, test_rand_mode mode_d)
 {
-    mpfr_t temp1, temp2, error;
+    mpfr_t error;
     arpra_range yy;
     arpra_prec prec_internal;
     arpra_uint iy;
 
     // Initialise vars.
     prec_internal = arpra_get_internal_precision();
-    mpfr_init2(temp1, prec_internal);
-    mpfr_init2(temp2, prec_internal);
     mpfr_init2(error, prec_internal);
     arpra_init2(&yy, y->precision);
     mpfr_set_zero(error, 1);
 
     // y[0] = rand()
-    test_rand_mpfr(&(yy.centre), yy.precision, mode_c);
+    test_rand_mpfr(&(yy.centre), prec_internal, mode_c);
 
-    // Allocate 5 to 9 terms.
-    yy.nTerms = gmp_urandomm_ui(test_randstate, 5) + 5;
+    // Allocate 0 to 9 terms.
+    yy.nTerms = gmp_urandomm_ui(test_randstate, 10);
     yy.symbols = malloc((yy.nTerms + 1) * sizeof(arpra_uint));
     yy.deviations = malloc((yy.nTerms + 1) * sizeof(mpfr_t));
 
@@ -49,7 +47,7 @@ void test_rand_arpra (arpra_range *y, test_rand_mode mode_c, test_rand_mode mode
 
         // y[i] = rand()
         yy.symbols[iy] = arpra_helper_next_symbol();
-        test_rand_mpfr(&(yy.deviations[iy]), yy.precision, mode_d);
+        test_rand_mpfr(&(yy.deviations[iy]), prec_internal, mode_d);
     }
 
     // Store new deviation term.
@@ -64,8 +62,53 @@ void test_rand_arpra (arpra_range *y, test_rand_mode mode_c, test_rand_mode mode
     arpra_helper_check_result(&yy);
 
     // Clear vars.
-    mpfr_clear(temp1);
-    mpfr_clear(temp2);
+    arpra_clear(y);
+    *y = yy;
+}
+
+void test_rand_uniform_arpra (arpra_range *y,
+                              long int yc_a, long int yc_b,
+                              long int yd_a, long int yd_b)
+{
+    mpfr_t error;
+    arpra_range yy;
+    arpra_prec prec_internal;
+    arpra_uint iy;
+
+    // Initialise vars.
+    prec_internal = arpra_get_internal_precision();
+    mpfr_init2(error, prec_internal);
+    arpra_init2(&yy, y->precision);
+    mpfr_set_zero(error, 1);
+
+    // y[0] = rand()
+    test_rand_uniform_mpfr(&(yy.centre), yc_a, yc_b);
+
+    // Allocate 0 to 9 terms.
+    yy.nTerms = gmp_urandomm_ui(test_randstate, 10);
+    yy.symbols = malloc((yy.nTerms + 1) * sizeof(arpra_uint));
+    yy.deviations = malloc((yy.nTerms + 1) * sizeof(mpfr_t));
+
+    for (iy = 0; iy < yy.nTerms; iy++) {
+        mpfr_init2(&(yy.deviations[iy]), prec_internal);
+
+        // y[i] = rand()
+        yy.symbols[iy] = arpra_helper_next_symbol();
+        test_rand_uniform_mpfr(&(yy.deviations[iy]), yd_a, yd_b);
+    }
+
+    // Store new deviation term.
+    yy.symbols[iy] = arpra_helper_next_symbol();
+    yy.deviations[iy] = *error;
+    yy.nTerms = iy + 1;
+
+    // Compute true_range.
+    arpra_helper_compute_range(&yy);
+
+    // Check for NaN and Inf.
+    arpra_helper_check_result(&yy);
+
+    // Clear vars.
     arpra_clear(y);
     *y = yy;
 }

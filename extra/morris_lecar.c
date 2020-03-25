@@ -465,7 +465,7 @@ int main (int argc, char *argv[])
         grp_syn_exc_R, grp_syn_exc_S, grp_syn_inh_R, grp_syn_inh_S
     };
 
-    //arpra_set_method(ARPRA_MIXED_TRIMMED_IAAA);
+    //arpra_set_range_method(ARPRA_MIXED_TRIMMED_IAAA);
     arpra_set_internal_precision(p_prec_internal);
 
     // Initialise arpra_reduce_small_rel threshold.
