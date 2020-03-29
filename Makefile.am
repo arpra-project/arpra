@@ -80,6 +80,9 @@ EXTRA_PROGRAMS += extra/henon_map
 extra_henon_map_LDADD = lib/libarpra.la
 extra_henon_map_SOURCES = extra/henon_map.c
 
+EXTRA_PROGRAMS += extra/henon_map_mpfi
+extra_henon_map_mpfi_SOURCES = extra/henon_map_mpfi.c
+
 EXTRA_PROGRAMS += extra/morris_lecar
 extra_morris_lecar_LDADD = lib/libarpra.la
 extra_morris_lecar_SOURCES = extra/morris_lecar.c

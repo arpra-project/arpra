@@ -56,8 +56,8 @@ int main (int argc, char *argv[])
     arpra_init(&y);
 
     // Initialise MPFR vars
-    mpfr_init(uncertainty);
-    mpfr_init(rt);
+    mpfr_init2(uncertainty, prec_internal);
+    mpfr_init2(rt, prec_internal);
 
     // Set Arpra ranges (almost chaotic)
     arpra_set_d(&one, 1.0);
