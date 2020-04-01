@@ -56,15 +56,13 @@ void arpra_helper_compute_range (arpra_range *y)
     /* } */
 
     // Compute true_range.
-    mpfr_sub(temp1, &(y->centre), &(y->radius), MPFR_RNDD);
-    mpfr_add(temp2, &(y->centre), &(y->radius), MPFR_RNDU);
-    mpfr_set(&(y->true_range.left), temp1, MPFR_RNDD);
-    mpfr_set(&(y->true_range.right), temp2, MPFR_RNDU);
+    mpfr_set_zero(temp1, 1);
+    ARPRA_MPFR_RNDERR_SUB(temp1, MPFR_RNDD, &(y->true_range.left), &(y->centre), &(y->radius));
+    mpfr_set_zero(temp2, 1);
+    ARPRA_MPFR_RNDERR_ADD(temp2, MPFR_RNDU, &(y->true_range.right), &(y->centre), &(y->radius));
 
     // Add rounding error to last deviation term.
     i_y = y->nTerms - 1;
-    mpfr_sub(temp1, temp1, &(y->true_range.left), MPFR_RNDU);
-    mpfr_sub(temp2, &(y->true_range.right), temp2, MPFR_RNDU);
     mpfr_max(temp1, temp1, temp2, MPFR_RNDU);
     mpfr_add(&(y->deviations[i_y]), &(y->deviations[i_y]), temp1, MPFR_RNDU);
     mpfr_add(&(y->radius), &(y->radius), temp1, MPFR_RNDU);

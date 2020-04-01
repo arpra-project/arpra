@@ -83,6 +83,12 @@ int arpra_ext_mpfr_sumabs (mpfr_ptr y, mpfr_ptr x,
 #define ARPRA_MPFR_RNDERR_SET(err, rnd, y, x1)                          \
     if (mpfr_set(y, x1, rnd)) arpra_helper_mpfr_rnderr(err, rnd, y)
 
+#define ARPRA_MPFR_RNDERR_ADD(err, rnd, y, x1, x2)                      \
+    if (mpfr_add(y, x1, x2, rnd)) arpra_helper_mpfr_rnderr(err, rnd, y)
+
+#define ARPRA_MPFR_RNDERR_SUB(err, rnd, y, x1, x2)                      \
+    if (mpfr_sub(y, x1, x2, rnd)) arpra_helper_mpfr_rnderr(err, rnd, y)
+
 #define ARPRA_MPFR_RNDERR_MUL(err, rnd, y, x1, x2)                      \
     if (mpfr_mul(y, x1, x2, rnd)) arpra_helper_mpfr_rnderr(err, rnd, y)
 
