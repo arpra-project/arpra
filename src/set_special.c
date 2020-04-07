@@ -31,21 +31,7 @@ void arpra_set_nan (arpra_range *y)
     mpfr_set_prec(&(y->radius), prec_internal);
     arpra_helper_clear_terms(y);
 
-    // y[0] = NaN
-    mpfr_set_nan(&(y->centre));
-
-    // Allocate memory for deviation terms.
-    y->symbols = malloc(sizeof(arpra_uint));
-    y->deviations = malloc(sizeof(mpfr_t));
-
-    // Store new deviation term.
-    y->symbols[0] = arpra_helper_next_symbol();
-    mpfr_init2(&(y->deviations[0]), prec_internal);
-    mpfr_set_nan(&(y->deviations[0]));
-    mpfr_set_nan(&(y->radius));
-    y->nTerms = 1;
-
-    // Compute true_range.
+    // Set true_range.
     mpfr_set_nan(&(y->true_range.left));
     mpfr_set_nan(&(y->true_range.right));
 }
@@ -74,7 +60,7 @@ void arpra_set_inf (arpra_range *y)
     mpfr_set_inf(&(y->radius), 1);
     y->nTerms = 1;
 
-    // Compute true_range.
+    // Set true_range.
     mpfr_set_inf(&(y->true_range.left), -1);
     mpfr_set_inf(&(y->true_range.right), 1);
 }
@@ -103,7 +89,7 @@ void arpra_set_zero (arpra_range *y)
     mpfr_set_zero(&(y->radius), 1);
     y->nTerms = 1;
 
-    // Compute true_range.
+    // Set true_range.
     mpfr_set_zero(&(y->true_range.left), -1);
     mpfr_set_zero(&(y->true_range.right), 1);
 }

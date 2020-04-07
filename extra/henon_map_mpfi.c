@@ -51,7 +51,6 @@ int main (int argc, char *argv[])
     // Set MPFI ranges (almost chaotic)
     mpfi_set_d(one, 1.0);
     mpfi_set_str(a, "1.057", 10);
-    //mpfi_set_str(a, argv[1], 10);
     mpfi_set_str(b, "0.3", 10);
     mpfi_set_d(x, 0.0);
     mpfi_set_d(y, 0.0);

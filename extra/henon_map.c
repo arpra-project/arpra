@@ -41,7 +41,6 @@ int main (int argc, char *argv[])
     n = 500;
     prec = 53;
     prec_internal = 128;
-    //prec_internal = atol(argv[1]);
     //arpra_set_range_method(ARPRA_MIXED_TRIMMED_IAAA);
     arpra_set_default_precision(prec);
     arpra_set_internal_precision(prec_internal);
@@ -62,7 +61,6 @@ int main (int argc, char *argv[])
     // Set Arpra ranges (almost chaotic)
     arpra_set_d(&one, 1.0);
     arpra_set_str(&a, "1.057", 10);
-    //arpra_set_str(&a, argv[2], 10);
     arpra_set_str(&b, "0.3", 10);
     arpra_set_zero(&x);
     arpra_set_zero(&y);
