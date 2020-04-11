@@ -27,7 +27,7 @@ void arpra_reduce_last_n (arpra_range *y, const arpra_range *x1, arpra_uint n)
     mpfr_ptr sum_x, *sum_x_ptr;
     arpra_range yy;
     arpra_prec prec_internal;
-    arpra_uint i_y, i_reduce;
+    arpra_uint i_y, i_x1;
 
     // Handle trivial cases.
     if (n == 0) {
@@ -67,22 +67,27 @@ void arpra_reduce_last_n (arpra_range *y, const arpra_range *x1, arpra_uint n)
     yy.symbols = malloc((x1->nTerms - n + 1) * sizeof(arpra_uint));
     yy.deviations = malloc((x1->nTerms - n + 1) * sizeof(mpfr_t));
 
-    for (i_y = 0; i_y < (x1->nTerms - n); i_y++) {
-        mpfr_init2(&(yy.deviations[i_y]), prec_internal);
+    for (i_y = 0, i_x1 = 0; i_x1 < x1->nTerms; i_x1++) {
+        if (i_x1 < (x1->nTerms - n)) {
+            mpfr_init2(&(yy.deviations[i_y]), prec_internal);
 
-        // y[i] = x1[i]
-        yy.symbols[i_y] = x1->symbols[i_y];
-        ARPRA_MPFR_RNDERR_SET(error, MPFR_RNDN, &(yy.deviations[i_y]), &(x1->deviations[i_y]));
+            // y[i] = x1[i]
+            yy.symbols[i_y] = x1->symbols[i_x1];
+            ARPRA_MPFR_RNDERR_SET(error, MPFR_RNDN, &(yy.deviations[i_y]), &(x1->deviations[i_x1]));
+
+            i_y++;
+        }
+        else {
+            // This term will be merged.
+            sum_x[i_x1 - i_y] = x1->deviations[i_x1];
+            sum_x[i_x1 - i_y]._mpfr_sign = 1;
+            sum_x_ptr[i_x1 - i_y] = &(sum_x[i_x1 - i_y]);
+        }
     }
 
-    // Abs sum the last n deviation terms.
-    for (i_reduce = i_y; i_reduce < x1->nTerms; i_reduce++) {
-        sum_x[i_reduce - i_y] = x1->deviations[i_reduce];
-        sum_x[i_reduce - i_y]._mpfr_sign = 1;
-        sum_x_ptr[i_reduce - i_y] = &(sum_x[i_reduce - i_y]);
-    }
-    sum_x_ptr[i_reduce - i_y] = error;
-    mpfr_sum(error, sum_x_ptr, (n + 1), MPFR_RNDU);
+    // Merge deviation terms.
+    sum_x_ptr[i_x1 - i_y] = error;
+    mpfr_sum(error, sum_x_ptr, (i_x1 - i_y + 1), MPFR_RNDU);
 
     // Store new deviation term.
     yy.symbols[i_y] = arpra_helper_next_symbol();

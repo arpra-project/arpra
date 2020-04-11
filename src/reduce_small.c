@@ -75,14 +75,14 @@ void arpra_reduce_small_abs (arpra_range *y, const arpra_range *x1, mpfr_srcptr 
             i_y++;
         }
         else {
-            // Include small deviation term in abs sum.
+            // This term will be merged.
             sum_x[i_x1 - i_y] = x1->deviations[i_x1];
             sum_x[i_x1 - i_y]._mpfr_sign = 1;
             sum_x_ptr[i_x1 - i_y] = &(sum_x[i_x1 - i_y]);
         }
     }
 
-    // Abs sum the small deviation terms.
+    // Merge deviation terms.
     sum_x_ptr[i_x1 - i_y] = error;
     mpfr_sum(error, sum_x_ptr, (i_x1 - i_y + 1), MPFR_RNDU);
 
