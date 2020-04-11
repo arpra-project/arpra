@@ -69,10 +69,10 @@
 #define p_h 0.5
 #define p_t0 0.0
 #define p_prec 53
-#define p_prec_internal 128
+#define p_prec_internal 256
 #define p_sim_steps 1000
 #define p_report_step 20
-#define p_reduce_step 50
+#define p_reduce_step 100
 #define p_reduce_rel 0.3
 
 // RNG parameters
@@ -465,7 +465,7 @@ int main (int argc, char *argv[])
         grp_syn_exc_R, grp_syn_exc_S, grp_syn_inh_R, grp_syn_inh_S
     };
 
-    //arpra_set_range_method(ARPRA_MIXED_TRIMMED_IAAA);
+    arpra_set_range_method(ARPRA_MIXED_TRIMMED_IAAA);
     arpra_set_internal_precision(p_prec_internal);
 
     // Initialise arpra_reduce_small_rel threshold.

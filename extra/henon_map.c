@@ -33,15 +33,14 @@ int main (int argc, char *argv[])
     arpra_uint n, i;
 
     arpra_uint old_x_nTerms, old_y_nTerms;
-    //arpra_uint reduce_epoch = 1;
-    arpra_uint reduce_epoch = 50;
+    arpra_uint reduce_epoch = 100;
     double rel_threshold = 0.3; // try 0.1, 0.2, 0.3
     mpfr_t rt;
 
     n = 500;
     prec = 53;
-    prec_internal = 128;
-    //arpra_set_range_method(ARPRA_MIXED_TRIMMED_IAAA);
+    prec_internal = 256;
+    arpra_set_range_method(ARPRA_MIXED_TRIMMED_IAAA);
     arpra_set_default_precision(prec);
     arpra_set_internal_precision(prec_internal);
 
