@@ -34,7 +34,7 @@ int main (int argc, char *argv[])
 
     n = 500;
     prec = 53;
-    prec_internal = 128;
+    prec_internal = 256;
 
     // Initialise MPFI ranges
     mpfi_init2(one, 2);

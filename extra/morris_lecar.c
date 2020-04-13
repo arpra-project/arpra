@@ -81,71 +81,69 @@
 //#define p_rng_uf_seed 707135875931353ul
 //#define p_rng_nf_seed 503108552855933ul
 
-// Poisson input parameters (group 1)
-#define p_in1_size 50
-#define p_in1_freq 42.0
-#define p_in1_V_lo -60.0
-#define p_in1_V_hi 20.0
+// Poisson input parameters
+#define p_in_size 50
+#define p_in_freq 42.0
+#define p_in_V_lo -60.0
+#define p_in_V_hi 20.0
 
-// Poisson input parameters (group 2)
-#define p_in2_size 0
-#define p_in2_freq 42.0
-#define p_in2_V_lo -60.0
-#define p_in2_V_hi 20.0
+// Neuron parameters (class 1)
+#define p_nrn_size 1
+#define p_nrn_N0 0.0
+#define p_nrn_V0 -60.0
+#define p_nrn_GL 2.0
+#define p_nrn_GCa 4.0
+#define p_nrn_GK 8.0
+#define p_nrn_VL -60.0
+#define p_nrn_VCa 120.0
+#define p_nrn_VK -80.0
+#define p_nrn_V1 -1.2
+#define p_nrn_V2 18.0
+#define p_nrn_V3 12.0
+#define p_nrn_V4 17.4
+#define p_nrn_phi 1.0 / 15.0
+#define p_nrn_C 20.0
 
-// Neuron parameters (group 1)
-#define p_nrn1_size 1
-#define p_nrn1_N0 0.0
-#define p_nrn1_V0 -60.0
-#define p_nrn1_class 1
-
-// Neuron parameters (group 2)
-#define p_nrn2_size 0
-#define p_nrn2_N0 0.0
-#define p_nrn2_V0 -60.0
-#define p_nrn2_class 1
-
-// Neuron parameters (common)
-#define p_GL 2.0
-#define p_GCa 4.0 // Class 1
-//#define p_GCa 4.4 // Class 2
-#define p_GK 8.0
-#define p_VL -60.0
-#define p_VCa 120.0
-#define p_VK -80.0
-#define p_V1 -1.2
-#define p_V2 18.0
-#define p_V3 12.0 // Class 1
-//#define p_V3 2.0 // Class 2
-#define p_V4 17.4 // Class 1
-//#define p_V4 30.0 // Class 2
-#define p_phi 1.0 / 15.0 // Class 1
-//#define p_phi 1.0 / 25.0 // Class 2
-#define p_C 20.0
+/* // Neuron parameters (class 2) */
+/* #define p_nrn_size 1 */
+/* #define p_nrn_N0 0.0 */
+/* #define p_nrn_V0 -60.0 */
+/* #define p_nrn_GL 2.0 */
+/* #define p_nrn_GCa 4.4 */
+/* #define p_nrn_GK 8.0 */
+/* #define p_nrn_VL -60.0 */
+/* #define p_nrn_VCa 120.0 */
+/* #define p_nrn_VK -80.0 */
+/* #define p_nrn_V1 -1.2 */
+/* #define p_nrn_V2 18.0 */
+/* #define p_nrn_V3 2.0 */
+/* #define p_nrn_V4 30.0 */
+/* #define p_nrn_phi 1.0 / 25.0 */
+/* #define p_nrn_C 20.0 */
 
 // Synapse parameters (excitatory)
-#define p_syn_exc_size p_in1_size * p_nrn1_size
-#define p_syn_exc_R0 0.0
-#define p_syn_exc_S0 0.0
-#define p_syn_exc_GSyn_std 0.05
-#define p_syn_exc_GSyn_mean 25.0 / p_in1_size
-#define p_syn_exc_VSyn 0.0
-#define p_syn_exc_thr -50.0
-#define p_syn_exc_a 0.25 // in [1/10, 1/2]
-#define p_syn_exc_b 0.15 // in [1/20, 1/4]
-#define p_syn_exc_k 1.0E6
+#define p_syn_size p_in_size * p_nrn_size
+#define p_syn_R0 0.0
+#define p_syn_S0 0.0
+#define p_syn_GSyn_std 0.05
+#define p_syn_GSyn_mean 25.0 / p_in_size
+#define p_syn_VSyn 0.0
+#define p_syn_thr -50.0
+#define p_syn_a 0.25 // in [1/10, 1/2]
+#define p_syn_b 0.15 // in [1/20, 1/4]
+#define p_syn_k 1.0E6
 
-// Synapse parameters (inhibitory)
-#define p_syn_inh_size 0
-#define p_syn_inh_R0 0.0
-#define p_syn_inh_S0 0.0
-#define p_syn_inh_GSyn_std 0.5
-#define p_syn_inh_GSyn_mean 3.0
-#define p_syn_inh_VSyn -80.0
-#define p_syn_inh_thr -50.0
-#define p_syn_inh_a 0.075 // in [1/20, 1/10]
-#define p_syn_inh_b 0.035 // in [1/50, 1/20]
-#define p_syn_inh_k 1.0E6
+/* // Synapse parameters (inhibitory) */
+/* #define p_syn_size p_in_size * p_nrn_size */
+/* #define p_syn_R0 0.0 */
+/* #define p_syn_S0 0.0 */
+/* #define p_syn_GSyn_std 0.5 */
+/* #define p_syn_GSyn_mean 3.0 */
+/* #define p_syn_VSyn -80.0 */
+/* #define p_syn_thr -50.0 */
+/* #define p_syn_a 0.075 // in [1/20, 1/10] */
+/* #define p_syn_b 0.035 // in [1/50, 1/20] */
+/* #define p_syn_k 1.0E6 */
 
 // ===================== end of model parameters ======================
 
@@ -224,7 +222,7 @@ struct dNdt_params
     arpra_range *temp2;
 };
 
-void dNdt (arpra_range *out, const void *params,
+void dNdt (arpra_range *y, const void *params,
            const arpra_range *t, const arpra_range **x,
            const arpra_uint x_grp, const arpra_uint x_dim)
 {
@@ -266,8 +264,8 @@ void dNdt (arpra_range *out, const void *params,
 
     // delta of K+ channel activation
     // dN/dt = (N_ss - N) / tau
-    arpra_sub(out, N_ss, N);
-    arpra_div(out, out, temp1);
+    arpra_sub(y, N_ss, N);
+    arpra_div(y, y, temp1);
 }
 
 struct dVdt_params
@@ -293,7 +291,7 @@ struct dVdt_params
     arpra_range *temp1;
 };
 
-void dVdt (arpra_range *out, const void *params,
+void dVdt (arpra_range *y, const void *params,
            const arpra_range *t, const arpra_range **x,
            const arpra_uint x_grp, const arpra_uint x_dim)
 {
@@ -334,16 +332,16 @@ void dVdt (arpra_range *out, const void *params,
         arpra_mul(&(I[i]), temp1, &(GSyn[i]));
         arpra_mul(&(I[i]), &(I[i]), &(S[i]));
     }
-    arpra_sum_recursive(out, I, p->pre_syn_size);
-    //arpra_sum(out, I, p->pre_syn_size);
+    arpra_sum_recursive(y, I, p->pre_syn_size);
+    //arpra_sum(y, I, p->pre_syn_size);
 
 
 
 
     // ======== TEMP DEBUG ==========
-    //arpra_set_d(out, 80.0); // bifurcation at sum(I) = 80.0
+    //arpra_set_d(y, 80.0); // bifurcation at sum(I) = 80.0
     if (x_dim == 0) {
-        //fprintf(stderr, "sum(I): "); debug(out->centre);
+        //fprintf(stderr, "sum(I): "); debug(y->centre);
         //fprintf(stderr, "I[0]: "); debug(I[0].centre);
         for (i = 0; i < p->pre_syn_size; i++) {
             //fprintf(stderr, "I[%lu]: ", i); debug(I[i].centre);
@@ -355,23 +353,23 @@ void dVdt (arpra_range *out, const void *params,
     // Leak current
     arpra_sub(temp1, V, VL);
     arpra_mul(temp1, temp1, GL);
-    arpra_sub(out, out, temp1);
+    arpra_sub(y, y, temp1);
 
     // Ca++ current
     arpra_sub(temp1, V, VCa);
     arpra_mul(temp1, temp1, GCa);
     arpra_mul(temp1, temp1, M_ss);
-    arpra_sub(out, out, temp1);
+    arpra_sub(y, y, temp1);
 
     // K+ current
     arpra_sub(temp1, V, VK);
     arpra_mul(temp1, temp1, GK);
     arpra_mul(temp1, temp1, N);
-    arpra_sub(out, out, temp1);
+    arpra_sub(y, y, temp1);
 
     // delta of membrane potential
     // dV/dt = (I + GL (VL - V) + GCa M (VCa - V) + GK N (VK - V)) / C
-    arpra_div(out, out, C);
+    arpra_div(y, y, C);
 }
 
 struct dRdt_params
@@ -389,7 +387,7 @@ struct dRdt_params
     arpra_range *temp2;
 };
 
-void dRdt (arpra_range *out, const void *params,
+void dRdt (arpra_range *y, const void *params,
            const arpra_range *t, const arpra_range **x,
            const arpra_uint x_grp, const arpra_uint x_dim)
 {
@@ -420,7 +418,7 @@ void dRdt (arpra_range *out, const void *params,
     // delta of presynaptic transmitter release
     // dR/dt = a Q - b R
     // Q = 1 / (1 + e^(k(V - threshold)))
-    arpra_sub(out, temp1, temp2);
+    arpra_sub(y, temp1, temp2);
 }
 
 struct dSdt_params
@@ -432,7 +430,7 @@ struct dSdt_params
     arpra_range *temp2;
 };
 
-void dSdt (arpra_range *out, const void *params,
+void dSdt (arpra_range *y, const void *params,
            const arpra_range *t, const arpra_range **x,
            const arpra_uint x_grp, const arpra_uint x_dim)
 {
@@ -452,7 +450,7 @@ void dSdt (arpra_range *out, const void *params,
 
     // delta of postsynaptic transmitter binding
     // dS/dt = a R - b S
-    arpra_sub(out, temp1, temp2);
+    arpra_sub(y, temp1, temp2);
 }
 
 int main (int argc, char *argv[])
@@ -461,8 +459,8 @@ int main (int argc, char *argv[])
     arpra_range h, sys_t;
 
     enum grps {
-        grp_nrn1_N, grp_nrn1_V, grp_nrn2_N, grp_nrn2_V,
-        grp_syn_exc_R, grp_syn_exc_S, grp_syn_inh_R, grp_syn_inh_S
+        grp_nrn_N, grp_nrn_V,
+        grp_syn_R, grp_syn_S,
     };
 
     arpra_set_range_method(ARPRA_MIXED_TRIMMED_IAAA);
@@ -474,36 +472,24 @@ int main (int argc, char *argv[])
     mpfr_set_d(reduce_rel, p_reduce_rel, MPFR_RNDN);
 
     // Allocate system state
-    arpra_range *nrn1_N = malloc(p_nrn1_size * sizeof(arpra_range));
-    arpra_range *nrn1_V = malloc(p_nrn1_size * sizeof(arpra_range));
-    arpra_range *nrn2_N = malloc(p_nrn2_size * sizeof(arpra_range));
-    arpra_range *nrn2_V = malloc(p_nrn2_size * sizeof(arpra_range));
-    arpra_range *syn_exc_R = malloc(p_syn_exc_size * sizeof(arpra_range));
-    arpra_range *syn_exc_S = malloc(p_syn_exc_size * sizeof(arpra_range));
-    arpra_range *syn_inh_R = malloc(p_syn_inh_size * sizeof(arpra_range));
-    arpra_range *syn_inh_S = malloc(p_syn_inh_size * sizeof(arpra_range));
+    arpra_range *nrn_N = malloc(p_nrn_size * sizeof(arpra_range));
+    arpra_range *nrn_V = malloc(p_nrn_size * sizeof(arpra_range));
+    arpra_range *syn_R = malloc(p_syn_size * sizeof(arpra_range));
+    arpra_range *syn_S = malloc(p_syn_size * sizeof(arpra_range));
 
     // Allocate other arrays
-    arpra_range *syn_exc_GSyn = malloc(p_syn_exc_size * sizeof(arpra_range));
-    arpra_range *syn_inh_GSyn = malloc(p_syn_inh_size * sizeof(arpra_range));
-    arpra_range *I1 = malloc(p_in1_size * sizeof(arpra_range));
-    arpra_range *I2 = malloc(p_in2_size * sizeof(arpra_range));
-    int *in1 = malloc(p_in1_size * sizeof(int));
-    int *in2 = malloc(p_in2_size * sizeof(int));
-    arpra_uint *nrn1_N_reduce_epoch = malloc(p_nrn1_size * sizeof(arpra_uint));
-    arpra_uint *nrn1_V_reduce_epoch = malloc(p_nrn1_size * sizeof(arpra_uint));
-    arpra_uint *nrn2_N_reduce_epoch = malloc(p_nrn2_size * sizeof(arpra_uint));
-    arpra_uint *nrn2_V_reduce_epoch = malloc(p_nrn2_size * sizeof(arpra_uint));
-    arpra_uint *syn_exc_R_reduce_epoch = malloc(p_syn_exc_size * sizeof(arpra_uint));
-    arpra_uint *syn_exc_S_reduce_epoch = malloc(p_syn_exc_size * sizeof(arpra_uint));
-    arpra_uint *syn_inh_R_reduce_epoch = malloc(p_syn_inh_size * sizeof(arpra_uint));
-    arpra_uint *syn_inh_S_reduce_epoch = malloc(p_syn_inh_size * sizeof(arpra_uint));
+    arpra_range *syn_GSyn = malloc(p_syn_size * sizeof(arpra_range));
+    arpra_range *I = malloc(p_in_size * sizeof(arpra_range));
+    int *in = malloc(p_in_size * sizeof(int));
+    arpra_uint *nrn_N_reduce_epoch = malloc(p_nrn_size * sizeof(arpra_uint));
+    arpra_uint *nrn_V_reduce_epoch = malloc(p_nrn_size * sizeof(arpra_uint));
+    arpra_uint *syn_R_reduce_epoch = malloc(p_syn_size * sizeof(arpra_uint));
+    arpra_uint *syn_S_reduce_epoch = malloc(p_syn_size * sizeof(arpra_uint));
 
-    mpfr_t in1_p0, in2_p0, rand_uf, rand_nf;
-    arpra_range GL, VL, GCa, VCa, GK, VK, V1, V2, V3, V4, phi, C,
-                syn_exc_VSyn, syn_exc_thr, syn_exc_a, syn_exc_b, syn_exc_k,
-                syn_inh_VSyn, syn_inh_thr, syn_inh_a, syn_inh_b, syn_inh_k, one, two, neg_two,
-                temp1, temp2, M_ss, N_ss, in1_V_lo, in1_V_hi, in2_V_lo, in2_V_hi;
+    mpfr_t in_p0, rand_uf, rand_nf;
+    arpra_range nrn_GL, nrn_VL, nrn_GCa, nrn_VCa, nrn_GK, nrn_VK, nrn_V1, nrn_V2,
+        nrn_V3, nrn_V4, nrn_phi, nrn_C, syn_VSyn, syn_thr, syn_a, syn_b, syn_k,
+        one, two, neg_two, temp1, temp2, M_ss, N_ss, in_V_lo, in_V_hi;
 
     struct timespec clock_time;
 
@@ -534,66 +520,43 @@ int main (int argc, char *argv[])
     // Initialise system state
     arpra_init2(&h, p_prec);
     arpra_init2(&sys_t, p_prec);
-    for (i = 0; i < p_nrn1_size; i++) {
-        arpra_init2(&(nrn1_N[i]), p_prec);
-        arpra_init2(&(nrn1_V[i]), p_prec);
+    for (i = 0; i < p_nrn_size; i++) {
+        arpra_init2(&(nrn_N[i]), p_prec);
+        arpra_init2(&(nrn_V[i]), p_prec);
     }
-    for (i = 0; i < p_nrn2_size; i++) {
-        arpra_init2(&(nrn2_N[i]), p_prec);
-        arpra_init2(&(nrn2_V[i]), p_prec);
-    }
-    for (i = 0; i < p_syn_exc_size; i++) {
-        arpra_init2(&(syn_exc_R[i]), p_prec);
-        arpra_init2(&(syn_exc_S[i]), p_prec);
-    }
-    for (i = 0; i < p_syn_inh_size; i++) {
-        arpra_init2(&(syn_inh_R[i]), p_prec);
-        arpra_init2(&(syn_inh_S[i]), p_prec);
+    for (i = 0; i < p_syn_size; i++) {
+        arpra_init2(&(syn_R[i]), p_prec);
+        arpra_init2(&(syn_S[i]), p_prec);
     }
 
-    // Initialise Poisson input parameters (group 1)
-    mpfr_init2(in1_p0, p_prec);
-    arpra_init2(&in1_V_lo, p_prec);
-    arpra_init2(&in1_V_hi, p_prec);
-
-    // Initialise Poisson input parameters (group 2)
-    mpfr_init2(in2_p0, p_prec);
-    arpra_init2(&in2_V_lo, p_prec);
-    arpra_init2(&in2_V_hi, p_prec);
+    // Initialise Poisson input parameters
+    mpfr_init2(in_p0, p_prec);
+    arpra_init2(&in_V_lo, p_prec);
+    arpra_init2(&in_V_hi, p_prec);
 
     // Initialise neuron parameters
-    arpra_init2(&GL, p_prec);
-    arpra_init2(&GCa, p_prec);
-    arpra_init2(&GK, p_prec);
-    arpra_init2(&VL, p_prec);
-    arpra_init2(&VCa, p_prec);
-    arpra_init2(&VK, p_prec);
-    arpra_init2(&V1, p_prec);
-    arpra_init2(&V2, p_prec);
-    arpra_init2(&V3, p_prec);
-    arpra_init2(&V4, p_prec);
-    arpra_init2(&phi, p_prec);
-    arpra_init2(&C, p_prec);
+    arpra_init2(&nrn_GL, p_prec);
+    arpra_init2(&nrn_GCa, p_prec);
+    arpra_init2(&nrn_GK, p_prec);
+    arpra_init2(&nrn_VL, p_prec);
+    arpra_init2(&nrn_VCa, p_prec);
+    arpra_init2(&nrn_VK, p_prec);
+    arpra_init2(&nrn_V1, p_prec);
+    arpra_init2(&nrn_V2, p_prec);
+    arpra_init2(&nrn_V3, p_prec);
+    arpra_init2(&nrn_V4, p_prec);
+    arpra_init2(&nrn_phi, p_prec);
+    arpra_init2(&nrn_C, p_prec);
 
-    // Initialise excitatory synapse parameters
-    for (i = 0; i < p_syn_exc_size; i++) {
-        arpra_init2(&(syn_exc_GSyn[i]), p_prec);
+    // Initialise synapse parameters
+    for (i = 0; i < p_syn_size; i++) {
+        arpra_init2(&(syn_GSyn[i]), p_prec);
     }
-    arpra_init2(&syn_exc_VSyn, p_prec);
-    arpra_init2(&syn_exc_thr, p_prec);
-    arpra_init2(&syn_exc_a, p_prec);
-    arpra_init2(&syn_exc_b, p_prec);
-    arpra_init2(&syn_exc_k, p_prec);
-
-    // Initialise inhibitory synapse parameters
-    for (i = 0; i < p_syn_inh_size; i++) {
-        arpra_init2(&(syn_inh_GSyn[i]), p_prec);
-    }
-    arpra_init2(&syn_inh_VSyn, p_prec);
-    arpra_init2(&syn_inh_thr, p_prec);
-    arpra_init2(&syn_inh_a, p_prec);
-    arpra_init2(&syn_inh_b, p_prec);
-    arpra_init2(&syn_inh_k, p_prec);
+    arpra_init2(&syn_VSyn, p_prec);
+    arpra_init2(&syn_thr, p_prec);
+    arpra_init2(&syn_a, p_prec);
+    arpra_init2(&syn_b, p_prec);
+    arpra_init2(&syn_k, p_prec);
 
     // Initialise constants
     arpra_init2(&one, p_prec);
@@ -607,88 +570,56 @@ int main (int argc, char *argv[])
     arpra_init2(&temp2, p_prec);
     arpra_init2(&M_ss, p_prec);
     arpra_init2(&N_ss, p_prec);
-    for (i = 0; i < p_in1_size; i++) {
-        arpra_init2(&(I1[i]), p_prec);
-    }
-    for (i = 0; i < p_in2_size; i++) {
-        arpra_init2(&(I2[i]), p_prec);
+    for (i = 0; i < p_in_size; i++) {
+        arpra_init2(&(I[i]), p_prec);
     }
 
     // Set system state
     arpra_set_d(&h, p_h);
     arpra_set_d(&sys_t, p_t0);
-    for (i = 0; i < p_nrn1_size; i++) {
-        arpra_set_d(&(nrn1_N[i]), p_nrn1_N0);
-        arpra_set_d(&(nrn1_V[i]), p_nrn1_V0);
+    for (i = 0; i < p_nrn_size; i++) {
+        arpra_set_d(&(nrn_N[i]), p_nrn_N0);
+        arpra_set_d(&(nrn_V[i]), p_nrn_V0);
     }
-    for (i = 0; i < p_nrn2_size; i++) {
-        arpra_set_d(&(nrn2_N[i]), p_nrn2_N0);
-        arpra_set_d(&(nrn2_V[i]), p_nrn2_V0);
-    }
-    for (i = 0; i < p_syn_exc_size; i++) {
-        arpra_set_d(&(syn_exc_R[i]), p_syn_exc_R0);
-        arpra_set_d(&(syn_exc_S[i]), p_syn_exc_S0);
-    }
-    for (i = 0; i < p_syn_inh_size; i++) {
-        arpra_set_d(&(syn_inh_R[i]), p_syn_inh_R0);
-        arpra_set_d(&(syn_inh_S[i]), p_syn_inh_S0);
+    for (i = 0; i < p_syn_size; i++) {
+        arpra_set_d(&(syn_R[i]), p_syn_R0);
+        arpra_set_d(&(syn_S[i]), p_syn_S0);
     }
 
-    // Set Poisson input parameters (group 1)
-    mpfr_set_d(in1_p0, -(p_in1_freq / 1000) * p_h, MPFR_RNDN);
-    mpfr_exp(in1_p0, in1_p0, MPFR_RNDN);
-    arpra_set_d(&in1_V_lo, p_in1_V_lo);
-    arpra_set_d(&in1_V_hi, p_in1_V_hi);
-
-    // Set Poisson input parameters (group 2)
-    mpfr_set_d(in2_p0, -(p_in2_freq / 1000) * p_h, MPFR_RNDN);
-    mpfr_exp(in2_p0, in2_p0, MPFR_RNDN);
-    arpra_set_d(&in2_V_lo, p_in2_V_lo);
-    arpra_set_d(&in2_V_hi, p_in2_V_hi);
+    // Set Poisson input parameters
+    mpfr_set_d(in_p0, -(p_in_freq / 1000) * p_h, MPFR_RNDN);
+    mpfr_exp(in_p0, in_p0, MPFR_RNDN);
+    arpra_set_d(&in_V_lo, p_in_V_lo);
+    arpra_set_d(&in_V_hi, p_in_V_hi);
 
     // Set neuron parameters
-    arpra_set_d(&GL, p_GL);
-    arpra_set_d(&GCa, p_GCa);
-    arpra_set_d(&GK, p_GK);
-    arpra_set_d(&VL, p_VL);
-    arpra_set_d(&VCa, p_VCa);
-    arpra_set_d(&VK, p_VK);
-    arpra_set_d(&V1, p_V1);
-    arpra_set_d(&V2, p_V2);
-    arpra_set_d(&V3, p_V3);
-    arpra_set_d(&V4, p_V4);
-    arpra_set_d(&phi, p_phi);
-    arpra_set_d(&C, p_C);
+    arpra_set_d(&nrn_GL, p_nrn_GL);
+    arpra_set_d(&nrn_GCa, p_nrn_GCa);
+    arpra_set_d(&nrn_GK, p_nrn_GK);
+    arpra_set_d(&nrn_VL, p_nrn_VL);
+    arpra_set_d(&nrn_VCa, p_nrn_VCa);
+    arpra_set_d(&nrn_VK, p_nrn_VK);
+    arpra_set_d(&nrn_V1, p_nrn_V1);
+    arpra_set_d(&nrn_V2, p_nrn_V2);
+    arpra_set_d(&nrn_V3, p_nrn_V3);
+    arpra_set_d(&nrn_V4, p_nrn_V4);
+    arpra_set_d(&nrn_phi, p_nrn_phi);
+    arpra_set_d(&nrn_C, p_nrn_C);
 
-    // Set excitatory synapse parameters
-    for (i = 0; i < p_syn_exc_size; i++) {
+    // Set synapse parameters
+    for (i = 0; i < p_syn_size; i++) {
         //mpfr_nrandom(rand_nf, rng_nf, MPFR_RNDN);
         mpfr_grandom(rand_nf, NULL, rng_nf, MPFR_RNDN);
-        mpfr_mul_d(rand_nf, rand_nf, p_syn_exc_GSyn_std, MPFR_RNDN);
-        mpfr_add_d(rand_nf, rand_nf, p_syn_exc_GSyn_mean, MPFR_RNDN);
-        arpra_set_mpfr(&(syn_exc_GSyn[i]), rand_nf);
+        mpfr_mul_d(rand_nf, rand_nf, p_syn_GSyn_std, MPFR_RNDN);
+        mpfr_add_d(rand_nf, rand_nf, p_syn_GSyn_mean, MPFR_RNDN);
+        arpra_set_mpfr(&(syn_GSyn[i]), rand_nf);
     }
-    arpra_set_d(&syn_exc_VSyn, p_syn_exc_VSyn);
-    arpra_set_d(&syn_exc_thr, p_syn_exc_thr);
-    arpra_set_d(&syn_exc_a, p_syn_exc_a);
-    arpra_set_d(&syn_exc_b, p_syn_exc_b);
-    arpra_set_d(&syn_exc_k, p_syn_exc_k);
-    arpra_neg(&syn_exc_k, &syn_exc_k);
-
-    // Set inhibitory synapse parameters
-    for (i = 0; i < p_syn_inh_size; i++) {
-        //mpfr_nrandom(rand_nf, rng_nf, MPFR_RNDN);
-        mpfr_grandom(rand_nf, NULL, rng_nf, MPFR_RNDN);
-        mpfr_mul_d(rand_nf, rand_nf, p_syn_inh_GSyn_std, MPFR_RNDN);
-        mpfr_add_d(rand_nf, rand_nf, p_syn_inh_GSyn_mean, MPFR_RNDN);
-        arpra_set_mpfr(&(syn_inh_GSyn[i]), rand_nf);
-    }
-    arpra_set_d(&syn_inh_VSyn, p_syn_inh_VSyn);
-    arpra_set_d(&syn_inh_thr, p_syn_inh_thr);
-    arpra_set_d(&syn_inh_a, p_syn_inh_a);
-    arpra_set_d(&syn_inh_b, p_syn_inh_b);
-    arpra_set_d(&syn_inh_k, p_syn_inh_k);
-    arpra_neg(&syn_inh_k, &syn_inh_k);
+    arpra_set_d(&syn_VSyn, p_syn_VSyn);
+    arpra_set_d(&syn_thr, p_syn_thr);
+    arpra_set_d(&syn_a, p_syn_a);
+    arpra_set_d(&syn_b, p_syn_b);
+    arpra_set_d(&syn_k, p_syn_k);
+    arpra_neg(&syn_k, &syn_k);
 
     // Set constants
     arpra_set_d(&one, 1.0);
@@ -696,71 +627,45 @@ int main (int argc, char *argv[])
     arpra_set_d(&neg_two, -2.0);
 
     // Initialise report files
-    FILE **f_time_c = malloc(sizeof(FILE *));;
-    FILE **f_time_r = malloc(sizeof(FILE *));;
-    FILE **f_time_n = malloc(sizeof(FILE *));;
-    FILE **f_time_s = malloc(sizeof(FILE *));;
-    FILE **f_time_d = malloc(sizeof(FILE *));;
+    FILE **f_time_c = malloc(sizeof(FILE *));
+    FILE **f_time_r = malloc(sizeof(FILE *));
+    FILE **f_time_n = malloc(sizeof(FILE *));
+    FILE **f_time_s = malloc(sizeof(FILE *));
+    FILE **f_time_d = malloc(sizeof(FILE *));
     file_init("time", 1, f_time_c, f_time_r, f_time_n, f_time_s, f_time_d);
 
-    FILE **f_nrn1_N_c = malloc(p_nrn1_size * sizeof(FILE *));
-    FILE **f_nrn1_N_r = malloc(p_nrn1_size * sizeof(FILE *));
-    FILE **f_nrn1_N_n = malloc(p_nrn1_size * sizeof(FILE *));
-    FILE **f_nrn1_N_s = malloc(p_nrn1_size * sizeof(FILE *));
-    FILE **f_nrn1_N_d = malloc(p_nrn1_size * sizeof(FILE *));
-    file_init("nrn1_N", p_nrn1_size, f_nrn1_N_c, f_nrn1_N_r, f_nrn1_N_n, f_nrn1_N_s, f_nrn1_N_d);
-    FILE **f_nrn1_V_c = malloc(p_nrn1_size * sizeof(FILE *));
-    FILE **f_nrn1_V_r = malloc(p_nrn1_size * sizeof(FILE *));
-    FILE **f_nrn1_V_n = malloc(p_nrn1_size * sizeof(FILE *));
-    FILE **f_nrn1_V_s = malloc(p_nrn1_size * sizeof(FILE *));
-    FILE **f_nrn1_V_d = malloc(p_nrn1_size * sizeof(FILE *));
-    file_init("nrn1_V", p_nrn1_size, f_nrn1_V_c, f_nrn1_V_r, f_nrn1_V_n, f_nrn1_V_s, f_nrn1_V_d);
+    FILE **f_nrn_N_c = malloc(p_nrn_size * sizeof(FILE *));
+    FILE **f_nrn_N_r = malloc(p_nrn_size * sizeof(FILE *));
+    FILE **f_nrn_N_n = malloc(p_nrn_size * sizeof(FILE *));
+    FILE **f_nrn_N_s = malloc(p_nrn_size * sizeof(FILE *));
+    FILE **f_nrn_N_d = malloc(p_nrn_size * sizeof(FILE *));
+    file_init("nrn_N", p_nrn_size, f_nrn_N_c, f_nrn_N_r, f_nrn_N_n, f_nrn_N_s, f_nrn_N_d);
+    FILE **f_nrn_V_c = malloc(p_nrn_size * sizeof(FILE *));
+    FILE **f_nrn_V_r = malloc(p_nrn_size * sizeof(FILE *));
+    FILE **f_nrn_V_n = malloc(p_nrn_size * sizeof(FILE *));
+    FILE **f_nrn_V_s = malloc(p_nrn_size * sizeof(FILE *));
+    FILE **f_nrn_V_d = malloc(p_nrn_size * sizeof(FILE *));
+    file_init("nrn_V", p_nrn_size, f_nrn_V_c, f_nrn_V_r, f_nrn_V_n, f_nrn_V_s, f_nrn_V_d);
 
-    /* FILE **f_nrn2_N_c = malloc(p_nrn2_size * sizeof(FILE *)); */
-    /* FILE **f_nrn2_N_r = malloc(p_nrn2_size * sizeof(FILE *)); */
-    /* FILE **f_nrn2_N_n = malloc(p_nrn2_size * sizeof(FILE *)); */
-    /* FILE **f_nrn2_N_s = malloc(p_nrn2_size * sizeof(FILE *)); */
-    /* FILE **f_nrn2_N_d = malloc(p_nrn2_size * sizeof(FILE *)); */
-    /* file_init("nrn2_N", p_nrn2_size, f_nrn2_N_c, f_nrn2_N_r, f_nrn2_N_n, f_nrn2_N_s, f_nrn2_N_d); */
-    /* FILE **f_nrn2_V_c = malloc(p_nrn2_size * sizeof(FILE *)); */
-    /* FILE **f_nrn2_V_r = malloc(p_nrn2_size * sizeof(FILE *)); */
-    /* FILE **f_nrn2_V_n = malloc(p_nrn2_size * sizeof(FILE *)); */
-    /* FILE **f_nrn2_V_s = malloc(p_nrn2_size * sizeof(FILE *)); */
-    /* FILE **f_nrn2_V_d = malloc(p_nrn2_size * sizeof(FILE *)); */
-    /* file_init("nrn2_V", p_nrn2_size, f_nrn2_V_c, f_nrn2_V_r, f_nrn2_V_n, f_nrn2_V_s, f_nrn2_V_d); */
-
-    /* FILE **f_syn_exc_R_c = malloc(p_syn_exc_size * sizeof(FILE *)); */
-    /* FILE **f_syn_exc_R_r = malloc(p_syn_exc_size * sizeof(FILE *)); */
-    /* FILE **f_syn_exc_R_n = malloc(p_syn_exc_size * sizeof(FILE *)); */
-    /* FILE **f_syn_exc_R_s = malloc(p_syn_exc_size * sizeof(FILE *)); */
-    /* FILE **f_syn_exc_R_d = malloc(p_syn_exc_size * sizeof(FILE *)); */
-    /* file_init("syn_exc_R", p_syn_exc_size, f_syn_exc_R_c, f_syn_exc_R_r, f_syn_exc_R_n, f_syn_exc_R_s, f_syn_exc_R_d); */
-    /* FILE **f_syn_exc_S_c = malloc(p_syn_exc_size * sizeof(FILE *)); */
-    /* FILE **f_syn_exc_S_r = malloc(p_syn_exc_size * sizeof(FILE *)); */
-    /* FILE **f_syn_exc_S_n = malloc(p_syn_exc_size * sizeof(FILE *)); */
-    /* FILE **f_syn_exc_S_s = malloc(p_syn_exc_size * sizeof(FILE *)); */
-    /* FILE **f_syn_exc_S_d = malloc(p_syn_exc_size * sizeof(FILE *)); */
-    /* file_init("syn_exc_S", p_syn_exc_size, f_syn_exc_S_c, f_syn_exc_S_r, f_syn_exc_S_n, f_syn_exc_S_s, f_syn_exc_S_d); */
-
-    /* FILE **f_syn_inh_R_c = malloc(p_syn_inh_size * sizeof(FILE *)); */
-    /* FILE **f_syn_inh_R_r = malloc(p_syn_inh_size * sizeof(FILE *)); */
-    /* FILE **f_syn_inh_R_n = malloc(p_syn_inh_size * sizeof(FILE *)); */
-    /* FILE **f_syn_inh_R_s = malloc(p_syn_inh_size * sizeof(FILE *)); */
-    /* FILE **f_syn_inh_R_d = malloc(p_syn_inh_size * sizeof(FILE *)); */
-    /* file_init("syn_inh_R", p_syn_inh_size, f_syn_inh_R_c, f_syn_inh_R_r, f_syn_inh_R_n, f_syn_inh_R_s, f_syn_inh_R_d); */
-    /* FILE **f_syn_inh_S_c = malloc(p_syn_inh_size * sizeof(FILE *)); */
-    /* FILE **f_syn_inh_S_r = malloc(p_syn_inh_size * sizeof(FILE *)); */
-    /* FILE **f_syn_inh_S_n = malloc(p_syn_inh_size * sizeof(FILE *)); */
-    /* FILE **f_syn_inh_S_s = malloc(p_syn_inh_size * sizeof(FILE *)); */
-    /* FILE **f_syn_inh_S_d = malloc(p_syn_inh_size * sizeof(FILE *)); */
-    /* file_init("syn_inh_S", p_syn_inh_size, f_syn_inh_S_c, f_syn_inh_S_r, f_syn_inh_S_n, f_syn_inh_S_s, f_syn_inh_S_d); */
+    /* FILE **f_syn_R_c = malloc(p_syn_size * sizeof(FILE *)); */
+    /* FILE **f_syn_R_r = malloc(p_syn_size * sizeof(FILE *)); */
+    /* FILE **f_syn_R_n = malloc(p_syn_size * sizeof(FILE *)); */
+    /* FILE **f_syn_R_s = malloc(p_syn_size * sizeof(FILE *)); */
+    /* FILE **f_syn_R_d = malloc(p_syn_size * sizeof(FILE *)); */
+    /* file_init("syn_R", p_syn_size, f_syn_R_c, f_syn_R_r, f_syn_R_n, f_syn_R_s, f_syn_R_d); */
+    /* FILE **f_syn_S_c = malloc(p_syn_size * sizeof(FILE *)); */
+    /* FILE **f_syn_S_r = malloc(p_syn_size * sizeof(FILE *)); */
+    /* FILE **f_syn_S_n = malloc(p_syn_size * sizeof(FILE *)); */
+    /* FILE **f_syn_S_s = malloc(p_syn_size * sizeof(FILE *)); */
+    /* FILE **f_syn_S_d = malloc(p_syn_size * sizeof(FILE *)); */
+    /* file_init("syn_S", p_syn_size, f_syn_S_c, f_syn_S_r, f_syn_S_n, f_syn_S_s, f_syn_S_d); */
 
     // Set parameter structs
-    struct dNdt_params params_nrn1_N = {
-        .grp_V = grp_nrn1_V,
-        .V3 = &V3,
-        .V4 = &V4,
-        .phi = &phi,
+    struct dNdt_params params_nrn_N = {
+        .grp_V = grp_nrn_V,
+        .V3 = &nrn_V3,
+        .V4 = &nrn_V4,
+        .phi = &nrn_phi,
         .one = &one,
         .two = &two,
         .neg_two = &neg_two,
@@ -769,124 +674,65 @@ int main (int argc, char *argv[])
         .temp2 = &temp2,
     };
 
-    struct dVdt_params params_nrn1_V = {
-        .grp_N = grp_nrn1_N,
-        .grp_S = grp_syn_exc_S,
-        .GSyn = syn_exc_GSyn,
-        .VSyn = &syn_exc_VSyn,
-        .GL = &GL,
-        .VL = &VL,
-        .GCa = &GCa,
-        .VCa = &VCa,
-        .GK = &GK,
-        .VK = &VK,
-        .V1 = &V1,
-        .V2 = &V2,
-        .V1 = &V1,
-        .V2 = &V2,
-        .C = &C,
-        .pre_syn_size = p_in1_size,
+    struct dVdt_params params_nrn_V = {
+        .grp_N = grp_nrn_N,
+        .grp_S = grp_syn_S,
+        .GSyn = syn_GSyn,
+        .VSyn = &syn_VSyn,
+        .GL = &nrn_GL,
+        .VL = &nrn_VL,
+        .GCa = &nrn_GCa,
+        .VCa = &nrn_VCa,
+        .GK = &nrn_GK,
+        .VK = &nrn_VK,
+        .V1 = &nrn_V1,
+        .V2 = &nrn_V2,
+        .C = &nrn_C,
+        .pre_syn_size = p_in_size,
         .one = &one,
         .neg_two = &neg_two,
-        .I = I1,
+        .I = I,
         .M_ss = &M_ss,
         .temp1 = &temp1,
     };
 
-    struct dNdt_params params_nrn2_N = {
-        .grp_V = grp_nrn2_V,
-        .V3 = &V3,
-        .V4 = &V4,
-        .phi = &phi,
-        .one = &one,
-        .two = &two,
-        .neg_two = &neg_two,
-        .N_ss = &N_ss,
-        .temp1 = &temp1,
-        .temp2 = &temp2,
-    };
-
-    struct dVdt_params params_nrn2_V = {
-        .grp_N = grp_nrn2_N,
-        .grp_S = grp_syn_inh_S,
-        .GSyn = syn_inh_GSyn,
-        .VSyn = &syn_inh_VSyn,
-        .GL = &GL,
-        .VL = &VL,
-        .GCa = &GCa,
-        .VCa = &VCa,
-        .GK = &GK,
-        .VK = &VK,
-        .V1 = &V1,
-        .V2 = &V2,
-        .C = &C,
-        .pre_syn_size = p_in2_size,
-        .one = &one,
-        .neg_two = &neg_two,
-        .I = I2,
-        .M_ss = &M_ss,
-        .temp1 = &temp1,
-    };
-
-    struct dRdt_params params_syn_exc_R = {
-        .a = &syn_exc_a,
-        .b = &syn_exc_b,
-        .k = &syn_exc_k,
-        .VPre_lo = &in1_V_lo,
-        .VPre_hi = &in1_V_hi,
-        .threshold = &syn_exc_thr,
-        .in = in1,
-        .pre_syn_size = p_in1_size,
+    struct dRdt_params params_syn_R = {
+        .a = &syn_a,
+        .b = &syn_b,
+        .k = &syn_k,
+        .VPre_lo = &in_V_lo,
+        .VPre_hi = &in_V_hi,
+        .threshold = &syn_thr,
+        .in = in,
+        .pre_syn_size = p_in_size,
         .one = &one,
         .temp1 = &temp1,
         .temp2 = &temp2,
     };
 
-    struct dSdt_params params_syn_exc_S = {
-        .grp_R = grp_syn_exc_R,
-        .a = &syn_exc_a,
-        .b = &syn_exc_b,
-        .temp1 = &temp1,
-        .temp2 = &temp2,
-    };
-
-    struct dRdt_params params_syn_inh_R = {
-        .a = &syn_inh_a,
-        .b = &syn_inh_b,
-        .k = &syn_inh_k,
-        .VPre_lo = &in2_V_lo,
-        .VPre_hi = &in2_V_hi,
-        .threshold = &syn_inh_thr,
-        .in = in2,
-        .pre_syn_size = p_in2_size,
-        .one = &one,
-        .temp1 = &temp1,
-        .temp2 = &temp2,
-    };
-
-    struct dSdt_params params_syn_inh_S = {
-        .grp_R = grp_syn_inh_R,
-        .a = &syn_inh_a,
-        .b = &syn_inh_b,
+    struct dSdt_params params_syn_S = {
+        .grp_R = grp_syn_R,
+        .a = &syn_a,
+        .b = &syn_b,
         .temp1 = &temp1,
         .temp2 = &temp2,
     };
 
     // ODE system
-    arpra_uint sys_grps = 8;
-    arpra_uint sys_dims[8] = {
-        p_nrn1_size, p_nrn1_size, p_nrn2_size, p_nrn2_size,
-        p_syn_exc_size, p_syn_exc_size, p_syn_inh_size, p_syn_inh_size
+    arpra_uint sys_grps = 4;
+    arpra_uint sys_dims[4] = {
+        p_nrn_size, p_nrn_size,
+        p_syn_size, p_syn_size,
     };
-    arpra_ode_f sys_f[8] = {
-        dNdt, dVdt, dNdt, dVdt, dRdt, dSdt, dRdt, dSdt
+    arpra_ode_f sys_f[4] = {
+        dNdt, dVdt, dRdt, dSdt,
     };
-    void *sys_params[8] = {
-        &params_nrn1_N, &params_nrn1_V, &params_nrn2_N, &params_nrn2_V,
-        &params_syn_exc_R, &params_syn_exc_S, &params_syn_inh_R, &params_syn_inh_S
+    void *sys_params[4] = {
+        &params_nrn_N, &params_nrn_V,
+        &params_syn_R, &params_syn_S,
     };
-    arpra_range *sys_x[8] = {
-        nrn1_N, nrn1_V, nrn2_N, nrn2_V, syn_exc_R, syn_exc_S, syn_inh_R, syn_inh_S
+    arpra_range *sys_x[4] = {
+        nrn_N, nrn_V, syn_R, syn_S,
     };
     arpra_ode_system ode_system = {
         .f = sys_f,
@@ -914,34 +760,20 @@ int main (int argc, char *argv[])
     for (i = 0; i < p_sim_steps; i++) {
         if (i % p_report_step == 0) printf("%lu\n", i);
 
-        for (j = 0; j < p_nrn1_size; j++) {
-            nrn1_N_reduce_epoch[j] = ode_system.x[grp_nrn1_N][j].nTerms;
-            nrn1_V_reduce_epoch[j] = ode_system.x[grp_nrn1_V][j].nTerms;
+        for (j = 0; j < p_nrn_size; j++) {
+            nrn_N_reduce_epoch[j] = ode_system.x[grp_nrn_N][j].nTerms;
+            nrn_V_reduce_epoch[j] = ode_system.x[grp_nrn_V][j].nTerms;
         }
-        for (j = 0; j < p_nrn2_size; j++) {
-            nrn2_N_reduce_epoch[j] = ode_system.x[grp_nrn2_N][j].nTerms;
-            nrn2_V_reduce_epoch[j] = ode_system.x[grp_nrn2_V][j].nTerms;
-        }
-        for (j = 0; j < p_syn_exc_size; j++) {
-            syn_exc_R_reduce_epoch[j] = ode_system.x[grp_syn_exc_R][j].nTerms;
-            syn_exc_S_reduce_epoch[j] = ode_system.x[grp_syn_exc_S][j].nTerms;
-        }
-        for (j = 0; j < p_syn_inh_size; j++) {
-            syn_inh_R_reduce_epoch[j] = ode_system.x[grp_syn_inh_R][j].nTerms;
-            syn_inh_S_reduce_epoch[j] = ode_system.x[grp_syn_inh_S][j].nTerms;
+        for (j = 0; j < p_syn_size; j++) {
+            syn_R_reduce_epoch[j] = ode_system.x[grp_syn_R][j].nTerms;
+            syn_S_reduce_epoch[j] = ode_system.x[grp_syn_S][j].nTerms;
         }
 
         // Event(s) occur if urandom >= e^-rate
-        for (j = 0; j < p_in1_size; j++) {
+        for (j = 0; j < p_in_size; j++) {
             mpfr_urandom(rand_uf, rng_uf, MPFR_RNDN);
-            in1[j] = mpfr_greaterequal_p(rand_uf, in1_p0);
-            fprintf(stderr, "%s", (in1[j] ? "\x1B[31m\xE2\x96\xA3\x1B[0m" : "\xE2\x96\xA3"));
-        }
-        fprintf(stderr, "  ");
-        for (j = 0; j < p_in2_size; j++) {
-            mpfr_urandom(rand_uf, rng_uf, MPFR_RNDN);
-            in2[j] = mpfr_greaterequal_p(rand_uf, in2_p0);
-            fprintf(stderr, "%s", (in2[j] ? "\x1B[31m\xE2\x96\xA3\x1B[0m" : "\xE2\x96\xA3"));
+            in[j] = mpfr_greaterequal_p(rand_uf, in_p0);
+            fprintf(stderr, "%s", (in[j] ? "\x1B[31m\xE2\x96\xA3\x1B[0m" : "\xE2\x96\xA3"));
         }
         fprintf(stderr, "\n");
 
@@ -949,63 +781,37 @@ int main (int argc, char *argv[])
         arpra_ode_stepper_step(&ode_stepper, &h);
 
         arpra_uint reduce_n;
-        for (j = 0; j < p_nrn1_size; j++) {
-            reduce_n = ode_system.x[grp_nrn1_N][j].nTerms - nrn1_N_reduce_epoch[j];
-            arpra_reduce_last_n(&(ode_system.x[grp_nrn1_N][j]), &(ode_system.x[grp_nrn1_N][j]), reduce_n);
-            reduce_n = ode_system.x[grp_nrn1_V][j].nTerms - nrn1_V_reduce_epoch[j];
-            arpra_reduce_last_n(&(ode_system.x[grp_nrn1_V][j]), &(ode_system.x[grp_nrn1_V][j]), reduce_n);
+        for (j = 0; j < p_nrn_size; j++) {
+            reduce_n = ode_system.x[grp_nrn_N][j].nTerms - nrn_N_reduce_epoch[j];
+            arpra_reduce_last_n(&(ode_system.x[grp_nrn_N][j]), &(ode_system.x[grp_nrn_N][j]), reduce_n);
+            reduce_n = ode_system.x[grp_nrn_V][j].nTerms - nrn_V_reduce_epoch[j];
+            arpra_reduce_last_n(&(ode_system.x[grp_nrn_V][j]), &(ode_system.x[grp_nrn_V][j]), reduce_n);
         }
-        for (j = 0; j < p_nrn2_size; j++) {
-            reduce_n = ode_system.x[grp_nrn2_N][j].nTerms - nrn2_N_reduce_epoch[j];
-            arpra_reduce_last_n(&(ode_system.x[grp_nrn2_N][j]), &(ode_system.x[grp_nrn2_N][j]), reduce_n);
-            reduce_n = ode_system.x[grp_nrn2_V][j].nTerms - nrn2_V_reduce_epoch[j];
-            arpra_reduce_last_n(&(ode_system.x[grp_nrn2_V][j]), &(ode_system.x[grp_nrn2_V][j]), reduce_n);
-        }
-        for (j = 0; j < p_syn_exc_size; j++) {
-            reduce_n = ode_system.x[grp_syn_exc_R][j].nTerms - syn_exc_R_reduce_epoch[j];
-            arpra_reduce_last_n(&(ode_system.x[grp_syn_exc_R][j]), &(ode_system.x[grp_syn_exc_R][j]), reduce_n);
-            reduce_n = ode_system.x[grp_syn_exc_S][j].nTerms - syn_exc_S_reduce_epoch[j];
-            arpra_reduce_last_n(&(ode_system.x[grp_syn_exc_S][j]), &(ode_system.x[grp_syn_exc_S][j]), reduce_n);
-        }
-        for (j = 0; j < p_syn_inh_size; j++) {
-            reduce_n = ode_system.x[grp_syn_inh_R][j].nTerms - syn_inh_R_reduce_epoch[j];
-            arpra_reduce_last_n(&(ode_system.x[grp_syn_inh_R][j]), &(ode_system.x[grp_syn_inh_R][j]), reduce_n);
-            reduce_n = ode_system.x[grp_syn_inh_S][j].nTerms - syn_inh_S_reduce_epoch[j];
-            arpra_reduce_last_n(&(ode_system.x[grp_syn_inh_S][j]), &(ode_system.x[grp_syn_inh_S][j]), reduce_n);
+        for (j = 0; j < p_syn_size; j++) {
+            reduce_n = ode_system.x[grp_syn_R][j].nTerms - syn_R_reduce_epoch[j];
+            arpra_reduce_last_n(&(ode_system.x[grp_syn_R][j]), &(ode_system.x[grp_syn_R][j]), reduce_n);
+            reduce_n = ode_system.x[grp_syn_S][j].nTerms - syn_S_reduce_epoch[j];
+            arpra_reduce_last_n(&(ode_system.x[grp_syn_S][j]), &(ode_system.x[grp_syn_S][j]), reduce_n);
         }
 
         if (i % p_reduce_step == 0) {
-            for (j = 0; j < p_nrn1_size; j++) {
-                arpra_reduce_small_rel(&(ode_system.x[grp_nrn1_N][j]), &(ode_system.x[grp_nrn1_N][j]), reduce_rel);
-                arpra_reduce_small_rel(&(ode_system.x[grp_nrn1_V][j]), &(ode_system.x[grp_nrn1_V][j]), reduce_rel);
+            for (j = 0; j < p_nrn_size; j++) {
+                arpra_reduce_small_rel(&(ode_system.x[grp_nrn_N][j]), &(ode_system.x[grp_nrn_N][j]), reduce_rel);
+                arpra_reduce_small_rel(&(ode_system.x[grp_nrn_V][j]), &(ode_system.x[grp_nrn_V][j]), reduce_rel);
             }
-            for (j = 0; j < p_nrn2_size; j++) {
-                arpra_reduce_small_rel(&(ode_system.x[grp_nrn2_N][j]), &(ode_system.x[grp_nrn2_N][j]), reduce_rel);
-                arpra_reduce_small_rel(&(ode_system.x[grp_nrn2_V][j]), &(ode_system.x[grp_nrn2_V][j]), reduce_rel);
-            }
-            for (j = 0; j < p_syn_exc_size; j++) {
-                arpra_reduce_small_rel(&(ode_system.x[grp_syn_exc_R][j]), &(ode_system.x[grp_syn_exc_R][j]), reduce_rel);
-                arpra_reduce_small_rel(&(ode_system.x[grp_syn_exc_S][j]), &(ode_system.x[grp_syn_exc_S][j]), reduce_rel);
-            }
-            for (j = 0; j < p_syn_inh_size; j++) {
-                arpra_reduce_small_rel(&(ode_system.x[grp_syn_inh_R][j]), &(ode_system.x[grp_syn_inh_R][j]), reduce_rel);
-                arpra_reduce_small_rel(&(ode_system.x[grp_syn_inh_S][j]), &(ode_system.x[grp_syn_inh_S][j]), reduce_rel);
+            for (j = 0; j < p_syn_size; j++) {
+                arpra_reduce_small_rel(&(ode_system.x[grp_syn_R][j]), &(ode_system.x[grp_syn_R][j]), reduce_rel);
+                arpra_reduce_small_rel(&(ode_system.x[grp_syn_S][j]), &(ode_system.x[grp_syn_S][j]), reduce_rel);
             }
         }
 
         file_write(&sys_t, 1, f_time_c, f_time_r, f_time_n, f_time_s, f_time_d);
 
-        file_write(nrn1_N, p_nrn1_size, f_nrn1_N_c, f_nrn1_N_r, f_nrn1_N_n, f_nrn1_N_s, f_nrn1_N_d);
-        file_write(nrn1_V, p_nrn1_size, f_nrn1_V_c, f_nrn1_V_r, f_nrn1_V_n, f_nrn1_V_s, f_nrn1_V_d);
+        file_write(nrn_N, p_nrn_size, f_nrn_N_c, f_nrn_N_r, f_nrn_N_n, f_nrn_N_s, f_nrn_N_d);
+        file_write(nrn_V, p_nrn_size, f_nrn_V_c, f_nrn_V_r, f_nrn_V_n, f_nrn_V_s, f_nrn_V_d);
 
-        /* file_write(nrn2_N, p_nrn2_size, f_nrn2_N_c, f_nrn2_N_r, f_nrn2_N_n, f_nrn2_N_s, f_nrn2_N_d); */
-        /* file_write(nrn2_V, p_nrn2_size, f_nrn2_V_c, f_nrn2_V_r, f_nrn2_V_n, f_nrn2_V_s, f_nrn2_V_d); */
-
-        /* file_write(syn_exc_R, p_syn_exc_size, f_syn_exc_R_c, f_syn_exc_R_r, f_syn_exc_R_n, f_syn_exc_R_s, f_syn_exc_R_d); */
-        /* file_write(syn_exc_S, p_syn_exc_size, f_syn_exc_S_c, f_syn_exc_S_r, f_syn_exc_S_n, f_syn_exc_S_s, f_syn_exc_S_d); */
-
-        /* file_write(syn_inh_R, p_syn_inh_size, f_syn_inh_R_c, f_syn_inh_R_r, f_syn_inh_R_n, f_syn_inh_R_s, f_syn_inh_R_d); */
-        /* file_write(syn_inh_S, p_syn_inh_size, f_syn_inh_S_c, f_syn_inh_S_r, f_syn_inh_S_n, f_syn_inh_S_s, f_syn_inh_S_d); */
+        /* file_write(syn_R, p_syn_size, f_syn_R_c, f_syn_R_r, f_syn_R_n, f_syn_R_s, f_syn_R_d); */
+        /* file_write(syn_S, p_syn_size, f_syn_S_c, f_syn_S_r, f_syn_S_n, f_syn_S_s, f_syn_S_d); */
     }
 
     run_time = clock() - run_time;
@@ -1021,66 +827,43 @@ int main (int argc, char *argv[])
     // Clear system state
     arpra_clear(&h);
     arpra_clear(&sys_t);
-    for (i = 0; i < p_nrn1_size; i++) {
-        arpra_clear(&(nrn1_N[i]));
-        arpra_clear(&(nrn1_V[i]));
+    for (i = 0; i < p_nrn_size; i++) {
+        arpra_clear(&(nrn_N[i]));
+        arpra_clear(&(nrn_V[i]));
     }
-    for (i = 0; i < p_nrn2_size; i++) {
-        arpra_clear(&(nrn2_N[i]));
-        arpra_clear(&(nrn2_V[i]));
-    }
-    for (i = 0; i < p_syn_exc_size; i++) {
-        arpra_clear(&(syn_exc_R[i]));
-        arpra_clear(&(syn_exc_S[i]));
-    }
-    for (i = 0; i < p_syn_inh_size; i++) {
-        arpra_clear(&(syn_inh_R[i]));
-        arpra_clear(&(syn_inh_S[i]));
+    for (i = 0; i < p_syn_size; i++) {
+        arpra_clear(&(syn_R[i]));
+        arpra_clear(&(syn_S[i]));
     }
 
-    // Clear Poisson input parameters (group 1)
-    mpfr_clear(in1_p0);
-    arpra_clear(&in1_V_lo);
-    arpra_clear(&in1_V_hi);
-
-    // Clear Poisson input parameters (group 2)
-    mpfr_clear(in2_p0);
-    arpra_clear(&in2_V_lo);
-    arpra_clear(&in2_V_hi);
+    // Clear Poisson input parameters
+    mpfr_clear(in_p0);
+    arpra_clear(&in_V_lo);
+    arpra_clear(&in_V_hi);
 
     // Clear neuron parameters
-    arpra_clear(&GL);
-    arpra_clear(&GCa);
-    arpra_clear(&GK);
-    arpra_clear(&VL);
-    arpra_clear(&VCa);
-    arpra_clear(&VK);
-    arpra_clear(&V1);
-    arpra_clear(&V2);
-    arpra_clear(&V3);
-    arpra_clear(&V4);
-    arpra_clear(&phi);
-    arpra_clear(&C);
+    arpra_clear(&nrn_GL);
+    arpra_clear(&nrn_GCa);
+    arpra_clear(&nrn_GK);
+    arpra_clear(&nrn_VL);
+    arpra_clear(&nrn_VCa);
+    arpra_clear(&nrn_VK);
+    arpra_clear(&nrn_V1);
+    arpra_clear(&nrn_V2);
+    arpra_clear(&nrn_V3);
+    arpra_clear(&nrn_V4);
+    arpra_clear(&nrn_phi);
+    arpra_clear(&nrn_C);
 
-    // Clear excitatory synapse parameters
-    for (i = 0; i < p_syn_exc_size; i++) {
-        arpra_clear(&(syn_exc_GSyn[i]));
+    // Clear synapse parameters
+    for (i = 0; i < p_syn_size; i++) {
+        arpra_clear(&(syn_GSyn[i]));
     }
-    arpra_clear(&syn_exc_VSyn);
-    arpra_clear(&syn_exc_thr);
-    arpra_clear(&syn_exc_a);
-    arpra_clear(&syn_exc_b);
-    arpra_clear(&syn_exc_k);
-
-    // Clear inhibitory synapse parameters
-    for (i = 0; i < p_syn_inh_size; i++) {
-        arpra_clear(&(syn_inh_GSyn[i]));
-    }
-    arpra_clear(&syn_inh_VSyn);
-    arpra_clear(&syn_inh_thr);
-    arpra_clear(&syn_inh_a);
-    arpra_clear(&syn_inh_b);
-    arpra_clear(&syn_inh_k);
+    arpra_clear(&syn_VSyn);
+    arpra_clear(&syn_thr);
+    arpra_clear(&syn_a);
+    arpra_clear(&syn_b);
+    arpra_clear(&syn_k);
 
     // Clear constants
     arpra_clear(&one);
@@ -1094,38 +877,24 @@ int main (int argc, char *argv[])
     arpra_clear(&temp2);
     arpra_clear(&M_ss);
     arpra_clear(&N_ss);
-    for (i = 0; i < p_in1_size; i++) {
-        arpra_clear(&(I1[i]));
-    }
-    for (i = 0; i < p_in2_size; i++) {
-        arpra_clear(&(I2[i]));
+    for (i = 0; i < p_in_size; i++) {
+        arpra_clear(&(I[i]));
     }
 
     // Free system state
-    free(nrn1_N);
-    free(nrn1_V);
-    free(nrn2_N);
-    free(nrn2_V);
-    free(syn_exc_R);
-    free(syn_exc_S);
-    free(syn_inh_R);
-    free(syn_inh_S);
+    free(nrn_N);
+    free(nrn_V);
+    free(syn_R);
+    free(syn_S);
 
     // Free other arrays
-    free(syn_exc_GSyn);
-    free(syn_inh_GSyn);
-    free(I1);
-    free(I2);
-    free(in1);
-    free(in2);
-    free(nrn1_N_reduce_epoch);
-    free(nrn1_V_reduce_epoch);
-    free(nrn2_N_reduce_epoch);
-    free(nrn2_V_reduce_epoch);
-    free(syn_exc_R_reduce_epoch);
-    free(syn_exc_S_reduce_epoch);
-    free(syn_inh_R_reduce_epoch);
-    free(syn_inh_S_reduce_epoch);
+    free(syn_GSyn);
+    free(I);
+    free(in);
+    free(nrn_N_reduce_epoch);
+    free(nrn_V_reduce_epoch);
+    free(syn_R_reduce_epoch);
+    free(syn_S_reduce_epoch);
 
     // Clear report files
     file_clear(1, f_time_c, f_time_r, f_time_n, f_time_s, f_time_d);
@@ -1135,57 +904,31 @@ int main (int argc, char *argv[])
     free(f_time_s);
     free(f_time_d);
 
-    file_clear(p_nrn1_size, f_nrn1_N_c, f_nrn1_N_r, f_nrn1_N_n, f_nrn1_N_s, f_nrn1_N_d);
-    free(f_nrn1_N_c);
-    free(f_nrn1_N_r);
-    free(f_nrn1_N_n);
-    free(f_nrn1_N_s);
-    free(f_nrn1_N_d);
-    file_clear(p_nrn1_size, f_nrn1_V_c, f_nrn1_V_r, f_nrn1_V_n, f_nrn1_V_s, f_nrn1_V_d);
-    free(f_nrn1_V_c);
-    free(f_nrn1_V_r);
-    free(f_nrn1_V_n);
-    free(f_nrn1_V_s);
-    free(f_nrn1_V_d);
+    file_clear(p_nrn_size, f_nrn_N_c, f_nrn_N_r, f_nrn_N_n, f_nrn_N_s, f_nrn_N_d);
+    free(f_nrn_N_c);
+    free(f_nrn_N_r);
+    free(f_nrn_N_n);
+    free(f_nrn_N_s);
+    free(f_nrn_N_d);
+    file_clear(p_nrn_size, f_nrn_V_c, f_nrn_V_r, f_nrn_V_n, f_nrn_V_s, f_nrn_V_d);
+    free(f_nrn_V_c);
+    free(f_nrn_V_r);
+    free(f_nrn_V_n);
+    free(f_nrn_V_s);
+    free(f_nrn_V_d);
 
-    /* file_clear(p_nrn2_size, f_nrn2_N_c, f_nrn2_N_r, f_nrn2_N_n, f_nrn2_N_s, f_nrn2_N_d); */
-    /* free(f_nrn2_N_c); */
-    /* free(f_nrn2_N_r); */
-    /* free(f_nrn2_N_n); */
-    /* free(f_nrn2_N_s); */
-    /* free(f_nrn2_N_d); */
-    /* file_clear(p_nrn2_size, f_nrn2_V_c, f_nrn2_V_r, f_nrn2_V_n, f_nrn2_V_s, f_nrn2_V_d); */
-    /* free(f_nrn2_V_c); */
-    /* free(f_nrn2_V_r); */
-    /* free(f_nrn2_V_n); */
-    /* free(f_nrn2_V_s); */
-    /* free(f_nrn2_V_d); */
-
-    /* file_clear(p_syn_exc_size, f_syn_exc_R_c, f_syn_exc_R_r, f_syn_exc_R_n, f_syn_exc_R_s, f_syn_exc_R_d); */
-    /* free(f_syn_exc_R_c); */
-    /* free(f_syn_exc_R_r); */
-    /* free(f_syn_exc_R_n); */
-    /* free(f_syn_exc_R_s); */
-    /* free(f_syn_exc_R_d); */
-    /* file_clear(p_syn_exc_size, f_syn_exc_S_c, f_syn_exc_S_r, f_syn_exc_S_n, f_syn_exc_S_s, f_syn_exc_S_d); */
-    /* free(f_syn_exc_S_c); */
-    /* free(f_syn_exc_S_r); */
-    /* free(f_syn_exc_S_n); */
-    /* free(f_syn_exc_S_s); */
-    /* free(f_syn_exc_S_d); */
-
-    /* file_clear(p_syn_inh_size, f_syn_inh_R_c, f_syn_inh_R_r, f_syn_inh_R_n, f_syn_inh_R_s, f_syn_inh_R_d); */
-    /* free(f_syn_inh_R_c); */
-    /* free(f_syn_inh_R_r); */
-    /* free(f_syn_inh_R_n); */
-    /* free(f_syn_inh_R_s); */
-    /* free(f_syn_inh_R_d); */
-    /* file_clear(p_syn_inh_size, f_syn_inh_S_c, f_syn_inh_S_r, f_syn_inh_S_n, f_syn_inh_S_s, f_syn_inh_S_d); */
-    /* free(f_syn_inh_S_c); */
-    /* free(f_syn_inh_S_r); */
-    /* free(f_syn_inh_S_n); */
-    /* free(f_syn_inh_S_s); */
-    /* free(f_syn_inh_S_d); */
+    /* file_clear(p_syn_size, f_syn_R_c, f_syn_R_r, f_syn_R_n, f_syn_R_s, f_syn_R_d); */
+    /* free(f_syn_R_c); */
+    /* free(f_syn_R_r); */
+    /* free(f_syn_R_n); */
+    /* free(f_syn_R_s); */
+    /* free(f_syn_R_d); */
+    /* file_clear(p_syn_size, f_syn_S_c, f_syn_S_r, f_syn_S_n, f_syn_S_s, f_syn_S_d); */
+    /* free(f_syn_S_c); */
+    /* free(f_syn_S_r); */
+    /* free(f_syn_S_n); */
+    /* free(f_syn_S_s); */
+    /* free(f_syn_S_d); */
 
     arpra_ode_stepper_clear(&ode_stepper);
     arpra_clear_buffers();

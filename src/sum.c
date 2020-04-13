@@ -211,20 +211,17 @@ void arpra_sum_recursive (arpra_range *y, arpra_range *x, arpra_uint n)
     mpfr_init2(temp2, prec_internal);
     sum_x = malloc(n * sizeof(mpfr_t));
     sum_x_ptr = malloc(n * sizeof(mpfr_t));
-    for (i = 0; i < n; i++) {
-        mpfr_init2(&(sum_x[i]), prec_internal);
-        sum_x_ptr[i] = &(sum_x[i]);
-    }
 
     // Compute |x|.
     for (i = 0; i < n; i++) {
-        if (mpfr_sgn(&(x[i].centre)) >= 0) {
-            mpfr_add(&(sum_x[i]), &(x[i].centre), &(x[i].radius), MPFR_RNDU);
+        if (mpfr_cmpabs(&(x[i]->true_range.right), &(x[i]->true_range.left)) >= 0) {
+            sum_x[i] = x[i]->true_range.right;
         }
         else {
-            mpfr_sub(&(sum_x[i]), &(x[i].centre), &(x[i].radius), MPFR_RNDD);
-            mpfr_abs(&(sum_x[i]), &(sum_x[i]), MPFR_RNDU);
+            sum_x[i] = x[i]->true_range.left;
+            sum_x[i]._mpfr_sign = 1;
         }
+        sum_x_ptr[i] = &(sum_x[i]);
     }
 
     // Compute error(sum_recursive(x)) = (n - 1) u sum(|x|).
@@ -240,9 +237,6 @@ void arpra_sum_recursive (arpra_range *y, arpra_range *x, arpra_uint n)
     // Clear vars.
     mpfr_clear(temp1);
     mpfr_clear(temp2);
-    for (i = 0; i < n; i++) {
-        mpfr_clear(&(sum_x[i]));
-    }
     free(sum_x);
     free(sum_x_ptr);
 }

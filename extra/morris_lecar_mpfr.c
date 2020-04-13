@@ -79,87 +79,84 @@
 //#define p_rng_nf_seed 503108552855933ul
 //#define p_rng_uz_seed 2071328946103ul
 
-// Poisson input parameters (group 1)
-#define p_in1_size 50
-#define p_in1_freq 10.0
-#define p_in1_V_lo -60.0
-#define p_in1_V_hi 20.0
+// Poisson input parameters
+#define p_in_size 50
+#define p_in_freq 42.0
+#define p_in_V_lo -60.0
+#define p_in_V_hi 20.0
 
-// Poisson input parameters (group 2)
-#define p_in2_size 0
-#define p_in2_freq 10.0
-#define p_in2_V_lo -60.0
-#define p_in2_V_hi 20.0
+// Neuron parameters (class 1)
+#define p_nrn_size 1
+#define p_nrn_N0 0.0
+#define p_nrn_V0 -60.0
+#define p_nrn_GL 2.0
+#define p_nrn_GCa 4.0
+#define p_nrn_GK 8.0
+#define p_nrn_VL -60.0
+#define p_nrn_VCa 120.0
+#define p_nrn_VK -80.0
+#define p_nrn_V1 -1.2
+#define p_nrn_V2 18.0
+#define p_nrn_V3 12.0
+#define p_nrn_V4 17.4
+#define p_nrn_phi 1.0 / 15.0
+#define p_nrn_C 20.0
 
-// Neuron parameters (group 1)
-#define p_nrn1_size 1
-#define p_nrn1_N0 0.0
-#define p_nrn1_V0 -60.0
-#define p_nrn1_class 1
-
-// Neuron parameters (group 2)
-#define p_nrn2_size 0
-#define p_nrn2_N0 0.0
-#define p_nrn2_V0 -60.0
-#define p_nrn2_class 1
-
-// Neuron parameters (common)
-#define p_GL 2.0
-#define p_GCa 4.0 // Class 1
-//#define p_GCa 4.4 // Class 2
-#define p_GK 8.0
-#define p_VL -60.0
-#define p_VCa 120.0
-#define p_VK -80.0
-#define p_V1 -1.2
-#define p_V2 18.0
-#define p_V3 12.0 // Class 1
-//#define p_V3 2.0 // Class 2
-#define p_V4 17.4 // Class 1
-//#define p_V4 30.0 // Class 2
-#define p_phi 1.0 / 15.0 // Class 1
-//#define p_phi 1.0 / 25.0 // Class 2
-#define p_C 20.0
+/* // Neuron parameters (class 2) */
+/* #define p_nrn_size 1 */
+/* #define p_nrn_N0 0.0 */
+/* #define p_nrn_V0 -60.0 */
+/* #define p_nrn_GL 2.0 */
+/* #define p_nrn_GCa 4.4 */
+/* #define p_nrn_GK 8.0 */
+/* #define p_nrn_VL -60.0 */
+/* #define p_nrn_VCa 120.0 */
+/* #define p_nrn_VK -80.0 */
+/* #define p_nrn_V1 -1.2 */
+/* #define p_nrn_V2 18.0 */
+/* #define p_nrn_V3 2.0 */
+/* #define p_nrn_V4 30.0 */
+/* #define p_nrn_phi 1.0 / 25.0 */
+/* #define p_nrn_C 20.0 */
 
 // Synapse parameters (excitatory)
-#define p_syn_exc_size p_in1_size * p_nrn1_size
-#define p_syn_exc_R0 0.0
-#define p_syn_exc_S0 0.0
-#define p_syn_exc_GSyn_std 0.05
-#define p_syn_exc_GSyn_mean 25.0 / p_in1_size
-#define p_syn_exc_VSyn 0.0
-#define p_syn_exc_thr -50.0
-#define p_syn_exc_a 0.25 // in [1/10, 1/2]
-#define p_syn_exc_b 0.15 // in [1/20, 1/4]
-#define p_syn_exc_k 1.0E6
+#define p_syn_size p_in_size * p_nrn_size
+#define p_syn_R0 0.0
+#define p_syn_S0 0.0
+#define p_syn_GSyn_std 0.05
+#define p_syn_GSyn_mean 25.0 / p_in_size
+#define p_syn_VSyn 0.0
+#define p_syn_thr -50.0
+#define p_syn_a 0.25 // in [1/10, 1/2]
+#define p_syn_b 0.15 // in [1/20, 1/4]
+#define p_syn_k 1.0E6
 
-// Synapse parameters (inhibitory)
-#define p_syn_inh_size 0
-#define p_syn_inh_R0 0.0
-#define p_syn_inh_S0 0.0
-#define p_syn_inh_GSyn_std 0.5
-#define p_syn_inh_GSyn_mean 3.0
-#define p_syn_inh_VSyn -80.0
-#define p_syn_inh_thr -50.0
-#define p_syn_inh_a 0.075 // in [1/20, 1/10]
-#define p_syn_inh_b 0.035 // in [1/50, 1/20]
-#define p_syn_inh_k 1.0E6
+/* // Synapse parameters (inhibitory) */
+/* #define p_syn_size p_in_size * p_nrn_size */
+/* #define p_syn_R0 0.0 */
+/* #define p_syn_S0 0.0 */
+/* #define p_syn_GSyn_std 0.5 */
+/* #define p_syn_GSyn_mean 3.0 */
+/* #define p_syn_VSyn -80.0 */
+/* #define p_syn_thr -50.0 */
+/* #define p_syn_a 0.075 // in [1/20, 1/10] */
+/* #define p_syn_b 0.035 // in [1/50, 1/20] */
+/* #define p_syn_k 1.0E6 */
 
 // ===================== end of model parameters ======================
 
 
-int *in1, *in2;
-mpfr_t GL, VL, GCa, VCa, GK, VK, V1, V2, V3, V4, phi, C, syn_exc_VSyn, syn_exc_thr,
-       syn_exc_a, syn_exc_b, syn_exc_k, syn_inh_VSyn, syn_inh_thr, syn_inh_a,
-       syn_inh_b, syn_inh_k, one, two, neg_two, temp1, temp2, M_ss, N_ss, in1_V_lo,
-       in1_V_hi, in2_V_lo, in2_V_hi, in1_p0, in2_p0, rand_uf, rand_nf;
+int *in;
 mpz_t rand_uz;
-mpfr_ptr syn_exc_GSyn, syn_inh_GSyn, I1, I2;
+mpfr_t nrn_GL, nrn_VL, nrn_GCa, nrn_VCa, nrn_GK, nrn_VK, nrn_V1, nrn_V2, nrn_V3, nrn_V4,
+    nrn_phi, nrn_C, syn_VSyn, syn_thr, syn_a, syn_b, syn_k, one, two, neg_two,
+    temp1, temp2, M_ss, N_ss, in_V_lo, in_V_hi, in_p0, rand_uf, rand_nf;
+mpfr_ptr syn_GSyn, I;
 gmp_randstate_t rng_uf, rng_nf, rng_uz;
 
 // System state variables
-mpfr_ptr nrn1_N, nrn2_N, nrn1_V, nrn2_V, syn_exc_R, syn_inh_R, syn_exc_S, syn_inh_S;
-mpfr_ptr d_nrn1_N, d_nrn2_N, d_nrn1_V, d_nrn2_V, d_syn_exc_R, d_syn_inh_R, d_syn_exc_S, d_syn_inh_S;
+mpfr_ptr nrn_N, nrn_V, syn_R, syn_S;
+mpfr_ptr d_nrn_N, d_nrn_V, d_syn_R, d_syn_S;
 
 // DEBUG: print MPFR numbers to stderr
 void debug (mpfr_srcptr x) {
@@ -197,21 +194,14 @@ void file_write (mpfr_srcptr A, unsigned long grp_size, FILE **f)
     }
 }
 
-void dNdt (const unsigned long idx, int grp)
+void dNdt (const unsigned long idx)
 {
-    mpfr_ptr d_N;
-    mpfr_srcptr N, V;
-
-    if (grp == 1) {
-        d_N = d_nrn1_N + idx;
-        N = nrn1_N + idx;
-        V = nrn1_V + idx;
-    }
-    //else if (grp == 2) {
-    //   d_N = d_nrn2_N + idx;
-    //   N = nrn2_N + idx;
-    //   V = nrn2_V + idx;
-    //}
+    mpfr_ptr d_N = &(d_nrn_N[idx]);
+    mpfr_srcptr N = &(nrn_N[idx]);
+    mpfr_srcptr V = &(nrn_V[idx]);
+    mpfr_srcptr V3 = nrn_V3;
+    mpfr_srcptr V4 = nrn_V4;
+    mpfr_srcptr phi = nrn_phi;
 
     // K+ channel activation steady-state
     // N_ss = 1 / (1 + exp(-2 (V - V3) / V4))
@@ -242,34 +232,25 @@ void dNdt (const unsigned long idx, int grp)
     mpfr_div(d_N, d_N, temp1, MPFR_RNDN);
 }
 
-void dVdt (const unsigned long idx, int grp)
+void dVdt (const unsigned long idx)
 {
-    mpfr_ptr d_V;
-    mpfr_srcptr N, V;
-    mpfr_srcptr S, GSyn, VSyn;
-    mpfr_ptr I;
-    unsigned long i, j, pre_size;
-
-    if (grp == 1) {
-        d_V = d_nrn1_V + idx;
-        N = nrn1_N + idx;
-        V = nrn1_V + idx;
-        pre_size = p_in1_size;
-        S = syn_exc_S + (idx * pre_size);
-        GSyn = syn_exc_GSyn + (idx * pre_size);
-        VSyn = syn_exc_VSyn;
-        I = I1;
-    }
-    //else if (grp == 2) {
-    //   d_V = d_nrn2_V + idx;
-    //   N = nrn2_N + idx;
-    //   V = nrn2_V + idx;
-    //   pre_size = p_in2_size;
-    //   S = syn_exc_S + (idx * pre_size);
-    //   GSyn = syn_exc_GSyn + (idx * pre_size);
-    //   VSyn = syn_exc_VSyn;
-    //   I = I2;
-    //}
+    unsigned long i, j;
+    unsigned long pre_size = p_in_size;
+    mpfr_ptr d_V = &(d_nrn_V[idx]);
+    mpfr_srcptr N = &(nrn_N[idx]);
+    mpfr_srcptr V = &(nrn_V[idx]);
+    mpfr_srcptr S = &(syn_S[idx * pre_size]);
+    mpfr_srcptr GSyn = &(syn_GSyn[idx * pre_size]);
+    mpfr_srcptr VSyn = syn_VSyn;
+    mpfr_srcptr VL = nrn_VL;
+    mpfr_srcptr GL = nrn_GL;
+    mpfr_srcptr VCa = nrn_VCa;
+    mpfr_srcptr GCa = nrn_GCa;
+    mpfr_srcptr VK = nrn_VK;
+    mpfr_srcptr GK = nrn_GK;
+    mpfr_srcptr V1 = nrn_V1;
+    mpfr_srcptr V2 = nrn_V2;
+    mpfr_srcptr C = nrn_C;
 
     // Ca++ channel activation steady-state
     // M_ss = 1 / (1 + exp(-2 (V - V1) / V2))
@@ -334,31 +315,15 @@ void dVdt (const unsigned long idx, int grp)
     mpfr_div(d_V, d_V, C, MPFR_RNDN);
 }
 
-void dRdt (const unsigned long idx, int grp)
+void dRdt (const unsigned long idx)
 {
-    mpfr_ptr d_R;
-    mpfr_srcptr R;
-    mpfr_srcptr a, b, k;
-    mpfr_srcptr VPre, threshold;
-
-    if (grp == 1) {
-        d_R = d_syn_exc_R + idx;
-        R = syn_exc_R + idx;
-        a = syn_exc_a;
-        b = syn_exc_b;
-        k = syn_exc_k;
-        VPre = in1[idx % p_in1_size] ? in1_V_hi : in1_V_lo;
-        threshold = syn_exc_thr;
-    }
-    //else if (grp == 2) {
-    //   d_R = d_syn_inh_R + idx;
-    //   R = syn_inh_R + idx;
-    //   a = syn_inh_a;
-    //   b = syn_inh_b;
-    //   k = syn_inh_k;
-    //   VPre = in2[idx % p_in2_size] ? in2_V_hi : in2_V_lo;
-    //   threshold = syn_inh_thr;
-    //}
+    mpfr_ptr d_R = &(d_syn_R[idx]);
+    mpfr_srcptr R = &(syn_R[idx]);
+    mpfr_srcptr a = syn_a;
+    mpfr_srcptr b = syn_b;
+    mpfr_srcptr k = syn_k;
+    mpfr_srcptr VPre = in[idx % p_in_size] ? in_V_hi : in_V_lo;
+    mpfr_srcptr threshold = syn_thr;
 
     // Sigmoid of threshold difference
     mpfr_sub(temp1, VPre, threshold, MPFR_RNDN);
@@ -379,26 +344,13 @@ void dRdt (const unsigned long idx, int grp)
     mpfr_sub(d_R, temp1, temp2, MPFR_RNDN);
 }
 
-void dSdt (const unsigned long idx, int grp)
+void dSdt (const unsigned long idx)
 {
-    mpfr_ptr d_S;
-    mpfr_srcptr R, S;
-    mpfr_srcptr a, b;
-
-    if (grp == 1) {
-        d_S = d_syn_exc_S + idx;
-        R = syn_exc_R + idx;
-        S = syn_exc_S + idx;
-        a = syn_exc_a;
-        b = syn_exc_b;
-    }
-    //else if (grp == 2) {
-    //   d_S = d_syn_inh_S + idx;
-    //   R = syn_inh_R + idx;
-    //   S = syn_inh_S + idx;
-    //   a = syn_inh_a;
-    //   b = syn_inh_b;
-    //}
+    mpfr_ptr d_S = &(d_syn_S[idx]);
+    mpfr_srcptr R = &(syn_R[idx]);
+    mpfr_srcptr S = &(syn_S[idx]);
+    mpfr_srcptr a = syn_a;
+    mpfr_srcptr b = syn_b;
 
     // Postsynaptic transmitter binding rise
     mpfr_mul(temp1, a, R, MPFR_RNDN);
@@ -417,30 +369,19 @@ int main (int argc, char *argv[])
     unsigned long i, j;
 
     // Allocate system state
-    nrn1_N = malloc(p_nrn1_size * sizeof(mpfr_t));
-    nrn1_V = malloc(p_nrn1_size * sizeof(mpfr_t));
-    nrn2_N = malloc(p_nrn2_size * sizeof(mpfr_t));
-    nrn2_V = malloc(p_nrn2_size * sizeof(mpfr_t));
-    syn_exc_R = malloc(p_syn_exc_size * sizeof(mpfr_t));
-    syn_exc_S = malloc(p_syn_exc_size * sizeof(mpfr_t));
-    syn_inh_R = malloc(p_syn_inh_size * sizeof(mpfr_t));
-    syn_inh_S = malloc(p_syn_inh_size * sizeof(mpfr_t));
+    nrn_N = malloc(p_nrn_size * sizeof(mpfr_t));
+    nrn_V = malloc(p_nrn_size * sizeof(mpfr_t));
+    syn_R = malloc(p_syn_size * sizeof(mpfr_t));
+    syn_S = malloc(p_syn_size * sizeof(mpfr_t));
 
     // Allocate other arrays
-    d_nrn1_N = malloc(p_nrn1_size * sizeof(mpfr_t));
-    d_nrn2_N = malloc(p_nrn2_size * sizeof(mpfr_t));
-    d_nrn1_V = malloc(p_nrn1_size * sizeof(mpfr_t));
-    d_nrn2_V = malloc(p_nrn2_size * sizeof(mpfr_t));
-    d_syn_exc_R = malloc(p_syn_exc_size * sizeof(mpfr_t));
-    d_syn_inh_R = malloc(p_syn_inh_size * sizeof(mpfr_t));
-    d_syn_exc_S = malloc(p_syn_exc_size * sizeof(mpfr_t));
-    d_syn_inh_S = malloc(p_syn_inh_size * sizeof(mpfr_t));
-    syn_exc_GSyn = malloc(p_syn_exc_size * sizeof(mpfr_t));
-    syn_inh_GSyn = malloc(p_syn_inh_size * sizeof(mpfr_t));
-    I1 = malloc(p_in1_size * sizeof(mpfr_t));
-    I2 = malloc(p_in2_size * sizeof(mpfr_t));
-    in1 = malloc(p_in1_size * sizeof(int));
-    in2 = malloc(p_in2_size * sizeof(int));
+    d_nrn_N = malloc(p_nrn_size * sizeof(mpfr_t));
+    d_nrn_V = malloc(p_nrn_size * sizeof(mpfr_t));
+    d_syn_R = malloc(p_syn_size * sizeof(mpfr_t));
+    d_syn_S = malloc(p_syn_size * sizeof(mpfr_t));
+    syn_GSyn = malloc(p_syn_size * sizeof(mpfr_t));
+    I = malloc(p_in_size * sizeof(mpfr_t));
+    in = malloc(p_in_size * sizeof(int));
 
     struct timespec clock_time;
 
@@ -480,74 +421,47 @@ int main (int argc, char *argv[])
     // Initialise system state
     mpfr_init2(h, p_prec);
     mpfr_init2(t, p_prec);
-    for (i = 0; i < p_nrn1_size; i++) {
-        mpfr_init2(&(nrn1_N[i]), p_prec);
-        mpfr_init2(&(nrn1_V[i]), p_prec);
-        mpfr_init2(&(d_nrn1_N[i]), p_prec);
-        mpfr_init2(&(d_nrn1_V[i]), p_prec);
+    for (i = 0; i < p_nrn_size; i++) {
+        mpfr_init2(&(nrn_N[i]), p_prec);
+        mpfr_init2(&(nrn_V[i]), p_prec);
+        mpfr_init2(&(d_nrn_N[i]), p_prec);
+        mpfr_init2(&(d_nrn_V[i]), p_prec);
     }
-    for (i = 0; i < p_nrn2_size; i++) {
-        mpfr_init2(&(nrn2_N[i]), p_prec);
-        mpfr_init2(&(nrn2_V[i]), p_prec);
-        mpfr_init2(&(d_nrn2_N[i]), p_prec);
-        mpfr_init2(&(d_nrn2_V[i]), p_prec);
-    }
-    for (i = 0; i < p_syn_exc_size; i++) {
-        mpfr_init2(&(syn_exc_R[i]), p_prec);
-        mpfr_init2(&(syn_exc_S[i]), p_prec);
-        mpfr_init2(&(d_syn_exc_R[i]), p_prec);
-        mpfr_init2(&(d_syn_exc_S[i]), p_prec);
-    }
-    for (i = 0; i < p_syn_inh_size; i++) {
-        mpfr_init2(&(syn_inh_R[i]), p_prec);
-        mpfr_init2(&(syn_inh_S[i]), p_prec);
-        mpfr_init2(&(d_syn_inh_R[i]), p_prec);
-        mpfr_init2(&(d_syn_inh_S[i]), p_prec);
+    for (i = 0; i < p_syn_size; i++) {
+        mpfr_init2(&(syn_R[i]), p_prec);
+        mpfr_init2(&(syn_S[i]), p_prec);
+        mpfr_init2(&(d_syn_R[i]), p_prec);
+        mpfr_init2(&(d_syn_S[i]), p_prec);
     }
 
-    // Initialise Poisson input parameters (group 1)
-    mpfr_init2(in1_p0, p_prec);
-    mpfr_init2(in1_V_lo, p_prec);
-    mpfr_init2(in1_V_hi, p_prec);
-
-    // Initialise Poisson input parameters (group 2)
-    mpfr_init2(in2_p0, p_prec);
-    mpfr_init2(in2_V_lo, p_prec);
-    mpfr_init2(in2_V_hi, p_prec);
+    // Initialise Poisson input parameters
+    mpfr_init2(in_p0, p_prec);
+    mpfr_init2(in_V_lo, p_prec);
+    mpfr_init2(in_V_hi, p_prec);
 
     // Initialise neuron parameters
-    mpfr_init2(GL, p_prec);
-    mpfr_init2(GCa, p_prec);
-    mpfr_init2(GK, p_prec);
-    mpfr_init2(VL, p_prec);
-    mpfr_init2(VCa, p_prec);
-    mpfr_init2(VK, p_prec);
-    mpfr_init2(V1, p_prec);
-    mpfr_init2(V2, p_prec);
-    mpfr_init2(V3, p_prec);
-    mpfr_init2(V4, p_prec);
-    mpfr_init2(phi, p_prec);
-    mpfr_init2(C, p_prec);
+    mpfr_init2(nrn_GL, p_prec);
+    mpfr_init2(nrn_GCa, p_prec);
+    mpfr_init2(nrn_GK, p_prec);
+    mpfr_init2(nrn_VL, p_prec);
+    mpfr_init2(nrn_VCa, p_prec);
+    mpfr_init2(nrn_VK, p_prec);
+    mpfr_init2(nrn_V1, p_prec);
+    mpfr_init2(nrn_V2, p_prec);
+    mpfr_init2(nrn_V3, p_prec);
+    mpfr_init2(nrn_V4, p_prec);
+    mpfr_init2(nrn_phi, p_prec);
+    mpfr_init2(nrn_C, p_prec);
 
-    // Initialise excitatory synapse parameters
-    for (i = 0; i < p_syn_exc_size; i++) {
-        mpfr_init2(&(syn_exc_GSyn[i]), p_prec);
+    // Initialise synapse parameters
+    for (i = 0; i < p_syn_size; i++) {
+        mpfr_init2(&(syn_GSyn[i]), p_prec);
     }
-    mpfr_init2(syn_exc_VSyn, p_prec);
-    mpfr_init2(syn_exc_thr, p_prec);
-    mpfr_init2(syn_exc_a, p_prec);
-    mpfr_init2(syn_exc_b, p_prec);
-    mpfr_init2(syn_exc_k, p_prec);
-
-    // Initialise inhibitory synapse parameters
-    for (i = 0; i < p_syn_inh_size; i++) {
-        mpfr_init2(&(syn_inh_GSyn[i]), p_prec);
-    }
-    mpfr_init2(syn_inh_VSyn, p_prec);
-    mpfr_init2(syn_inh_thr, p_prec);
-    mpfr_init2(syn_inh_a, p_prec);
-    mpfr_init2(syn_inh_b, p_prec);
-    mpfr_init2(syn_inh_k, p_prec);
+    mpfr_init2(syn_VSyn, p_prec);
+    mpfr_init2(syn_thr, p_prec);
+    mpfr_init2(syn_a, p_prec);
+    mpfr_init2(syn_b, p_prec);
+    mpfr_init2(syn_k, p_prec);
 
     // Initialise constants
     mpfr_init2(one, p_prec);
@@ -562,86 +476,55 @@ int main (int argc, char *argv[])
     mpfr_init2(temp2, p_prec);
     mpfr_init2(M_ss, p_prec);
     mpfr_init2(N_ss, p_prec);
-    for (i = 0; i < p_in1_size; i++) {
-        mpfr_init2(&(I1[i]), p_prec);
-    }
-    for (i = 0; i < p_in2_size; i++) {
-        mpfr_init2(&(I2[i]), p_prec);
+    for (i = 0; i < p_in_size; i++) {
+        mpfr_init2(&(I[i]), p_prec);
     }
 
     // Set system state
     mpfr_set_d(h, p_h, MPFR_RNDN);
     mpfr_set_d(t, p_t0, MPFR_RNDN);
-    for (i = 0; i < p_nrn1_size; i++) {
-        mpfr_set_d(&(nrn1_N[i]), p_nrn1_N0, MPFR_RNDN);
-        mpfr_set_d(&(nrn1_V[i]), p_nrn1_V0, MPFR_RNDN);
+    for (i = 0; i < p_nrn_size; i++) {
+        mpfr_set_d(&(nrn_N[i]), p_nrn_N0, MPFR_RNDN);
+        mpfr_set_d(&(nrn_V[i]), p_nrn_V0, MPFR_RNDN);
     }
-    for (i = 0; i < p_nrn2_size; i++) {
-        mpfr_set_d(&(nrn2_N[i]), p_nrn2_N0, MPFR_RNDN);
-        mpfr_set_d(&(nrn2_V[i]), p_nrn2_V0, MPFR_RNDN);
-    }
-    for (i = 0; i < p_syn_exc_size; i++) {
-        mpfr_set_d(&(syn_exc_R[i]), p_syn_exc_R0, MPFR_RNDN);
-        mpfr_set_d(&(syn_exc_S[i]), p_syn_exc_S0, MPFR_RNDN);
-    }
-    for (i = 0; i < p_syn_inh_size; i++) {
-        mpfr_set_d(&(syn_inh_R[i]), p_syn_inh_R0, MPFR_RNDN);
-        mpfr_set_d(&(syn_inh_S[i]), p_syn_inh_S0, MPFR_RNDN);
+    for (i = 0; i < p_syn_size; i++) {
+        mpfr_set_d(&(syn_R[i]), p_syn_R0, MPFR_RNDN);
+        mpfr_set_d(&(syn_S[i]), p_syn_S0, MPFR_RNDN);
     }
 
-    // Set Poisson input parameters (group 1)
-    mpfr_set_d(in1_p0, -(p_in1_freq / 1000) * p_h, MPFR_RNDN);
-    mpfr_exp(in1_p0, in1_p0, MPFR_RNDN);
-    mpfr_set_d(in1_V_lo, p_in1_V_lo, MPFR_RNDN);
-    mpfr_set_d(in1_V_hi, p_in1_V_hi, MPFR_RNDN);
-
-    // Set Poisson input parameters (group 2)
-    mpfr_set_d(in2_p0, -(p_in2_freq / 1000) * p_h, MPFR_RNDN);
-    mpfr_exp(in2_p0, in2_p0, MPFR_RNDN);
-    mpfr_set_d(in2_V_lo, p_in2_V_lo, MPFR_RNDN);
-    mpfr_set_d(in2_V_hi, p_in2_V_hi, MPFR_RNDN);
+    // Set Poisson input parameters
+    mpfr_set_d(in_p0, -(p_in_freq / 1000) * p_h, MPFR_RNDN);
+    mpfr_exp(in_p0, in_p0, MPFR_RNDN);
+    mpfr_set_d(in_V_lo, p_in_V_lo, MPFR_RNDN);
+    mpfr_set_d(in_V_hi, p_in_V_hi, MPFR_RNDN);
 
     // Set neuron parameters
-    mpfr_set_d(GL, p_GL, MPFR_RNDN);
-    mpfr_set_d(GCa, p_GCa, MPFR_RNDN);
-    mpfr_set_d(GK, p_GK, MPFR_RNDN);
-    mpfr_set_d(VL, p_VL, MPFR_RNDN);
-    mpfr_set_d(VCa, p_VCa, MPFR_RNDN);
-    mpfr_set_d(VK, p_VK, MPFR_RNDN);
-    mpfr_set_d(V1, p_V1, MPFR_RNDN);
-    mpfr_set_d(V2, p_V2, MPFR_RNDN);
-    mpfr_set_d(V3, p_V3, MPFR_RNDN);
-    mpfr_set_d(V4, p_V4, MPFR_RNDN);
-    mpfr_set_d(phi, p_phi, MPFR_RNDN);
-    mpfr_set_d(C, p_C, MPFR_RNDN);
+    mpfr_set_d(nrn_GL, p_nrn_GL, MPFR_RNDN);
+    mpfr_set_d(nrn_GCa, p_nrn_GCa, MPFR_RNDN);
+    mpfr_set_d(nrn_GK, p_nrn_GK, MPFR_RNDN);
+    mpfr_set_d(nrn_VL, p_nrn_VL, MPFR_RNDN);
+    mpfr_set_d(nrn_VCa, p_nrn_VCa, MPFR_RNDN);
+    mpfr_set_d(nrn_VK, p_nrn_VK, MPFR_RNDN);
+    mpfr_set_d(nrn_V1, p_nrn_V1, MPFR_RNDN);
+    mpfr_set_d(nrn_V2, p_nrn_V2, MPFR_RNDN);
+    mpfr_set_d(nrn_V3, p_nrn_V3, MPFR_RNDN);
+    mpfr_set_d(nrn_V4, p_nrn_V4, MPFR_RNDN);
+    mpfr_set_d(nrn_phi, p_nrn_phi, MPFR_RNDN);
+    mpfr_set_d(nrn_C, p_nrn_C, MPFR_RNDN);
 
-    // Set excitatory synapse parameters
-    for (i = 0; i < p_syn_exc_size; i++) {
+    // Set synapse parameters
+    for (i = 0; i < p_syn_size; i++) {
         //mpfr_nrandom(rand_nf, rng_nf, MPFR_RNDN);
         mpfr_grandom(rand_nf, NULL, rng_nf, MPFR_RNDN);
-        mpfr_mul_d(rand_nf, rand_nf, p_syn_exc_GSyn_std, MPFR_RNDN);
-        mpfr_add_d(&(syn_exc_GSyn[i]), rand_nf, p_syn_exc_GSyn_mean, MPFR_RNDN);
+        mpfr_mul_d(rand_nf, rand_nf, p_syn_GSyn_std, MPFR_RNDN);
+        mpfr_add_d(&(syn_GSyn[i]), rand_nf, p_syn_GSyn_mean, MPFR_RNDN);
     }
-    mpfr_set_d(syn_exc_VSyn, p_syn_exc_VSyn, MPFR_RNDN);
-    mpfr_set_d(syn_exc_thr, p_syn_exc_thr, MPFR_RNDN);
-    mpfr_set_d(syn_exc_a, p_syn_exc_a, MPFR_RNDN);
-    mpfr_set_d(syn_exc_b, p_syn_exc_b, MPFR_RNDN);
-    mpfr_set_d(syn_exc_k, p_syn_exc_k, MPFR_RNDN);
-    mpfr_neg(syn_exc_k, syn_exc_k, MPFR_RNDN);
-
-    // Set inhibitory synapse parameters
-    for (i = 0; i < p_syn_inh_size; i++) {
-        //mpfr_nrandom(rand_nf, rng_nf, MPFR_RNDN);
-        mpfr_grandom(rand_nf, NULL, rng_nf, MPFR_RNDN);
-        mpfr_mul_d(rand_nf, rand_nf, p_syn_inh_GSyn_std, MPFR_RNDN);
-        mpfr_add_d(&(syn_inh_GSyn[i]), rand_nf, p_syn_inh_GSyn_mean, MPFR_RNDN);
-    }
-    mpfr_set_d(syn_inh_VSyn, p_syn_inh_VSyn, MPFR_RNDN);
-    mpfr_set_d(syn_inh_thr, p_syn_inh_thr, MPFR_RNDN);
-    mpfr_set_d(syn_inh_a, p_syn_inh_a, MPFR_RNDN);
-    mpfr_set_d(syn_inh_b, p_syn_inh_b, MPFR_RNDN);
-    mpfr_set_d(syn_inh_k, p_syn_inh_k, MPFR_RNDN);
-    mpfr_neg(syn_inh_k, syn_inh_k, MPFR_RNDN);
+    mpfr_set_d(syn_VSyn, p_syn_VSyn, MPFR_RNDN);
+    mpfr_set_d(syn_thr, p_syn_thr, MPFR_RNDN);
+    mpfr_set_d(syn_a, p_syn_a, MPFR_RNDN);
+    mpfr_set_d(syn_b, p_syn_b, MPFR_RNDN);
+    mpfr_set_d(syn_k, p_syn_k, MPFR_RNDN);
+    mpfr_neg(syn_k, syn_k, MPFR_RNDN);
 
     // Set constants
     mpfr_set_d(one, 1.0, MPFR_RNDN);
@@ -652,25 +535,15 @@ int main (int argc, char *argv[])
     FILE **f_time = malloc(sizeof(FILE *));;
     file_init("time", 1, f_time);
 
-    FILE **f_nrn1_N = malloc(p_nrn1_size * sizeof(FILE *));
-    file_init("nrn1_N", p_nrn1_size, f_nrn1_N);
-    FILE **f_nrn1_V = malloc(p_nrn1_size * sizeof(FILE *));
-    file_init("nrn1_V", p_nrn1_size, f_nrn1_V);
+    FILE **f_nrn_N = malloc(p_nrn_size * sizeof(FILE *));
+    file_init("nrn_N", p_nrn_size, f_nrn_N);
+    FILE **f_nrn_V = malloc(p_nrn_size * sizeof(FILE *));
+    file_init("nrn_V", p_nrn_size, f_nrn_V);
 
-    /* FILE **f_nrn2_N = malloc(p_nrn2_size * sizeof(FILE *)); */
-    /* file_init("nrn2_N", p_nrn2_size, f_nrn2_N); */
-    /* FILE **f_nrn2_V = malloc(p_nrn2_size * sizeof(FILE *)); */
-    /* file_init("nrn2_V", p_nrn2_size, f_nrn2_V); */
-
-    /* FILE **f_syn_exc_R = malloc(p_syn_exc_size * sizeof(FILE *)); */
-    /* file_init("syn_exc_R", p_syn_exc_size, f_syn_exc_R); */
-    /* FILE **f_syn_exc_S = malloc(p_syn_exc_size * sizeof(FILE *)); */
-    /* file_init("syn_exc_S", p_syn_exc_size, f_syn_exc_S); */
-
-    /* FILE **f_syn_inh_R = malloc(p_syn_inh_size * sizeof(FILE *)); */
-    /* file_init("syn_inh_R", p_syn_inh_size, f_syn_inh_R); */
-    /* FILE **f_syn_inh_S = malloc(p_syn_inh_size * sizeof(FILE *)); */
-    /* file_init("syn_inh_S", p_syn_inh_size, f_syn_inh_S); */
+    /* FILE **f_syn_R = malloc(p_syn_size * sizeof(FILE *)); */
+    /* file_init("syn_R", p_syn_size, f_syn_R); */
+    /* FILE **f_syn_S = malloc(p_syn_size * sizeof(FILE *)); */
+    /* file_init("syn_S", p_syn_size, f_syn_S); */
 
 
     // Begin simulation loop
@@ -682,77 +555,45 @@ int main (int argc, char *argv[])
         if (i % p_report_step == 0) printf("%lu\n", i);
 
         // Event(s) occur if urandom >= e^-rate
-        for (j = 0; j < p_in1_size; j++) {
+        for (j = 0; j < p_in_size; j++) {
             mpfr_urandom(rand_uf, rng_uf, MPFR_RNDN);
-            in1[j] = mpfr_greaterequal_p(rand_uf, in1_p0);
-            fprintf(stderr, "%s", (in1[j] ? "\x1B[31m\xE2\x96\xA3\x1B[0m" : "\xE2\x96\xA3"));
-        }
-        fprintf(stderr, "  ");
-        for (j = 0; j < p_in2_size; j++) {
-            mpfr_urandom(rand_uf, rng_uf, MPFR_RNDN);
-            in2[j] = mpfr_greaterequal_p(rand_uf, in2_p0);
-            fprintf(stderr, "%s", (in2[j] ? "\x1B[31m\xE2\x96\xA3\x1B[0m" : "\xE2\x96\xA3"));
+            in[j] = mpfr_greaterequal_p(rand_uf, in_p0);
+            fprintf(stderr, "%s", (in[j] ? "\x1B[31m\xE2\x96\xA3\x1B[0m" : "\xE2\x96\xA3"));
         }
         fprintf(stderr, "\n");
 
         // Compute derivatives
-        for (j = 0; j < p_nrn1_size; j++) {
-            dNdt(j, 1);
-            dVdt(j, 1);
+        for (j = 0; j < p_nrn_size; j++) {
+            dNdt(j);
+            dVdt(j);
         }
-        for (j = 0; j < p_nrn2_size; j++) {
-            dNdt(j, 2);
-            dVdt(j, 2);
-        }
-        for (j = 0; j < p_syn_exc_size; j++) {
-            dRdt(j, 1);
-            dSdt(j, 1);
-        }
-        for (j = 0; j < p_syn_inh_size; j++) {
-            dRdt(j, 2);
-            dSdt(j, 2);
+        for (j = 0; j < p_syn_size; j++) {
+            dRdt(j);
+            dSdt(j);
         }
 
         // Step system
         mpfr_add(t, t, h, MPFR_RNDN);
-        for (j = 0; j < p_nrn1_size; j++) {
-            mpfr_mul(&(d_nrn1_N[j]), &(d_nrn1_N[j]), h, MPFR_RNDN);
-            mpfr_add(&(nrn1_N[j]), &(nrn1_N[j]), &(d_nrn1_N[j]), MPFR_RNDN);
-            mpfr_mul(&(d_nrn1_V[j]), &(d_nrn1_V[j]), h, MPFR_RNDN);
-            mpfr_add(&(nrn1_V[j]), &(nrn1_V[j]), &(d_nrn1_V[j]), MPFR_RNDN);
+        for (j = 0; j < p_nrn_size; j++) {
+            mpfr_mul(&(d_nrn_N[j]), &(d_nrn_N[j]), h, MPFR_RNDN);
+            mpfr_add(&(nrn_N[j]), &(nrn_N[j]), &(d_nrn_N[j]), MPFR_RNDN);
+            mpfr_mul(&(d_nrn_V[j]), &(d_nrn_V[j]), h, MPFR_RNDN);
+            mpfr_add(&(nrn_V[j]), &(nrn_V[j]), &(d_nrn_V[j]), MPFR_RNDN);
         }
-        for (j = 0; j < p_nrn2_size; j++) {
-            mpfr_mul(&(d_nrn2_N[j]), &(d_nrn2_N[j]), h, MPFR_RNDN);
-            mpfr_add(&(nrn2_N[j]), &(nrn2_N[j]), &(d_nrn2_N[j]), MPFR_RNDN);
-            mpfr_mul(&(d_nrn2_V[j]), &(d_nrn2_V[j]), h, MPFR_RNDN);
-            mpfr_add(&(nrn2_V[j]), &(nrn2_V[j]), &(d_nrn2_V[j]), MPFR_RNDN);
-        }
-        for (j = 0; j < p_syn_exc_size; j++) {
-            mpfr_mul(&(d_syn_exc_R[j]), &(d_syn_exc_R[j]), h, MPFR_RNDN);
-            mpfr_add(&(syn_exc_R[j]), &(syn_exc_R[j]), &(d_syn_exc_R[j]), MPFR_RNDN);
-            mpfr_mul(&(d_syn_exc_S[j]), &(d_syn_exc_S[j]), h, MPFR_RNDN);
-            mpfr_add(&(syn_exc_S[j]), &(syn_exc_S[j]), &(d_syn_exc_S[j]), MPFR_RNDN);
-        }
-        for (j = 0; j < p_syn_inh_size; j++) {
-            mpfr_mul(&(d_syn_inh_R[j]), &(d_syn_inh_R[j]), h, MPFR_RNDN);
-            mpfr_add(&(syn_inh_R[j]), &(syn_inh_R[j]), &(d_syn_inh_R[j]), MPFR_RNDN);
-            mpfr_mul(&(d_syn_inh_S[j]), &(d_syn_inh_S[j]), h, MPFR_RNDN);
-            mpfr_add(&(syn_inh_S[j]), &(syn_inh_S[j]), &(d_syn_inh_S[j]), MPFR_RNDN);
+        for (j = 0; j < p_syn_size; j++) {
+            mpfr_mul(&(d_syn_R[j]), &(d_syn_R[j]), h, MPFR_RNDN);
+            mpfr_add(&(syn_R[j]), &(syn_R[j]), &(d_syn_R[j]), MPFR_RNDN);
+            mpfr_mul(&(d_syn_S[j]), &(d_syn_S[j]), h, MPFR_RNDN);
+            mpfr_add(&(syn_S[j]), &(syn_S[j]), &(d_syn_S[j]), MPFR_RNDN);
         }
 
         file_write(t, 1, f_time);
 
-        file_write(nrn1_N, p_nrn1_size, f_nrn1_N);
-        file_write(nrn1_V, p_nrn1_size, f_nrn1_V);
+        file_write(nrn_N, p_nrn_size, f_nrn_N);
+        file_write(nrn_V, p_nrn_size, f_nrn_V);
 
-        /* file_write(nrn2_N, p_nrn2_size, f_nrn2_N); */
-        /* file_write(nrn2_V, p_nrn2_size, f_nrn2_V); */
-
-        /* file_write(syn_exc_R, p_syn_exc_size, f_syn_exc_R); */
-        /* file_write(syn_exc_S, p_syn_exc_size, f_syn_exc_S); */
-
-        /* file_write(syn_inh_R, p_syn_inh_size, f_syn_inh_R); */
-        /* file_write(syn_inh_S, p_syn_inh_size, f_syn_inh_S); */
+        /* file_write(syn_R, p_syn_size, f_syn_R); */
+        /* file_write(syn_S, p_syn_size, f_syn_S); */
     }
 
     run_time = clock() - run_time;
@@ -765,74 +606,47 @@ int main (int argc, char *argv[])
     // Clear system state
     mpfr_clear(h);
     mpfr_clear(t);
-    for (i = 0; i < p_nrn1_size; i++) {
-        mpfr_clear(&(nrn1_N[i]));
-        mpfr_clear(&(nrn1_V[i]));
-        mpfr_clear(&(d_nrn1_N[i]));
-        mpfr_clear(&(d_nrn1_V[i]));
+    for (i = 0; i < p_nrn_size; i++) {
+        mpfr_clear(&(nrn_N[i]));
+        mpfr_clear(&(nrn_V[i]));
+        mpfr_clear(&(d_nrn_N[i]));
+        mpfr_clear(&(d_nrn_V[i]));
     }
-    for (i = 0; i < p_nrn2_size; i++) {
-        mpfr_clear(&(nrn2_N[i]));
-        mpfr_clear(&(nrn2_V[i]));
-        mpfr_clear(&(d_nrn2_N[i]));
-        mpfr_clear(&(d_nrn2_V[i]));
-    }
-    for (i = 0; i < p_syn_exc_size; i++) {
-        mpfr_clear(&(syn_exc_R[i]));
-        mpfr_clear(&(syn_exc_S[i]));
-        mpfr_clear(&(d_syn_exc_R[i]));
-        mpfr_clear(&(d_syn_exc_S[i]));
-    }
-    for (i = 0; i < p_syn_inh_size; i++) {
-        mpfr_clear(&(syn_inh_R[i]));
-        mpfr_clear(&(syn_inh_S[i]));
-        mpfr_clear(&(d_syn_inh_R[i]));
-        mpfr_clear(&(d_syn_inh_S[i]));
+    for (i = 0; i < p_syn_size; i++) {
+        mpfr_clear(&(syn_R[i]));
+        mpfr_clear(&(syn_S[i]));
+        mpfr_clear(&(d_syn_R[i]));
+        mpfr_clear(&(d_syn_S[i]));
     }
 
-    // Clear Poisson input parameters (group 1)
-    mpfr_clear(in1_p0);
-    mpfr_clear(in1_V_lo);
-    mpfr_clear(in1_V_hi);
-
-    // Clear Poisson input parameters (group 2)
-    mpfr_clear(in2_p0);
-    mpfr_clear(in2_V_lo);
-    mpfr_clear(in2_V_hi);
+    // Clear Poisson input parameters
+    mpfr_clear(in_p0);
+    mpfr_clear(in_V_lo);
+    mpfr_clear(in_V_hi);
 
     // Clear neuron parameters
-    mpfr_clear(GL);
-    mpfr_clear(GCa);
-    mpfr_clear(GK);
-    mpfr_clear(VL);
-    mpfr_clear(VCa);
-    mpfr_clear(VK);
-    mpfr_clear(V1);
-    mpfr_clear(V2);
-    mpfr_clear(V3);
-    mpfr_clear(V4);
-    mpfr_clear(phi);
-    mpfr_clear(C);
+    mpfr_clear(nrn_GL);
+    mpfr_clear(nrn_GCa);
+    mpfr_clear(nrn_GK);
+    mpfr_clear(nrn_VL);
+    mpfr_clear(nrn_VCa);
+    mpfr_clear(nrn_VK);
+    mpfr_clear(nrn_V1);
+    mpfr_clear(nrn_V2);
+    mpfr_clear(nrn_V3);
+    mpfr_clear(nrn_V4);
+    mpfr_clear(nrn_phi);
+    mpfr_clear(nrn_C);
 
-    // Clear excitatory synapse parameters
-    for (i = 0; i < p_syn_exc_size; i++) {
-        mpfr_clear(&(syn_exc_GSyn[i]));
+    // Clear synapse parameters
+    for (i = 0; i < p_syn_size; i++) {
+        mpfr_clear(&(syn_GSyn[i]));
     }
-    mpfr_clear(syn_exc_VSyn);
-    mpfr_clear(syn_exc_thr);
-    mpfr_clear(syn_exc_a);
-    mpfr_clear(syn_exc_b);
-    mpfr_clear(syn_exc_k);
-
-    // Clear inhibitory synapse parameters
-    for (i = 0; i < p_syn_inh_size; i++) {
-        mpfr_clear(&(syn_inh_GSyn[i]));
-    }
-    mpfr_clear(syn_inh_VSyn);
-    mpfr_clear(syn_inh_thr);
-    mpfr_clear(syn_inh_a);
-    mpfr_clear(syn_inh_b);
-    mpfr_clear(syn_inh_k);
+    mpfr_clear(syn_VSyn);
+    mpfr_clear(syn_thr);
+    mpfr_clear(syn_a);
+    mpfr_clear(syn_b);
+    mpfr_clear(syn_k);
 
     // Clear constants
     mpfr_clear(one);
@@ -847,62 +661,38 @@ int main (int argc, char *argv[])
     mpfr_clear(temp2);
     mpfr_clear(M_ss);
     mpfr_clear(N_ss);
-    for (i = 0; i < p_in1_size; i++) {
-        mpfr_clear(&(I1[i]));
-    }
-    for (i = 0; i < p_in2_size; i++) {
-        mpfr_clear(&(I2[i]));
+    for (i = 0; i < p_in_size; i++) {
+        mpfr_clear(&(I[i]));
     }
 
     // Free system state
-    free(nrn1_N);
-    free(nrn1_V);
-    free(nrn2_N);
-    free(nrn2_V);
-    free(syn_exc_R);
-    free(syn_exc_S);
-    free(syn_inh_R);
-    free(syn_inh_S);
+    free(nrn_N);
+    free(nrn_V);
+    free(syn_R);
+    free(syn_S);
 
     // Free other arrays
-    free(d_nrn1_N);
-    free(d_nrn2_N);
-    free(d_nrn1_V);
-    free(d_nrn2_V);
-    free(d_syn_exc_R);
-    free(d_syn_inh_R);
-    free(d_syn_exc_S);
-    free(d_syn_inh_S);
-    free(syn_exc_GSyn);
-    free(syn_inh_GSyn);
-    free(I1);
-    free(I2);
-    free(in1);
-    free(in2);
+    free(d_nrn_N);
+    free(d_nrn_V);
+    free(d_syn_R);
+    free(d_syn_S);
+    free(syn_GSyn);
+    free(I);
+    free(in);
 
     // Clear report files
     file_clear(1, f_time);
     free(f_time);
 
-    file_clear(p_nrn1_size, f_nrn1_N);
-    free(f_nrn1_N);
-    file_clear(p_nrn1_size, f_nrn1_V);
-    free(f_nrn1_V);
+    file_clear(p_nrn_size, f_nrn_N);
+    free(f_nrn_N);
+    file_clear(p_nrn_size, f_nrn_V);
+    free(f_nrn_V);
 
-    /* file_clear(p_nrn2_size, f_nrn2_N); */
-    /* free(f_nrn2_N); */
-    /* file_clear(p_nrn2_size, f_nrn2_V); */
-    /* free(f_nrn2_V); */
-
-    /* file_clear(p_syn_exc_size, f_syn_exc_R); */
-    /* free(f_syn_exc_R); */
-    /* file_clear(p_syn_exc_size, f_syn_exc_S); */
-    /* free(f_syn_exc_S); */
-
-    /* file_clear(p_syn_inh_size, f_syn_inh_R); */
-    /* free(f_syn_inh_R); */
-    /* file_clear(p_syn_inh_size, f_syn_inh_S); */
-    /* free(f_syn_inh_S); */
+    /* file_clear(p_syn_size, f_syn_R); */
+    /* free(f_syn_R); */
+    /* file_clear(p_syn_size, f_syn_S); */
+    /* free(f_syn_S); */
 
     gmp_randclear(rng_uf);
     gmp_randclear(rng_nf);
