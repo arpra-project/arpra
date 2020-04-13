@@ -214,11 +214,11 @@ void arpra_sum_recursive (arpra_range *y, arpra_range *x, arpra_uint n)
 
     // Compute |x|.
     for (i = 0; i < n; i++) {
-        if (mpfr_cmpabs(&(x[i]->true_range.right), &(x[i]->true_range.left)) >= 0) {
-            sum_x[i] = x[i]->true_range.right;
+        if (mpfr_cmpabs(&(x[i].true_range.right), &(x[i].true_range.left)) >= 0) {
+            sum_x[i] = x[i].true_range.right;
         }
         else {
-            sum_x[i] = x[i]->true_range.left;
+            sum_x[i] = x[i].true_range.left;
             sum_x[i]._mpfr_sign = 1;
         }
         sum_x_ptr[i] = &(sum_x[i]);
