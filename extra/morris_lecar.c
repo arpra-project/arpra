@@ -83,7 +83,7 @@
 
 // Poisson input parameters
 #define p_in_size 50
-#define p_in_freq 42.0
+#define p_in_freq 10.0
 #define p_in_V_lo -60.0
 #define p_in_V_hi 20.0
 
@@ -125,8 +125,8 @@
 #define p_syn_size p_in_size * p_nrn_size
 #define p_syn_R0 0.0
 #define p_syn_S0 0.0
-#define p_syn_GSyn_std 0.05
-#define p_syn_GSyn_mean 25.0 / p_in_size
+#define p_syn_GSyn_std 1.0
+#define p_syn_GSyn_mean 150.0 / p_in_size
 #define p_syn_VSyn 0.0
 #define p_syn_thr -50.0
 #define p_syn_a 0.25 // in [1/10, 1/2]

@@ -30,14 +30,14 @@ void arpra_helper_mix_trim (arpra_range *y, mpfi_srcptr ia_range)
     if (arpra_get_range_method() == ARPRA_MIXED_IAAA) {
         // Intersect AA and IA ranges.
         mpfi_intersect(&(y->true_range), &(y->true_range), ia_range);
-        assert(!mpfi_is_empty(&(y->true_range)));
+        //assert(!mpfi_is_empty(&(y->true_range)));
     }
 
     // Mixed trimmed IA/AA method.
     else if (arpra_get_range_method() == ARPRA_MIXED_TRIMMED_IAAA) {
         // Intersect AA and IA ranges.
         mpfi_intersect(&(y->true_range), &(y->true_range), ia_range);
-        assert(!mpfi_is_empty(&(y->true_range)));
+        //assert(!mpfi_is_empty(&(y->true_range)));
 
         // Initialise vars.
         prec_internal = arpra_get_internal_precision();
