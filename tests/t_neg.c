@@ -26,7 +26,7 @@ int main (int argc, char *argv[])
     const arpra_prec prec = 24;
     const arpra_prec prec_internal = 256;
     const arpra_uint test_n = 100000;
-    unsigned i, fail_n;
+    arpra_uint i, fail_n;
 
     FILE *unshared_log;
     unshared_log = fopen("neg_unshared.log", "w");
