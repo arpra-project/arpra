@@ -71,7 +71,8 @@ void arpra_helper_mpfr_rnderr (mpfr_ptr err, mpfr_rnd_t rnd, mpfr_srcptr y)
 
 
 
-void arpra_helper_term_mul (mpfr_ptr error, mpfr_ptr y, mpfr_srcptr x1, mpfi_srcptr alpha)
+void arpra_helper_term_mul (mpfr_ptr error, mpfr_ptr y, mpfr_srcptr x1,
+                            mpfi_srcptr alpha)
 {
     mpfr_t temp1, temp2;
     mpfi_t y_range;
@@ -87,13 +88,13 @@ void arpra_helper_term_mul (mpfr_ptr error, mpfr_ptr y, mpfr_srcptr x1, mpfi_src
     mpfi_mul_fr(y_range, alpha, x1);
 
     // y mid
-    mpfr_div_ui(temp1, &(y_range.left), 2, MPFR_RNDD);
-    mpfr_div_ui(temp2, &(y_range.right), 2, MPFR_RNDU);
+    mpfr_div_ui(temp1, &(y_range->left), 2, MPFR_RNDD);
+    mpfr_div_ui(temp2, &(y_range->right), 2, MPFR_RNDU);
     mpfr_add(y, temp1, temp2, MPFR_RNDN);
 
     // y rad
-    mpfr_sub(temp1, y, &(y_range.left), MPFR_RNDU);
-    mpfr_sub(temp2, &(y_range.right), y, MPFR_RNDU);
+    mpfr_sub(temp1, y, &(y_range->left), MPFR_RNDU);
+    mpfr_sub(temp2, &(y_range->right), y, MPFR_RNDU);
     mpfr_max(temp1, temp1, temp2, MPFR_RNDU);
     mpfr_add(error, error, temp1, MPFR_RNDU);
 
@@ -125,13 +126,13 @@ void arpra_helper_term_fma (mpfr_ptr error, mpfr_ptr y, mpfr_srcptr x1,
     mpfi_add(y_range, alpha_x1, gamma);
 
     // y mid
-    mpfr_div_ui(temp1, &(y_range.left), 2, MPFR_RNDD);
-    mpfr_div_ui(temp2, &(y_range.right), 2, MPFR_RNDU);
+    mpfr_div_ui(temp1, &(y_range->left), 2, MPFR_RNDD);
+    mpfr_div_ui(temp2, &(y_range->right), 2, MPFR_RNDU);
     mpfr_add(y, temp1, temp2, MPFR_RNDN);
 
     // y rad
-    mpfr_sub(temp1, y, &(y_range.left), MPFR_RNDU);
-    mpfr_sub(temp2, &(y_range.right), y, MPFR_RNDU);
+    mpfr_sub(temp1, y, &(y_range->left), MPFR_RNDU);
+    mpfr_sub(temp2, &(y_range->right), y, MPFR_RNDU);
     mpfr_max(temp1, temp1, temp2, MPFR_RNDU);
     mpfr_add(error, error, temp1, MPFR_RNDU);
 
@@ -166,13 +167,13 @@ void arpra_helper_term_fmma (mpfr_ptr error, mpfr_ptr y, mpfr_srcptr x1, mpfr_sr
     mpfi_add(y_range, alpha_x1, beta_x2);
 
     // y mid
-    mpfr_div_ui(temp1, &(y_range.left), 2, MPFR_RNDD);
-    mpfr_div_ui(temp2, &(y_range.right), 2, MPFR_RNDU);
+    mpfr_div_ui(temp1, &(y_range->left), 2, MPFR_RNDD);
+    mpfr_div_ui(temp2, &(y_range->right), 2, MPFR_RNDU);
     mpfr_add(y, temp1, temp2, MPFR_RNDN);
 
     // y rad
-    mpfr_sub(temp1, y, &(y_range.left), MPFR_RNDU);
-    mpfr_sub(temp2, &(y_range.right), y, MPFR_RNDU);
+    mpfr_sub(temp1, y, &(y_range->left), MPFR_RNDU);
+    mpfr_sub(temp2, &(y_range->right), y, MPFR_RNDU);
     mpfr_max(temp1, temp1, temp2, MPFR_RNDU);
     mpfr_add(error, error, temp1, MPFR_RNDU);
 
@@ -205,17 +206,17 @@ void arpra_helper_term_fmmaa (mpfr_ptr error, mpfr_ptr y, mpfr_srcptr x1, mpfr_s
     // y = (alpha * x1) + (beta * x2) + (gamma)
     mpfi_mul_fr(alpha_x1, alpha, x1);
     mpfi_mul_fr(beta_x2, beta, x2);
-    mpfr_sum(&(y_range.left), (mpfr_ptr[3]) {&(alpha_x1.left), &(beta_x2.left), &(gamma.left)}, 3, MPFR_RNDD);
-    mpfr_sum(&(y_range.right), (mpfr_ptr[3]) {&(alpha_x1.right), &(beta_x2.right), &(gamma.right)}, 3, MPFR_RNDU);
+    mpfr_sum(&(y_range->left), (mpfr_ptr[3]) {&(alpha_x1->left), &(beta_x2->left), (mpfr_ptr) &(gamma->left)}, 3, MPFR_RNDD);
+    mpfr_sum(&(y_range->right), (mpfr_ptr[3]) {&(alpha_x1->right), &(beta_x2->right), (mpfr_ptr) &(gamma->right)}, 3, MPFR_RNDU);
 
     // y mid
-    mpfr_div_ui(temp1, &(y_range.left), 2, MPFR_RNDD);
-    mpfr_div_ui(temp2, &(y_range.right), 2, MPFR_RNDU);
+    mpfr_div_ui(temp1, &(y_range->left), 2, MPFR_RNDD);
+    mpfr_div_ui(temp2, &(y_range->right), 2, MPFR_RNDU);
     mpfr_add(y, temp1, temp2, MPFR_RNDN);
 
     // y rad
-    mpfr_sub(temp1, y, &(y_range.left), MPFR_RNDU);
-    mpfr_sub(temp2, &(y_range.right), y, MPFR_RNDU);
+    mpfr_sub(temp1, y, &(y_range->left), MPFR_RNDU);
+    mpfr_sub(temp2, &(y_range->right), y, MPFR_RNDU);
     mpfr_max(temp1, temp1, temp2, MPFR_RNDU);
     mpfr_add(error, error, temp1, MPFR_RNDU);
 

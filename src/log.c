@@ -27,10 +27,12 @@
 
 void arpra_log (arpra_range *y, const arpra_range *x1)
 {
-    mpfi_t ia_range;
-    mpfr_t alpha, gamma, delta;
-    mpfr_t diff1, diff2, diff3;
-    mpfr_t temp1, temp2;
+    mpfi_t ia_range_working_prec, ia_range_internal_prec;
+    mpfi_t alpha, gamma;
+    mpfr_t delta;
+    mpfi_t diff1, diff2, diff3;
+    mpfi_srcptr diff_boundary;
+    mpfi_t temp1, temp2;
     arpra_prec prec_internal;
 
     // Domain violations:
@@ -52,51 +54,62 @@ void arpra_log (arpra_range *y, const arpra_range *x1)
 
     // Initialise vars.
     prec_internal = arpra_get_internal_precision();
-    mpfi_init2(ia_range, y->precision);
-    mpfr_init2(alpha, prec_internal);
-    mpfr_init2(gamma, prec_internal);
+    mpfi_init2(ia_range_working_prec, y->precision);
+    mpfi_init2(ia_range_internal_prec, prec_internal);
+    mpfi_init2(alpha, prec_internal);
+    mpfi_init2(gamma, prec_internal);
     mpfr_init2(delta, prec_internal);
-    mpfr_init2(diff1, prec_internal);
-    mpfr_init2(diff2, prec_internal);
-    mpfr_init2(diff3, prec_internal);
-    mpfr_init2(temp1, prec_internal);
-    mpfr_init2(temp2, prec_internal);
+    mpfi_init2(diff1, prec_internal);
+    mpfi_init2(diff2, prec_internal);
+    mpfi_init2(diff3, prec_internal);
+    mpfi_init2(temp1, prec_internal);
+    mpfi_init2(temp2, prec_internal);
+
+    mpfi_log(ia_range_internal_prec, &(x1->true_range));
 
     // compute alpha
-    mpfr_log(alpha, &(x1->true_range.right), MPFR_RNDN);
-    mpfr_log(temp1, &(x1->true_range.left), MPFR_RNDN);
-    mpfr_sub(alpha, alpha, temp1, MPFR_RNDN);
-    mpfr_sub(temp1, &(x1->true_range.right), &(x1->true_range.left), MPFR_RNDN);
-    mpfr_div(alpha, alpha, temp1, MPFR_RNDN);
+    mpfi_set_fr(temp1, &(ia_range_internal_prec->left));
+    mpfi_set_fr(temp2, &(ia_range_internal_prec->right));
+    mpfi_sub(alpha, temp2, temp1);
+    mpfi_set_fr(temp1, &(x1->true_range.left));
+    mpfi_set_fr(temp2, &(x1->true_range.right));
+    mpfi_sub(temp1, temp2, temp1);
+    mpfi_div(alpha, alpha, temp1);
 
     // compute difference (log(a) - alpha a)
-    mpfr_mul(diff1, alpha, &(x1->true_range.left), MPFR_RNDU);
-    mpfr_log(temp1, &(x1->true_range.left), MPFR_RNDD);
-    mpfr_sub(diff1, temp1, diff1, MPFR_RNDD);
+    mpfi_set_fr(temp1, &(ia_range_internal_prec->left));
+    mpfi_mul_fr(temp2, alpha, &(x1->true_range.left));
+    mpfi_sub(diff1, temp1, temp2);
 
     // compute difference (log(b) - alpha b)
-    mpfr_mul(diff3, alpha, &(x1->true_range.right), MPFR_RNDU);
-    mpfr_log(temp1, &(x1->true_range.right), MPFR_RNDD);
-    mpfr_sub(diff3, temp1, diff3, MPFR_RNDD);
+    mpfi_set_fr(temp1, &(ia_range_internal_prec->right));
+    mpfi_mul_fr(temp2, alpha, &(x1->true_range.right));
+    mpfi_sub(diff3, temp1, temp2);
 
-    mpfr_min(diff1, diff1, diff3, MPFR_RNDD);
+    // min of boundary diffs
+    if (mpfr_less_p(&(diff1->right), &(diff3->right))) {
+        diff_boundary = diff1;
+    }
+    else {
+        diff_boundary = diff3;
+    }
 
     // compute difference (log(u) - alpha u)
-    mpfr_ui_div(diff2, 1, alpha, MPFR_RNDU);
-    mpfr_log(diff2, diff2, MPFR_RNDU);
-    mpfr_sub_si(diff2, diff2, 1, MPFR_RNDU);
+    mpfi_si_div(diff2, 1, alpha);
+    mpfi_log(diff2, diff2);
+    mpfi_sub_si(diff2, diff2, 1);
 
     // compute gamma
-    mpfr_add(gamma, diff1, diff2, MPFR_RNDN);
-    mpfr_div_si(gamma, gamma, 2, MPFR_RNDN);
+    mpfi_add(gamma, diff_boundary, diff2);
+    mpfi_div_si(gamma, gamma, 2);
 
     // compute delta
-    mpfr_sub(delta, diff2, gamma, MPFR_RNDU);
-    mpfr_sub(temp1, gamma, diff1, MPFR_RNDU);
-    mpfr_max(delta, delta, temp1, MPFR_RNDU);
+    mpfi_sub(temp1, diff2, gamma);
+    mpfi_sub(temp2, gamma, diff_boundary);
+    mpfr_max(delta, &(temp1->right), &(temp2->right), MPFR_RNDU);
 
     // MPFI natural logarithm
-    mpfi_log(ia_range, &(x1->true_range));
+    mpfi_log(ia_range_working_prec, &(x1->true_range));
 
     // compute affine approximation
     arpra_helper_affine_1(y, x1, alpha, gamma, delta);
@@ -105,19 +118,20 @@ void arpra_log (arpra_range *y, const arpra_range *x1)
     arpra_helper_compute_range(y);
 
     // Mix with IA range, and trim error term.
-    arpra_helper_mix_trim(y, ia_range);
+    arpra_helper_mix_trim(y, ia_range_working_prec);
 
     // Check for NaN and Inf.
     arpra_helper_check_result(y);
 
     // Clear vars.
-    mpfi_clear(ia_range);
-    mpfr_clear(alpha);
-    mpfr_clear(gamma);
+    mpfi_clear(ia_range_working_prec);
+    mpfi_clear(ia_range_internal_prec);
+    mpfi_clear(alpha);
+    mpfi_clear(gamma);
     mpfr_clear(delta);
-    mpfr_clear(diff1);
-    mpfr_clear(diff2);
-    mpfr_clear(diff3);
-    mpfr_clear(temp1);
-    mpfr_clear(temp2);
+    mpfi_clear(diff1);
+    mpfi_clear(diff2);
+    mpfi_clear(diff3);
+    mpfi_clear(temp1);
+    mpfi_clear(temp2);
 }
