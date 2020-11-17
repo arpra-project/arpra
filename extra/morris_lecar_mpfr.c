@@ -514,8 +514,7 @@ int main (int argc, char *argv[])
 
     // Set synapse parameters
     for (i = 0; i < p_syn_size; i++) {
-        //mpfr_nrandom(rand_nf, rng_nf, MPFR_RNDN);
-        mpfr_grandom(rand_nf, NULL, rng_nf, MPFR_RNDN);
+        mpfr_nrandom(rand_nf, rng_nf, MPFR_RNDN);
         mpfr_mul_d(rand_nf, rand_nf, p_syn_GSyn_std, MPFR_RNDN);
         mpfr_add_d(&(syn_GSyn[i]), rand_nf, p_syn_GSyn_mean, MPFR_RNDN);
     }
