@@ -79,33 +79,35 @@ void arpra_inv (arpra_range *y, const arpra_range *x1)
         mpfi_set(x1_range, &(x1->true_range));
     }
 
-//#if ARPRA_MIN_RANGE
-    /* // compute alpha */
-    /* mpfr_si_div(alpha, -1, &(x1_range->right), MPFR_RNDN); */
-    /* mpfr_div(alpha, alpha, &(x1_range->right), MPFR_RNDN); */
-
-    /* // compute difference (1/a - alpha a) */
-    /* mpfr_mul(diff1, alpha, &(x1_range->left), MPFR_RNDD); */
-    /* mpfr_ui_div(temp1, 1, &(x1_range->left), MPFR_RNDU); */
-    /* mpfr_sub(diff1, temp1, diff1, MPFR_RNDU); */
-
-    /* // compute difference (1/b - alpha b) */
-    /* mpfr_mul(diff3, alpha, &(x1_range->right), MPFR_RNDU); */
-    /* mpfr_ui_div(temp1, 1, &(x1_range->right), MPFR_RNDD); */
-    /* mpfr_sub(diff3, temp1, diff3, MPFR_RNDD); */
-
-    /* // compute gamma */
-    /* mpfr_add(gamma, diff1, diff3, MPFR_RNDN); */
-    /* mpfr_div_si(gamma, gamma, 2, MPFR_RNDN); */
-
-    /* // compute delta */
-    /* mpfr_sub(delta, gamma, diff3, MPFR_RNDU); */
-    /* mpfr_sub(temp1, diff1, gamma, MPFR_RNDU); */
-    /* mpfr_max(delta, delta, temp1, MPFR_RNDU); */
-
-//#else
-
     mpfi_inv(ia_range_internal_prec, x1_range);
+
+#if ARPRA_MIN_RANGE
+
+    // compute alpha
+    mpfi_set_fr(temp1, &(x1_range->right));
+    mpfi_si_div(temp1, -1, temp1);
+    mpfi_div_fr(alpha, temp1, &(x1_range->right));
+
+    // compute difference (1/a - alpha a)
+    mpfi_set_fr(temp1, &(ia_range_internal_prec->right));
+    mpfi_mul_fr(temp2, alpha, &(x1_range->left));
+    mpfi_sub(diff1, temp1, temp2);
+
+    // compute difference (1/b - alpha b)
+    mpfi_set_fr(temp1, &(ia_range_internal_prec->left));
+    mpfi_mul_fr(temp2, alpha, &(x1_range->right));
+    mpfi_sub(diff3, temp1, temp2);
+
+    // compute gamma
+    mpfi_add(gamma, diff1, diff3);
+    mpfi_div_si(gamma, gamma, 2);
+
+    // compute delta
+    mpfi_sub(temp1, gamma, diff3);
+    mpfi_sub(temp2, diff1, gamma);
+    mpfr_max(delta, &(temp1->right), &(temp2->right), MPFR_RNDU);
+
+#else
 
     // compute alpha
     mpfi_set_fr(temp1, &(x1_range->right));
@@ -135,8 +137,6 @@ void arpra_inv (arpra_range *y, const arpra_range *x1)
     mpfi_sqrt(temp1, temp1);
     mpfi_mul_si(diff2, temp1, 2);
 
-
-
     // compute gamma
     mpfi_add(gamma, diff_boundary, diff2);
     mpfi_div_si(gamma, gamma, 2);
@@ -146,7 +146,7 @@ void arpra_inv (arpra_range *y, const arpra_range *x1)
     mpfi_sub(temp2, diff_boundary, gamma);
     mpfr_max(delta, &(temp1->right), &(temp2->right), MPFR_RNDU);
 
-//#endif // ARPRA_MIN_RANGE
+#endif // ARPRA_MIN_RANGE
 
     if (sign < 0) {
         mpfi_neg(gamma, gamma);

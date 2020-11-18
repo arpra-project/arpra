@@ -68,32 +68,33 @@ void arpra_exp (arpra_range *y, const arpra_range *x1)
     mpfi_init2(temp1, prec_internal);
     mpfi_init2(temp2, prec_internal);
 
-//#if ARPRA_MIN_RANGE
-    /* // compute alpha */
-    /* mpfr_exp(alpha, &(x1->true_range.left), MPFR_RNDN); */
-
-    /* // compute difference (exp(a) - alpha a) */
-    /* mpfr_mul(diff1, alpha, &(x1->true_range.left), MPFR_RNDU); */
-    /* mpfr_exp(temp1, &(x1->true_range.left), MPFR_RNDD); */
-    /* mpfr_sub(diff1, temp1, diff1, MPFR_RNDD); */
-
-    /* // compute difference (exp(b) - alpha b) */
-    /* mpfr_mul(diff3, alpha, &(x1->true_range.right), MPFR_RNDD); */
-    /* mpfr_exp(temp1, &(x1->true_range.right), MPFR_RNDU); */
-    /* mpfr_sub(diff3, temp1, diff3, MPFR_RNDU); */
-
-    /* // compute gamma */
-    /* mpfr_add(gamma, diff1, diff3, MPFR_RNDN); */
-    /* mpfr_div_si(gamma, gamma, 2, MPFR_RNDN); */
-
-    /* // compute delta */
-    /* mpfr_sub(delta, gamma, diff1, MPFR_RNDU); */
-    /* mpfr_sub(temp1, diff3, gamma, MPFR_RNDU); */
-    /* mpfr_max(delta, delta, temp1, MPFR_RNDU); */
-
-//#else
-
     mpfi_exp(ia_range_internal_prec, &(x1->true_range));
+
+#if ARPRA_MIN_RANGE
+
+    // compute alpha
+    mpfi_set_fr(alpha, &(ia_range_internal_prec->left));
+
+    // compute difference (exp(a) - alpha a)
+    mpfi_set_fr(temp1, &(ia_range_internal_prec->left));
+    mpfi_mul_fr(temp2, alpha, &(x1->true_range.left));
+    mpfi_sub(diff1, temp1, temp2);
+
+    // compute difference (exp(b) - alpha b)
+    mpfi_set_fr(temp1, &(ia_range_internal_prec->right));
+    mpfi_mul_fr(temp2, alpha, &(x1->true_range.right));
+    mpfi_sub(diff3, temp1, temp2);
+
+    // compute gamma
+    mpfi_add(gamma, diff1, diff3);
+    mpfi_div_si(gamma, gamma, 2);
+
+    // compute delta
+    mpfi_sub(temp1, gamma, diff1);
+    mpfi_sub(temp2, diff3, gamma);
+    mpfr_max(delta, &(temp1->right), &(temp2->right), MPFR_RNDU);
+
+#else
 
     // compute alpha
     mpfi_set_fr(temp1, &(ia_range_internal_prec->left));
@@ -137,7 +138,7 @@ void arpra_exp (arpra_range *y, const arpra_range *x1)
     mpfi_sub(temp2, diff_boundary, gamma);
     mpfr_max(delta, &(temp1->right), &(temp2->right), MPFR_RNDU);
 
-//#endif // ARPRA_MIN_RANGE
+#endif // ARPRA_MIN_RANGE
 
     // MPFI exponential
     mpfi_exp(ia_range_working_prec, &(x1->true_range));
