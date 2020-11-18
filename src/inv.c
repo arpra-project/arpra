@@ -31,7 +31,7 @@ void arpra_inv (arpra_range *y, const arpra_range *x1)
     mpfi_t alpha, gamma;
     mpfr_t delta;
     mpfi_t diff1, diff2, diff3;
-    mpfi_srcptr diff_boundary;
+    mpfi_srcptr diff_lo, diff_hi;
     mpfi_t temp1, temp2;
     arpra_prec prec_internal;
     int sign;
@@ -98,14 +98,9 @@ void arpra_inv (arpra_range *y, const arpra_range *x1)
     mpfi_mul_fr(temp2, alpha, &(x1_range->right));
     mpfi_sub(diff3, temp1, temp2);
 
-    // compute gamma
-    mpfi_add(gamma, diff1, diff3);
-    mpfi_div_si(gamma, gamma, 2);
-
-    // compute delta
-    mpfi_sub(temp1, gamma, diff3);
-    mpfi_sub(temp2, diff1, gamma);
-    mpfr_max(delta, &(temp1->right), &(temp2->right), MPFR_RNDU);
+    // min and max difference
+    diff_lo = diff3;
+    diff_hi = diff1;
 
 #else
 
@@ -124,29 +119,25 @@ void arpra_inv (arpra_range *y, const arpra_range *x1)
     mpfi_mul_fr(temp2, alpha, &(x1_range->right));
     mpfi_sub(diff3, temp1, temp2);
 
-    // max of boundary diffs
-    if (mpfr_greater_p(&(diff1->right), &(diff3->right))) {
-        diff_boundary = diff1;
-    }
-    else {
-        diff_boundary = diff3;
-    }
-
     // compute difference (1/u - alpha u)
     mpfi_neg(temp1, alpha);
     mpfi_sqrt(temp1, temp1);
     mpfi_mul_si(diff2, temp1, 2);
 
+    // min and max difference
+    diff_lo = diff2;
+    diff_hi = mpfr_greater_p(&(diff1->right), &(diff3->right)) ? diff1 : diff3;
+
+#endif // ARPRA_MIN_RANGE
+
     // compute gamma
-    mpfi_add(gamma, diff_boundary, diff2);
+    mpfi_add(gamma, diff_lo, diff_hi);
     mpfi_div_si(gamma, gamma, 2);
 
     // compute delta
-    mpfi_sub(temp1, gamma, diff2);
-    mpfi_sub(temp2, diff_boundary, gamma);
+    mpfi_sub(temp1, gamma, diff_lo);
+    mpfi_sub(temp2, diff_hi, gamma);
     mpfr_max(delta, &(temp1->right), &(temp2->right), MPFR_RNDU);
-
-#endif // ARPRA_MIN_RANGE
 
     if (sign < 0) {
         mpfi_neg(gamma, gamma);

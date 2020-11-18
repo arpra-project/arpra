@@ -31,7 +31,7 @@ void arpra_log (arpra_range *y, const arpra_range *x1)
     mpfi_t alpha, gamma;
     mpfr_t delta;
     mpfi_t diff1, diff2, diff3;
-    mpfi_srcptr diff_boundary;
+    mpfi_srcptr diff_lo, diff_hi;
     mpfi_t temp1, temp2;
     arpra_prec prec_internal;
 
@@ -86,26 +86,22 @@ void arpra_log (arpra_range *y, const arpra_range *x1)
     mpfi_mul_fr(temp2, alpha, &(x1->true_range.right));
     mpfi_sub(diff3, temp1, temp2);
 
-    // min of boundary diffs
-    if (mpfr_less_p(&(diff1->right), &(diff3->right))) {
-        diff_boundary = diff1;
-    }
-    else {
-        diff_boundary = diff3;
-    }
-
     // compute difference (log(u) - alpha u)
     mpfi_si_div(diff2, 1, alpha);
     mpfi_log(diff2, diff2);
     mpfi_sub_si(diff2, diff2, 1);
 
+    // min and max difference
+    diff_lo = mpfr_less_p(&(diff1->left), &(diff3->left)) ? diff1 : diff3;
+    diff_hi = diff2;
+
     // compute gamma
-    mpfi_add(gamma, diff_boundary, diff2);
+    mpfi_add(gamma, diff_lo, diff_hi);
     mpfi_div_si(gamma, gamma, 2);
 
     // compute delta
-    mpfi_sub(temp1, diff2, gamma);
-    mpfi_sub(temp2, gamma, diff_boundary);
+    mpfi_sub(temp1, gamma, diff_lo);
+    mpfi_sub(temp2, diff_hi, gamma);
     mpfr_max(delta, &(temp1->right), &(temp2->right), MPFR_RNDU);
 
     // MPFI natural logarithm
