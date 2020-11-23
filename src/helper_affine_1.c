@@ -22,7 +22,7 @@
 #include "arpra-impl.h"
 
 void arpra_helper_affine_1 (arpra_range *y, const arpra_range *x1,
-                            mpfr_srcptr alpha, mpfr_srcptr gamma, mpfr_srcptr delta)
+                            mpfi_srcptr alpha, mpfi_srcptr gamma, mpfr_srcptr delta)
 {
     mpfr_t temp, error;
     arpra_range yy;
@@ -37,7 +37,7 @@ void arpra_helper_affine_1 (arpra_range *y, const arpra_range *x1,
     mpfr_set_zero(error, 1);
 
     // y[0] = (alpha * x1[0]) + (gamma)
-    ARPRA_MPFR_RNDERR_FMA(error, MPFR_RNDN, &(yy.centre), alpha, &(x1->centre), gamma);
+    arpra_helper_term_fma(error, &(yy.centre), &(x1->centre), alpha, gamma);
 
     // Allocate memory for deviation terms.
     yy.symbols = malloc((x1->nTerms + 1) * sizeof(arpra_uint));
@@ -48,7 +48,7 @@ void arpra_helper_affine_1 (arpra_range *y, const arpra_range *x1,
 
         // y[i] = (alpha * x1[i])
         yy.symbols[i_y] = x1->symbols[i_y];
-        ARPRA_MPFR_RNDERR_MUL(error, MPFR_RNDN, &(yy.deviations[i_y]), alpha, &(x1->deviations[i_y]));
+        arpra_helper_term_mul(error, &(yy.deviations[i_y]), &(x1->deviations[i_y]), alpha);
     }
 
     // Add delta to error.

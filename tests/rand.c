@@ -26,7 +26,7 @@ gmp_randstate_t test_randstate;
 
 void test_rand_init ()
 {
-    unsigned long int seed;
+    long int seed;
     char *environment_seed;
 
     // Ensure that we do not double-initialise.

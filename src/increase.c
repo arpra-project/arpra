@@ -24,7 +24,7 @@
 void arpra_increase (arpra_range *y, const arpra_range *x1, mpfr_srcptr delta)
 {
     mpfi_t ia_range;
-    mpfr_t alpha, gamma;
+    mpfi_t alpha, gamma;
 
     // Domain violations:
     // increase(NaN) = (NaN)
@@ -42,10 +42,10 @@ void arpra_increase (arpra_range *y, const arpra_range *x1, mpfr_srcptr delta)
 
     // Initialise vars.
     mpfi_init2(ia_range, y->precision);
-    mpfr_init2(alpha, 2);
-    mpfr_init2(gamma, 2);
-    mpfr_set_si(alpha, 1, MPFR_RNDN);
-    mpfr_set_zero(gamma, 1);
+    mpfi_init2(alpha, 2);
+    mpfi_init2(gamma, 2);
+    mpfi_set_si(alpha, 1);
+    mpfi_set_si(gamma, 0);
 
     // MPFI increase
     mpfi_set(ia_range, &(x1->true_range));
@@ -65,6 +65,6 @@ void arpra_increase (arpra_range *y, const arpra_range *x1, mpfr_srcptr delta)
 
     // Clear vars.
     mpfi_clear(ia_range);
-    mpfr_clear(alpha);
-    mpfr_clear(gamma);
+    mpfi_clear(alpha);
+    mpfi_clear(gamma);
 }

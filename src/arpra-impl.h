@@ -51,10 +51,26 @@
 #define ARPRA_BUFFER_RESIZE_FACTOR 256
 
 // Internal auxiliary functions.
+
+
 void arpra_helper_affine_1 (arpra_range *y, const arpra_range *x1,
-                            mpfr_srcptr alpha, mpfr_srcptr gamma, mpfr_srcptr delta);
+                            mpfi_srcptr alpha, mpfi_srcptr gamma, mpfr_srcptr delta);
+
 void arpra_helper_affine_2 (arpra_range *y, const arpra_range *x1, const arpra_range *x2,
-                             mpfr_srcptr alpha, mpfr_srcptr beta, mpfr_srcptr gamma, mpfr_srcptr delta);
+                            mpfi_srcptr alpha, mpfi_srcptr beta, mpfi_srcptr gamma, mpfr_srcptr delta);
+
+
+void arpra_helper_term_mul (mpfr_ptr error, mpfr_ptr y, mpfr_srcptr x1,
+                            mpfi_srcptr alpha);
+void arpra_helper_term_fma (mpfr_ptr error, mpfr_ptr y, mpfr_srcptr x1,
+                            mpfi_srcptr alpha, mpfi_srcptr gamma);
+void arpra_helper_term_fmma (mpfr_ptr error, mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2,
+                             mpfi_srcptr alpha, mpfi_srcptr beta);
+void arpra_helper_term_fmmaa (mpfr_ptr error, mpfr_ptr y, mpfr_srcptr x1, mpfr_srcptr x2,
+                              mpfi_srcptr alpha, mpfi_srcptr beta, mpfi_srcptr gamma);
+
+
+
 void arpra_helper_mpfr_rnderr (mpfr_ptr err, mpfr_rnd_t rnd, mpfr_srcptr y);
 void arpra_helper_compute_range (arpra_range *y);
 void arpra_helper_mix_trim (arpra_range *y, mpfi_srcptr ia_range);

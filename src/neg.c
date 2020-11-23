@@ -24,7 +24,8 @@
 void arpra_neg (arpra_range *y, const arpra_range *x1)
 {
     mpfi_t ia_range;
-    mpfr_t alpha, gamma, delta;
+    mpfi_t alpha, gamma;
+    mpfr_t delta;
 
     // Domain violations:
     // -(NaN) = (NaN)
@@ -42,11 +43,11 @@ void arpra_neg (arpra_range *y, const arpra_range *x1)
 
     // Initialise vars.
     mpfi_init2(ia_range, y->precision);
-    mpfr_init2(alpha, 2);
-    mpfr_init2(gamma, 2);
+    mpfi_init2(alpha, 2);
+    mpfi_init2(gamma, 2);
     mpfr_init2(delta, 2);
-    mpfr_set_si(alpha, -1, MPFR_RNDN);
-    mpfr_set_zero(gamma, 1);
+    mpfi_set_si(alpha, -1);
+    mpfi_set_si(gamma, 0);
     mpfr_set_zero(delta, 1);
 
     // MPFI negation
@@ -66,7 +67,7 @@ void arpra_neg (arpra_range *y, const arpra_range *x1)
 
     // Clear vars.
     mpfi_clear(ia_range);
-    mpfr_clear(alpha);
-    mpfr_clear(gamma);
+    mpfi_clear(alpha);
+    mpfi_clear(gamma);
     mpfr_clear(delta);
 }

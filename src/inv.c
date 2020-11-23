@@ -27,10 +27,12 @@
 
 void arpra_inv (arpra_range *y, const arpra_range *x1)
 {
-    mpfi_t ia_range, x1_range;
-    mpfr_t alpha, gamma, delta;
-    mpfr_t diff1, diff2, diff3;
-    mpfr_t temp1, temp2;
+    mpfi_t ia_range_working_prec, ia_range_internal_prec, x1_range;
+    mpfi_t alpha, gamma;
+    mpfr_t delta;
+    mpfi_t diff1, diff2, diff3;
+    mpfi_srcptr diff_lo, diff_hi;
+    mpfi_t temp1, temp2;
     arpra_prec prec_internal;
     int sign;
 
@@ -57,89 +59,92 @@ void arpra_inv (arpra_range *y, const arpra_range *x1)
 
     // Initialise vars.
     prec_internal = arpra_get_internal_precision();
-    mpfi_init2(ia_range, y->precision);
+    mpfi_init2(ia_range_working_prec, y->precision);
+    mpfi_init2(ia_range_internal_prec, prec_internal);
     mpfi_init2(x1_range, x1->precision);
-    mpfr_init2(alpha, prec_internal);
-    mpfr_init2(gamma, prec_internal);
+    mpfi_init2(alpha, prec_internal);
+    mpfi_init2(gamma, prec_internal);
     mpfr_init2(delta, prec_internal);
-    mpfr_init2(diff1, prec_internal);
-    mpfr_init2(diff2, prec_internal);
-    mpfr_init2(diff3, prec_internal);
-    mpfr_init2(temp1, prec_internal);
-    mpfr_init2(temp2, prec_internal);
+    mpfi_init2(diff1, prec_internal);
+    mpfi_init2(diff2, prec_internal);
+    mpfi_init2(diff3, prec_internal);
+    mpfi_init2(temp1, prec_internal);
+    mpfi_init2(temp2, prec_internal);
 
     sign = mpfr_sgn(&(x1->true_range.left));
     if (sign < 0) {
-        mpfr_neg(&(x1_range->left), &(x1->true_range.right), MPFR_RNDD);
-        mpfr_neg(&(x1_range->right), &(x1->true_range.left), MPFR_RNDU);
+        mpfi_neg(x1_range, &(x1->true_range));
     }
     else {
         mpfi_set(x1_range, &(x1->true_range));
     }
 
+    mpfi_inv(ia_range_internal_prec, x1_range);
+
 #if ARPRA_MIN_RANGE
+
     // compute alpha
-    mpfr_si_div(alpha, -1, &(x1_range->right), MPFR_RNDN);
-    mpfr_div(alpha, alpha, &(x1_range->right), MPFR_RNDN);
+    mpfi_set_fr(temp1, &(x1_range->right));
+    mpfi_si_div(temp1, -1, temp1);
+    mpfi_div_fr(alpha, temp1, &(x1_range->right));
 
     // compute difference (1/a - alpha a)
-    mpfr_mul(diff1, alpha, &(x1_range->left), MPFR_RNDD);
-    mpfr_ui_div(temp1, 1, &(x1_range->left), MPFR_RNDU);
-    mpfr_sub(diff1, temp1, diff1, MPFR_RNDU);
+    mpfi_set_fr(temp1, &(ia_range_internal_prec->right));
+    mpfi_mul_fr(temp2, alpha, &(x1_range->left));
+    mpfi_sub(diff1, temp1, temp2);
 
     // compute difference (1/b - alpha b)
-    mpfr_mul(diff3, alpha, &(x1_range->right), MPFR_RNDU);
-    mpfr_ui_div(temp1, 1, &(x1_range->right), MPFR_RNDD);
-    mpfr_sub(diff3, temp1, diff3, MPFR_RNDD);
+    mpfi_set_fr(temp1, &(ia_range_internal_prec->left));
+    mpfi_mul_fr(temp2, alpha, &(x1_range->right));
+    mpfi_sub(diff3, temp1, temp2);
 
-    // compute gamma
-    mpfr_add(gamma, diff1, diff3, MPFR_RNDN);
-    mpfr_div_si(gamma, gamma, 2, MPFR_RNDN);
-
-    // compute delta
-    mpfr_sub(delta, gamma, diff3, MPFR_RNDU);
-    mpfr_sub(temp1, diff1, gamma, MPFR_RNDU);
-    mpfr_max(delta, delta, temp1, MPFR_RNDU);
+    // min and max difference
+    diff_lo = diff3;
+    diff_hi = diff1;
 
 #else
+
     // compute alpha
-    mpfr_si_div(alpha, -1, &(x1_range->right), MPFR_RNDN);
-    mpfr_div(alpha, alpha, &(x1_range->left), MPFR_RNDN);
+    mpfi_set_fr(temp1, &(x1_range->right));
+    mpfi_si_div(temp1, -1, temp1);
+    mpfi_div_fr(alpha, temp1, &(x1_range->left));
 
     // compute difference (1/a - alpha a)
-    mpfr_mul(diff1, alpha, &(x1_range->left), MPFR_RNDD);
-    mpfr_ui_div(temp1, 1, &(x1_range->left), MPFR_RNDU);
-    mpfr_sub(diff1, temp1, diff1, MPFR_RNDU);
+    mpfi_set_fr(temp1, &(ia_range_internal_prec->right));
+    mpfi_mul_fr(temp2, alpha, &(x1_range->left));
+    mpfi_sub(diff1, temp1, temp2);
 
     // compute difference (1/b - alpha b)
-    mpfr_mul(diff3, alpha, &(x1_range->right), MPFR_RNDD);
-    mpfr_ui_div(temp1, 1, &(x1_range->right), MPFR_RNDU);
-    mpfr_sub(diff3, temp1, diff3, MPFR_RNDU);
-
-    mpfr_max(diff3, diff1, diff3, MPFR_RNDU);
+    mpfi_set_fr(temp1, &(ia_range_internal_prec->left));
+    mpfi_mul_fr(temp2, alpha, &(x1_range->right));
+    mpfi_sub(diff3, temp1, temp2);
 
     // compute difference (1/u - alpha u)
-    mpfr_neg(diff2, alpha, MPFR_RNDN);
-    mpfr_sqrt(diff2, diff2, MPFR_RNDD);
-    mpfr_mul_si(diff2, diff2, 2, MPFR_RNDD);
+    mpfi_neg(temp1, alpha);
+    mpfi_sqrt(temp1, temp1);
+    mpfi_mul_si(diff2, temp1, 2);
 
-    // compute gamma
-    mpfr_add(gamma, diff3, diff2, MPFR_RNDN);
-    mpfr_div_si(gamma, gamma, 2, MPFR_RNDN);
-
-    // compute delta
-    mpfr_sub(delta, gamma, diff2, MPFR_RNDU);
-    mpfr_sub(temp1, diff3, gamma, MPFR_RNDU);
-    mpfr_max(delta, delta, temp1, MPFR_RNDU);
+    // min and max difference
+    diff_lo = diff2;
+    diff_hi = mpfr_greater_p(&(diff1->right), &(diff3->right)) ? diff1 : diff3;
 
 #endif // ARPRA_MIN_RANGE
 
+    // compute gamma
+    mpfi_add(gamma, diff_lo, diff_hi);
+    mpfi_div_si(gamma, gamma, 2);
+
+    // compute delta
+    mpfi_sub(temp1, gamma, diff_lo);
+    mpfi_sub(temp2, diff_hi, gamma);
+    mpfr_max(delta, &(temp1->right), &(temp2->right), MPFR_RNDU);
+
     if (sign < 0) {
-        mpfr_neg(gamma, gamma, MPFR_RNDN);
+        mpfi_neg(gamma, gamma);
     }
 
     // MPFI inverse
-    mpfi_inv(ia_range, &(x1->true_range));
+    mpfi_inv(ia_range_working_prec, &(x1->true_range));
 
     // compute affine approximation
     arpra_helper_affine_1(y, x1, alpha, gamma, delta);
@@ -148,20 +153,21 @@ void arpra_inv (arpra_range *y, const arpra_range *x1)
     arpra_helper_compute_range(y);
 
     // Mix with IA range, and trim error term.
-    arpra_helper_mix_trim(y, ia_range);
+    arpra_helper_mix_trim(y, ia_range_working_prec);
 
     // Check for NaN and Inf.
     arpra_helper_check_result(y);
 
     // Clear vars.
-    mpfi_clear(ia_range);
+    mpfi_clear(ia_range_working_prec);
+    mpfi_clear(ia_range_internal_prec);
     mpfi_clear(x1_range);
-    mpfr_clear(alpha);
-    mpfr_clear(gamma);
+    mpfi_clear(alpha);
+    mpfi_clear(gamma);
     mpfr_clear(delta);
-    mpfr_clear(diff1);
-    mpfr_clear(diff2);
-    mpfr_clear(diff3);
-    mpfr_clear(temp1);
-    mpfr_clear(temp2);
+    mpfi_clear(diff1);
+    mpfi_clear(diff2);
+    mpfi_clear(diff3);
+    mpfi_clear(temp1);
+    mpfi_clear(temp2);
 }
