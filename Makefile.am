@@ -93,6 +93,10 @@ extra_morris_lecar_mpfr_SOURCES = extra/morris_lecar_mpfr.c
 EXTRA_PROGRAMS += extra/morris_lecar_mpfi
 extra_morris_lecar_mpfi_SOURCES = extra/morris_lecar_mpfi.c
 
+EXTRA_PROGRAMS += extra/hodgkin_huxley
+extra_hodgkin_huxley_LDADD = lib/libarpra.la
+extra_hodgkin_huxley_SOURCES = extra/hodgkin_huxley.c
+
 # Experiments
 EXTRA_PROGRAMS += experiments/experiment_1
 experiments_experiment_1_LDADD = lib/libarpra.la
