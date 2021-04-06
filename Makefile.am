@@ -97,28 +97,6 @@ EXTRA_PROGRAMS += extra/hodgkin_huxley
 extra_hodgkin_huxley_LDADD = lib/libarpra.la
 extra_hodgkin_huxley_SOURCES = extra/hodgkin_huxley.c
 
-# Experiments
-EXTRA_PROGRAMS += experiments/experiment_1
-experiments_experiment_1_LDADD = lib/libarpra.la
-experiments_experiment_1_SOURCES = experiments/experiment_1.c
-
-EXTRA_PROGRAMS += experiments/experiment_2
-experiments_experiment_2_SOURCES = experiments/experiment_2.c
-
-EXTRA_PROGRAMS += experiments/experiment_3/morris_lecar
-experiments_experiment_3_morris_lecar_LDADD = lib/libarpra.la
-experiments_experiment_3_morris_lecar_SOURCES = experiments/experiment_3/morris_lecar.c
-
-EXTRA_PROGRAMS += experiments/fig5/ml-arpra
-experiments_fig5_ml_arpra_LDADD = lib/libarpra.la
-experiments_fig5_ml_arpra_SOURCES = experiments/fig5/ml-arpra.c
-
-EXTRA_PROGRAMS += experiments/fig5/ml-mpfr
-experiments_fig5_ml_mpfr_SOURCES = experiments/fig5/ml-mpfr.c
-
-EXTRA_PROGRAMS += experiments/fig5/ml-mpfi
-experiments_fig5_ml_mpfi_SOURCES = experiments/fig5/ml-mpfi.c
-
 # Documentation
 info_TEXINFOS = doc/arpra.texi
 doc_arpra_TEXINFOS = doc/fdl-1.3.texi
