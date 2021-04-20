@@ -1,7 +1,7 @@
 /*
  * helper_mix_trim.c -- Mixed IA/AA and Mixed Trimmed IA/AA functions.
  *
- * Copyright 2020 James Paul Turner.
+ * Copyright 2020-2021 James Paul Turner.
  *
  * This file is part of the Arpra library.
  *
@@ -59,9 +59,7 @@ void arpra_helper_mix_trim (arpra_range *y, mpfi_srcptr ia_range)
             }
 
             mpfr_sub(&(y->radius), &(y->radius), temp1, MPFR_RNDU);
-            if (mpfr_sgn(&(y->radius)) < 0) {
-                mpfr_set_zero(&(y->radius), 1);
-            }
+            //assert(!(mpfr_sgn(&(y->radius)) < 0));
         }
 
         // Clear vars.
