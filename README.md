@@ -1,4 +1,4 @@
-Copyright 2016-2020 James Paul Turner.
+Copyright 2016-2022 James Paul Turner.
 
 This file is part of the Arpra library.
 
@@ -17,8 +17,6 @@ along with the Arpra library. If not, see <http://www.gnu.org/licenses/>.
 
 For any copyright year range specified as YYYY-ZZZZ in this package,
 note that the range specifies every single year in that closed interval.
-
-##############################################################################
 
 
 Introduction
