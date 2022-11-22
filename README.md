@@ -53,11 +53,12 @@ interval arithmetic suffers from.
 
 For further information on the implementation and features of Arpra,
 such as range trimming and deviation term reduction, refer to the
-original published article at
-https://www.frontiersin.org/articles/10.3389/fninf.2021.632729/full:
+original published article:
 
 Turner, J. P., & Nowotny, T. (2021). Arpra: An Arbitrary Precision
 Range Analysis Library. Frontiers in Neuroinformatics, 30.
+
+https://doi.org/10.3389/fninf.2021.632729
 
 
 Quickstart
