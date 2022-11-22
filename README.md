@@ -24,11 +24,12 @@ note that the range specifies every single year in that closed interval.
 Introduction
 ============
 
-The Arpra library is an (Ar)bitrary-(p)recision (r)ange (a)nalysis C
-library, based on GNU MPFR. The main use-case of Arpra is to maintain
-computed upper and lower bounds of numerical error for all variables,
-at all times, throughout a computation. Arpra uses mixed interval/affine
-arithmetic to accomplish this.
+Arpra is a C library for (Ar)bitrary-(p)recision (r)ange (a)nalysis
+of IEEE-754 floating-point computations, based on GNU MPFR. The main
+use-case of Arpra is to maintain computed upper and lower bounds of
+numerical error for all variables, at all times, throughout a
+computation. Arpra uses mixed trimmed interval/affine arithmetic with
+deviation term reduction to accomplish this.
 
 Affine arithmetic is a variant of interval arithmetic which accounts for
 variable correlations. As such, it does not suffer from the so-called
