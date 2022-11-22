@@ -1,3 +1,5 @@
+![Arpra](./doc/arpra_logo.svg)
+
 Copyright 2016-2022 James Paul Turner.
 
 This file is part of the Arpra library.
@@ -25,14 +27,17 @@ Introduction
 The Arpra library is an (Ar)bitrary-(p)recision (r)ange (a)nalysis C
 library, based on GNU MPFR. The main use-case of Arpra is to maintain
 computed upper and lower bounds of numerical error for all variables,
-at all times, throughout a computation. Arpra uses affine arithmetic to
-accomplish this.
+at all times, throughout a computation. Arpra uses mixed interval/affine
+arithmetic to accomplish this.
 
 Affine arithmetic is a variant of interval arithmetic which accounts for
 variable correlations. As such, it does not suffer from the so-called
 'dependency problem', where intervals grow overly large due to lack of
 consideration for variable correlations. The problem is described further
 at <https://en.wikipedia.org/wiki/Interval_arithmetic#Dependency_problem>.
+By combining the results of interval arithmetic and affine arithmetic,
+one avoids both the dependency problem of interval arithmetic, and the
+nonlinear function overshoot/undershoot problem of affine arithmetic.
 
 Arpra implements affine arithmetic using a GNU MPFR backend. MPFR is an
 arbitrary-precision floating-point library, meaning the floating-point
@@ -44,6 +49,14 @@ one is able, for example, to test how a change in numerical precision
 or integration scheme affects local and global error during a long
 numerical simulation, without the interval 'explosion' problem regular
 interval arithmetic suffers from.
+
+For further information on the implementation and features of Arpra,
+such as range trimming and deviation term reduction, refer to the
+original published article at
+https://www.frontiersin.org/articles/10.3389/fninf.2021.632729/full:
+
+Turner, J. P., & Nowotny, T. (2021). Arpra: An Arbitrary Precision
+Range Analysis Library. Frontiers in Neuroinformatics, 30.
 
 
 Quickstart
@@ -81,8 +94,9 @@ Contribute
 ==========
 
 All contributions (e.g. bug reports, feature requests, expert knowledge,
-source code and documentation) are gratefully received via the issue
-tracker <https://github.com/arpra-project/arpra/issues>.
+source code and documentation contributions) are gratefully received via
+the issue tracker <https://github.com/arpra-project/arpra/issues> or
+pull request.
 
 The source code repository for Arpra is hosted at GitHub. Clone it using:
 
