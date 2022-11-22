@@ -43,9 +43,8 @@ nonlinear function overshoot/undershoot problem of affine arithmetic.
 Arpra implements affine arithmetic using a GNU MPFR backend. MPFR is an
 arbitrary-precision floating-point library, meaning the floating-point
 MPFR variables can be of arbitrary precision. For more information,
-refer to the MPFR project website at <http://www.mpfr.org/>.
-
-By implementing affine arithmetic with an arbitrary-precision backend,
+refer to the MPFR project website at <http://www.mpfr.org/>. By
+implementing affine arithmetic with an arbitrary-precision backend,
 one is able, for example, to test how a change in numerical precision
 or integration scheme affects local and global error during a long
 numerical simulation, without the interval 'explosion' problem regular
